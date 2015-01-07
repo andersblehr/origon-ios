@@ -14,6 +14,7 @@ NSString * const kIdentifierInfo = @"info";
 NSString * const kIdentifierMember = @"member";
 NSString * const kIdentifierOrigo = @"origo";
 NSString * const kIdentifierOrigoList = @"origos";
+NSString * const kIdentifierRecipientPicker = @"recipients";
 NSString * const kIdentifierValueList = @"values";
 NSString * const kIdentifierValuePicker = @"value";
 
@@ -121,17 +122,17 @@ NSString * const kStringPrefixMemberRoleTitle = @"[member role]";
 NSString * const kStringPrefixSettingTitle = @"[setting title]";
 
 // Icon file names
-NSString * const kIconFileResidence = @"750-home-toolbar-selected.png";
+NSString * const kIconFileResidence = @"ro-750-home-toolbar-selected.png";
 NSString * const kIconFileList = @"ro-854-list.png";
 NSString * const kIconFileOrigo = @"10-contract.png";
 NSString * const kIconFileSettings = @"740-gear-toolbar.png";
 NSString * const kIconFile_iPad = @"693-ipad.png";
-NSString * const kIconFile_iPhone = @"692-iphone-5.png";
+NSString * const kIconFile_iPhone = @"ro-692-iphone-5.png";
 NSString * const kIconFile_iPodTouch = @"ro-ipod-touch-5.png";
 NSString * const kIconFileMan = @"769-male-toolbar.png";
 NSString * const kIconFileWoman = @"768-female-toolbar.png";
-NSString * const kIconFileBoy = @"593-boy_shrunk.png";
-NSString * const kIconFileGirl = @"594-girl_shrunk.png";
+NSString * const kIconFileBoy = @"ro-593-boy.png";
+NSString * const kIconFileGirl = @"ro-594-girl.png";
 NSString * const kIconFileEdit = @"830-pencil-toolbar.png";
 NSString * const kIconFileMap = @"852-map-toolbar.png";
 NSString * const kIconFileInfo = @"724-info-toolbar.png";
@@ -139,7 +140,7 @@ NSString * const kIconFileLookup = @"01-magnify.png";
 NSString * const kIconFileFavouriteNo = @"726-star-toolbar.png";
 NSString * const kIconFileFavouriteYes = @"726-star-toolbar-selected.png";
 NSString * const kIconFileAcceptDecline = @"739-question-selected.png";
-NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
+NSString * const kIconFileCall = @"735-phone.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
 NSString * const kIconFileRoleHolders = @"ro-role-holders.png";
@@ -150,6 +151,11 @@ NSString * const kIconFileGroups = @"895-user-group-toolbar.png";
 // Gender codes
 NSString * const kGenderMale = @"M";
 NSString * const kGenderFemale = @"F";
+
+// Recipient types
+NSInteger const kRecipientTypeText = 0;
+NSInteger const kRecipientTypeCall = 1;
+NSInteger const kRecipientTypeEmail = 2;
 
 // Age thresholds
 NSInteger const kAgeThresholdInSchool = 6;

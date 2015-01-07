@@ -12,8 +12,10 @@ static NSString * const kViewControllerSuffixList = @"ListViewController";
 static NSString * const kViewControllerSuffixPicker = @"PickerViewController";
 static NSString * const kViewControllerSuffixDefault = @"ViewController";
 
+static NSString * const kProtocolTel = @"tel://";
+
 static CGFloat const kInitialHeadroomHeight = 28.f;
-static CGFloat const kPlainTableViewHeaderHeight = 22.f;
+static CGFloat const kPlainTableViewHeaderHeight = 24.f;
 static CGFloat const kFooterHeadroom = 6.f;
 static CGFloat const kEmptyHeaderHeight = 14.f;
 static CGFloat const kEmptyFooterHeight = 14.f;
@@ -25,7 +27,7 @@ static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
 
 
-@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate> {
+@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
@@ -265,6 +267,66 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if (_usesPlainTableViewStyle) {
             _tableView.backgroundColor = [UIColor tableViewBackgroundColour];
+        }
+    }
+}
+
+
+- (void)setToolbarItemsIfApplicable
+{
+    if (!self.isModal) {
+        NSMutableArray *toolbarItems = [NSMutableArray array];
+        
+        BOOL hasSendTextButton = NO;
+        BOOL hasCallButton = NO;
+        BOOL hasSendEmailButton = NO;
+        
+        if ([MFMessageComposeViewController canSendText] || [OMeta deviceIsSimulator]) {
+            if ([_instance respondsToSelector:@selector(toolbarHasSendTextButton)]) {
+                hasSendTextButton = [_instance toolbarHasSendTextButton];
+            }
+        }
+        
+        BOOL hasSignal = [[OMeta m].carrier.mobileNetworkCode hasValue];
+        BOOL deviceCanMakeCall = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]];
+        
+        if ((hasSignal && deviceCanMakeCall) || [OMeta deviceIsSimulator]) {
+            if ([_instance respondsToSelector:@selector(toolbarHasCallButton)]) {
+                hasCallButton = [_instance toolbarHasCallButton];
+            }
+        }
+        
+        if ([MFMailComposeViewController canSendMail]) {
+            if ([_instance respondsToSelector:@selector(toolbarHasSendEmailButton)]) {
+                hasSendEmailButton = [_instance toolbarHasSendEmailButton];
+            }
+        }
+        
+        if (hasSendTextButton || hasCallButton || hasSendEmailButton) {
+            [toolbarItems addObject:[UIBarButtonItem flexibleSpace]];
+            
+            if (hasSendTextButton) {
+                [toolbarItems addObject:[UIBarButtonItem sendTextButtonWithTarget:_instance]];
+                [toolbarItems addObject:[UIBarButtonItem flexibleSpace]];
+            }
+            
+            if (hasCallButton) {
+                [toolbarItems addObject:[UIBarButtonItem callButtonWithTarget:_instance]];
+                [toolbarItems addObject:[UIBarButtonItem flexibleSpace]];
+            }
+            
+            if (hasSendEmailButton) {
+                [toolbarItems addObject:[UIBarButtonItem sendEmailButtonWithTarget:_instance]];
+                [toolbarItems addObject:[UIBarButtonItem flexibleSpace]];
+            }
+        }
+        
+        self.toolbarItems = [toolbarItems count] ? toolbarItems : nil;
+        
+        BOOL toolbarHidden = !self.toolbarItems;
+        
+        if (self.navigationController.toolbarHidden != toolbarHidden) {
+            [self.navigationController setToolbarHidden:toolbarHidden animated:YES];
         }
     }
 }
@@ -579,7 +641,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
-    if ([data isKindOfClass:[NSArray class]] || [data isKindOfClass:[NSSet class]]) {
+    if ([data conformsToProtocol:@protocol(NSFastEnumeration)]) {
         _sectionData[@(sectionKey)] = [[self sortedArrayWithData:data forSectionWithKey:sectionKey] mutableCopy];
     } else if (data) {
         if (sectionKey == kInputSectionKey) {
@@ -681,7 +743,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_sectionData removeObjectsForKeys:redundantSectionKeys];
             [_sectionCounts removeObjectsForKeys:redundantSectionKeys];
             
-            [_tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:redundantSections] withRowAnimation:[self rowAnimation]];
+            [_tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:redundantSections] withRowAnimation:_rowAnimation];
         }
     }
 }
@@ -716,6 +778,79 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath
 {
     return [self sectionKeyForSectionNumber:indexPath.section];
+}
+
+
+#pragma mark - Communications
+
+- (void)sendTextToRecipients:(id)recipients
+{
+    if (![recipients conformsToProtocol:@protocol(NSFastEnumeration)]) {
+        recipients = @[recipients];
+    }
+    
+    NSMutableArray *recipientNumbers = [NSMutableArray array];
+    
+    for (id<OMember> recipient in recipients) {
+        [recipientNumbers addObject:recipient.mobilePhone];
+    }
+    
+    MFMessageComposeViewController *messageComposer = [[MFMessageComposeViewController alloc] init];
+    messageComposer.messageComposeDelegate = self;
+    messageComposer.recipients = recipientNumbers;
+    
+    [self presentViewController:messageComposer animated:YES completion:nil];
+}
+
+
+- (void)sendEmailToRecipients:(id)toRecipients cc:(id)ccRecipients
+{
+    if (toRecipients && ![toRecipients conformsToProtocol:@protocol(NSFastEnumeration)]) {
+        toRecipients = @[toRecipients];
+    }
+    
+    if (ccRecipients && ![ccRecipients conformsToProtocol:@protocol(NSFastEnumeration)]) {
+        ccRecipients = @[ccRecipients];
+    }
+    
+    NSMutableArray *toAddresses = [NSMutableArray array];
+    NSMutableArray *ccAddresses = [NSMutableArray array];
+    
+    for (id<OMember> toRecipient in toRecipients) {
+        [toAddresses addObject:toRecipient.email];
+    }
+    
+    for (id<OMember> ccRecipient in ccRecipients) {
+        [ccAddresses addObject:ccRecipient.email];
+    }
+    
+    MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+    mailComposer.mailComposeDelegate = self;
+    [mailComposer setToRecipients:toAddresses];
+    [mailComposer setCcRecipients:ccAddresses];
+    [mailComposer setMessageBody:NSLocalizedString(@"Sent from Origo - http://origoapp.com", @"") isHTML:NO];
+    
+    [self presentViewController:mailComposer animated:YES completion:nil];
+}
+
+
+- (void)callRecipient:(id)recipient
+{
+    NSString *phoneNumber = nil;
+    
+    if ([recipient conformsToProtocol:@protocol(OMember)]) {
+        phoneNumber = [OPhoneNumberFormatter formatterForNumber:[recipient mobilePhone]].flattenedNumber;
+    } else if ([recipient conformsToProtocol:@protocol(OOrigo)]) {
+        phoneNumber = [OPhoneNumberFormatter formatterForNumber:[recipient telephone]].flattenedNumber;
+    }
+    
+    NSURL *phoneURL = [NSURL URLWithString:[kProtocolTel stringByAppendingString:phoneNumber]];
+    
+    if ([[UIApplication sharedApplication] canOpenURL:phoneURL]) {
+        [[UIApplication sharedApplication] openURL:phoneURL];
+    } else {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot place call", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify that %@ is a valid phone number.", @""), [OPhoneNumberFormatter formatterForNumber:phoneNumber].formattedNumber]];
+    }
 }
 
 
@@ -777,7 +912,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         _presentStealthilyOnce = NO;
     } else {
-        [self.navigationController presentViewController:destinationViewController animated:YES completion:NULL];
+        [self.navigationController presentViewController:destinationViewController animated:YES completion:nil];
     }
 }
 
@@ -996,6 +1131,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSections
 {
+    [_tableView beginUpdates];
     [_instance loadData];
     
     NSArray *sectionKeys = [[_sectionData allKeys] sortedArrayUsingSelector:@selector(compare:)];
@@ -1003,8 +1139,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
     UITableViewRowAnimation rowAnimation = [self rowAnimation];
-    
-    [_tableView beginUpdates];
     
     for (NSNumber *sectionKey in sectionKeys) {
         if ([self isEntityViewController] && [sectionKey integerValue] == _inputSectionKey) {
@@ -1192,16 +1326,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _didJustLoad = NO;
     
     [_state makeActive];
-    
-    if (!_isModal && [_instance respondsToSelector:@selector(toolbarButtons)]) {
-        [self setToolbarItems:[_instance toolbarButtons] animated:YES];
-    }
-    
-    BOOL toolbarHidden = !self.toolbarItems;
-    
-    if (self.navigationController.toolbarHidden != toolbarHidden) {
-        [self.navigationController setToolbarHidden:toolbarHidden animated:YES];
-    }
+
+    [self setToolbarItemsIfApplicable];
     
     if (self.navigationController.navigationBar.translucent) {
         self.navigationController.navigationBar.translucent = NO;
@@ -1369,6 +1495,18 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+#pragma mark - UIViewController conformance
+
+- (void)setTitle:(NSString *)title
+{
+    [super setTitle:title];
+    
+    if (_titleField) {
+        _titleField = [self.navigationItem setTitle:self.title editable:_titleField.userInteractionEnabled withSubtitle:self.subtitle];
+    }
+}
+
+
 #pragma mark - OTableViewController conformance
 
 - (void)loadState
@@ -1389,6 +1527,34 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
     
     [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser meta:_reinstantiatedRootViewController];
+}
+
+
+#pragma mark - OConnectionDelegate conformance
+
+- (void)willSendRequest:(NSURLRequest *)request
+{
+    if (_requiresSynchronousServerCalls) {
+        [[OMeta m].activityIndicator startAnimating];
+    }
+}
+
+
+- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+{
+    if ([OMeta m].activityIndicator.isAnimating) {
+        [[OMeta m].activityIndicator stopAnimating];
+    }
+}
+
+
+- (void)didFailWithError:(NSError *)error
+{
+    if ([OMeta m].activityIndicator.isAnimating) {
+        [[OMeta m].activityIndicator stopAnimating];
+    }
+    
+    // TODO: Handle errors (-1001: Timeout, and others)
 }
 
 
@@ -1816,31 +1982,27 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - OConnectionDelegate conformance
+#pragma mark - MFMessageComposeViewControllerDelegate conformance
 
-- (void)willSendRequest:(NSURLRequest *)request
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-    if (_requiresSynchronousServerCalls) {
-        [[OMeta m].activityIndicator startAnimating];
+    if (result == MessageComposeResultCancelled) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self.dismisser dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
 
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
-{
-    if ([OMeta m].activityIndicator.isAnimating) {
-        [[OMeta m].activityIndicator stopAnimating];
-    }
-}
+#pragma mark - MFMailComposeViewControllerDelegate conformance
 
-
-- (void)didFailWithError:(NSError *)error
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
-    if ([OMeta m].activityIndicator.isAnimating) {
-        [[OMeta m].activityIndicator stopAnimating];
+    if (result == MFMailComposeResultCancelled) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self.dismisser dismissViewControllerAnimated:YES completion:nil];
     }
-    
-    // TODO: Handle errors (-1001: Timeout, and others)
 }
 
 @end

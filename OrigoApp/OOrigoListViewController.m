@@ -136,6 +136,18 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
+- (void)performTextAction
+{
+    [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetText: kAspectGlobal}];
+}
+
+
+- (void)performEmailAction
+{
+    [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetEmail: kAspectGlobal}];
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidAppear:(BOOL)animated
@@ -195,11 +207,14 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         }
         
         _wards = wardsWithHiddenOrigos;
-    } else {
+        
+        [self setData:[[OMeta m].user hiddenOrigos] forSectionWithKey:kSectionKeyOrigos];
+    } else if (_member) {
         _wards = [[OMeta m].user wards];
         
         [self setData:[[OMeta m].user residences] forSectionWithKey:kSectionKeyUser];
         [self appendData:[[OMeta m].user stash] toSectionWithKey:kSectionKeyUser];
+        [self setData:[[OMeta m].user origos] forSectionWithKey:kSectionKeyOrigos];
     }
     
     if ([_wards count]) {
@@ -330,6 +345,38 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (NSString *)emptyTableViewFooterText
 {
     return [self targetIs:kTargetHiddenOrigos] ? NSLocalizedString(@"No hidden lists.", @"") : nil;
+}
+
+
+- (BOOL)toolbarHasSendTextButton
+{
+    BOOL hasSendTextButton = NO;
+    
+    for (id<OMember> recipientCandidate in [self.state eligibleCandidates]) {
+        if ([recipientCandidate.mobilePhone hasValue]) {
+            hasSendTextButton = YES;
+            
+            break;
+        }
+    }
+    
+    return hasSendTextButton;
+}
+
+
+- (BOOL)toolbarHasSendEmailButton
+{
+    BOOL hasSendEmailButton = NO;
+    
+    for (id<OMember> recipientCandidate in [self.state eligibleCandidates]) {
+        if ([recipientCandidate.email hasValue]) {
+            hasSendEmailButton = YES;
+            
+            break;
+        }
+    }
+    
+    return hasSendEmailButton;
 }
 
 

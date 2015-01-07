@@ -59,24 +59,24 @@
 {
     NSMutableArray *stringItems = [NSMutableArray array];
     
-    if ([members count] && [members[0] conformsToProtocol:@protocol(OMember)]) {
+    if ([members count]) {
         if ([members isKindOfClass:[NSSet class]]) {
-            members = [members allObjects];
+            members = [[members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        for (id<OMember> member in members) {
-            if (subjective) {
-                if ([member isUser]) {
-                    [stringItems addObject:[OLanguage pronouns][_you_][nominative]];
+        if ([members[0] conformsToProtocol:@protocol(OMember)]) {
+            for (id<OMember> member in members) {
+                if (subjective || [member isJuvenile]) {
+                    if ([member isUser]) {
+                        [stringItems addObject:[OLanguage pronouns][_you_][nominative]];
+                    } else {
+                        [stringItems addObject:[member givenName]];
+                    }
+                } else if ([members count] > 1) {
+                    [stringItems addObject:[member shortName]];
                 } else {
-                    [stringItems addObject:[member givenName]];
+                    [stringItems addObject:member.name];
                 }
-            } else if ([members count] > 1) {
-                [stringItems addObject:[member shortName]];
-            } else if ([member isJuvenile]) {
-                [stringItems addObject:[member givenName]];
-            } else {
-                [stringItems addObject:member.name];
             }
         }
     }
@@ -89,34 +89,36 @@
 {
     NSMutableArray *stringItems = [NSMutableArray array];
     
-    if ([members count] && [members[0] conformsToProtocol:@protocol(OMember)]) {
+    if ([members count]) {
         if ([members isKindOfClass:[NSSet class]]) {
-            members = [members allObjects];
+            members = [[members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        NSDictionary *isUniqueByGivenName = nil;
-        
-        for (id<OMember> member in members) {
-            if ([origo isJuvenile]) {
-                if (![member isJuvenile]) {
-                    [stringItems addObject:[member shortName]];
-                } else if ([origo hasMember:member]) {
-                    [stringItems addObject:[member displayNameInOrigo:origo]];
-                } else {
-                    if (!isUniqueByGivenName) {
-                        isUniqueByGivenName = [self isUniqueByGivenNameFromMembers:members];
-                    }
-                    
-                    NSString *givenName = [member givenName];
-                    
-                    if ([isUniqueByGivenName[givenName] boolValue]) {
-                        [stringItems addObject:givenName];
-                    } else {
+        if ([members[0] conformsToProtocol:@protocol(OMember)]) {
+            NSDictionary *isUniqueByGivenName = nil;
+            
+            for (id<OMember> member in members) {
+                if ([origo isJuvenile]) {
+                    if (![member isJuvenile]) {
                         [stringItems addObject:[member shortName]];
+                    } else if ([origo hasMember:member]) {
+                        [stringItems addObject:[member displayNameInOrigo:origo]];
+                    } else {
+                        if (!isUniqueByGivenName) {
+                            isUniqueByGivenName = [self isUniqueByGivenNameFromMembers:members];
+                        }
+                        
+                        NSString *givenName = [member givenName];
+                        
+                        if ([isUniqueByGivenName[givenName] boolValue]) {
+                            [stringItems addObject:givenName];
+                        } else {
+                            [stringItems addObject:[member shortName]];
+                        }
                     }
+                } else {
+                    [stringItems addObject:[member shortName]];
                 }
-            } else {
-                [stringItems addObject:[member shortName]];
             }
         }
     }
@@ -129,19 +131,21 @@
 {
     NSMutableArray *stringItems = [NSMutableArray array];
     
-    if ([members count] && [members[0] conformsToProtocol:@protocol(OMember)]) {
+    if ([members count]) {
         if ([members isKindOfClass:[NSSet class]]) {
-            members = [members allObjects];
+            members = [[members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        for (id<OMember> member in members) {
-            id<OMembership> membership = [origo membershipForMember:member];
-            NSArray *roles = [membership roles];
-            
-            if ([roles count]) {
-                [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfStrings:roles conjoin:NO conditionallyLowercase:YES]]];
-            } else {
-                [stringItems addObject:[member shortName]];
+        if ([members[0] conformsToProtocol:@protocol(OMember)]) {
+            for (id<OMember> member in members) {
+                id<OMembership> membership = [origo membershipForMember:member];
+                NSArray *roles = [membership roles];
+                
+                if ([roles count]) {
+                    [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfStrings:roles conjoin:NO conditionallyLowercase:YES]]];
+                } else {
+                    [stringItems addObject:[member shortName]];
+                }
             }
         }
     }

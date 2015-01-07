@@ -20,11 +20,11 @@
 @property (nonatomic, readonly) NSString *authToken;
 @property (nonatomic, readonly) NSString *language;
 @property (nonatomic, readonly) NSBundle *localisedStringsBundle;
+@property (nonatomic, readonly) CTCarrier *carrier;
 
 @property (nonatomic, readonly) OMember *user;
 @property (nonatomic, readonly) OLocator *locator;
 @property (nonatomic, readonly) OReplicator *replicator;
-@property (nonatomic, readonly) OSwitchboard *switchboard;
 @property (nonatomic, readonly) OActivityIndicator *activityIndicator;
 
 @property (nonatomic, assign, readonly) BOOL internetConnectionIsWiFi;
@@ -40,9 +40,9 @@
 - (void)userDidSignIn;
 - (void)signOut;
 
+- (BOOL)userIsAllSet;
 - (BOOL)userIsSignedIn;
 - (BOOL)userIsRegistered;
-- (BOOL)userIsAllSet;
 
 - (BOOL)internetConnectionIsAvailable;
 + (BOOL)deviceIsSimulator;

@@ -14,4 +14,6 @@
 
 - (instancetype)initWithKey:(NSString *)key centred:(BOOL)centred;
 
++ (UILabel *)genericLabelWithText:(NSString *)text;
+
 @end

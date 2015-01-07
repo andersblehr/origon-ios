@@ -380,7 +380,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     } completion:^(BOOL finished) {
         [UIView animateWithDuration:kShakeDuration delay:0.f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             self.transform = CGAffineTransformIdentity;
-        } completion:NULL];
+        } completion:nil];
     }];
 }
 
@@ -456,19 +456,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Custom accessors
-
-- (void)setDestinationId:(NSString *)destinationId
-{
-    if (destinationId) {
-        [self setDestinationId:destinationId selectableDuringInput:NO];
-    } else {
-        _destinationId = nil;
-        
-        self.accessoryType = UITableViewCellAccessoryNone;
-    }
-}
-
+#pragma mark - Miscellaneous
 
 - (void)setDestinationId:(NSString *)destinationId selectableDuringInput:(BOOL)selectableDuringInput
 {
@@ -492,6 +480,30 @@ static CGFloat const kShakeRepeatCount = 3.f;
             
             self.accessoryType = UITableViewCellAccessoryNone;
         }
+    }
+}
+
+
+- (void)bumpCheckedState
+{
+    if (_partiallyChecked) {
+        self.partiallyChecked = NO;
+    } else {
+        self.checkedState = ++_checkedState % [_checkedStateAccessoryViews count];
+    }
+}
+
+
+#pragma mark - Custom accessors
+
+- (void)setDestinationId:(NSString *)destinationId
+{
+    if (destinationId) {
+        [self setDestinationId:destinationId selectableDuringInput:NO];
+    } else {
+        _destinationId = nil;
+        
+        self.accessoryType = UITableViewCellAccessoryNone;
     }
 }
 
@@ -532,11 +544,44 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)setChecked:(BOOL)checked
 {
     _checked = checked;
+    _partiallyChecked = NO;
     
     if (_checked) {
         self.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
         self.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
+    self.tintColor = [UIColor globalTintColour];
+}
+
+
+- (void)setPartiallyChecked:(BOOL)partiallyChecked
+{
+    _partiallyChecked = partiallyChecked;
+    
+    if (_partiallyChecked) {
+        if (self.accessoryType == UITableViewCellAccessoryNone) {
+            self.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        
+        self.tintColor = [UIColor tonedDownTextColour];
+    } else {
+        self.tintColor = [UIColor globalTintColour];
+    }
+}
+
+
+- (void)setCheckedState:(NSInteger)checkedState
+{
+    if (checkedState < [_checkedStateAccessoryViews count]) {
+        _checkedState = checkedState;
+        
+        self.accessoryView = _checkedStateAccessoryViews[checkedState];
+        
+        if ([self.accessoryView isKindOfClass:[UILabel class]]) {
+            ((UILabel *)self.accessoryView).textColor = self.tintColor;
+        }
     }
 }
 
@@ -594,6 +639,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if (_selectable) {
         [super setSelected:selected animated:animated];
+    }
+}
+
+
+- (void)setTintColor:(UIColor *)tintColor
+{
+    [super setTintColor:tintColor];
+    
+    if ([self.accessoryView isKindOfClass:[UILabel class]]) {
+        ((UILabel *)self.accessoryView).textColor = tintColor;
     }
 }
 

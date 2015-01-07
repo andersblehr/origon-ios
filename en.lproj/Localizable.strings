@@ -120,16 +120,16 @@
 "[member role] team" = "Team role";
 
 // Member titles
-"[member] alumni" = "alum";
-"[member] community" = "member";
-"[member] list" = "friend";
-"[member] organisation" = "member";
-"[member] preschoolClass" = "child";
-"[member] residence" = "resident";
-"[member] schoolClass" = "student";
-"[member] simple" = "member";
-"[member] studyGroup" = "student";
-"[member] team" = "player";
+"[member] alumni" = "Alum";
+"[member] community" = "Member";
+"[member] list" = "Friend";
+"[member] organisation" = "Member";
+"[member] preschoolClass" = "Child";
+"[member] residence" = "Resident";
+"[member] schoolClass" = "Student";
+"[member] simple" = "Member";
+"[member] studyGroup" = "Student";
+"[member] team" = "Player";
 
 // Member list titles
 "[members] alumni" = "Alumni";
@@ -228,7 +228,6 @@
 "coach" = "coach;-;coaches;-;-;-";
 "father" = "father;the father;-;-;your father;%@'s father";
 "guardian" = "guardian;-;guardians;-;-;-";
-"household" = "household;the household;-;-;-;-";
 "lecturer" = "lecturer;-;lecturers;-;-;-";
 "mother" = "mother;the mother;-;-;your mother;%@'s mother";
 "parent" = "-;-;parents;the parents;your parents;%@'s parents";
@@ -247,9 +246,6 @@
  * Cross-view strings
  ***/
 
-// Email signature
-"Sent from Origo - http://origoapp.com" = "\n\nSent from Origo - http://origoapp.com";
-
 // Buttons
 "OK" = "OK";
 "Edit" = "Edit";
@@ -260,9 +256,15 @@
 "Continue" = "Continue";
 "Cancel" = "Cancel";
 "Skip" = "Skip";
+"Home: %@" = "Home: %@";
 
-// Placeholders
-"Role designation" = "Role designation";
+// Prompts
+"Who do you want to text?" = "Who do you want to text?";
+"Who do you want to call?" = "Who do you want to call?";
+"Who do you want to email?" = "Who do you want to email?";
+"Send text to %@" = "Send text to %@";
+"Call %@" = "Call %@";
+"Send email to %@" = "Send email to %@";
 
 // Alerts
 "No internet connection." = "No internet connection.";
@@ -282,10 +284,12 @@
 "friend [female]" = "friend";
 "Friends" = "Friends";
 "Contacts" = "Contacts";
+"Households" = "Households";
 "Home number" = "Home number";
 "Neither" = "Neither";
 "Both" = "Both";
 "All" = "All";
+"Favourites" = "Favourites";
 "None of them" = "None of them";
 "None of you" = "None of you";
 "All of them" = "All of them";
@@ -302,6 +306,9 @@
 
 // Separators
 " and " = " and ";
+
+// Email signature
+"Sent from Origo - http://origoapp.com" = "\n\nSent from Origo - http://origoapp.com";
 
 
 /***
@@ -364,7 +371,6 @@
  ***/
 
 // Headers
-"Households" = "Households";
 "Guardians in the household" = "Guardians in the household";
 
 // Footers
@@ -451,9 +457,6 @@
 "The mobile number %@ is already in use." = "The mobile number %@ is already in use.";
 
 // Prompts
-"Who do you want to email?" = "Who do you want to email?";
-"Who do you want to text?" = "Who do you want to text?";
-"Who do you want to call?" = "Who do you want to call?";
 "Should %@ also be registered at this address?" = "Should %@ also be registered at this address?";
 "Who else should be registered at this address?" = "Who else should be registered at this address?";
 "Are you a %@ or a %@?" = "Are you a %@ or a %@?";
@@ -485,7 +488,6 @@
 
 // View titles
 "Settings" = "Settings";
-"Favourites" = "Favourites";
 "Others" = "Others";
 "Responsibilities" = "Responsibilities";
 "Groups" = "Groups";
@@ -518,6 +520,25 @@
 "Group name" = "Group name";
 "This device" = "This device";
 "Last seen %@" = "Last seen %@";
+
+
+/***
+ * ORecipientPickerViewController strings
+ ***/
+
+// View titles
+"Send text" = "Send text";
+"Send email" = "Send email";
+
+// Buttons
+"Select all" = "Select all";
+"Parents" = "Parents";
+"Parents, grouped" = "Parents, grouped";
+"Parents and %@" = "Parents and %@";
+
+// Labels
+"To" = "To";
+"Cc" = "Cc";
 
 
 /***

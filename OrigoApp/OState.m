@@ -20,6 +20,7 @@ NSString * const kActionRegister = @"register";
 NSString * const kActionSignIn = @"signin";
 
 NSString * const kTargetAdmin = @"admin";
+NSString * const kTargetCall = @"call";
 NSString * const kTargetAffiliation = @"affiliation";
 NSString * const kTargetDevices = @"devices";
 NSString * const kTargetElder = @"elder";
@@ -43,12 +44,14 @@ NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
 NSString * const kTargetSettings = @"settings";
+NSString * const kTargetText = @"text";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
 
 NSString * const kAspectAdmin = @"admin";
 NSString * const kAspectDefault = @"default";
 NSString * const kAspectEditable = @"editable";
+NSString * const kAspectGlobal = @"global";
 NSString * const kAspectGroup = @"group";
 NSString * const kAspectHousehold = @"household";
 NSString * const kAspectJuvenile = @"juvenile";
@@ -280,15 +283,19 @@ static OState *_activeState = nil;
     id candidates = nil;
     
     if (peerPivot) {
-        if ([self targetIs:kTargetOrganiser]) {
-            candidates = [peerPivot peersNotInSet:[_currentOrigo organisers]];
+        if (_currentOrigo) {
+            if ([self targetIs:kTargetOrganiser]) {
+                candidates = [peerPivot peersNotInSet:[_currentOrigo organisers]];
+            } else {
+                candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
+            }
+            
+            if ([_currentOrigo isOfType:kOrigoTypeList]) {
+                candidates = [candidates mutableCopy];
+                [candidates removeObject:peerPivot];
+            }
         } else {
-            candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
-        }
-        
-        if ([_currentOrigo isOfType:kOrigoTypeList]) {
-            candidates = [candidates mutableCopy];
-            [candidates removeObject:peerPivot];
+            candidates = [peerPivot peers];
         }
     }
     

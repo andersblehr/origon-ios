@@ -273,7 +273,7 @@ static CGFloat const kTextInsetY = 1.2f;
         if (_isTitleField) {
             self.layer.borderColor = [[UIColor titleTextColour] CGColor];
         } else {
-            self.layer.borderColor = [[UIColor windowTintColour] CGColor];
+            self.layer.borderColor = [[UIColor globalTintColour] CGColor];
         }
     } else {
         self.layer.borderColor = [[UIColor clearColor] CGColor];

@@ -122,7 +122,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 
 #pragma mark - Interface colours
 
-+ (instancetype)windowTintColour
++ (instancetype)globalTintColour
 {
     return [self pizazzColour];
 }
@@ -130,7 +130,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 
 + (instancetype)titleBackgroundColour
 {
-    return [self windowTintColour];
+    return [self globalTintColour];
 }
 
 
@@ -162,7 +162,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 
 + (instancetype)notificationTextColour
 {
-    return [self windowTintColour];
+    return [self globalTintColour];
 }
 
 
@@ -192,7 +192,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 
 + (instancetype)labelTextColour
 {
-    return [self windowTintColour];
+    return [self globalTintColour];
 }
 
 

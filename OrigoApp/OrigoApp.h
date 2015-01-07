@@ -32,7 +32,7 @@
 @protocol OTableViewController;
 @class OEntityProxy, OMemberProxy, OMembershipProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
-@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OSwitchboard, OTableView, OTableViewCell, OInputCellBlueprint, OInputCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OInputCellBlueprint, OInputCellConstrainer, OLabel, OLanguage, OLocator, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OTableView, OTableViewCell, OTableViewController, OTextField, OTextView;
 
 #import "OConnectionDelegate.h"
 #import "OInputCellDelegate.h"
@@ -94,7 +94,6 @@ typedef UIView<OTextInput> OInputField;
 #import "OPhoneNumberFormatter.h"
 #import "OReplicator.h"
 #import "OState.h"
-#import "OSwitchboard.h"
 #import "OTableView.h"
 #import "OTableViewCell+OrigoAdditions.h"
 #import "OTableViewController.h"

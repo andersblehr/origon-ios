@@ -25,15 +25,52 @@ NSString * const kOrigoTypeTeam = @"team";
 
 #pragma mark - Auxiliary methods
 
+- (NSSet *)allMembershipsIncludeExpired:(BOOL)includeExpired
+{
+    NSMutableSet *memberships = [NSMutableSet set];
+    
+    for (OMembership *membership in self.memberships) {
+        if (includeExpired || (![membership hasExpired] && ![membership isMarkedForDeletion])) {
+            [memberships addObject:membership];
+        }
+    }
+    
+    return memberships;
+}
+
+
+- (id<OMembership>)membershipForMember:(id<OMember>)member includeExpired:(BOOL)includeExpired
+{
+    id<OMembership> targetMembership = nil;
+    
+    if ([member instance]) {
+        member = [member instance];
+        
+        for (OMembership *membership in [self allMembershipsIncludeExpired:includeExpired]) {
+            if (!targetMembership && membership.member == member) {
+                targetMembership = membership;
+            }
+        }
+    } else {
+        targetMembership = [[self proxy] membershipForMember:member];
+    }
+    
+    return targetMembership;
+}
+
+
 - (id<OMembership>)addMember:(id<OMember>)member isAssociate:(BOOL)isAssociate
 {
     OMembership *membership = nil;
     
     if ([member instance]) {
         member = [member instance];
-        membership = [self membershipForMember:member];
+        membership = [self membershipForMember:member includeExpired:YES];
         
         if (membership) {
+            membership.isExpired = @NO;
+            membership.isAwaitingDeletion = @NO;
+            
             if ([membership isAssociate] && !isAssociate) {
                 [membership promote];
             }
@@ -146,15 +183,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSSet *)allMemberships
 {
-    NSMutableSet *memberships = [NSMutableSet set];
-    
-    for (OMembership *membership in self.memberships) {
-        if (![membership hasExpired]) {
-            [memberships addObject:membership];
-        }
-    }
-    
-    return memberships;
+    return [self allMembershipsIncludeExpired:NO];
 }
 
 
@@ -504,21 +533,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (id<OMembership>)membershipForMember:(id<OMember>)member
 {
-    id<OMembership> targetMembership = nil;
-    
-    if ([member instance]) {
-        member = [member instance];
-        
-        for (OMembership *membership in [self allMemberships]) {
-            if (!targetMembership && membership.member == member) {
-                targetMembership = membership;
-            }
-        }
-    } else {
-        targetMembership = [[self proxy] membershipForMember:member];
-    }
-    
-    return targetMembership;
+    return [self membershipForMember:member includeExpired:NO];
 }
 
 
@@ -702,6 +717,82 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
+#pragma mark - Communication recipients
+
+- (NSArray *)recipientCandidates
+{
+    NSArray *recipientCandidates = [NSArray array];
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        for (OMember *resident in [self residents]) {
+            if (![resident isUser]) {
+                recipientCandidates = [recipientCandidates arrayByAddingObject:resident];
+            }
+        }
+    } else {
+        NSMutableSet *candidates = [NSMutableSet setWithArray:[self organisers]];
+        
+        if ([self isJuvenile]) {
+            [candidates unionSet:[NSSet setWithArray:[self guardians]]];
+        } else {
+            [candidates unionSet:[NSSet setWithArray:[self regulars]]];
+        }
+        
+        if ([candidates containsObject:[OMeta m].user]) {
+            [candidates removeObject:[OMeta m].user];
+        }
+        
+        recipientCandidates = [[candidates allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    }
+    
+    return recipientCandidates;
+}
+
+
+- (NSArray *)textRecipients
+{
+    NSMutableArray *textRecipients = [NSMutableArray array];
+    
+    for (OMember *recipientCandidate in [self recipientCandidates]) {
+        if ([recipientCandidate.mobilePhone hasValue]) {
+            [textRecipients addObject:recipientCandidate];
+        }
+    }
+    
+    return textRecipients;
+}
+
+
+- (NSArray *)callRecipients
+{
+    NSMutableArray *callRecipients = [NSMutableArray array];
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        [callRecipients addObjectsFromArray:[self textRecipients]];
+    }
+    
+    if ([self hasTelephone]) {
+        [callRecipients addObject:self];
+    }
+    
+    return callRecipients;
+}
+
+
+- (NSArray *)emailRecipients
+{
+    NSMutableArray *emailRecipients = [NSMutableArray array];
+    
+    for (OMember *recipientCandidate in [self recipientCandidates]) {
+        if ([recipientCandidate.email hasValue]) {
+            [emailRecipients addObject:recipientCandidate];
+        }
+    }
+    
+    return emailRecipients;
+}
+
+
 #pragma mark - Display strings
 
 - (NSString *)displayName
@@ -727,6 +818,36 @@ NSString * const kOrigoTypeTeam = @"team";
 - (NSString *)shortAddress
 {
     return [self hasAddress] ? [self.address lines][0] : nil;
+}
+
+
+- (NSString *)recipientLabel
+{
+    NSString *recipientLabel = nil;
+    
+    if ([self hasAddress]) {
+        recipientLabel = [self shortAddress];
+    } else {
+        NSString *formattedPhoneNumber = [[OPhoneNumberFormatter formatterForNumber:self.telephone] formattedNumber];
+        
+        if ([self isOfType:kOrigoTypeResidence]) {
+            if ([self hasAddress]) {
+                recipientLabel = [self shortAddress];
+            } else {
+                recipientLabel = [NSString stringWithFormat:@"Home: %@", formattedPhoneNumber];
+            }
+        } else {
+            recipientLabel = formattedPhoneNumber;
+        }
+    }
+    
+    return recipientLabel;
+}
+
+
+- (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType
+{
+    return [NSString stringWithFormat:NSLocalizedString(@"Call %@", @""), [[self recipientLabel] stringByLowercasingFirstLetter]];
 }
 
 

@@ -29,7 +29,7 @@
 + (instancetype)selectedCellBackgroundColour;
 + (instancetype)alertViewBackgroundColour;
 
-+ (instancetype)windowTintColour;
++ (instancetype)globalTintColour;
 + (instancetype)titleBackgroundColour;
 + (instancetype)titlePlaceholderColour;
 + (instancetype)imagePlaceholderBackgroundColour;

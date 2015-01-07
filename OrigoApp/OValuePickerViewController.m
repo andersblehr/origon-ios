@@ -20,7 +20,7 @@ static NSInteger const kSectionKeyValues = 0;
     id<OSettings> _settings;
     NSString *_settingKey;
     NSMutableDictionary *_valuesByKey;
-
+    
     id<OOrigo> _origo;
     NSString *_affiliation;
     NSString *_affiliationType;
@@ -104,10 +104,9 @@ static NSInteger const kSectionKeyValues = 0;
         
         if ([self targetIs:kTargetMembers]) {
             _origo = self.state.currentOrigo;
+            _isMultiValuePicker = YES;
             
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewMembersTitle);
-            
-            _isMultiValuePicker = YES;
         } else if ([self targetIs:kTargetAffiliation]) {
             _origo = self.state.currentOrigo;
             

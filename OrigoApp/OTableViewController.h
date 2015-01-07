@@ -25,7 +25,6 @@
 - (id)defaultTarget;
 - (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath;
 - (NSString *)reuseIdentifierForInputSection;
-- (NSArray *)toolbarButtons;
 
 - (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
@@ -35,6 +34,10 @@
 - (id)headerContentForSectionWithKey:(NSInteger)sectionKey;
 - (id)footerContentForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)emptyTableViewFooterText;
+
+- (BOOL)toolbarHasSendTextButton;
+- (BOOL)toolbarHasCallButton;
+- (BOOL)toolbarHasSendEmailButton;
 
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey;
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
@@ -110,6 +113,10 @@
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
+
+- (void)sendTextToRecipients:(id)recipients;
+- (void)sendEmailToRecipients:(id)toRecipients cc:(id)ccRecipients;
+- (void)callRecipient:(id)recipient;
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta;

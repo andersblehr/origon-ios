@@ -19,8 +19,6 @@
 
 @implementation OLabel
 
-#pragma mark - Width computation
-
 #pragma mark - Initialisation
 
 - (instancetype)initWithKey:(NSString *)key centred:(BOOL)centred
@@ -41,6 +39,22 @@
     }
     
     return self;
+}
+
+
+#pragma mark - Static, reusable labels
+
++ (UILabel *)genericLabelWithText:(NSString *)text
+{
+    UIFont *labelFont = [UIFont detailFont];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, [text sizeWithFont:labelFont maxWidth:CGFLOAT_MAX].width, [labelFont lineHeight])];
+    label.backgroundColor = [UIColor clearColor];
+    label.font = labelFont;
+    label.textColor = [UIColor textColour];
+    label.text = text;
+    
+    return label;
 }
 
 

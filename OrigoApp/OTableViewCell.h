@@ -29,7 +29,11 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic, assign) BOOL selectable;
 @property (nonatomic, assign) BOOL selectableDuringInput;
 @property (nonatomic, assign) BOOL editable;
+
 @property (nonatomic, assign) BOOL checked;
+@property (nonatomic, assign) BOOL partiallyChecked;
+@property (nonatomic, assign) NSInteger checkedState;
+@property (nonatomic) NSArray *checkedStateAccessoryViews;
 
 @property (nonatomic, weak) id<OInputCellDelegate> inputCellDelegate;
 
@@ -60,5 +64,6 @@ extern CGFloat const kCellAnimationDuration;
 - (void)writeInput;
 
 - (void)setDestinationId:(NSString *)identifier selectableDuringInput:(BOOL)selectableDuringInput;
+- (void)bumpCheckedState;
 
 @end

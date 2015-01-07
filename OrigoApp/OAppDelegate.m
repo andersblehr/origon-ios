@@ -125,7 +125,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
     
-    _window.tintColor = [UIColor windowTintColour];
+    _window.tintColor = [UIColor globalTintColour];
     
     OLogDebug(@"Device ID: %@", [OMeta m].deviceId);
     OLogDebug(@"System language: %@", [OMeta m].language);

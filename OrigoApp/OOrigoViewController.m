@@ -38,6 +38,8 @@ static NSInteger const kButtonTagCoHabitantsWards = 1;
 static NSInteger const kButtonTagCoHabitantsNew = 2;
 static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
+static NSInteger const kActionSheetTagRecipients = 4;
+
 
 @interface OOrigoViewController () <OTableViewController, OInputCellDelegate, UIActionSheetDelegate> {
 @private
@@ -47,6 +49,9 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     
     NSString *_origoType;
     NSArray *_eligibleCandidates;
+    
+    NSInteger _recipientType;
+    NSArray *_recipientCandidates;
     
     BOOL _userCanEdit;
 }
@@ -198,6 +203,42 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 }
 
 
+- (void)presentRecipientsSheet
+{
+    NSString *prompt = nil;
+    
+    if ([_recipientCandidates count] > 1) {
+        if (_recipientType == kRecipientTypeCall) {
+            prompt = NSLocalizedString(@"Who do you want to call?", @"");
+        } else {
+            _recipientCandidates = [_recipientCandidates arrayByAddingObject:[NSArray arrayWithArray:_recipientCandidates]];
+            
+            if (_recipientType == kRecipientTypeText) {
+                prompt = NSLocalizedString(@"Who do you want to text?", @"");
+            } else if (_recipientType == kRecipientTypeEmail) {
+                prompt = NSLocalizedString(@"Who do you want to email?", @"");
+            }
+        }
+    }
+    
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagRecipients];
+    
+    if ([_recipientCandidates count] > 1) {
+        for (id recipientCandidate in _recipientCandidates) {
+            if ([recipientCandidate isKindOfClass:[NSArray class]]) {
+                [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:recipientCandidate conjoin:YES subjective:YES]];
+            } else {
+                [actionSheet addButtonWithTitle:[recipientCandidate recipientLabel]];
+            }
+        }
+    } else {
+        [actionSheet addButtonWithTitle:[_recipientCandidates[0] recipientLabelForRecipientType:_recipientType]];
+    }
+    
+    [actionSheet show];
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)performAcceptDeclineAction
@@ -298,6 +339,51 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 - (void)performInfoAction
 {
     [self presentModalViewControllerWithIdentifier:kIdentifierInfo target:_origo];
+}
+
+
+- (void)performTextAction
+{
+    NSArray *recipientCandidates = [_origo textRecipients];
+    
+    if (![_origo isOfType:kOrigoTypeResidence] || [recipientCandidates count] > 2) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:kTargetText meta:_origo];
+    } else {
+        _recipientType = kRecipientTypeText;
+        _recipientCandidates = recipientCandidates;
+        
+        [self presentRecipientsSheet];
+    }
+}
+
+
+- (void)performCallAction
+{
+    NSArray *recipientCandidates = [_origo callRecipients];
+    
+    if ([recipientCandidates count] > 1) {
+        _recipientType = kRecipientTypeCall;
+        _recipientCandidates = recipientCandidates;
+        
+        [self presentRecipientsSheet];
+    } else {
+        [self callRecipient:_origo];
+    }
+}
+
+
+- (void)performEmailAction
+{
+    NSArray *recipientCandidates = [_origo emailRecipients];
+    
+    if (![_origo isOfType:kOrigoTypeResidence] || [recipientCandidates count] > 2) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:kTargetEmail meta:_origo];
+    } else {
+        _recipientType = kRecipientTypeEmail;
+        _recipientCandidates = recipientCandidates;
+        
+        [self presentRecipientsSheet];
+    }
 }
 
 
@@ -454,18 +540,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 }
 
 
-- (NSArray *)toolbarButtons
-{
-    NSArray *toolbarButtons = nil;
-    
-    if ([_origo isCommitted] && ![_membership isHidden]) {
-        toolbarButtons = [[OMeta m].switchboard toolbarButtonsForOrigo:_origo presenter:self];
-    }
-    
-    return toolbarButtons;
-}
-
-
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
     BOOL hasHeader = NO;
@@ -568,6 +642,24 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     }
     
     return footerText;
+}
+
+
+- (BOOL)toolbarHasSendTextButton
+{
+    return [[_origo textRecipients] count] > 0;
+}
+
+
+- (BOOL)toolbarHasCallButton
+{
+    return [[_origo callRecipients] count] > 0;
+}
+
+
+- (BOOL)toolbarHasSendEmailButton
+{
+    return [[_origo emailRecipients] count] > 0;
 }
 
 
@@ -951,6 +1043,17 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                     }
                     
                     [self reloadSections];
+                }
+                
+                break;
+                
+            case kActionSheetTagRecipients:
+                if (_recipientType == kRecipientTypeText) {
+                    [self sendTextToRecipients:_recipientCandidates[buttonIndex]];
+                } else if (_recipientType == kRecipientTypeCall) {
+                    [self callRecipient:_recipientCandidates[buttonIndex]];
+                } else if (_recipientType == kRecipientTypeEmail) {
+                    [self sendEmailToRecipients:_recipientCandidates[buttonIndex] cc:nil];
                 }
                 
                 break;

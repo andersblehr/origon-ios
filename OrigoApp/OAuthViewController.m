@@ -50,7 +50,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     logoBanner.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
     logoBanner.text = kLogoText;
     logoBanner.textAlignment = NSTextAlignmentCenter;
-    logoBanner.textColor = [UIColor windowTintColour];
+    logoBanner.textColor = [UIColor globalTintColour];
     
     UIView *topHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, screenWidth, 0.5f)];
     topHairline.backgroundColor = [UIColor toolbarHairlineColour];
