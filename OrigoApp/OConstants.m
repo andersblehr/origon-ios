@@ -94,6 +94,13 @@ NSString * const kExternalKeyRepeatPassword = @"repeatPassword";
 NSString * const kExternalKeySignIn = @"signIn";
 NSString * const kExternalKeySignOut = @"signOut";
 
+// Button keys
+NSString * const kButtonKeySignUp = @"signUp";
+NSString * const kButtonKeySignIn = @"signIn";
+NSString * const kButtonKeyActivate = @"activate";
+NSString * const kButtonKeyChangePassword = @"changePassword";
+NSString * const kButtonKeyCancel = @"cancel";
+
 // Placeholders
 NSString * const kPlaceholderDefaultValue = @"defaultValue";
 
@@ -101,6 +108,7 @@ NSString * const kPlaceholderDefaultValue = @"defaultValue";
 NSString * const kStringPrefixDefault = @"[default]";
 NSString * const kStringPrefixLabel = @"[label]";
 NSString * const kStringPrefixAlternateLabel = @"[alternate label]";
+NSString * const kStringPrefixTitle = @"[title]";
 NSString * const kStringPrefixSettingLabel = @"[setting label]";
 NSString * const kStringPrefixSettingListLabel = @"[setting list label]";
 NSString * const kStringPrefixPlaceholder = @"[placeholder]";

@@ -834,23 +834,23 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
     if ([_origo isOfType:kOrigoTypeResidence]) {
         blueprint.detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
-        blueprint.multiLineTextKeys = @[kPropertyKeyAddress];
+        blueprint.multiLineKeys = @[kPropertyKeyAddress];
     } else if ([_origo isOfType:kOrigoTypeOrganisation]) {
         blueprint.detailKeys = @[kMappedKeyOrganisationDescription, kPropertyKeyAddress, kPropertyKeyTelephone];
-        blueprint.multiLineTextKeys = @[kMappedKeyOrganisationDescription, kPropertyKeyAddress];
+        blueprint.multiLineKeys = @[kMappedKeyOrganisationDescription, kPropertyKeyAddress];
     } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
         blueprint.detailKeys = @[kMappedKeyPreschool, kPropertyKeyAddress];
-        blueprint.multiLineTextKeys = @[kPropertyKeyAddress];
+        blueprint.multiLineKeys = @[kPropertyKeyAddress];
     } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
         blueprint.detailKeys = @[kMappedKeySchool, kPropertyKeyAddress];
-        blueprint.multiLineTextKeys = @[kPropertyKeyAddress];
+        blueprint.multiLineKeys = @[kPropertyKeyAddress];
     } else if ([_origo isOfType:kOrigoTypeTeam]) {
         blueprint.detailKeys = @[kMappedKeyClub];
     } else if ([_origo isOfType:kOrigoTypeStudyGroup]) {
         blueprint.detailKeys = @[kMappedKeyInstitution];
     } else if (![_origo isOfType:kOrigoTypeList]) {
         blueprint.detailKeys = @[kPropertyKeyDescriptionText];
-        blueprint.multiLineTextKeys = @[kPropertyKeyDescriptionText];
+        blueprint.multiLineKeys = @[kPropertyKeyDescriptionText];
     }
     
     return blueprint;

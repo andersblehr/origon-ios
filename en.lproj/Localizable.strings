@@ -70,6 +70,13 @@
 "[placeholder] telephone" = "Telephone number";
 "[placeholder] institution" = "Name of university or school";
 
+// Titles
+"[title] signUp" = "Sign up";
+"[title] signIn" = "Sign in";
+"[title] activate" = "Activate";
+"[title] changePassword" = "Change password";
+"[title] cancel" = "Cancel";
+
 
 /***
  * Origo type derived strings

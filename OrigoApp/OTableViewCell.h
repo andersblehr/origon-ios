@@ -12,6 +12,7 @@ extern NSString * const kReuseIdentifierList;
 
 extern NSString * const kViewKeySuffixLabel;
 extern NSString * const kViewKeySuffixInputField;
+extern NSString * const kViewKeySuffixButton;
 
 extern CGFloat const kCellAnimationDuration;
 

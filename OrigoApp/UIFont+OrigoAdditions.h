@@ -17,6 +17,7 @@
 + (instancetype)footerFont;
 + (instancetype)titleFont;
 + (instancetype)detailFont;
++ (instancetype)boldDetailFont;
 + (instancetype)listTextFont;
 + (instancetype)listDetailTextFont;
 + (instancetype)alternateListTextFont;

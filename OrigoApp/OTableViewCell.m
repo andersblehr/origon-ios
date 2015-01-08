@@ -12,12 +12,15 @@ NSString * const kReuseIdentifierList = @"list";
 
 NSString * const kViewKeySuffixLabel = @"Label";
 NSString * const kViewKeySuffixInputField = @"Field";
+NSString * const kViewKeySuffixButton = @"Button";
 
 CGFloat const kCellAnimationDuration = 0.3f;
 
 static NSString * const kViewKeyTitleBanner = @"titleBanner";
 static NSString * const kViewKeyPhotoFrame = @"photoFrame";
 static NSString * const kViewKeyPhotoPrompt = @"photoPrompt";
+
+static NSString * const kButtonActionFormat = @"perform%@Action";
 
 static CGFloat const kShakeDuration = 0.05f;
 static CGFloat const kShakeDelay = 0.f;
@@ -101,6 +104,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)addButtonForKey:(NSString *)key
+{
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
+    button.backgroundColor = [UIColor globalTintColour];
+    button.titleLabel.font = [key isEqualToString:kButtonKeyCancel] ? [UIFont boldDetailFont] : [UIFont detailFont];
+    [button setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [button setTitle:NSLocalizedString(key, kStringPrefixTitle) forState:UIControlStateNormal];
+    [button addTarget:_inputCellDelegate action:NSSelectorFromString([NSString stringWithFormat:kButtonActionFormat, [key stringByCapitalisingFirstLetter]]) forControlEvents:UIControlEventTouchUpInside];
+    
+    _views[[key stringByAppendingString:kViewKeySuffixButton]] = button;
+    [self.contentView addSubview:button];
+}
+
+
 #pragma mark - Cell composition
 
 - (void)addCellElements
@@ -122,6 +139,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
             }
             
             [self addInputFieldForKey:detailKey];
+        }
+        
+        for (NSString *buttonKey in _blueprint.buttonKeys) {
+            [self addButtonForKey:buttonKey];
         }
         
         self.editable = [_state actionIs:kActionInput];

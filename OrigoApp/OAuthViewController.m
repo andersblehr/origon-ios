@@ -14,9 +14,17 @@ static CGFloat const kLogoFontSize = 26.f;
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..origo..";
 
+static NSInteger const kSignInActionNone = 0;
+static NSInteger const kSignInActionSignUp = 1;
+static NSInteger const kSignInActionSignIn = 2;
+
 static NSInteger const kSectionKeyAuth = 0;
 
 static NSInteger const kMaxActivationAttempts = 3;
+
+static NSInteger const kActionSheetTagSignInAction = 0;
+static NSInteger const kButtonTagSignInActionSignUp = 0;
+static NSInteger const kButtonTagSignInActionSignIn = 1;
 
 static NSInteger const kAlertTagWelcomeBack = 0;
 static NSInteger const kAlertTagActivationFailed = 1;
@@ -24,7 +32,7 @@ static NSInteger const kAlertTagActivationFailed = 1;
 static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 
-@interface OAuthViewController () <OTableViewController, OInputCellDelegate, OConnectionDelegate, UIAlertViewDelegate> {
+@interface OAuthViewController () <OTableViewController, OInputCellDelegate, OConnectionDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OInputField *_emailField;
     OInputField *_passwordField;
@@ -36,6 +44,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     OInputField *_newPasswordField;
     OInputField *_repeatNewPasswordField;
     
+    NSInteger _signInAction;
     NSDictionary *_authInfo;
 }
 
@@ -165,6 +174,46 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     }
     
     [self.dismisser dismissModalViewController:self];
+}
+
+
+#pragma mark - Selector implementations
+
+- (void)performSignUpAction
+{
+    _signInAction = kSignInActionSignUp;
+    
+    [self.inputCell processInputShouldValidate:YES];
+}
+
+
+- (void)performSignInAction
+{
+    _signInAction = kSignInActionSignIn;
+    
+    [self.inputCell processInputShouldValidate:YES];
+}
+
+
+- (void)performActivateAction
+{
+    [self.inputCell processInputShouldValidate:YES];
+}
+
+
+- (void)performChangePasswordAction
+{
+    [self.inputCell processInputShouldValidate:YES];
+}
+
+
+- (void)performCancelAction
+{
+    if ([self actionIs:kActionActivate]) {
+        [self toggleAuthState];
+    } else if ([self actionIs:kActionChange]) {
+        [self.dismisser dismissModalViewController:self];
+    }
 }
 
 
@@ -299,12 +348,15 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     if ([self actionIs:kActionSignIn]) {
         blueprint.titleKey = kExternalKeySignIn;
         blueprint.detailKeys = @[kExternalKeyAuthEmail, kExternalKeyPassword];
+        blueprint.buttonKeys = @[kButtonKeySignUp, kButtonKeySignIn];
     } else if ([self actionIs:kActionActivate]) {
         blueprint.titleKey = kExternalKeyActivate;
         blueprint.detailKeys = @[kExternalKeyActivationCode, kExternalKeyRepeatPassword];
-    } else if ([self actionIs:kActionChange] && [self targetIs:kTargetPassword]) {
+        blueprint.buttonKeys = @[kButtonKeyCancel, kButtonKeyActivate];
+    } else if ([self actionIs:kActionChange]) {
         blueprint.titleKey = kExternalKeyChangePassword;
         blueprint.detailKeys = @[kExternalKeyOldPassword, kExternalKeyNewPassword, kExternalKeyRepeatNewPassword];
+        blueprint.buttonKeys = @[kButtonKeyCancel, kButtonKeyChangePassword];
     }
     
     return blueprint;
@@ -329,6 +381,19 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         inputIsValid = [_oldPasswordField hasValidValue] && [_newPasswordField hasValidValue] && [_repeatNewPasswordField hasValidValue];
     }
     
+    if (!inputIsValid) {
+        if ([self actionIs:kActionActivate]) {
+            [self handleFailedActivationAttempt];
+        } else if ([self actionIs:kActionChange]) {
+            [self.inputCell clearInputFields];
+            [_oldPasswordField becomeFirstResponder];
+        }
+        
+        if (_signInAction) {
+            _signInAction = kSignInActionNone;
+        }
+    }
+    
     return inputIsValid;
 }
 
@@ -336,8 +401,25 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)processInput
 {
     if ([self actionIs:kActionSignIn]) {
-        [OMeta m].userEmail = _emailField.value;
-        [[OConnection connectionWithDelegate:self] signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
+        if (!_signInAction && [_emailField.value isEqualToString:[OMeta m].userEmail]) {
+            _signInAction = kSignInActionSignIn;
+        }
+        
+        if (!_signInAction) {
+            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSignInAction];
+            [actionSheet addButtonWithTitle:NSLocalizedString(kButtonKeySignUp, kStringPrefixTitle) tag:kButtonTagSignInActionSignUp];
+            [actionSheet addButtonWithTitle:NSLocalizedString(kButtonKeySignIn, kStringPrefixTitle) tag:kButtonTagSignInActionSignIn];
+            
+            [actionSheet show];
+        } else {
+            [OMeta m].userEmail = _emailField.value;
+            
+            if (_signInAction == kSignInActionSignUp) {
+                [[OConnection connectionWithDelegate:self] signUpWithEmail:[OMeta m].userEmail password:_passwordField.value];
+            } else if (_signInAction == kSignInActionSignIn) {
+                [[OConnection connectionWithDelegate:self] signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
+            }
+        }
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
             [[OConnection connectionWithDelegate:self] activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.value];
@@ -394,16 +476,31 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         isValid = [inputValue isEqualToString:_newPasswordField.value];
     }
     
-    if (!isValid) {
-        if ([self actionIs:kActionActivate]) {
-            [self handleFailedActivationAttempt];
-        } else if ([self actionIs:kActionChange]) {
-            [self.inputCell clearInputFields];
-            [_oldPasswordField becomeFirstResponder];
-        }
-    }
-    
     return isValid;
+}
+
+
+#pragma mark - UIActionSheetDelegate conformance
+
+- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (actionSheet.tag) {
+        case kActionSheetTagSignInAction:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+                
+                if (buttonTag == kButtonTagSignInActionSignUp) {
+                    [self performSignUpAction];
+                } else if (buttonTag == kButtonTagSignInActionSignIn) {
+                    [self performSignInAction];
+                }
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
 }
 
 

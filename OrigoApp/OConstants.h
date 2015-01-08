@@ -94,6 +94,13 @@ extern NSString * const kExternalKeyRepeatPassword;
 extern NSString * const kExternalKeySignIn;
 extern NSString * const kExternalKeySignOut;
 
+// Button keys
+extern NSString * const kButtonKeySignUp;
+extern NSString * const kButtonKeySignIn;
+extern NSString * const kButtonKeyActivate;
+extern NSString * const kButtonKeyChangePassword;
+extern NSString * const kButtonKeyCancel;
+
 // Placeholders
 extern NSString * const kPlaceholderDefaultValue;
 
@@ -101,6 +108,7 @@ extern NSString * const kPlaceholderDefaultValue;
 extern NSString * const kStringPrefixDefault;
 extern NSString * const kStringPrefixLabel;
 extern NSString * const kStringPrefixAlternateLabel;
+extern NSString * const kStringPrefixTitle;
 extern NSString * const kStringPrefixSettingLabel;
 extern NSString * const kStringPrefixSettingListLabel;
 extern NSString * const kStringPrefixPlaceholder;
