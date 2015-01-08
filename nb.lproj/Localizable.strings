@@ -29,7 +29,7 @@
 "[label] organisationDescription" = "Beskrivelse";
 "[label] preschool" = "Barnehage";
 "[label] school" = "Skole";
-"[label] signIn" = "Logg på eller registrer deg";
+"[label] signIn" = "Registrer deg eller logg inn";
 "[label] signOut" = "Logg ut";
 "[label] telephone" = "Telefon";
 "[label] type" = "Type";
@@ -69,6 +69,13 @@
 "[placeholder] team" = "Lagets navn";
 "[placeholder] telephone" = "Telefonnummer";
 "[placeholder] institution" = "Universitetets eller skolens navn";
+
+// Titles
+"[title] signUp" = "Registrer";
+"[title] signIn" = "Logg inn";
+"[title] activate" = "Aktiver";
+"[title] changePassword" = "Bytt passord";
+"[title] cancel" = "Avbryt";
 
 
 /***

@@ -8,8 +8,9 @@
 
 #import "UIFont+OrigoAdditions.h"
 
-static NSString * const kiOS7SystemFontName = @"HelveticaNeue";
-static NSString * const kiOS7MediumSystemFontName = @"HelveticaNeue-Medium";
+static NSString * const kGlobalFontName = @"HelveticaNeue";
+static NSString * const kGlobalBoldFontName = @"HelveticaNeue-Bold";
+static NSString * const kGlobalMediumFontName = @"HelveticaNeue-Medium";
 
 static CGFloat const kNavigationBarTitleFontSize = 17.f;
 static CGFloat const kNavigationBarSubtitleFontSize = 11.f;
@@ -27,31 +28,17 @@ static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 
 @implementation UIFont (OrigoAdditions)
 
-#pragma mark - Auxiliary methods
-
-+ (instancetype)iOS7SystemFontOfSize:(CGFloat)size
-{
-    return [self fontWithName:kiOS7SystemFontName size:size];
-}
-
-
-+ (instancetype)iOS7MediumSystemFontOfSize:(CGFloat)size
-{
-    return [self fontWithName:kiOS7MediumSystemFontName size:size];
-}
-
-
 #pragma mark - Font shorthands
 
 + (instancetype)navigationBarTitleFont
 {
-    return [self iOS7MediumSystemFontOfSize:kNavigationBarTitleFontSize];
+    return [self fontWithName:kGlobalMediumFontName size:kNavigationBarTitleFontSize];
 }
 
 
 + (instancetype)navigationBarSubtitleFont
 {
-    return [self iOS7SystemFontOfSize:kNavigationBarSubtitleFontSize];
+    return [self fontWithName:kGlobalFontName size:kNavigationBarSubtitleFontSize];
 }
 
 
@@ -63,43 +50,49 @@ static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 
 + (instancetype)headerFont
 {
-    return [self iOS7SystemFontOfSize:kHeaderFontSize];
+    return [self fontWithName:kGlobalFontName size:kHeaderFontSize];
 }
 
 
 + (instancetype)footerFont
 {
-    return [self iOS7SystemFontOfSize:kFooterFontSize];
+    return [self fontWithName:kGlobalFontName size:kFooterFontSize];
 }
 
 
 + (instancetype)titleFont
 {
-    return [self iOS7SystemFontOfSize:kTitleFontSize];
+    return [self fontWithName:kGlobalFontName size:kTitleFontSize];
 }
 
 
 + (instancetype)detailFont
 {
-    return [self iOS7SystemFontOfSize:kDetailFontSize];
+    return [self fontWithName:kGlobalFontName size:kDetailFontSize];
+}
+
+
++ (instancetype)boldDetailFont
+{
+    return [self fontWithName:kGlobalBoldFontName size:kDetailFontSize];
 }
 
 
 + (instancetype)listTextFont
 {
-    return [self iOS7SystemFontOfSize:kListTextFontSize];
+    return [self fontWithName:kGlobalFontName size:kListTextFontSize];
 }
 
 
 + (instancetype)listDetailTextFont
 {
-    return [self iOS7SystemFontOfSize:kListDetailFontSize];
+    return [self fontWithName:kGlobalFontName size:kListDetailFontSize];
 }
 
 
 + (instancetype)alternateListTextFont
 {
-    return [self iOS7SystemFontOfSize:kAlternateListFontSize];
+    return [self fontWithName:kGlobalFontName size:kAlternateListFontSize];
 }
 
 

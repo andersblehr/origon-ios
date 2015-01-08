@@ -24,6 +24,7 @@ extern NSString * const kHTTPHeaderLocation;
 
 + (instancetype)connectionWithDelegate:(id)delegate;
 
+- (void)signUpWithEmail:(NSString *)email password:(NSString *)password;
 - (void)signInWithEmail:(NSString *)email password:(NSString *)password;
 - (void)activateWithEmail:(NSString *)email password:(NSString *)password;
 - (void)changePasswordWithEmail:(NSString *)email password:(NSString *)password;

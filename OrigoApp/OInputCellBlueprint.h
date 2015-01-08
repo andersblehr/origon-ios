@@ -23,7 +23,8 @@ extern CGFloat const kPhotoFrameWidth;
 @property (nonatomic) NSString *titleKey;
 @property (nonatomic) NSArray *detailKeys;
 @property (nonatomic) NSArray *inputKeys;
-@property (nonatomic) NSArray *multiLineTextKeys;
+@property (nonatomic) NSArray *multiLineKeys;
+@property (nonatomic) NSArray *buttonKeys;
 
 + (OInputCellBlueprint *)editableListCellBlueprint;
 

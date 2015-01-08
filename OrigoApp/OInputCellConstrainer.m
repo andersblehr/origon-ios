@@ -33,9 +33,15 @@ static NSString * const kHConstraintsPhotoPrompt       = @"H:|-3-[photoPrompt]-3
 static NSString * const kVConstraintsLabel             = @"-%.f-[%@(%.f)]";
 static NSString * const kVConstraintsInputField        = @"[%@(%.f)]";
 
+static NSString * const kHConstraintsButtonInitial     = @"H:|-55-[%@]";
+static NSString * const kHConstraintsButton            = @"-5-[%@(==%@)]";
+static NSString * const kHConstraintsButtonFinal       = @"-55-|";
+
 static NSString * const kHConstraints                  = @"H:|-10-[%@(%.f)]-3-[%@]-6-|";
 static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%@]-6-[photoFrame]-10-|";
 
+static CGFloat const kButtonHeight = 26.f;
+static CGFloat const kButtonHeadroomHeight = 5.f;
 static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 
@@ -93,7 +99,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         } else if ([delegate isReceivingInput] || [entity hasValueForKey:key]) {
             displaysDetailKeys = YES;
             
-            if ([constrainer.blueprint.multiLineTextKeys containsObject:key]) {
+            if ([constrainer.blueprint.multiLineKeys containsObject:key]) {
                 if (inputCell && inputCell.constrainer.didConstrain) {
                     height += [[inputCell inputFieldForKey:key] height];
                 } else if ([entity hasValueForKey:key]) {
@@ -105,6 +111,10 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
                 height += [UIFont detailFieldHeight];
             }
         }
+    }
+    
+    if (constrainer.blueprint.buttonKeys) {
+        height += kButtonHeight + kButtonHeadroomHeight;
     }
     
     if (constrainer.blueprint.hasPhoto) {
@@ -358,7 +368,8 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 
 - (NSArray *)centredVerticalConstraints
 {
-    NSString *constraints = nil;
+    NSMutableArray *constraints = [NSMutableArray array];
+    NSString *constraintsFormat = nil;
     
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
@@ -367,8 +378,8 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {
-            if (!constraints) {
-                constraints = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
+            if (!constraintsFormat) {
+                constraintsFormat = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
             }
             
             NSString *constraint = nil;
@@ -388,12 +399,20 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
                 constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, elementName, [UIFont detailFieldHeight]];
             }
             
-            constraints = [constraints stringByAppendingString:constraint];
+            constraintsFormat = [constraintsFormat stringByAppendingString:constraint];
             isBelowLabel = [elementName hasSuffix:kViewKeySuffixLabel];
         }
     }
     
-    return constraints ? [NSArray arrayWithObject:constraints] : [NSArray array];
+    if (_blueprint.buttonKeys) {
+        for (NSString *buttonKey in _blueprint.buttonKeys) {
+            [constraints addObject:[constraintsFormat stringByAppendingString:[NSString stringWithFormat:kVConstraintsElement, kButtonHeadroomHeight, [buttonKey stringByAppendingString:kViewKeySuffixButton], [UIFont titleFieldHeight]]]];
+        }
+    } else {
+        [constraints addObject:constraintsFormat];
+    }
+    
+    return constraints;
 }
 
 
@@ -417,6 +436,19 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
             
             [constraints addObject:constraint];
         }
+    }
+    
+    if (_blueprint.buttonKeys) {
+        NSString *initialButtonKey = [[_blueprint.buttonKeys firstObject] stringByAppendingString:kViewKeySuffixButton];
+        NSArray *postInitialButtonKeys = [_blueprint.buttonKeys subarrayWithRange:NSMakeRange(1, [_blueprint.buttonKeys count] - 1)];
+        
+        NSString *buttonConstraints = [NSString stringWithFormat:kHConstraintsButtonInitial, initialButtonKey];
+        
+        for (NSString *buttonKey in postInitialButtonKeys) {
+            buttonConstraints = [buttonConstraints stringByAppendingString:[NSString stringWithFormat:kHConstraintsButton, [buttonKey stringByAppendingString:kViewKeySuffixButton], initialButtonKey]];
+        }
+        
+        [constraints addObject:[buttonConstraints stringByAppendingString:kHConstraintsButtonFinal]];
     }
     
     return constraints;
@@ -527,7 +559,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 {
     OInputField *inputField = nil;
     
-    if ([_blueprint.multiLineTextKeys containsObject:key]) {
+    if ([_blueprint.multiLineKeys containsObject:key]) {
         inputField = [[OTextView alloc] initWithKey:key constrainer:self delegate:_delegate];
     } else if ([_blueprint.inputKeys containsObject:key]) {
         inputField = [[OTextField alloc] initWithKey:key delegate:_delegate];

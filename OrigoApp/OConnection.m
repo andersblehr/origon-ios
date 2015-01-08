@@ -42,6 +42,7 @@ static NSString * const kMediaTypeJSON = @"application/json";
 static NSString * const kRootAuth = @"auth";
 static NSString * const kRootModel = @"model";
 
+static NSString * const kPathSignUp = @"signup";
 static NSString * const kPathSignIn = @"signin";
 static NSString * const kPathActivate = @"activate";
 static NSString * const kPathChange = @"change";
@@ -195,6 +196,12 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 
 #pragma mark - Authentication
+
+- (void)signUpWithEmail:(NSString *)email password:(NSString *)password
+{
+    [self authenticateWithPath:kPathSignUp email:email password:password];
+}
+
 
 - (void)signInWithEmail:(NSString *)email password:(NSString *)password
 {
