@@ -28,8 +28,13 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 @private
     OInputField *_emailField;
     OInputField *_passwordField;
+    
     OInputField *_activationCodeField;
     OInputField *_repeatPasswordField;
+    
+    OInputField *_oldPasswordField;
+    OInputField *_newPasswordField;
+    OInputField *_repeatNewPasswordField;
     
     NSDictionary *_authInfo;
 }
@@ -74,6 +79,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             _emailField.value = [OMeta m].userEmail;
             [_passwordField becomeFirstResponder];
         } else {
+            _emailField.value = [NSString string];
             [_emailField becomeFirstResponder];
         }
     } else if ([self actionIs:kActionActivate]) {
@@ -81,6 +87,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         _repeatPasswordField.value = [NSString string];
         
         [_activationCodeField becomeFirstResponder];
+    } else if ([self actionIs:kActionChange]) {
+        [_oldPasswordField becomeFirstResponder];
     }
 }
 
@@ -272,6 +280,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     } else if ([self actionIs:kActionActivate]) {
         _activationCodeField = [inputCell inputFieldForKey:kExternalKeyActivationCode];
         _repeatPasswordField = [inputCell inputFieldForKey:kExternalKeyRepeatPassword];
+    } else if ([self actionIs:kActionChange]) {
+        _oldPasswordField = [inputCell inputFieldForKey:kExternalKeyOldPassword];
+        _newPasswordField = [inputCell inputFieldForKey:kExternalKeyNewPassword];
+        _repeatNewPasswordField = [inputCell inputFieldForKey:kExternalKeyRepeatNewPassword];
     }
 }
 
@@ -313,6 +325,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         inputIsValid = [_emailField hasValidValue] && [_passwordField hasValidValue];
     } else if ([self actionIs:kActionActivate]) {
         inputIsValid = [_activationCodeField hasValidValue] && [_repeatPasswordField hasValidValue];
+    } else if ([self actionIs:kActionChange]) {
+        inputIsValid = [_oldPasswordField hasValidValue] && [_newPasswordField hasValidValue] && [_repeatNewPasswordField hasValidValue];
     }
     
     return inputIsValid;
@@ -331,13 +345,16 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [OMeta m].userEmail = self.target;
             [self.dismisser dismissModalViewController:self];
         }
+    } else if ([self actionIs:kActionChange]) {
+        [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_newPasswordField.value];
+        [[OConnection connectionWithDelegate:self] changePasswordWithEmail:[OMeta m].userEmail password:_newPasswordField.value];
     }
 }
 
 
 - (BOOL)willValidateInputForKey:(NSString *)key
 {
-    return [@[kExternalKeyActivationCode, kExternalKeyRepeatPassword] containsObject:key];
+    return [@[kExternalKeyActivationCode, kExternalKeyRepeatPassword, kExternalKeyOldPassword, kExternalKeyNewPassword, kExternalKeyRepeatNewPassword] containsObject:key];
 }
 
 
@@ -361,10 +378,29 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         }
         
         isValid = [passwordHashAsEntered isEqualToString:passwordHash];
+    } else if ([key isEqualToString:kExternalKeyOldPassword]) {
+        NSString *oldPasswordHashAsEntered = [OCrypto passwordHashWithPassword:inputValue];
+        NSString *oldPasswordHash = [OMeta m].user.passwordHash;
+        
+        isValid = [oldPasswordHashAsEntered isEqualToString:oldPasswordHash];
+    } else if ([key isEqualToString:kExternalKeyNewPassword]) {
+        if ([OValidator value:inputValue isValidForKey:key]) {
+            NSString *newPasswordHash = [OCrypto passwordHashWithPassword:inputValue];
+            NSString *oldPasswordHash = [OMeta m].user.passwordHash;
+            
+            isValid = ![newPasswordHash isEqualToString:oldPasswordHash];
+        }
+    } else if ([key isEqualToString:kExternalKeyRepeatNewPassword]) {
+        isValid = [inputValue isEqualToString:_newPasswordField.value];
     }
     
     if (!isValid) {
-        [self handleFailedActivationAttempt];
+        if ([self actionIs:kActionActivate]) {
+            [self handleFailedActivationAttempt];
+        } else if ([self actionIs:kActionChange]) {
+            [self.inputCell clearInputFields];
+            [_oldPasswordField becomeFirstResponder];
+        }
     }
     
     return isValid;
@@ -402,7 +438,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         if (response.statusCode == kHTTPStatusCreated) {
-            [self userDidSignUpWithData:data];
+            if ([self actionIs:kActionChange]) {
+                [self.dismisser dismissModalViewController:self];
+            } else {
+                [self userDidSignUpWithData:data];
+            }
         } else {
             if (![OMeta m].userId) {
                 if (response.statusCode == kHTTPStatusOK) {

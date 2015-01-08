@@ -341,16 +341,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _inputCell.inputField = inputField;
     
     if ([_inputCell nextInputField]) {
-        self.navigationItem.rightBarButtonItem = _nextButton;
+        if (_nextButton) {
+            self.navigationItem.rightBarButtonItem = _nextButton;
+        }
         
         if (!inputField.supportsMultiLineText) {
             inputField.returnKeyType = UIReturnKeyNext;
         }
     } else {
-        self.navigationItem.rightBarButtonItem = _doneButton;
+        if (_doneButton) {
+            self.navigationItem.rightBarButtonItem = _doneButton;
+        }
         
         if (!inputField.supportsMultiLineText) {
-            inputField.returnKeyType = UIReturnKeyDone;
+            if ([OValidator isPasswordKey:inputField.key]) {
+                inputField.returnKeyType = UIReturnKeyGo;
+            } else {
+                inputField.returnKeyType = UIReturnKeyDone;
+            }
         }
     }
 }
