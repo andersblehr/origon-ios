@@ -74,7 +74,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isPasswordKey:(NSString *)key
 {
     if (!_passwordKeys) {
-        _passwordKeys = @[kExternalKeyPassword, kExternalKeyRepeatPassword];
+        _passwordKeys = @[kExternalKeyPassword, kExternalKeyRepeatPassword, kExternalKeyOldPassword, kExternalKeyNewPassword, kExternalKeyRepeatNewPassword];
     }
     
     return [_passwordKeys containsObject:key];
