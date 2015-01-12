@@ -108,7 +108,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
     button.backgroundColor = [UIColor globalTintColour];
-    button.titleLabel.font = [key isEqualToString:kButtonKeyCancel] ? [UIFont boldDetailFont] : [UIFont detailFont];
+    button.titleLabel.font = [UIFont detailFont];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
     [button setTitle:NSLocalizedString(key, kStringPrefixTitle) forState:UIControlStateNormal];
     [button addTarget:_inputCellDelegate action:NSSelectorFromString([NSString stringWithFormat:kButtonActionFormat, [key stringByCapitalisingFirstLetter]]) forControlEvents:UIControlEventTouchUpInside];

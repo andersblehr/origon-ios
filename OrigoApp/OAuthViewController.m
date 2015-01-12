@@ -210,7 +210,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)performCancelAction
 {
     if ([self actionIs:kActionActivate]) {
-        [self toggleAuthState];
+        if ([self targetIs:kTargetEmail]) {
+            [self.dismisser dismissModalViewController:self];
+        } else {
+            [self toggleAuthState];
+        }
     } else if ([self actionIs:kActionChange]) {
         [self.dismisser dismissModalViewController:self];
     }
