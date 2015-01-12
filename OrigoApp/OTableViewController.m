@@ -1994,10 +1994,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-    if (result == MessageComposeResultCancelled) {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    } else {
+    if ([self isModal] && result != MessageComposeResultCancelled) {
         [self.dismisser dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
@@ -2006,10 +2006,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
-    if (result == MFMailComposeResultCancelled) {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    } else {
+    if ([self isModal] && result != MFMailComposeResultCancelled) {
         [self.dismisser dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
