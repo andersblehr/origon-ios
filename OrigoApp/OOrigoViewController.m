@@ -818,6 +818,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
 }
 
 
+- (BOOL)supportsPullToRefresh
+{
+    return ![_origo isOfType:kOrigoTypeResidence] && ![_origo isOfType:kOrigoTypeList];
+}
+
+
 #pragma mark - OInputCellDelegate conformance
 
 - (id)targetEntity

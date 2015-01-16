@@ -60,6 +60,7 @@
 - (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath;
 - (void)didFinishEditingListCellField:(OInputField *)listCellField;
 
+- (BOOL)supportsPullToRefresh;
 - (void)didResumeFromBackground;
 - (void)didSignOut;
 
@@ -71,6 +72,7 @@
 @property (nonatomic, readonly) OState *state;
 @property (nonatomic, readonly) OEntityProxy *entity;
 @property (nonatomic, readonly) OTableView *tableView;
+@property (nonatomic, readonly) UIRefreshControl *refreshControl;
 
 @property (nonatomic, assign, readonly) BOOL isModal;
 @property (nonatomic, assign, readonly) BOOL isPushed;

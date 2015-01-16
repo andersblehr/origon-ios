@@ -278,6 +278,8 @@
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "An error has occurred. Please try again later. [%d: \"%@\"]";
 "Cannot place call" = "Cannot place call";
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
+"Authentication required" = "Authentication required";
+"You have been signed out. Please sign in again to continue to use Origo on this device." = "You have been remotely signed out. Please sign in again to continue to use Origo on this device.";
 
 // Generic terms
 "Close" = "Close";
@@ -501,15 +503,12 @@
 "Edit groups" = "Edit groups";
 
 // List titles
-"[setting list label] devices" = "Registered devices";
+"[setting list label] devices" = "Active devices";
 "[setting list label] hidden" = "Hidden lists";
 
 // Footers
 "All persons marked as favourites will be listed here ..." = "All persons marked as favourites will be listed here. Tap ☆ in the person view to mark a person as favourite.";
 "All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
-
-// Buttons
-"Not in use" = "Not in use";
 
 
 /***

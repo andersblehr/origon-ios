@@ -55,23 +55,29 @@ NSString *kDeviceType_iPodTouch = @"iPod";
 }
 
 
+#pragma mark - Touching device
+
+- (void)touch
+{
+    if ([self hasExpired]) {
+        [self unexpire];
+    }
+    
+    if (![self.name isEqualToString:[UIDevice currentDevice].name]) {
+        self.name = [UIDevice currentDevice].name;
+    }
+    
+    self.lastSeen = [NSDate date];
+}
+
+
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
 - (void)expire
 {
-    if ([self.entityId isEqualToString:[OMeta m].deviceId]) {
-        [OMeta m].deviceId = nil;
-    } else {
+    if (![self.entityId isEqualToString:[OMeta m].deviceId]) {
         [super expire];
     }
-}
-
-
-- (void)unexpire
-{
-    [super unexpire];
-    
-    [OMeta m].deviceId = self.entityId;
 }
 
 @end

@@ -362,7 +362,7 @@
     
     [self save];
     
-    if (![OMeta m].deviceId) {
+    if ([[ODevice device] hasExpired]) {
         [[OMeta m] signOut];
     }
 }
