@@ -451,6 +451,12 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
+- (BOOL)supportsPullToRefresh
+{
+    return YES;
+}
+
+
 #pragma mark - UIActionSheetDelegate conformance
 
 - (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex

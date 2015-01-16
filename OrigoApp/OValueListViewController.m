@@ -609,7 +609,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSString *deleteTitle = nil;
     
     if ([self targetIs:kTargetDevices]) {
-        deleteTitle = NSLocalizedString(@"Not in use", @"");
+        deleteTitle = NSLocalizedString(kExternalKeySignOut, kStringPrefixLabel);
     } else if ([self targetIs:kTargetRole]) {
         deleteTitle = NSLocalizedString(@"Remove", @"");
     } else {

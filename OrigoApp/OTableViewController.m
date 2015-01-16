@@ -516,6 +516,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Selector implementations
 
+- (void)refresh
+{
+    [[OMeta m].replicator refreshViewWithController:self];
+}
+
+
 - (void)didSelectHeaderSegment
 {
     _selectedHeaderSegment = _segmentedHeader.selectedSegmentIndex;
@@ -1313,6 +1319,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         [self.navigationItem insertRightBarButtonItem:_nextButton atIndex:0];
+    }
+    
+    if ([_instance respondsToSelector:@selector(supportsPullToRefresh)]) {
+        if ([_instance supportsPullToRefresh]) {
+            _refreshControl = [[UIRefreshControl alloc] init];
+            _refreshControl.tintColor = [UIColor lightGrayColor];
+            [_refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
+            
+            [_tableView insertSubview:_refreshControl atIndex:0];
+        }
     }
     
     _didJustLoad = YES;

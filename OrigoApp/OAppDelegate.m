@@ -18,7 +18,7 @@ static NSString * const kPersistentStoreURLFormat = @"OrigoApp^%@.sqlite";
     NSManagedObjectContext *_managedObjectContext;
     NSPersistentStoreCoordinator *_persistentStoreCoordinator;
     
-    BOOL _didEnterBackground;
+    BOOL _isRunningInBackground;
 }
 
 @end
@@ -147,7 +147,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     
     [self saveApplicationState];
     
-    _didEnterBackground = YES;
+    _isRunningInBackground = YES;
 }
 
 
@@ -161,12 +161,16 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     OLogDebug(@"Application did become active");
     
-    if (_didEnterBackground) {
+    if (_isRunningInBackground) {
         if ([[OState s].viewController respondsToSelector:@selector(didResumeFromBackground)]) {
             [[OState s].viewController didResumeFromBackground];
         }
         
-        _didEnterBackground = NO;
+        _isRunningInBackground = NO;
+        
+        if ([[OMeta m] userIsAllSet]) {
+            [[OMeta m].replicator replicateIfNeeded];
+        }
     } else {
         if ([[OMeta m] userIsAllSet]) {
             [[OMeta m].replicator replicate];
@@ -179,7 +183,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     OLogDebug(@"Application will terminate");
     
-    if (!_didEnterBackground) {
+    if (!_isRunningInBackground) {
         [self saveApplicationState];
     }
 }

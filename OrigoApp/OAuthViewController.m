@@ -162,6 +162,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [[OMeta m].context saveEntityDictionaries:data];
     }
     
+    [[ODevice device] touch];
+    
     if ([self actionIs:kActionSignIn]) {
         [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_passwordField.value];
     } else if ([self actionIs:kActionActivate]) {

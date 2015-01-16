@@ -13,6 +13,7 @@
 @private
     BOOL _isReplicating;
     
+    OTableViewController *_refreshViewController;
     NSMutableSet *_dirtyEntities;
 }
 
@@ -20,6 +21,24 @@
 
 
 @implementation OReplicator
+
+#pragma mark - Auxiliary methods
+
+- (void)touchDeviceIfNeeded
+{
+    static BOOL didTouchDevice = NO;
+    
+    if (!didTouchDevice) {
+        ODevice *device = [ODevice device];
+        
+        if (![device hasExpired]) {
+            [device touch];
+        }
+        
+        didTouchDevice = YES;
+    }
+}
+
 
 #pragma mark - Initialisation
 
@@ -83,6 +102,14 @@
 }
 
 
+- (void)refreshViewWithController:(OTableViewController *)viewController
+{
+    _refreshViewController = viewController;
+    
+    [self replicate];
+}
+
+
 #pragma mark - Maintaining user replication state
 
 - (void)saveUserReplicationState
@@ -135,7 +162,7 @@
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    NSInteger HTTPStatus = response.statusCode;
+    OTableViewController *refreshViewController = nil;
     
     if (data) {
         [[OMeta m].context saveEntityDictionaries:data];
@@ -143,26 +170,48 @@
     
     _isReplicating = NO;
     
-    if (HTTPStatus == kHTTPStatusCreated || HTTPStatus == kHTTPStatusMultiStatus) {
-        OLogDebug(@"Entities successfully replicated to server.");
+    if (_refreshViewController) {
+        refreshViewController = _refreshViewController;
         
-        NSDate *now = [NSDate date];
+        [_refreshViewController.refreshControl endRefreshing];
+        _refreshViewController = nil;
+    }
+    
+    if ([[OMeta m] userIsSignedIn]) {
+        NSInteger HTTPStatus = response.statusCode;
         
-        for (OReplicatedEntity *entity in _dirtyEntities) {
-            if ([entity isTransient]) {
-                [entity markForDeletion];
-            } else {
-                entity.dateReplicated = now;
-                entity.hashCode = [entity SHA1HashCode];
+        if (HTTPStatus < kHTTPStatusErrorRangeStart) {
+            if (HTTPStatus == kHTTPStatusCreated || HTTPStatus == kHTTPStatusMultiStatus) {
+                OLogDebug(@"Entities successfully replicated to server.");
+                
+                NSDate *now = [NSDate date];
+                
+                for (OReplicatedEntity *entity in _dirtyEntities) {
+                    if ([entity isTransient]) {
+                        [entity markForDeletion];
+                    } else {
+                        entity.dateReplicated = now;
+                        entity.hashCode = [entity SHA1HashCode];
+                    }
+                }
+                
+                [[OMeta m].context save];
+                
+                [self resetUserReplicationState];
             }
+            
+            if (refreshViewController) {
+                [refreshViewController reloadSections];
+            }
+            
+            [self touchDeviceIfNeeded];
+            [self replicateIfNeeded];
+        } else if (HTTPStatus == kHTTPStatusUnauthorized) {
+            [[OMeta m] signOut];
         }
+    } else {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Authentication required", @"") text:NSLocalizedString(@"You have been signed out. Please sign in again to continue to use Origo on this device.", @"")];
         
-        [[OMeta m].context save];
-        
-        [self resetUserReplicationState];
-        [self replicateIfNeeded];
-    } else if (HTTPStatus == kHTTPStatusUnauthorized) {
-        [[OMeta m] signOut];
     }
 }
 
@@ -170,6 +219,11 @@
 - (void)didFailWithError:(NSError *)error
 {
     OLogError(@"Error replicating with server.");
+    
+    if (_refreshViewController) {
+        [_refreshViewController.refreshControl endRefreshing];
+        _refreshViewController = nil;
+    }
     
     _isReplicating = NO;
 }

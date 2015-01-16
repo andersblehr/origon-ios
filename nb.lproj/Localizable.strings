@@ -278,6 +278,8 @@
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "Det har oppstått en feil, vennligst prøv igjen senere. [%d: \"%@\"]";
 "Cannot place call" = "Kan ikke ringe";
 "Please verify that %@ is a valid phone number." = "Verifiser at %@ er et gyldig telefonnummer.";
+"Authentication required" = "Autentisering kreves";
+"You have been signed out. Please sign in again to continue to use Origo on this device." = "Du er blitt logget ut. Logg inn på nytt for å fortsette å bruke Origo på denne enheten.";
 
 // Generic terms
 "Close" = "Lukk";
@@ -500,15 +502,12 @@
 "Edit groups" = "Rediger grupper";
 
 // List titles
-"[setting list label] devices" = "Registrerte enheter";
+"[setting list label] devices" = "Aktive enheter";
 "[setting list label] hidden" = "Skjulte lister";
 
 // Footers
 "All persons marked as favourites will be listed here ..." = "Alle personer markert som favoritter vil bli listet opp her. Trykk på ☆ i personbildet for å markere en person som favoritt.";
 "All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter vil bli listet opp her.";
-
-// Buttons
-"Not in use" = "Ikke i bruk";
 
 
 /***

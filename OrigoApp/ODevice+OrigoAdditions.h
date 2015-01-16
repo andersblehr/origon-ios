@@ -16,6 +16,7 @@ extern NSString *kDeviceType_iPodTouch;
 
 + (instancetype)device;
 
+- (void)touch;
 - (BOOL)isOfType:(NSString *)deviceType;
 
 @end
