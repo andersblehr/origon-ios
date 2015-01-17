@@ -173,6 +173,10 @@ static NSDictionary *_keyMappings = nil;
             valueIsValid = [self isEmailValue:value];
         } else if ([self isPasswordKey:key]) {
             valueIsValid = [value length] >= kMinimumPassordLength;
+            
+            if (!valueIsValid) {
+                [OAlert showAlertWithTitle:NSLocalizedString(@"Password too short", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The password must be at least %@ characters long.", @""), @(kMinimumPassordLength)]];
+            }
         } else {
             valueIsValid = [value hasValue];
         }

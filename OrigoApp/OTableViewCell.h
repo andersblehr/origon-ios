@@ -43,6 +43,7 @@ extern CGFloat const kCellAnimationDuration;
 
 - (OLabel *)labelForKey:(NSString *)key;
 - (OInputField *)inputFieldForKey:(NSString *)key;
+- (OButton *)buttonForKey:(NSString *)key;
 - (OInputField *)nextInputField;
 - (OInputField *)nextInvalidInputField;
 - (OInputField *)editableListCellField;

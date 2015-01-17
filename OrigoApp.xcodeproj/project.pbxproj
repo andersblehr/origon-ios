@@ -15,6 +15,7 @@
 		5C1D6CCA1743C80900479F7D /* OSettings+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC91743C80900479F7D /* OSettings+OrigoAdditions.m */; };
 		5C23431214812A3100164478 /* OConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OConstants.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
+		5C2B8AF01A6966BC00596082 /* OButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2B8AEF1A6966BC00596082 /* OButton.m */; };
 		5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OConnection.m */; };
 		5C2E6B7E15A8501800638330 /* OMembership+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E6B7D15A8501800638330 /* OMembership+OrigoAdditions.m */; };
 		5C3374831563FBE200DEF67D /* OMember+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* OMember+OrigoAdditions.m */; };
@@ -183,6 +184,8 @@
 		5C23431114812A3000164478 /* OConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OConstants.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* OAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthViewController.h; sourceTree = "<group>"; };
 		5C26291D158F27860012A74A /* OAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthViewController.m; sourceTree = "<group>"; };
+		5C2B8AEE1A6966BC00596082 /* OButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OButton.h; sourceTree = "<group>"; };
+		5C2B8AEF1A6966BC00596082 /* OButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OButton.m; sourceTree = "<group>"; };
 		5C2E11121469CDE5005BDE61 /* OConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConnection.h; sourceTree = "<group>"; };
 		5C2E11131469CDE5005BDE61 /* OConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OConnection.m; sourceTree = "<group>"; };
 		5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConnectionDelegate.h; sourceTree = "<group>"; };
@@ -750,6 +753,8 @@
 			children = (
 				5C78694E18116AD400020E08 /* OActionSheet.h */,
 				5C78694F18116AD400020E08 /* OActionSheet.m */,
+				5C2B8AEE1A6966BC00596082 /* OButton.h */,
+				5C2B8AEF1A6966BC00596082 /* OButton.m */,
 				5C77067418549A2E0088C78D /* OLabel.h */,
 				5C77067518549A2E0088C78D /* OLabel.m */,
 				5C64105717D499450005B192 /* ONavigationController.h */,
@@ -1006,6 +1011,7 @@
 				5C2E6B7E15A8501800638330 /* OMembership+OrigoAdditions.m in Sources */,
 				5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */,
 				5C014A2415CA77320040A1D9 /* OAlert.m in Sources */,
+				5C2B8AF01A6966BC00596082 /* OButton.m in Sources */,
 				5CB7E94015F38C1200FD53DF /* OValueListViewController.m in Sources */,
 				5CFD8E76183E0BA100DC3945 /* NSLocale+OrigoAdditions.m in Sources */,
 				5CCC3598181FC8200079DB55 /* UINavigationItem+OrigoAdditions.m in Sources */,
