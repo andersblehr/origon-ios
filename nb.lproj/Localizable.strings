@@ -29,7 +29,7 @@
 "[label] organisationDescription" = "Beskrivelse";
 "[label] preschool" = "Barnehage";
 "[label] school" = "Skole";
-"[label] signIn" = "Registrer deg eller logg inn";
+"[label] signIn" = "Registrer bruker eller logg inn";
 "[label] signOut" = "Logg ut";
 "[label] telephone" = "Telefon";
 "[label] type" = "Type";
@@ -46,7 +46,7 @@
 "[placeholder] club" = "Klubbens navn";
 "[placeholder] dateOfBirth" = "Fødselsdato";
 "[placeholder] descriptionText" = "En valgfri beskrivelse";
-"[placeholder] email" = "En gyldig epostadresse";
+"[placeholder] email" = "Epost-adresse";
 "[placeholder] fullName" = "Fullt navn";
 "[placeholder] givenName" = "Navn";
 "[placeholder] mobilePhone" = "Mobilnummer";
@@ -55,7 +55,7 @@
 "[placeholder] oldPassword" = "Gammelt passord";
 "[placeholder] organisation" = "Organisasjonens navn";
 "[placeholder] organisationDescription" = "Kort beskrivelse av organisasjonen";
-"[placeholder] password" = "Passordet ditt";
+"[placeholder] password" = "Passord";
 "[placeholder] photo" = "Bilde";
 "[placeholder] preschool" = "Barnehagens navn";
 "[placeholder] preschoolClass" = "Navn på avdelingen";
@@ -71,7 +71,7 @@
 "[placeholder] institution" = "Universitetets eller skolens navn";
 
 // Titles
-"[title] signUp" = "Registrer";
+"[title] signUp" = "Registrer bruker";
 "[title] signIn" = "Logg inn";
 "[title] activate" = "Aktiver";
 "[title] changePassword" = "Bytt passord";
@@ -275,6 +275,8 @@
 
 // Alerts
 "No internet connection." = "Ingen internettforbindelse.";
+"Password too short" = "For kort passord";
+"The password must be at least %@ characters long." = "Passordet må inneholde minst 6 tegn.";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "Det har oppstått en feil, vennligst prøv igjen senere. [%d: \"%@\"]";
 "Cannot place call" = "Kan ikke ringe";
 "Please verify that %@ is a valid phone number." = "Verifiser at %@ er et gyldig telefonnummer.";

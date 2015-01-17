@@ -29,7 +29,7 @@ static NSString *userId = nil;
 
     if ([key isEqualToString:kDefaultsKeyUserId]) {
         if (!userEmail) {
-            userEmail = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyUserEmail];
+            userEmail = [self globalDefaultForKey:kDefaultsKeyUserEmail];
         }
         
         userQualifier = userEmail;
@@ -54,6 +54,10 @@ static NSString *userId = nil;
 + (void)setGlobalDefault:(id)globalDefault forKey:(NSString *)key
 {
     if (globalDefault) {
+        if ([key isEqualToString:kDefaultsKeyUserEmail]) {
+            userEmail = globalDefault;
+        }
+        
         [[NSUserDefaults standardUserDefaults] setObject:globalDefault forKey:key];
     } else {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
@@ -77,6 +81,10 @@ static NSString *userId = nil;
 
 + (void)setUserDefault:(id)userDefault forKey:(NSString *)key
 {
+    if (userDefault && [key isEqualToString:kDefaultsKeyUserId]) {
+        userId = userDefault;
+    }
+    
     NSString *userKey = [self userKeyForKey:key];
     
     if (userKey) {

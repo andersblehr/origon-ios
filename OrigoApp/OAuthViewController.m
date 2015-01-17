@@ -36,6 +36,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 @private
     OInputField *_emailField;
     OInputField *_passwordField;
+    UIButton *_signUpButton;
     
     OInputField *_activationCodeField;
     OInputField *_repeatPasswordField;
@@ -66,11 +67,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     logoBanner.textAlignment = NSTextAlignmentCenter;
     logoBanner.textColor = [UIColor globalTintColour];
     
-    UIView *topHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, screenWidth, 0.5f)];
+    UIView *topHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, screenWidth, kBorderWidth)];
     topHairline.backgroundColor = [UIColor toolbarHairlineColour];
     [logoBanner addSubview:topHairline];
     
-    UIView *bottomHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kLogoHeight, screenWidth, 0.5f)];
+    UIView *bottomHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kLogoHeight, screenWidth, kBorderWidth)];
     bottomHairline.backgroundColor = [UIColor toolbarHairlineColour];
     [logoBanner addSubview:bottomHairline];
     
@@ -87,6 +88,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([OMeta m].userEmail) {
             _emailField.value = [OMeta m].userEmail;
             [_passwordField becomeFirstResponder];
+            
+            [self emailDidChange];
         } else {
             _emailField.value = [NSString string];
             [_emailField becomeFirstResponder];
@@ -98,6 +101,18 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [_activationCodeField becomeFirstResponder];
     } else if ([self actionIs:kActionChange]) {
         [_oldPasswordField becomeFirstResponder];
+    }
+}
+
+
+- (void)performSignInAction:(NSInteger)signInAction
+{
+    [OMeta m].userEmail = _emailField.value;
+    
+    if (signInAction == kSignInActionSignUp) {
+        [[OConnection connectionWithDelegate:self] signUpWithEmail:[OMeta m].userEmail password:_passwordField.value];
+    } else if (signInAction == kSignInActionSignIn) {
+        [[OConnection connectionWithDelegate:self] signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
     }
 }
 
@@ -180,6 +195,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 
 #pragma mark - Selector implementations
+
+- (void)emailDidChange
+{
+    _signUpButton.enabled = ![_emailField.value isEqualToString:[OMeta m].userEmail];
+}
+
 
 - (void)performSignUpAction
 {
@@ -332,6 +353,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     if ([self actionIs:kActionSignIn]) {
         _emailField = [inputCell inputFieldForKey:kExternalKeyAuthEmail];
         _passwordField = [inputCell inputFieldForKey:kExternalKeyPassword];
+        _signUpButton = [inputCell buttonForKey:kButtonKeySignUp];
+        
+        [(UITextField *)_emailField addTarget:self action:@selector(emailDidChange) forControlEvents:UIControlEventEditingChanged];
     } else if ([self actionIs:kActionActivate]) {
         _activationCodeField = [inputCell inputFieldForKey:kExternalKeyActivationCode];
         _repeatPasswordField = [inputCell inputFieldForKey:kExternalKeyRepeatPassword];
@@ -407,24 +431,18 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)processInput
 {
     if ([self actionIs:kActionSignIn]) {
-        if (!_signInAction && [_emailField.value isEqualToString:[OMeta m].userEmail]) {
+        if (!_signInAction && !_signUpButton.enabled) {
             _signInAction = kSignInActionSignIn;
         }
         
-        if (!_signInAction) {
+        if (_signInAction) {
+            [self performSignInAction:_signInAction];
+        } else {
             OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSignInAction];
             [actionSheet addButtonWithTitle:NSLocalizedString(kButtonKeySignUp, kStringPrefixTitle) tag:kButtonTagSignInActionSignUp];
             [actionSheet addButtonWithTitle:NSLocalizedString(kButtonKeySignIn, kStringPrefixTitle) tag:kButtonTagSignInActionSignIn];
             
             [actionSheet show];
-        } else {
-            [OMeta m].userEmail = _emailField.value;
-            
-            if (_signInAction == kSignInActionSignUp) {
-                [[OConnection connectionWithDelegate:self] signUpWithEmail:[OMeta m].userEmail password:_passwordField.value];
-            } else if (_signInAction == kSignInActionSignIn) {
-                [[OConnection connectionWithDelegate:self] signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
-            }
         }
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
@@ -496,9 +514,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
                 
                 if (buttonTag == kButtonTagSignInActionSignUp) {
-                    [self performSignUpAction];
+                    [self performSignInAction:kSignInActionSignUp];
                 } else if (buttonTag == kButtonTagSignInActionSignIn) {
-                    [self performSignInAction];
+                    [self performSignInAction:kSignInActionSignIn];
                 }
             }
             

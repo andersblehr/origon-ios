@@ -106,8 +106,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addButtonForKey:(NSString *)key
 {
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
-    button.backgroundColor = [UIColor globalTintColour];
+    OButton *button = [[OButton alloc] initWithFrame:CGRectZero];
+    button.enabled = YES;
     button.titleLabel.font = [UIFont detailFont];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
     [button setTitle:NSLocalizedString(key, kStringPrefixTitle) forState:UIControlStateNormal];
@@ -217,7 +217,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Label & input field access
+#pragma mark - UI element access
 
 - (OLabel *)labelForKey:(NSString *)key
 {
@@ -228,6 +228,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (OInputField *)inputFieldForKey:(NSString *)key
 {
     return _views[[key stringByAppendingString:kViewKeySuffixInputField]];
+}
+
+
+- (OButton *)buttonForKey:(NSString *)key
+{
+    return _views[[key stringByAppendingString:kViewKeySuffixButton]];
 }
 
 

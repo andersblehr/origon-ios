@@ -29,7 +29,7 @@
 "[label] organisationDescription" = "Description";
 "[label] preschool" = "Preschool";
 "[label] school" = "School";
-"[label] signIn" = "Sign in or sign up";
+"[label] signIn" = "Register user or sign in";
 "[label] signOut" = "Sign out";
 "[label] telephone" = "Telephone";
 "[label] type" = "Type";
@@ -55,7 +55,7 @@
 "[placeholder] oldPassword" = "Old password";
 "[placeholder] organisation" = "Name of organisation";
 "[placeholder] organisationDescription" = "Short description of the organisation";
-"[placeholder] password" = "Your password";
+"[placeholder] password" = "Password";
 "[placeholder] photo" = "Photo";
 "[placeholder] preschool" = "Name of preschool";
 "[placeholder] preschoolClass" = "Class";
@@ -71,7 +71,7 @@
 "[placeholder] institution" = "Name of university or school";
 
 // Titles
-"[title] signUp" = "Sign up";
+"[title] signUp" = "Register user";
 "[title] signIn" = "Sign in";
 "[title] activate" = "Activate";
 "[title] changePassword" = "Change password";
@@ -275,6 +275,8 @@
 
 // Alerts
 "No internet connection." = "No internet connection.";
+"Password too short" = "Password too short";
+"The password must be at least %@ characters long." = "The password must be at least %@ characters long.";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "An error has occurred. Please try again later. [%d: \"%@\"]";
 "Cannot place call" = "Cannot place call";
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
