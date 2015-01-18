@@ -24,8 +24,8 @@ static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
 static NSString * const kHTTPMethodDELETE = @"DELETE";
 
-//static NSString * const kOrigoDevServer = @"http://localhost:8888";
-static NSString * const kOrigoDevServer = @"https://origoapp.appspot.com";
+static NSString * const kOrigoDevServer = @"http://localhost:8888";
+//static NSString * const kOrigoDevServer = @"https://origoapp.appspot.com";
 static NSString * const kOrigoProdServer = @"https://origoapp.appspot.com";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
@@ -46,6 +46,7 @@ static NSString * const kPathSignUp = @"signup";
 static NSString * const kPathSignIn = @"signin";
 static NSString * const kPathActivate = @"activate";
 static NSString * const kPathChange = @"change";
+static NSString * const kPathReset = @"reset";
 static NSString * const kPathSendCode = @"sendcode";
 static NSString * const kPathReplicate = @"replicate";
 static NSString * const kPathFetch = @"fetch";
@@ -221,6 +222,14 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
+- (void)resetPasswordWithEmail:(NSString *)email password:(NSString *)password
+{
+    OLogDebug(@"Replacing unknown password with new password (%@).", password);
+    
+    [self authenticateWithPath:kPathReset email:email password:password];
+}
+
+
 - (void)sendActivationCodeToEmail:(NSString *)email
 {
     [self authenticateWithPath:kPathSendCode email:email password:[OCrypto generateActivationCode]];
@@ -268,7 +277,6 @@ static NSString * const kURLParameterIdentifier = @"id";
             [OMeta m].lastReplicationDate = replicationDate;
         }
     } else if (response.statusCode != kHTTPStatusNotFound) {
-        [OAlert showAlertForHTTPStatus:response.statusCode];
         OLogError(@"Server error: %@", [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode]);
     }
     
@@ -328,7 +336,6 @@ static NSString * const kURLParameterIdentifier = @"id";
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    [OAlert showAlertForError:error];
     [_delegate didFailWithError:error];
 }
 

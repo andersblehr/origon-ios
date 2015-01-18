@@ -28,6 +28,7 @@ extern NSString * const kHTTPHeaderLocation;
 - (void)signInWithEmail:(NSString *)email password:(NSString *)password;
 - (void)activateWithEmail:(NSString *)email password:(NSString *)password;
 - (void)changePasswordWithEmail:(NSString *)email password:(NSString *)password;
+- (void)resetPasswordWithEmail:(NSString *)email password:(NSString *)password;
 - (void)sendActivationCodeToEmail:(NSString *)email;
 
 - (void)replicateEntities:(NSArray *)entities;
