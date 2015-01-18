@@ -10,7 +10,6 @@
 
 @interface OCrypto : NSObject
 
-+ (NSString *)timestampToken;
 + (NSString *)authTokenWithExpiryDate:(NSDate *)expiryDate;
 + (NSString *)passwordHashWithPassword:(NSString *)password;
 + (NSString *)basicAuthHeaderWithUserId:(NSString *)userId password:(NSString *)password;

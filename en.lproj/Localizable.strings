@@ -340,6 +340,10 @@
 "It looks like you may have lost the activation code ..." = "It looks like you may have lost the activation code or forgotten your password. Let's start over.";
 "Welcome back!" = "Welcome back!";
 "If you have handy the activation code sent to %@ ..." = "If you have handy the activation code sent to %@, you can now activate your membership. If not, you may go back and start over.";
+"Your password has been changed." = "Your password has been changed.";
+"Did you forget the password?" = "Did you forget the password?";
+"New password" = "New password";
+"Your password has been reset and a new password has been generated and sent to %@." = "Your password has been reset and a new password has been generated and sent to %@.";
 
 
 /***

@@ -340,6 +340,10 @@
 "It looks like you may have lost the activation code ..." = "Det ser ut til at du har mistet aktiveringskoden eller glemt passordet ditt. La oss starte på nytt.";
 "Welcome back!" = "Velkommen tilbake!";
 "If you have handy the activation code sent to %@ ..." = "Om du har aktiveringskoden som ble sendt til %@, så kan du aktivere medlemskapet ditt nå. Om ikke, kan du gå tilbake og starte på nytt.";
+"Your password has been changed." = "Passordet ditt har blitt endret.";
+"Did you forget the password?" = "Har du glemt passordet?";
+"New password" = "Nytt passord";
+"Your password has been reset and a new password has been generated and sent to %@." = "Passordet ditt har blitt nullstilt og et nytt passord er generert og sendt til %@.";
 
 /***
  * OOrigoListViewController strings

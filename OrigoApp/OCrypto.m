@@ -57,18 +57,6 @@ static NSInteger const kActivationCodeLength = 6;
 
 #pragma mark - Tokens & authentication
 
-+ (NSString *)timestampToken
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:kDateTimeFormatZulu];
-    
-    NSString *timestamp = [dateFormatter stringFromDate:[NSDate date]];
-    NSString *base64EncodedTimestamp = [self base64EncodeString:timestamp];
-    
-    return [base64EncodedTimestamp stringByAppendingString:[self seasonAndHashString:timestamp]];
-}
-
-
 + (NSString *)authTokenWithExpiryDate:(NSDate *)expiryDate
 {
     NSString *rawToken = [self string:[OMeta m].deviceId seasonedWith:expiryDate.description];

@@ -20,7 +20,7 @@ static NSInteger const kSignInActionSignIn = 2;
 
 static NSInteger const kSectionKeyAuth = 0;
 
-static NSInteger const kMaxActivationAttempts = 3;
+static NSInteger const kMaxAttempts = 2;
 
 static NSInteger const kActionSheetTagSignInAction = 0;
 static NSInteger const kButtonTagSignInActionSignUp = 0;
@@ -28,6 +28,7 @@ static NSInteger const kButtonTagSignInActionSignIn = 1;
 
 static NSInteger const kAlertTagWelcomeBack = 0;
 static NSInteger const kAlertTagActivationFailed = 1;
+static NSInteger const kAlertTagForgottenPassword = 2;
 
 static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
@@ -107,11 +108,13 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)performSignInAction:(NSInteger)signInAction
 {
+    _signInAction = signInAction;
+    
     [OMeta m].userEmail = _emailField.value;
     
-    if (signInAction == kSignInActionSignUp) {
+    if (_signInAction == kSignInActionSignUp) {
         [[OConnection connectionWithDelegate:self] signUpWithEmail:[OMeta m].userEmail password:_passwordField.value];
-    } else if (signInAction == kSignInActionSignIn) {
+    } else if (_signInAction == kSignInActionSignIn) {
         [[OConnection connectionWithDelegate:self] signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
     }
 }
@@ -139,12 +142,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)handleFailedActivationAttempt
 {
-    static NSInteger numberOfFailedAttempts = 0;
+    static NSInteger numberOfFailedActivationAttempts = 0;
     
-    numberOfFailedAttempts++;
+    numberOfFailedActivationAttempts++;
     
-    if (numberOfFailedAttempts == kMaxActivationAttempts) {
-        numberOfFailedAttempts = 0;
+    if (numberOfFailedActivationAttempts == kMaxAttempts) {
+        numberOfFailedActivationAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") text:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
@@ -262,9 +265,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            UIAlertView *welcomeBackAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have handy the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Start over", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
-            welcomeBackAlert.tag = kAlertTagWelcomeBack;
-            [welcomeBackAlert show];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have handy the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Start over", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
+            alert.tag = kAlertTagWelcomeBack;
+            
+            [alert show];
         } else if ([self targetIs:kTargetEmail]) {
             [[OConnection connectionWithDelegate:self] sendActivationCodeToEmail:self.target];
         }
@@ -545,6 +549,15 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             
             break;
             
+        case kAlertTagForgottenPassword:
+            if (buttonIndex == alertView.cancelButtonIndex) {
+                [_passwordField becomeFirstResponder];
+            } else {
+                [[OConnection connectionWithDelegate:self] resetPasswordWithEmail:[OMeta m].userEmail password:[OCrypto generateActivationCode]];
+            }
+
+            break;
+            
         default:
             break;
     }
@@ -559,10 +572,18 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         if (response.statusCode == kHTTPStatusCreated) {
-            if ([self actionIs:kActionChange]) {
+            if ([self actionIs:kActionSignIn]) {
+                if (_signInAction == kSignInActionSignUp) {
+                    [self userDidSignUpWithData:data];
+                } else if (_signInAction == kSignInActionSignIn) {
+                    [OAlert showAlertWithTitle:NSLocalizedString(@"New password", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Your password has been reset and a new password has been generated and sent to %@.", @""), _emailField.value]];
+                    
+                    [_passwordField becomeFirstResponder];
+                }
+            } else if ([self actionIs:kActionChange]) {
+                [OAlert showAlertWithTitle:@"" text:NSLocalizedString(@"Your password has been changed.", @"")];
+                
                 [self.dismisser dismissModalViewController:self];
-            } else {
-                [self userDidSignUpWithData:data];
             }
         } else {
             if (![OMeta m].userId) {
@@ -577,7 +598,25 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         }
     } else if (response.statusCode == kHTTPStatusUnauthorized) {
         [self.inputCell shakeCellVibrate:YES];
-        [_passwordField becomeFirstResponder];
+        
+        if ([self actionIs:kActionSignIn]) {
+            static NSInteger numberOfFailedSignInAttempts = 0;
+            
+            numberOfFailedSignInAttempts++;
+            
+            if (numberOfFailedSignInAttempts == kMaxAttempts) {
+                numberOfFailedSignInAttempts = 0;
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"Did you forget the password?", @"") delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
+                alert.tag = kAlertTagForgottenPassword;
+                
+                [alert show];
+            } else {
+                [_passwordField becomeFirstResponder];
+            }
+        } else {
+            [_passwordField becomeFirstResponder];
+        }
     }
 }
 
