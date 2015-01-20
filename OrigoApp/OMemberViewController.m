@@ -1394,7 +1394,7 @@ static NSInteger const kButtonIndexContinue = 1;
     OInputCellBlueprint *blueprint = [[OInputCellBlueprint alloc] init];
     blueprint.titleKey = [self nameKey];
     blueprint.detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-    blueprint.hasPhoto = _member.photo || ([self aspectIs:kAspectHousehold] && [_member isManagedByUser]);
+    //blueprint.hasPhoto = _member.photo || ([self aspectIs:kAspectHousehold] && [_member isManagedByUser]); // Introduce photos in later release
     
     return blueprint;
 }

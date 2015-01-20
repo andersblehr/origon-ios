@@ -11,6 +11,7 @@
 // View controller identifiers
 NSString * const kIdentifierAuth = @"auth";
 NSString * const kIdentifierInfo = @"info";
+NSString * const kIdentifierMap = @"map";
 NSString * const kIdentifierMember = @"member";
 NSString * const kIdentifierOrigo = @"origo";
 NSString * const kIdentifierOrigoList = @"origos";
@@ -142,7 +143,9 @@ NSString * const kIconFileWoman = @"768-female-toolbar.png";
 NSString * const kIconFileBoy = @"ro-593-boy.png";
 NSString * const kIconFileGirl = @"ro-594-girl.png";
 NSString * const kIconFileEdit = @"830-pencil-toolbar.png";
-NSString * const kIconFileMap = @"852-map-toolbar.png";
+NSString * const kIconFileLocation = @"722-location-pin-toolbar.png";
+NSString * const kIconFileDirections = @"852-map-toolbar.png";
+NSString * const kIconFileNavigation = @"113-navigation.png";
 NSString * const kIconFileInfo = @"724-info-toolbar.png";
 NSString * const kIconFileLookup = @"01-magnify.png";
 NSString * const kIconFileFavouriteNo = @"726-star-toolbar.png";

@@ -84,7 +84,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
     
     if ([_origo hasAddress]) {
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem mapButtonWithTarget:self]];
+        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self]];
     }
     
     if ([[_origo groups] count]) {
@@ -330,9 +330,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
 }
 
 
-- (void)performMapAction
+- (void)performLocationAction
 {
-    
+    [self presentModalViewControllerWithIdentifier:kIdentifierMap target:_origo];
 }
 
 
@@ -911,12 +911,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
         [self toggleEditMode];
 
         if ([self actionIs:kActionDisplay]) {
-            UIBarButtonItem *mapButton = [self.navigationItem rightBarButtonItemWithTag:kBarButtonTagMap];
+            UIBarButtonItem *locationButton = [self.navigationItem rightBarButtonItemWithTag:kBarButtonTagLocation];
             
-            if (!mapButton && [_origo hasAddress]) {
-                [self.navigationItem insertRightBarButtonItem:[UIBarButtonItem mapButtonWithTarget:self] atIndex:1];
-            } else if (mapButton && ![_origo hasAddress]) {
-                [self.navigationItem removeRightBarButtonItem:mapButton];
+            if (!locationButton && [_origo hasAddress]) {
+                [self.navigationItem insertRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self] atIndex:1];
+            } else if (locationButton && ![_origo hasAddress]) {
+                [self.navigationItem removeRightBarButtonItem:locationButton];
             }
         }
     }

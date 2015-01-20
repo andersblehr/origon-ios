@@ -125,7 +125,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
         }
         
-        if (!_didJustLoad) {
+        if (_tableView && !_didJustLoad) {
             [_tableView reloadData];
         }
             
@@ -1114,7 +1114,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _titleSubsegments = [[UISegmentedControl alloc] initWithItems:subsegmentTitles];
             _titleSubsegments.selectedSegmentIndex = 0;
             _titleSubsegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenWidth] - 2 * kContentInset, _titleSubsegments.frame.size.height);
-            [_titleSubsegments addTarget:_instance action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
+            [_titleSubsegments addTarget:_instance action:@selector(didSelectTitleSubsegment) forControlEvents:UIControlEventValueChanged];
             
             UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenWidth], kBorderWidth)];
             segmentsHairline.backgroundColor = [UIColor toolbarHairlineColour];
@@ -1269,6 +1269,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [super viewDidLoad];
     
     _identifier = self.restorationIdentifier;
+    _usesTableView = YES;
     _sectionKeys = [NSMutableArray array];
     _sectionData = [NSMutableDictionary dictionary];
     _sectionCounts = [NSMutableDictionary dictionary];
@@ -1281,53 +1282,55 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     [self initialiseInstance];
     
-    CGRect tableViewFrame = self.view.frame;
-    tableViewFrame.size.height -= self.navigationController ? kNavigationBarHeight : 0.f;
-    
-    if (_usesPlainTableViewStyle) {
-        _tableView = [[OTableView alloc] initWithFrame:tableViewFrame style:UITableViewStylePlain];
-        _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    } else {
-        _tableView = [[OTableView alloc] initWithFrame:tableViewFrame style:UITableViewStyleGrouped];
-    }
-    
-    _tableView.dataSource = self;
-    _tableView.delegate = self;
-    
-    if (_titleSubsegments) {
-        [self.view insertSubview:_tableView belowSubview:_titleSubsegments.superview];
+    if (_usesTableView) {
+        CGRect tableViewFrame = self.view.frame;
+        tableViewFrame.size.height -= self.navigationController ? kNavigationBarHeight : 0.f;
         
-        [_tableView setTopContentInset:_tableView.contentInset.top + kToolbarBarHeight];
-    } else {
-        [self.view addSubview:_tableView];
-    }
-    
-    if ([self actionIs:kActionRegister]) {
-        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
-        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
-        
-        if (_isModal) {
-            if ([[OMeta m].user isActive]) {
-                if (_cancelImpliesSkip) {
-                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem skipButtonWithTarget:self];
-                } else {
-                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-                }
-            } else {
-                self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:[OMeta m]];
-            }
+        if (_usesPlainTableViewStyle) {
+            _tableView = [[OTableView alloc] initWithFrame:tableViewFrame style:UITableViewStylePlain];
+            _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+        } else {
+            _tableView = [[OTableView alloc] initWithFrame:tableViewFrame style:UITableViewStyleGrouped];
         }
         
-        [self.navigationItem insertRightBarButtonItem:_nextButton atIndex:0];
-    }
-    
-    if ([_instance respondsToSelector:@selector(supportsPullToRefresh)]) {
-        if ([_instance supportsPullToRefresh]) {
-            _refreshControl = [[UIRefreshControl alloc] init];
-            _refreshControl.tintColor = [UIColor lightGrayColor];
-            [_refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        
+        if (_titleSubsegments) {
+            [self.view insertSubview:_tableView belowSubview:_titleSubsegments.superview];
             
-            [_tableView insertSubview:_refreshControl atIndex:0];
+            [_tableView setTopContentInset:_tableView.contentInset.top + kToolbarBarHeight];
+        } else {
+            [self.view addSubview:_tableView];
+        }
+        
+        if ([self actionIs:kActionRegister]) {
+            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+            
+            if (_isModal) {
+                if ([[OMeta m].user isActive]) {
+                    if (_cancelImpliesSkip) {
+                        self.navigationItem.leftBarButtonItem = [UIBarButtonItem skipButtonWithTarget:self];
+                    } else {
+                        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+                    }
+                } else {
+                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:[OMeta m]];
+                }
+            }
+            
+            [self.navigationItem insertRightBarButtonItem:_nextButton atIndex:0];
+        }
+        
+        if ([_instance respondsToSelector:@selector(supportsPullToRefresh)]) {
+            if ([_instance supportsPullToRefresh]) {
+                _refreshControl = [[UIRefreshControl alloc] init];
+                _refreshControl.tintColor = [UIColor lightGrayColor];
+                [_refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
+                
+                [_tableView insertSubview:_refreshControl atIndex:0];
+            }
         }
     }
     

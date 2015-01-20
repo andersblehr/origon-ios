@@ -81,6 +81,7 @@
 @property (nonatomic, assign, readonly) BOOL didResurface;
 
 @property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
+@property (nonatomic, assign) BOOL usesTableView;
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
 @property (nonatomic, assign) BOOL usesSectionIndexTitles;
 @property (nonatomic, assign) BOOL presentStealthilyOnce;

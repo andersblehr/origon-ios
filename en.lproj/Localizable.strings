@@ -405,7 +405,6 @@
 "Edit responsibilities" = "Edit responsibilities";
 "Register from other list" = "Register from other list";
 "Register parent contact" = "Register parent contact";
-"Show in map" = "Show in map";
 "About %@" = "About %@";
 "Register household member" = "Register household member";
 "Other guardian" = "Other guardian";
@@ -573,6 +572,36 @@
 // Labels
 "Active" = "Active";
 "Through household" = "Through household";
+
+
+/***
+ * OMapViewController strings
+ ***/
+
+// Titles
+"Standard" = "Standard";
+"Hybrid" = "Hybrid";
+"Satellite" = "Satellite";
+
+// Prompts
+"Select starting point for directions" = "Select starting point for directions";
+
+// Buttons
+"Current location" = "Current location";
+
+// Labels
+"Starting point" = "Starting point";
+
+// Alerts
+"Unknown address" = "Unknown address";
+"No known address matches %@." = "No know address matches %@.";
+"Unclear address" = "Unclear address";
+"The address %@ is unclear and could not be not found in the map." = "The address %@ is unclear and could not be not found in the map.";
+"Cannot give directions" = "Cannot give directions";
+"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.";
+"Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo." = "Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo.";
+"Error" = "Error";
+"An error occurred. Please try again another time." = "An error occurred. Please try again another time.";
 
 
 /***

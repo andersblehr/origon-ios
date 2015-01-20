@@ -2,8 +2,8 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 13/11/14.
-//  Copyright (c) 2014 Rhelba Source. All rights reserved.
+//  Created by Anders Blehr on 20/01/15.
+//  Copyright (c) 2015 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
