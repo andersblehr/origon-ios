@@ -158,12 +158,6 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)textButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
-{
-    return [self barButtonWithVisuals:title target:target action:action tag:0];
-}
-
-
 + (instancetype)cancelButtonWithTarget:(id)target
 {
     return [self barButtonWithVisuals:NSLocalizedString(@"Cancel", @"") target:target action:@selector(didCancelEditing) tag:kBarButtonTagCancel];

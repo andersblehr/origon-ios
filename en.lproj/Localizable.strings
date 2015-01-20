@@ -541,11 +541,20 @@
 "Send text" = "Send text";
 "Send email" = "Send email";
 
+// Prompts
+"Select recipients" = "Select recipients";
+
 // Buttons
-"Select all" = "Select all";
 "Parents" = "Parents";
 "Parents, grouped" = "Parents, grouped";
 "Parents and %@" = "Parents and %@";
+"Everybody" = "Everybody";
+"Select all" = "Select all";
+"All %@" = "All %@";
+"All parents" = "All parents";
+"Parents of boys" = "Parents of boys";
+"Parents of girls" = "Parents of girls";
+"Parents in %@" = "Parents in %@";
 
 // Labels
 "To" = "To";

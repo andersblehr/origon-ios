@@ -540,11 +540,20 @@
 "Send text" = "Send melding";
 "Send email" = "Send epost";
 
+// Prompts
+"Select recipients" = "Velg mottakere";
+
 // Buttons
-"Select all" = "Velg alle";
 "Parents" = "Foreldre";
 "Parents, grouped" = "Foreldre, gruppert";
 "Parents and %@" = "Foreldre og %@";
+"Everybody" = "Alle";
+"Select all" = "Velg alle";
+"All %@" = "Alle %@";
+"All parents" = "Alle foreldre";
+"Parents of boys" = "Gutteforeldre";
+"Parents of girls" = "Jenteforeldre";
+"Parents in %@" = "Foreldre i %@";
 
 // Labels
 "To" = "Til";
