@@ -22,6 +22,7 @@
 #import <CoreTelephony/CTCarrier.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <Foundation/Foundation.h>
+#import <MapKit/MapKit.h>
 #import <MessageUI/MessageUI.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>

@@ -16,6 +16,7 @@
 		5C23431214812A3100164478 /* OConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OConstants.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
 		5C2B8AF01A6966BC00596082 /* OButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2B8AEF1A6966BC00596082 /* OButton.m */; };
+		5C2B8AF31A6BF6A300596082 /* OMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2B8AF21A6BF6A300596082 /* OMapViewController.m */; };
 		5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OConnection.m */; };
 		5C2E6B7E15A8501800638330 /* OMembership+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E6B7D15A8501800638330 /* OMembership+OrigoAdditions.m */; };
 		5C3374831563FBE200DEF67D /* OMember+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* OMember+OrigoAdditions.m */; };
@@ -43,6 +44,14 @@
 		5C77067618549A2E0088C78D /* OLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C77067518549A2E0088C78D /* OLabel.m */; };
 		5C78695018116AD400020E08 /* OActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78694F18116AD400020E08 /* OActionSheet.m */; };
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
+		5C7BD0491A6CF95B00C1F14B /* 722-location-pin-toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C7BD0461A6CF95B00C1F14B /* 722-location-pin-toolbar.png */; };
+		5C7BD04A1A6CF95B00C1F14B /* 722-location-pin-toolbar@2x.svg in Resources */ = {isa = PBXBuildFile; fileRef = 5C7BD0471A6CF95B00C1F14B /* 722-location-pin-toolbar@2x.svg */; };
+		5C7BD04B1A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C7BD0481A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png */; };
+		5C7BD04E1A6D1C7A00C1F14B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */; };
+		5C7BD0551A6D5F0800C1F14B /* 113-navigation.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C7BD0521A6D5F0800C1F14B /* 113-navigation.png */; };
+		5C7BD0561A6D5F0800C1F14B /* 113-navigation@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C7BD0531A6D5F0800C1F14B /* 113-navigation@2x.png */; };
+		5C7BD0571A6D5F0800C1F14B /* 113-navigation@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C7BD0541A6D5F0800C1F14B /* 113-navigation@3x.png */; };
+		5C7BD05A1A6E5B8000C1F14B /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7BD0591A6E5B8000C1F14B /* OOrigo.m */; };
 		5C7C4DD218E57E1F00903989 /* OEntityProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C4DD118E57E1F00903989 /* OEntityProxy.m */; };
 		5C7EDE3418DB2450003AFFAF /* OOrigoProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7EDE3318DB2450003AFFAF /* OOrigoProxy.m */; };
 		5C83DF81153F59B800BB0B29 /* OOrigo+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* OOrigo+OrigoAdditions.m */; };
@@ -54,7 +63,6 @@
 		5C8A6FDA1A208A0600AA18D6 /* 726-star-toolbar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8A6FD41A208A0600AA18D6 /* 726-star-toolbar@3x.png */; };
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
-		5C93392C1A14C4ED008D0DB3 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C93392B1A14C4ED008D0DB3 /* OOrigo.m */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
 		5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903417F6B8AD00D957F9 /* 730-envelope.png */; };
 		5C98903717F6B8AD00D957F9 /* 730-envelope@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */; };
@@ -186,6 +194,8 @@
 		5C26291D158F27860012A74A /* OAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthViewController.m; sourceTree = "<group>"; };
 		5C2B8AEE1A6966BC00596082 /* OButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OButton.h; sourceTree = "<group>"; };
 		5C2B8AEF1A6966BC00596082 /* OButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OButton.m; sourceTree = "<group>"; };
+		5C2B8AF11A6BF6A300596082 /* OMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMapViewController.h; sourceTree = "<group>"; };
+		5C2B8AF21A6BF6A300596082 /* OMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMapViewController.m; sourceTree = "<group>"; };
 		5C2E11121469CDE5005BDE61 /* OConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConnection.h; sourceTree = "<group>"; };
 		5C2E11131469CDE5005BDE61 /* OConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OConnection.m; sourceTree = "<group>"; };
 		5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConnectionDelegate.h; sourceTree = "<group>"; };
@@ -238,6 +248,16 @@
 		5C78694F18116AD400020E08 /* OActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActionSheet.m; sourceTree = "<group>"; };
 		5C78FAB81654E77E009A4BCF /* OTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextView.h; sourceTree = "<group>"; };
 		5C78FAB91654E77E009A4BCF /* OTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextView.m; sourceTree = "<group>"; };
+		5C7BD0461A6CF95B00C1F14B /* 722-location-pin-toolbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "722-location-pin-toolbar.png"; sourceTree = "<group>"; };
+		5C7BD0471A6CF95B00C1F14B /* 722-location-pin-toolbar@2x.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "722-location-pin-toolbar@2x.svg"; sourceTree = "<group>"; };
+		5C7BD0481A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "722-location-pin-toolbar@3x.png"; sourceTree = "<group>"; };
+		5C7BD04F1A6D1C7A00C1F14B /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5C7BD0511A6D1C8200C1F14B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5C7BD0521A6D5F0800C1F14B /* 113-navigation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "113-navigation.png"; sourceTree = "<group>"; };
+		5C7BD0531A6D5F0800C1F14B /* 113-navigation@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "113-navigation@2x.png"; sourceTree = "<group>"; };
+		5C7BD0541A6D5F0800C1F14B /* 113-navigation@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "113-navigation@3x.png"; sourceTree = "<group>"; };
+		5C7BD0581A6E5B8000C1F14B /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
+		5C7BD0591A6E5B8000C1F14B /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5C7C4DD018E57E1F00903989 /* OEntityProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEntityProxy.h; sourceTree = "<group>"; };
 		5C7C4DD118E57E1F00903989 /* OEntityProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEntityProxy.m; sourceTree = "<group>"; };
 		5C7EDE3218DB2450003AFFAF /* OOrigoProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoProxy.h; sourceTree = "<group>"; };
@@ -254,8 +274,6 @@
 		5C8B3AB515813DBB000B19FA /* OMemberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberViewController.m; sourceTree = "<group>"; };
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
-		5C93392A1A14C4ED008D0DB3 /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
-		5C93392B1A14C4ED008D0DB3 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "./Default-568h@2x.png"; sourceTree = "<group>"; };
 		5C98903417F6B8AD00D957F9 /* 730-envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope.png"; sourceTree = "<group>"; };
 		5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope@2x.png"; sourceTree = "<group>"; };
@@ -425,9 +443,15 @@
 				5CD626DA19CB145C007DD29B /* 10-contract.png */,
 				5CD626DB19CB145C007DD29B /* 10-contract@2x.png */,
 				5CD626DC19CB145C007DD29B /* 10-contract@3x.png */,
+				5C7BD0521A6D5F0800C1F14B /* 113-navigation.png */,
+				5C7BD0531A6D5F0800C1F14B /* 113-navigation@2x.png */,
+				5C7BD0541A6D5F0800C1F14B /* 113-navigation@3x.png */,
 				5CC129FF19CC7B0E00A545F8 /* 693-ipad.png */,
 				5CC12A0019CC7B0E00A545F8 /* 693-ipad@2x.png */,
 				5CC12A0119CC7B0E00A545F8 /* 693-ipad@3x.png */,
+				5C7BD0461A6CF95B00C1F14B /* 722-location-pin-toolbar.png */,
+				5C7BD0471A6CF95B00C1F14B /* 722-location-pin-toolbar@2x.svg */,
+				5C7BD0481A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png */,
 				5CD626B619CB0E81007DD29B /* 724-info-toolbar.png */,
 				5CD626B719CB0E81007DD29B /* 724-info-toolbar@2x.png */,
 				5CD626B819CB0E81007DD29B /* 724-info-toolbar@3x.png */,
@@ -508,8 +532,8 @@
 				5CC1870119B9F5D200B6F02A /* OMembership.m */,
 				5CD33AE018F5288100A863F4 /* OMember.h */,
 				5CD33AE118F5288100A863F4 /* OMember.m */,
-				5C93392A1A14C4ED008D0DB3 /* OOrigo.h */,
-				5C93392B1A14C4ED008D0DB3 /* OOrigo.m */,
+				5C7BD0581A6E5B8000C1F14B /* OOrigo.h */,
+				5C7BD0591A6E5B8000C1F14B /* OOrigo.m */,
 				5CC307D219E97EEE00373980 /* OReplicatedEntity.h */,
 				5CC307D319E97EEE00373980 /* OReplicatedEntity.m */,
 				5CD33AD718F5288000A863F4 /* OReplicatedEntityRef.h */,
@@ -613,6 +637,8 @@
 				5C26291D158F27860012A74A /* OAuthViewController.m */,
 				5CC307CC19E966E400373980 /* OInfoViewController.h */,
 				5CC307CD19E966E400373980 /* OInfoViewController.m */,
+				5C2B8AF11A6BF6A300596082 /* OMapViewController.h */,
+				5C2B8AF21A6BF6A300596082 /* OMapViewController.m */,
 				5C8B3AB415813DBB000B19FA /* OMemberViewController.h */,
 				5C8B3AB515813DBB000B19FA /* OMemberViewController.m */,
 				5C3D42801485678E009A68E0 /* OOrigoListViewController.h */,
@@ -725,6 +751,7 @@
 				5CBB63C6146080DF00A9133A /* OrigoApp-Prefix.pch */,
 				5CBB63C0146080DF00A9133A /* OrigoApp-Info.plist */,
 				5C58AA8518CE028500778B9F /* Localizable.strings */,
+				5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */,
 				5C276E7A1475B9A800A6C500 /* Media */,
 			);
 			name = "Supporting Files";
@@ -860,6 +887,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CD626BF19CB0EAE007DD29B /* 830-pencil-toolbar.png in Resources */,
+				5C7BD04E1A6D1C7A00C1F14B /* InfoPlist.strings in Resources */,
 				5CD626D819CB10F0007DD29B /* 895-user-group-toolbar@2x.png in Resources */,
 				5CD626C119CB0EAE007DD29B /* 830-pencil-toolbar@3x.png in Resources */,
 				5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */,
@@ -905,6 +933,7 @@
 				5CD6268619CB01B6007DD29B /* ro-593-boy.png in Resources */,
 				5CD5EC0C18D0768A0075D07E /* MainStoryboard.storyboard in Resources */,
 				5C49A28A1A168F0B00D8E596 /* ro-854-list@3x.png in Resources */,
+				5C7BD04A1A6CF95B00C1F14B /* 722-location-pin-toolbar@2x.svg in Resources */,
 				5CD6267919CAF221007DD29B /* 769-male-toolbar.png in Resources */,
 				5CD6268119CAF79F007DD29B /* ro-594-girl@2x.png in Resources */,
 				5CD626FC19CB2501007DD29B /* ro-750-home-toolbar-selected.png in Resources */,
@@ -917,7 +946,9 @@
 				5CD626E519CB16AB007DD29B /* 01-magnify.png in Resources */,
 				5CD6268819CB01B6007DD29B /* ro-594-girl.png in Resources */,
 				5CD626E619CB16AB007DD29B /* 01-magnify@2x.png in Resources */,
+				5C7BD04B1A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png in Resources */,
 				5C8A6FD91A208A0600AA18D6 /* 726-star-toolbar@2x.png in Resources */,
+				5C7BD0551A6D5F0800C1F14B /* 113-navigation.png in Resources */,
 				5CD626E719CB16AB007DD29B /* 01-magnify@3x.png in Resources */,
 				5C98903E17F6B8D500D957F9 /* 735-phone.png in Resources */,
 				5CD6267619CAF221007DD29B /* 768-female-toolbar.png in Resources */,
@@ -925,10 +956,13 @@
 				5CD626CB19CB1076007DD29B /* 779-users-toolbar.png in Resources */,
 				5C98903F17F6B8D500D957F9 /* 735-phone@2x.png in Resources */,
 				5CC12A0D19CC829800A545F8 /* ro-692-iphone-5@2x.png in Resources */,
+				5C7BD0561A6D5F0800C1F14B /* 113-navigation@2x.png in Resources */,
 				5CD626FF19CB2E7F007DD29B /* ro-role-holders@2x.png in Resources */,
 				5C49A28C1A16902D00D8E596 /* ro-854-list.png in Resources */,
 				5CD626A719CB0C0E007DD29B /* 740-gear-toolbar.png in Resources */,
 				5CD6267A19CAF221007DD29B /* 769-male-toolbar@2x.png in Resources */,
+				5C7BD0491A6CF95B00C1F14B /* 722-location-pin-toolbar.png in Resources */,
+				5C7BD0571A6D5F0800C1F14B /* 113-navigation@3x.png in Resources */,
 				5CD6268F19CB08C9007DD29B /* 734-chat@3x.png in Resources */,
 				5C98903C17F6B8D500D957F9 /* 734-chat.png in Resources */,
 				5CD626A819CB0C0E007DD29B /* 740-gear-toolbar@2x.png in Resources */,
@@ -974,6 +1008,7 @@
 			files = (
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */,
+				5C7BD05A1A6E5B8000C1F14B /* OOrigo.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
 				5CC1870219B9F5D200B6F02A /* OMembership.m in Sources */,
 				5C7513A719B719360071FD34 /* ODevice.m in Sources */,
@@ -1003,7 +1038,6 @@
 				5CA94D9F15836BD9008CD9EC /* NSDate+OrigoAdditions.m in Sources */,
 				5C26291E158F27860012A74A /* OAuthViewController.m in Sources */,
 				5C7379FD1593111B0065AB4F /* OTextField.m in Sources */,
-				5C93392C1A14C4ED008D0DB3 /* OOrigo.m in Sources */,
 				5CBE91A31599823000516C54 /* UIFont+OrigoAdditions.m in Sources */,
 				5CDE11B319FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m in Sources */,
 				5CC307D419E97EEE00373980 /* OReplicatedEntity.m in Sources */,
@@ -1015,6 +1049,7 @@
 				5CB7E94015F38C1200FD53DF /* OValueListViewController.m in Sources */,
 				5CFD8E76183E0BA100DC3945 /* NSLocale+OrigoAdditions.m in Sources */,
 				5CCC3598181FC8200079DB55 /* UINavigationItem+OrigoAdditions.m in Sources */,
+				5C2B8AF31A6BF6A300596082 /* OMapViewController.m in Sources */,
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.m in Sources */,
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
 				5CBDF78C1659175000D4681C /* OInputCellConstrainer.m in Sources */,
@@ -1069,6 +1104,15 @@
 			);
 			name = Localizable.strings;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5C7BD04F1A6D1C7A00C1F14B /* nb */,
+				5C7BD0511A6D1C8200C1F14B /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -115,7 +115,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 }
 
 
-- (void)didSelectTitleSegment
+- (void)didSelectTitleSubsegment
 {
     NSInteger previousSegment = _selectedTitleSubsegment;
     

@@ -105,7 +105,7 @@ static NSInteger const kCellCheckedStateCc = 2;
 }
 
 
-- (void)didSelectTitleSegment
+- (void)didSelectTitleSubsegment
 {
     _selectedTitleSubsegment = _titleSubsegments.selectedSegmentIndex;
     

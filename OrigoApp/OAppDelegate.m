@@ -129,7 +129,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     
     OLogDebug(@"Device ID: %@", [OMeta m].deviceId);
     OLogDebug(@"System language: %@", [OMeta m].language);
-    OLogDebug(@"Persistent store: %@", [self persistentStoreURL]);
+    //OLogDebug(@"Persistent store: %@", [self persistentStoreURL]);
 
     return YES;
 }

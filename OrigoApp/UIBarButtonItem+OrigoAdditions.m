@@ -10,15 +10,17 @@
 
 NSInteger const kBarButtonTagAcceptDecline = 10;
 NSInteger const kBarButtonTagAction = 11;
-NSInteger const kbarButtonTagEdit = 12;
-NSInteger const kBarButtonTagFavourite = 13;
-NSInteger const kBarButtonTagGroups = 14;
-NSInteger const kBarButtonTagInfo = 15;
-NSInteger const kBarButtonTagLookup = 16;
-NSInteger const kBarButtonTagMap = 17;
-NSInteger const kBarButtonTagMultiRole = 18;
-NSInteger const kBarButtonTagPlus = 19;
-NSInteger const kBarButtonTagSettings = 20;
+NSInteger const kBarButtonTagDirections = 12;
+NSInteger const kbarButtonTagEdit = 13;
+NSInteger const kBarButtonTagFavourite = 14;
+NSInteger const kBarButtonTagGroups = 15;
+NSInteger const kBarButtonTagInfo = 16;
+NSInteger const kBarButtonTagLocation = 17;
+NSInteger const kBarButtonTagLookup = 18;
+NSInteger const kBarButtonTagMultiRole = 19;
+NSInteger const kBarButtonTagNavigation = 20;
+NSInteger const kBarButtonTagPlus = 21;
+NSInteger const kBarButtonTagSettings = 22;
 
 NSInteger const kBarButtonTagBack = 30;
 NSInteger const kBarButtonTagCancel = 31;
@@ -108,9 +110,21 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)mapButtonWithTarget:(id)target
++ (instancetype)locationButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileMap] target:target action:@selector(performMapAction) tag:kBarButtonTagMap];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileLocation] target:target action:@selector(performLocationAction) tag:kBarButtonTagLocation];
+}
+
+
++ (instancetype)directionsButtonWithTarget:(id)target
+{
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileDirections] target:target action:@selector(performDirectionsAction) tag:kBarButtonTagDirections];
+}
+
+
++ (instancetype)navigationButtonWithTarget:(id)target
+{
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileNavigation] target:target action:@selector(performNavigationAction) tag:kBarButtonTagNavigation];
 }
 
 

@@ -10,13 +10,15 @@
 
 extern NSInteger const kBarButtonTagAcceptDecline;
 extern NSInteger const kBarButtonTagAction;
+extern NSInteger const kBarButtonTagDirections;
 extern NSInteger const kbarButtonTagEdit;
 extern NSInteger const kBarButtonTagFavourite;
 extern NSInteger const kBarButtonTagGroups;
 extern NSInteger const kBarButtonTagInfo;
+extern NSInteger const kBarButtonTagLocation;
 extern NSInteger const kBarButtonTagLookup;
-extern NSInteger const kBarButtonTagMap;
 extern NSInteger const kBarButtonTagMultiRole;
+extern NSInteger const kBarButtonTagNavigation;
 extern NSInteger const kBarButtonTagPlus;
 extern NSInteger const kBarButtonTagSettings;
 
@@ -40,7 +42,9 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)infoButtonWithTarget:(id)target;
 + (instancetype)lookupButtonWithTarget:(id)target;
 + (instancetype)favouriteButtonWithTarget:(id)target isFavourite:(BOOL)isFavourite;
-+ (instancetype)mapButtonWithTarget:(id)target;
++ (instancetype)locationButtonWithTarget:(id)target;
++ (instancetype)directionsButtonWithTarget:(id)target;
++ (instancetype)navigationButtonWithTarget:(id)target;
 + (instancetype)multiRoleButtonWithTarget:(id)target on:(BOOL)on;
 + (instancetype)plusButtonWithTarget:(id)target;
 + (instancetype)settingsButtonWithTarget:(id)target;

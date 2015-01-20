@@ -404,7 +404,6 @@
 "Edit responsibilities" = "Rediger ansvarsområder";
 "Register from other list" = "Registrer fra annen liste";
 "Register parent contact" = "Registrer foreldrekontakt";
-"Show in map" = "Vis på kart";
 "About %@" = "Om %@";
 "Register household member" = "Registrer medlem i husstanden";
 "Other guardian" = "Annen foresatt";
@@ -572,6 +571,36 @@
 // Labels
 "Active" = "Aktiv";
 "Through household" = "Gjennom husstand";
+
+
+/***
+ * OMapViewController strings
+ ***/
+
+// Titles
+"Standard" = "Standard";
+"Hybrid" = "Hybrid";
+"Satellite" = "Satelitt";
+
+// Prompts
+"Select starting point for directions" = "Angi startpunkt for veibeskrivelsen";
+
+// Buttons
+"Current location" = "Nåværende plassering";
+
+// Labels
+"Starting point" = "Startpunkt";
+
+// Alerts
+"Unknown address" = "Ukjent adresse";
+"No known address matches %@." = "Ingen kjente adresser motsvarer %@.";
+"Unclear address" = "Uklar adresse";
+"The address %@ is unclear and could not be not found in the map." = "Adressen %@ er uklar og kunne ikke bli funnet på kartet.";
+"Cannot give directions" = "Kan ikke gi veibeskrivelse";
+"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Åpne Innstillinger, gå til Personvern > Stedstjenester og skru på stedstjenestene for å få veibeskrivelse.";
+"Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo." = "Stedstjenestene er skrudd av for Origo. Åpne Innstillinger og gå til Personvern > Stedstjenester for å skru på stedstjenester for Origo.";
+"Error" = "Feil";
+"An error occurred. Please try again another time." = "Det oppstod en feil. Vennligst prøv igjen en annen gang.";
 
 
 /***

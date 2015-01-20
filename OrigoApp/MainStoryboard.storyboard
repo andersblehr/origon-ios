@@ -8,18 +8,7 @@
         <!--Auth View Controller-->
         <scene sceneID="i2s-nI-C1j">
             <objects>
-                <tableViewController storyboardIdentifier="auth" useStoryboardIdentifierAsRestorationIdentifier="YES" id="a73-0o-gAI" customClass="OAuthViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IaI-4F-Chh">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <connections>
-                            <outlet property="dataSource" destination="a73-0o-gAI" id="z21-V1-1iY"/>
-                            <outlet property="delegate" destination="a73-0o-gAI" id="sie-6D-uPG"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="lej-0U-7XK"/>
-                </tableViewController>
+                <tableViewController storyboardIdentifier="auth" useStoryboardIdentifierAsRestorationIdentifier="YES" id="a73-0o-gAI" customClass="OAuthViewController" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hiH-3x-2qe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="183" y="-615"/>
@@ -27,34 +16,23 @@
         <!--Origo View Controller-->
         <scene sceneID="5fB-zI-Tq9">
             <objects>
-                <viewController storyboardIdentifier="origo" useStoryboardIdentifierAsRestorationIdentifier="YES" id="O0V-Ey-WLK" customClass="OOrigoViewController" sceneMemberID="viewController">
-                    <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <sections/>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="PZV-fj-ium"/>
-                </viewController>
+                <viewController storyboardIdentifier="origo" useStoryboardIdentifierAsRestorationIdentifier="YES" id="O0V-Ey-WLK" customClass="OOrigoViewController" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="642" y="28"/>
         </scene>
+        <!--Map View Controller-->
+        <scene sceneID="aMz-tu-Szk">
+            <objects>
+                <viewController storyboardIdentifier="map" useStoryboardIdentifierAsRestorationIdentifier="YES" id="W9z-N3-K6Z" customClass="OMapViewController" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gkm-pW-ph9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1110" y="28"/>
+        </scene>
         <!--Member View Controller-->
         <scene sceneID="x7u-en-eVb">
             <objects>
-                <tableViewController storyboardIdentifier="member" useStoryboardIdentifierAsRestorationIdentifier="YES" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="209" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <connections>
-                            <outlet property="dataSource" destination="T87-Bh-GzL" id="wla-Re-bhC"/>
-                            <outlet property="delegate" destination="T87-Bh-GzL" id="GlC-bZ-Zjk"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="uRg-zS-kRb"/>
-                </tableViewController>
+                <tableViewController storyboardIdentifier="member" useStoryboardIdentifierAsRestorationIdentifier="YES" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="642" y="-615"/>
@@ -63,11 +41,6 @@
         <scene sceneID="SzQ-Uz-J3x">
             <objects>
                 <viewController storyboardIdentifier="origos" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9Fa-Np-JO6" customClass="OOrigoListViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Nfe-mR-3nj">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                    </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="2TD-LP-teE"/>
                 </viewController>
@@ -78,18 +51,7 @@
         <!--Value List View Controller-->
         <scene sceneID="sOz-jV-QHA">
             <objects>
-                <tableViewController storyboardIdentifier="values" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Bf4-zU-a9P" customClass="OValueListViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="eLC-aL-8ZY">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <connections>
-                            <outlet property="dataSource" destination="Bf4-zU-a9P" id="xyF-5m-7JT"/>
-                            <outlet property="delegate" destination="Bf4-zU-a9P" id="h0S-cp-pW5"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="pPk-Kr-fAc"/>
-                </tableViewController>
+                <tableViewController storyboardIdentifier="values" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Bf4-zU-a9P" customClass="OValueListViewController" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="183" y="678"/>
@@ -97,18 +59,7 @@
         <!--Value Picker View Controller-->
         <scene sceneID="J4F-Wc-d9B">
             <objects>
-                <tableViewController storyboardIdentifier="value" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Lcb-OF-t33" customClass="OValuePickerViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="pjX-pJ-aBY">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <connections>
-                            <outlet property="dataSource" destination="Lcb-OF-t33" id="UM7-NS-NNt"/>
-                            <outlet property="delegate" destination="Lcb-OF-t33" id="4Lp-bR-Yo6"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="FVF-9e-saF"/>
-                </tableViewController>
+                <tableViewController storyboardIdentifier="value" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Lcb-OF-t33" customClass="OValuePickerViewController" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hCo-uL-u2D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="642" y="678"/>
@@ -132,31 +83,15 @@
         <!--Info View Controller-->
         <scene sceneID="4Nc-1g-caQ">
             <objects>
-                <viewController storyboardIdentifier="info" useStoryboardIdentifierAsRestorationIdentifier="YES" id="meS-fC-wit" customClass="OInfoViewController" sceneMemberID="viewController">
-                    <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="zHX-B3-hGi">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <sections/>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="mD6-tf-CXC"/>
-                </viewController>
+                <viewController storyboardIdentifier="info" useStoryboardIdentifierAsRestorationIdentifier="YES" id="meS-fC-wit" customClass="OInfoViewController" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jur-oq-HSj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1110" y="28"/>
+            <point key="canvasLocation" x="1110" y="-615"/>
         </scene>
         <!--Recipient Picker View Controller-->
         <scene sceneID="hTr-vU-HB3">
             <objects>
-                <viewController storyboardIdentifier="recipients" useStoryboardIdentifierAsRestorationIdentifier="YES" id="q2e-U8-KTi" customClass="ORecipientPickerViewController" sceneMemberID="viewController">
-                    <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="pId-dk-l4E">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <sections/>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="k3F-YK-HTs"/>
-                </viewController>
+                <viewController storyboardIdentifier="recipients" useStoryboardIdentifierAsRestorationIdentifier="YES" id="q2e-U8-KTi" customClass="ORecipientPickerViewController" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oM1-SP-NAl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1110" y="678"/>

@@ -11,6 +11,7 @@
 // View controller identifiers
 extern NSString * const kIdentifierAuth;
 extern NSString * const kIdentifierInfo;
+extern NSString * const kIdentifierMap;
 extern NSString * const kIdentifierMember;
 extern NSString * const kIdentifierOrigo;
 extern NSString * const kIdentifierOrigoList;
@@ -142,7 +143,9 @@ extern NSString * const kIconFileWoman;
 extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileEdit;
-extern NSString * const kIconFileMap;
+extern NSString * const kIconFileLocation;
+extern NSString * const kIconFileDirections;
+extern NSString * const kIconFileNavigation;
 extern NSString * const kIconFileInfo;
 extern NSString * const kIconFileLookup;
 extern NSString * const kIconFileFavouriteNo;
