@@ -16,8 +16,16 @@ static NSInteger const kCellCheckedStateNone = 0;
 static NSInteger const kCellCheckedStateTo = 1;
 static NSInteger const kCellCheckedStateCc = 2;
 
+static NSInteger const kActionSheetTagGroups = 0;
+static NSInteger const kButtonTagGroupAll = 0;
+static NSInteger const kButtonTagGroupMembers = 1;
+static NSInteger const kButtonTagGroupOrganisers = 2;
+static NSInteger const kButtonTagGroupParents = 3;
+static NSInteger const kButtonTagGroupCoGenderParents = 4;
+static NSInteger const kButtonTagGroupCoGroupParents = 5;
 
-@interface ORecipientPickerViewController () <MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
+
+@interface ORecipientPickerViewController () <UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
 @private
     id<OOrigo> _origo;
     
@@ -35,22 +43,6 @@ static NSInteger const kCellCheckedStateCc = 2;
 @implementation ORecipientPickerViewController
 
 #pragma mark - Auxiliary methods
-
-- (void)toggleSendButton:(BOOL)on
-{
-    if (on) {
-        if ([self targetIs:kTargetText]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendTextButtonWithTarget:self];
-        } else if ([self targetIs:kTargetEmail]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendEmailButtonWithTarget:self];
-        }
-        
-        self.navigationItem.rightBarButtonItem.enabled = [_toRecipients count] > 0;
-    } else {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem textButtonWithTitle:NSLocalizedString(@"Select all", @"") target:self action:@selector(selectAll)];
-    }
-}
-
 
 - (void)inferTitleAndSubtitle
 {
@@ -85,32 +77,71 @@ static NSInteger const kCellCheckedStateCc = 2;
 
 #pragma mark - Selector implementations
 
-- (void)selectAll
-{
-    if ([self targetIs:kTargetText]) {
-        _toRecipients = [[_origo textRecipients] mutableCopy];
-    } else if ([self targetIs:kTargetEmail]) {
-        _toRecipients = [[_origo emailRecipients] mutableCopy];
-    }
-    
-    if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
-        for (id<OMember> organiser in [_origo organisers]) {
-            [_toRecipients removeObject:organiser];
-        }
-    }
-    
-    [self inferTitleAndSubtitle];
-    [self toggleSendButton:YES];
-    [self reloadSections];
-}
-
-
 - (void)didSelectTitleSubsegment
 {
     _selectedTitleSubsegment = _titleSubsegments.selectedSegmentIndex;
     
     self.rowAnimation = UITableViewRowAnimationFade;
     [self reloadSections];
+}
+
+
+- (void)performGroupsAction
+{
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
+    
+    if ([_origo isOrganised]) {
+        if (_selectedTitleSubsegment == kTitleSubsegmentAll) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) tag:kButtonTagGroupOrganisers];
+            [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Parents and %@", @""), [NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
+            
+            if ([_origo isJuvenile]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents", @"") tag:kButtonTagGroupParents];
+            } else {
+                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"All %@", @""), [NSLocalizedString(_origo.type, kStringPrefixMembersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupMembers];
+            }
+        } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"All parents", @"") tag:kButtonTagGroupParents];
+        }
+        
+        if ([_origo isOfType:@[kOrigoTypePreschoolClass, kOrigoTypeSchoolClass]]) {
+            if ([[OState s].currentMember isMale]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents of boys", @"") tag:kButtonTagGroupCoGenderParents];
+            } else {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents of girls", @"") tag:kButtonTagGroupCoGenderParents];
+            }
+        }
+    }
+    
+    if ([[_origo groups] count]) {
+        if (!actionSheet.numberOfButtons) {
+            if ([_origo isJuvenile]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"All parents", @"") tag:kButtonTagGroupParents];
+            } else {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Everybody", @"") tag:kButtonTagGroupAll];
+            }
+        }
+        
+        for (NSString *group in [_origo groups]) {
+            if ([_origo isJuvenile]) {
+                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Parents in %@", @""), group] tag:kButtonTagGroupCoGroupParents];
+            } else {
+                [actionSheet addButtonWithTitle:group];
+            }
+        }
+    }
+    
+    if (actionSheet.numberOfButtons == 1) {
+        actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
+    }
+    
+    if (!actionSheet.numberOfButtons) {
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
+    } else {
+        actionSheet.title = NSLocalizedString(@"Select recipients", @"");
+    }
+    
+    [actionSheet show];
 }
 
 
@@ -172,7 +203,21 @@ static NSInteger const kCellCheckedStateCc = 2;
     
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
     
-    [self toggleSendButton:[self aspectIs:kAspectGlobal]];
+    if ([self targetIs:kTargetText]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendTextButtonWithTarget:self];
+        
+        if (![self aspectIs:kAspectGlobal] && [[_origo textRecipients] count] > 1) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+        }
+    } else if ([self targetIs:kTargetEmail]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendEmailButtonWithTarget:self];
+        
+        if (![self aspectIs:kAspectGlobal] && [[_origo emailRecipients] count] > 1) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+        }
+    }
+    
+    self.navigationItem.rightBarButtonItem.enabled = NO;
     
     if ([self aspectIs:kAspectGlobal]) {
         _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"All", @""), NSLocalizedString(@"Favourites", @"")]];
@@ -436,11 +481,95 @@ static NSInteger const kCellCheckedStateCc = 2;
     }
     
     [self inferTitleAndSubtitle];
-    
-    if (![_toRecipients count] && ![_ccRecipients count]) {
-        [self toggleSendButton:NO];
+
+    if ([_toRecipients count] || [_ccRecipients count]) {
+        if ([self.navigationItem.rightBarButtonItems count] > 1) {
+            self.navigationItem.rightBarButtonItems = @[self.navigationItem.rightBarButtonItem];
+        }
     } else {
-        [self toggleSendButton:YES];
+        if ([self.navigationItem.rightBarButtonItems count] == 1) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+        }
+    }
+    
+    self.navigationItem.rightBarButtonItem.enabled = [_toRecipients count] > 0;
+}
+
+
+#pragma mark - UIActionSheetDelegate conformance
+
+- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (actionSheet.tag) {
+        case kActionSheetTagGroups:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+                NSMutableArray *recipientCandidates = nil;
+                
+                if ([self targetIs:kTargetText]) {
+                    recipientCandidates = [[_origo textRecipients] mutableCopy];
+                } else if ([self targetIs:kTargetEmail]) {
+                    recipientCandidates = [[_origo emailRecipients] mutableCopy];
+                }
+                
+                if (buttonTag == kButtonTagGroupAll) {
+                    _toRecipients = recipientCandidates;
+                } else if (buttonTag == kButtonTagGroupMembers) {
+                    _toRecipients = recipientCandidates;
+                    
+                    for (id<OMember> organiser in [_origo organisers]) {
+                        [_toRecipients removeObject:organiser];
+                    }
+                } else if (buttonTag == kButtonTagGroupOrganisers) {
+                    NSArray *organisers = [_origo organisers];
+                    
+                    for (id<OMember> recipientCandidate in recipientCandidates) {
+                        if ([organisers containsObject:recipientCandidate]) {
+                            [_toRecipients addObject:recipientCandidate];
+                        }
+                    }
+                } else if (buttonTag == kButtonTagGroupParents) {
+                    _toRecipients = recipientCandidates;
+                    
+                    for (id<OMember> organiser in [_origo organisers]) {
+                        [_toRecipients removeObject:organiser];
+                    }
+                } else if (buttonTag == kButtonTagGroupCoGenderParents) {
+                    BOOL isMale = [[OState s].currentMember isMale];
+                    
+                    for (id<OMember> member in [_origo regulars]) {
+                        if ([member isMale] == isMale) {
+                            for (id<OMember> guardian in [member guardians]) {
+                                if ([recipientCandidates containsObject:guardian]) {
+                                    [_toRecipients addObject:guardian];
+                                }
+                            }
+                        }
+                    }
+                } else if (buttonTag == kButtonTagGroupCoGroupParents) {
+                    NSArray *groups = [_origo groups];
+                    NSString *group = groups[[groups count] - (actionSheet.numberOfButtons - buttonIndex - 1)];
+                    
+                    for (id<OMember> member in [_origo membersOfGroup:group]) {
+                        for (id<OMember> guardian in [member guardians]) {
+                            if ([recipientCandidates containsObject:guardian]) {
+                                [_toRecipients addObject:guardian];
+                            }
+                        }
+                    }
+                }
+                
+                [self inferTitleAndSubtitle];
+                [self reloadSections];
+                
+                self.navigationItem.rightBarButtonItems = @[self.navigationItem.rightBarButtonItem];
+                self.navigationItem.rightBarButtonItem.enabled = YES;
+            }
+            
+            break;
+            
+        default:
+            break;
     }
 }
 
