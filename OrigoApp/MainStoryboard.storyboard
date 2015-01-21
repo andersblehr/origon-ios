@@ -64,11 +64,10 @@
             </objects>
             <point key="canvasLocation" x="642" y="678"/>
         </scene>
-        <!--Origo-->
+        <!--Navigation Controller-->
         <scene sceneID="0Xf-MH-Xiq">
             <objects>
                 <navigationController definesPresentationContext="YES" id="a3K-AG-mMk" customClass="ONavigationController" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Origo" image="10-arrows-in.png" id="Hk3-Sp-L4U"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ram-2l-Dgq">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -97,9 +96,6 @@
             <point key="canvasLocation" x="1110" y="678"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="10-arrows-in.png" width="23" height="23"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

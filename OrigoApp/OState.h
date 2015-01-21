@@ -71,6 +71,7 @@ extern NSString * const kAspectRole;
 @property (nonatomic) id aspect;
 
 @property (nonatomic, readonly) id<OMember> currentMember;
+@property (nonatomic, readonly) id<OMember> baseMember;
 @property (nonatomic, readonly) id<OOrigo> currentOrigo;
 @property (nonatomic, readonly) id<OOrigo> baseOrigo;
 

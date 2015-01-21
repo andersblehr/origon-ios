@@ -23,7 +23,6 @@
 @property (nonatomic, readonly) CTCarrier *carrier;
 
 @property (nonatomic, readonly) OMember *user;
-@property (nonatomic, readonly) OLocator *locator;
 @property (nonatomic, readonly) OReplicator *replicator;
 @property (nonatomic, readonly) OActivityIndicator *activityIndicator;
 

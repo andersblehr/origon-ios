@@ -420,17 +420,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
             if ([self respondsToSelector:@selector(instantiate)]) {
                 instance = [self instantiate];
             } else {
-                instance = [_entityClass instanceWithId:self.entityId];
-                
-                for (NSString *key in _propertyKeys) {
-                    if (![key isEqualToString:kPropertyKeyEntityId]) {
-                        id value = [self valueForKey:key];
-                        
-                        if (value) {
-                            [instance setValue:value forKey:key];
-                        }
-                    }
-                }
+                instance = [_entityClass instanceWithId:self.entityId proxy:self];
             }
             
             [self useInstance:instance];

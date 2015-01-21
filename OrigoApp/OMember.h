@@ -2,8 +2,8 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 09.04.14.
-//  Copyright (c) 2014 Rhelba Source. All rights reserved.
+//  Created by Anders Blehr on 21/01/15.
+//  Copyright (c) 2015 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -25,6 +25,7 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * photo;
+@property (nonatomic, retain) NSString * createdIn;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) OSettings *settings;

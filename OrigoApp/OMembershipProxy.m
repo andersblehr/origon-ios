@@ -17,7 +17,7 @@
     NSString *meta = [origo isOfType:kOrigoTypeResidence] ? kMembershipTypeResidency : kMembershipTypeParticipancy;
     
     OMembershipProxy *proxy = [self proxyForEntityOfClass:[OMembership class] meta:meta];
-    proxy.entityId = [NSString stringWithFormat:@"%@@%@", member.entityId, origo.entityId];
+    proxy.entityId = [OCrypto UUIDByOverlayingUUID:member.entityId withUUID:origo.entityId];
     proxy.member = member;
     proxy.origo = origo;
     

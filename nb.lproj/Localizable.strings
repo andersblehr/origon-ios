@@ -17,6 +17,7 @@
 "[label] address" = "Adresse";
 "[label] club" = "Klubb";
 "[label] createdBy" = "Opprettet av";
+"[label] createdIn" = "Registrert i";
 "[label] dateOfBirth" = "Alder";
 "[label] descriptionText" = "Beskrivelse";
 "[label] email"  = "Epost";
@@ -314,6 +315,7 @@
 "%@ [friend of] %@" = "%@ av %@";
 "%@ [guardian of] %@" = "%@ til %@";
 "%@ in %@" = "%@ i %@";
+"%@'s friends" = "%@ sine venner";
 
 // Separators
 " and " = " og ";
@@ -357,7 +359,6 @@
 
 // Labels
 "Favourites and others" = "Favoritter og andre";
-"%@'s friends" = "%@ sine venner";
 
 // Buttons
 "Yourself" = "Deg selv";

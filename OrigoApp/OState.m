@@ -64,14 +64,6 @@ NSString * const kAspectRole = @"role";
 static OState *_activeState = nil;
 
 
-@interface OState () {
-@private
-    id<OMember> _pivotMember;
-}
-
-@end
-
-
 @implementation OState
 
 #pragma mark - Instantiation & initialisation
@@ -90,7 +82,7 @@ static OState *_activeState = nil;
                 _currentMember = _activeState.currentMember;
                 _currentOrigo = _activeState.currentOrigo;
                 _baseOrigo = _activeState.baseOrigo;
-                _pivotMember = _activeState->_pivotMember;
+                _baseMember = _activeState->_baseMember;
             }
         }
         
@@ -261,8 +253,8 @@ static OState *_activeState = nil;
     id<OMember> peerPivot = nil;
     
     if ([self aspectIs:kAspectJuvenile] && ![self targetIs:kTargetElder]) {
-        if ([_currentOrigo isJuvenile] && ![_pivotMember isJuvenile]) {
-            NSArray *pivotWards = [_pivotMember wards];
+        if ([_currentOrigo isJuvenile] && ![_baseMember isJuvenile]) {
+            NSArray *pivotWards = [_baseMember wards];
             
             for (id<OMember> pivotWard in pivotWards) {
                 if ([_currentOrigo hasMember:pivotWard]) {
@@ -274,7 +266,7 @@ static OState *_activeState = nil;
                 peerPivot = pivotWards[0];
             }
         } else {
-            peerPivot = _pivotMember;
+            peerPivot = _baseMember;
         }
     } else {
         peerPivot = [OMeta m].user;
@@ -347,7 +339,7 @@ static OState *_activeState = nil;
             
             if ([_currentMember isCommitted]) {
                 if ([_currentMember isUser] || [_currentMember isWardOfUser]) {
-                    _pivotMember = _currentMember;
+                    _baseMember = _currentMember;
                 }
                 
                 id<OMembership> membership = [_currentOrigo membershipForMember:_currentMember];

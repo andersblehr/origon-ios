@@ -33,7 +33,7 @@
 @protocol OTableViewController;
 @class OEntityProxy, OMemberProxy, OMembershipProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
-@class OActionSheet, OActivityIndicator, OAlert, OBUtton, OConnection, OCrypto, ODefaults, OInputCellBlueprint, OInputCellConstrainer, OLabel, OLanguage, OLocator, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OTableView, OTableViewCell, OTableViewController, OTextField, OTextView;
+@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OInputCellBlueprint, OInputCellConstrainer, OLabel, OLanguage, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OTableView, OTableViewCell, OTableViewController, OTextField, OTextView;
 
 #import "OConnectionDelegate.h"
 #import "OInputCellDelegate.h"
@@ -79,7 +79,6 @@ typedef UIView<OTextInput> OInputField;
 #import "OActionSheet.h"
 #import "OActivityIndicator.h"
 #import "OAlert.h"
-#import "OButton.h"
 #import "OConnection.h"
 #import "OConstants.h"
 #import "OCrypto.h"
@@ -88,7 +87,6 @@ typedef UIView<OTextInput> OInputField;
 #import "OInputCellConstrainer.h"
 #import "OLabel.h"
 #import "OLanguage.h"
-#import "OLocator.h"
 #import "OLogging.h"
 #import "OMemberExaminer.h"
 #import "OMeta.h"

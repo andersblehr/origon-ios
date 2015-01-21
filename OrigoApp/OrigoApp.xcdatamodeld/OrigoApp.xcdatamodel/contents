@@ -11,6 +11,7 @@
     </entity>
     <entity name="OMember" representedClassName="OMember" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="createdIn" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="fatherId" optional="YES" attributeType="String" syncable="YES"/>
@@ -81,7 +82,7 @@
     </entity>
     <elements>
         <element name="ODevice" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="255"/>
+        <element name="OMember" positionX="0" positionY="0" width="128" height="270"/>
         <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
         <element name="OOrigo" positionX="0" positionY="0" width="128" height="180"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="195"/>

@@ -75,7 +75,7 @@ NSString * const kOrigoTypeTeam = @"team";
                 [membership promote];
             }
         } else {
-            membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self entityId:[NSString stringWithFormat:@"%@@%@", member.entityId, self.entityId]];
+            membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self entityId:[OCrypto UUIDByOverlayingUUID:member.entityId withUUID:self.entityId]];
             membership.member = member;
             
             [membership alignWithOrigoIsAssociate:isAssociate];
@@ -135,9 +135,9 @@ NSString * const kOrigoTypeTeam = @"team";
 
 #pragma mark - Instantiation
 
-+ (instancetype)instanceWithId:(NSString *)entityId
++ (instancetype)instanceWithId:(NSString *)entityId proxy:(id)proxy
 {
-    OOrigo *instance = [super instanceWithId:entityId];
+    OOrigo *instance = [super instanceWithId:entityId proxy:proxy];
     instance.origoId = entityId;
     
     return instance;
@@ -146,7 +146,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 + (instancetype)instanceWithId:(NSString *)entityId type:(NSString *)type
 {
-    OOrigo *instance = [self instanceWithId:entityId];
+    OOrigo *instance = [self instanceWithId:entityId proxy:nil];
     instance.type = type;
     
     if ([instance isOfType:kOrigoTypeResidence]) {
