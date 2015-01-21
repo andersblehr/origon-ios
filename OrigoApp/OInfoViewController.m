@@ -16,6 +16,7 @@ static NSInteger const kSectionKeyAdmins = 2;
 @private
     id _entity;
     id<OMember> _createdBy;
+    id<OOrigo> _createdIn;
     id<OMember> _modifiedBy;
     
     BOOL _userCanEdit;
@@ -49,6 +50,14 @@ static NSInteger const kSectionKeyAdmins = 2;
     }
     
     [propertyKeys addObject:kPropertyKeyCreatedBy];
+    
+    if ([_entity conformsToProtocol:@protocol(OMember)] && [self aspectIs:kAspectHousehold]) {
+        id<OMember> member = _entity;
+        
+        if ([member.createdIn hasValue]) {
+            [propertyKeys addObject:kPropertyKeyCreatedIn];
+        }
+    }
     
     if ([_entity modifiedBy]) {
         [propertyKeys addObject:kPropertyKeyModifiedBy];
@@ -184,6 +193,29 @@ static NSInteger const kSectionKeyAdmins = 2;
                 if ([member isManagedByUser]) {
                     cell.destinationId = kIdentifierValuePicker;
                 }
+            } else if ([propertyKey isEqualToString:kPropertyKeyCreatedIn]) {
+                NSArray *components = [member.createdIn componentsSeparatedByString:kSeparatorList];
+                
+                if ([components[0] isEqualToString:kOrigoTypeList]) {
+                    NSInteger numberOfComponents = [components count];
+                    
+                    if (numberOfComponents == 1) {
+                        cell.detailTextLabel.text = NSLocalizedString(kOrigoTypeList, kStringPrefixTitle);
+                    } else if (numberOfComponents == 2) {
+                        cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), components[1]];
+                    } else if (numberOfComponents == 3) {
+                        cell.detailTextLabel.text = [NSString stringWithFormat:[NSLocalizedString(@"%@'s friends", @"") stringByAppendingString:@" (%@)"], components[1], [OLanguage nouns][components[2]][singularIndefinite]];
+                    }
+                } else {
+                    _createdIn = [[OMeta m].context entityWithId:components[1]];
+                    
+                    if (_createdIn) {
+                        cell.detailTextLabel.text = [_createdIn displayName];
+                        cell.destinationId = kIdentifierOrigo;
+                    } else {
+                        cell.detailTextLabel.text = components[0];
+                    }
+                }
             } else if ([propertyKey isEqualToString:kPropertyKeyActiveSince]) {
                 cell.textLabel.text = NSLocalizedString(@"Active", @"");
                 
@@ -238,6 +270,8 @@ static NSInteger const kSectionKeyAdmins = 2;
             target = kTargetGender;
         } else if ([target isEqualToString:kPropertyKeyCreatedBy]) {
             target = _createdBy;
+        } else if ([target isEqualToString:kPropertyKeyCreatedIn]) {
+            target = _createdIn;
         } else if ([target isEqualToString:kPropertyKeyModifiedBy]) {
             target = _modifiedBy;
         }

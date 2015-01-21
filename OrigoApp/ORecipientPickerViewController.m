@@ -559,6 +559,8 @@ static NSInteger const kButtonTagGroupCoGroupParents = 5;
                     }
                 }
                 
+                _toRecipients = [[_toRecipients sortedArrayUsingSelector:@selector(compare:)] mutableCopy];
+                
                 [self inferTitleAndSubtitle];
                 [self reloadSections];
                 

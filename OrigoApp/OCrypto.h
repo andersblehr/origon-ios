@@ -18,6 +18,7 @@
 + (NSString *)computeSHA1HashForString:(NSString *)string;
 
 + (NSString *)generateUUID;
++ (NSString *)UUIDByOverlayingUUID:(NSString *)UUID1 withUUID:(NSString *)UUID2;
 + (NSString *)generateActivationCode;
 
 @end

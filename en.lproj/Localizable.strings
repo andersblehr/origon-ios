@@ -17,6 +17,7 @@
 "[label] address" = "Address";
 "[label] club" = "Club";
 "[label] createdBy" = "Created by";
+"[label] createdIn" = "Created in";
 "[label] dateOfBirth" = "Age";
 "[label] descriptionText" = "Description";
 "[label] email" = "Email";
@@ -314,6 +315,7 @@
 "%@ [friend of] %@" = "%@ of %@";
 "%@ [guardian of] %@" = "%@ of %@";
 "%@ in %@" = "%@ in %@";
+"%@'s friends" = "%@'s friends";
 
 // Separators
 " and " = " and ";
@@ -358,7 +360,6 @@
 
 // Labels
 "Favourites and others" = "Favourites and others";
-"%@'s friends" = "%@'s friends";
 
 // Buttons
 "Yourself" = "Yourself";

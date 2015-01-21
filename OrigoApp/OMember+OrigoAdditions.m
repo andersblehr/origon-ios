@@ -13,6 +13,12 @@
 
 #pragma mark - Auxiliary methods
 
+- (NSString *)stashId
+{
+    return [NSString stringWithFormat:@"~%@", self.entityId];
+}
+
+
 - (NSArray *)visibleMembersFromMembers:(NSArray *)members
 {
     id visibleMembers = [NSMutableArray array];
@@ -69,12 +75,6 @@
         for (OMember *member in [origo members]) {
             if ([member isJuvenile] == [self isJuvenile]) {
                 [allPeers addObject:member];
-            
-//                for (OMember *housemate in [member allHousemates]) {
-//                    if ([housemate isJuvenile] == [self isJuvenile]) {
-//                        [allPeers addObject:housemate];
-//                    }
-//                }
             }
         }
     }
@@ -368,6 +368,13 @@
         if (!stash && [membership.origo isOfType:kOrigoTypeStash]) {
             stash = membership.origo;
         }
+    }
+    
+    if (!stash) {
+        stash = [OOrigo instanceWithId:[self stashId] type:kOrigoTypeStash];
+        
+        self.origoId = stash.entityId;
+        [stash addMember:self];
     }
     
     return stash;
@@ -1081,12 +1088,27 @@
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
-+ (instancetype)instanceWithId:(NSString *)entityId
++ (instancetype)instanceWithId:(NSString *)entityId proxy:(id)proxy
 {
-    OOrigo *stash = [OOrigo instanceWithId:[NSString stringWithFormat:@"~%@", entityId] type:kOrigoTypeStash];
-    OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:stash entityId:entityId];
+    OMember *instance = [super instanceWithId:entityId proxy:proxy];
+    [instance stash];
     
-    [stash addMember:instance];
+    OOrigo *baseOrigo = [OState s].baseOrigo;
+    OMember *baseMember = [OState s].baseMember;
+    
+    if ([baseOrigo isOfType:kOrigoTypeList]) {
+        instance.createdIn = kOrigoTypeList;
+        
+        if ([baseMember isJuvenile]) {
+            instance.createdIn = [instance.createdIn stringByAppendingString:baseMember.givenName separator:kSeparatorList];
+            
+            if (![instance isJuvenile]) {
+                instance.createdIn = [instance.createdIn stringByAppendingString:_guardian_ separator:kSeparatorList];
+            }
+        }
+    } else {
+        instance.createdIn = [baseOrigo.name stringByAppendingString:baseOrigo.entityId separator:kSeparatorList];
+    }
     
     return instance;
 }

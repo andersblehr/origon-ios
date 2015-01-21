@@ -36,6 +36,7 @@ NSString * const kPropertyKeyActiveSince = @"activeSince";
 NSString * const kPropertyKeyAddress = @"address";
 NSString * const kPropertyKeyCountryCode = @"countryCode";
 NSString * const kPropertyKeyCreatedBy = @"createdBy";
+NSString * const kPropertyKeyCreatedIn = @"createdIn";
 NSString * const kPropertyKeyDateCreated = @"dateCreated";
 NSString * const kPropertyKeyDateExpires = @"dateExpires";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";

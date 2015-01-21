@@ -151,6 +151,34 @@ static NSInteger const kActivationCodeLength = 6;
 }
 
 
++ (NSString *)UUIDByOverlayingUUID:(NSString *)UUID1 withUUID:(NSString *)UUID2
+{
+    NSMutableString *overlaidUUID = [NSMutableString string];
+    NSInteger UUIDLength = [UUID1 length];
+    
+    const char *UUID1CString = [UUID1 cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *UUID2CString = [UUID2 cStringUsingEncoding:NSUTF8StringEncoding];
+    
+    for (NSInteger i = 0; i < UUIDLength; i++) {
+        if (*(UUID1CString + i) == '-') {
+            [overlaidUUID appendString:@"-"];
+        } else {
+            char char1[2] = "\0\0";
+            char char2[2] = "\0\0";
+            
+            memcpy(&char1, UUID1CString + i, 1);
+            memcpy(&char2, UUID2CString + i, 1);
+            
+            NSString *sumAsHex = [NSString stringWithFormat:@"%lx", strtol(char1, NULL, 16) + strtol(char2, NULL, 16)];
+            
+            [overlaidUUID appendString:[sumAsHex substringFromIndex:[sumAsHex length] - 1]];
+        }
+    }
+    
+    return overlaidUUID;
+}
+
+
 + (NSString *)generateActivationCode
 {
     return [[self generateUUID] substringToIndex:kActivationCodeLength];

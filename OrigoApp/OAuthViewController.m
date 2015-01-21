@@ -37,8 +37,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 @private
     OInputField *_emailField;
     OInputField *_passwordField;
-    UIButton *_signUpButton;
-    
     OInputField *_activationCodeField;
     OInputField *_repeatPasswordField;
     
@@ -89,8 +87,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([OMeta m].userEmail) {
             _emailField.value = [OMeta m].userEmail;
             [_passwordField becomeFirstResponder];
-            
-            [self emailDidChange];
         } else {
             _emailField.value = [NSString string];
             [_emailField becomeFirstResponder];
@@ -198,12 +194,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 
 #pragma mark - Selector implementations
-
-- (void)emailDidChange
-{
-    _signUpButton.enabled = ![_emailField.value isEqualToString:[OMeta m].userEmail];
-}
-
 
 - (void)performSignUpAction
 {
@@ -357,9 +347,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     if ([self actionIs:kActionSignIn]) {
         _emailField = [inputCell inputFieldForKey:kExternalKeyAuthEmail];
         _passwordField = [inputCell inputFieldForKey:kExternalKeyPassword];
-        _signUpButton = [inputCell buttonForKey:kButtonKeySignUp];
-        
-        [(UITextField *)_emailField addTarget:self action:@selector(emailDidChange) forControlEvents:UIControlEventEditingChanged];
     } else if ([self actionIs:kActionActivate]) {
         _activationCodeField = [inputCell inputFieldForKey:kExternalKeyActivationCode];
         _repeatPasswordField = [inputCell inputFieldForKey:kExternalKeyRepeatPassword];
@@ -435,7 +422,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)processInput
 {
     if ([self actionIs:kActionSignIn]) {
-        if (!_signInAction && !_signUpButton.enabled) {
+        if (!_signInAction && [_emailField.value isEqualToString:[OMeta m].userEmail]) {
             _signInAction = kSignInActionSignIn;
         }
         

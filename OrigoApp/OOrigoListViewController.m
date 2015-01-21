@@ -38,10 +38,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 #pragma mark - Auxiliary methods
 
-- (void)assembleOrigoTypes
+- (void)presentAddOrigoSheet
 {
     _origoTypes = [NSMutableArray array];
-    
     [_origoTypes addObject:kOrigoTypeList];
     [_origoTypes addObject:kOrigoTypeSimple];
     
@@ -59,12 +58,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         [_origoTypes addObject:kOrigoTypeStudyGroup];
         [_origoTypes addObject:kOrigoTypeAlumni];
     }
-}
-
-
-- (void)presentAddOrigoSheet
-{
-    [self assembleOrigoTypes];
     
     NSString *prompt = NSLocalizedString(@"What sort of list do you want to create", @"");
     

@@ -106,8 +106,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addButtonForKey:(NSString *)key
 {
-    OButton *button = [[OButton alloc] initWithFrame:CGRectZero];
-    button.enabled = YES;
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
+    button.backgroundColor = [UIColor globalTintColour];
     button.titleLabel.font = [UIFont detailFont];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
     [button setTitle:NSLocalizedString(key, kStringPrefixTitle) forState:UIControlStateNormal];
@@ -228,12 +228,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (OInputField *)inputFieldForKey:(NSString *)key
 {
     return _views[[key stringByAppendingString:kViewKeySuffixInputField]];
-}
-
-
-- (OButton *)buttonForKey:(NSString *)key
-{
-    return _views[[key stringByAppendingString:kViewKeySuffixButton]];
 }
 
 

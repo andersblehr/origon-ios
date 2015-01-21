@@ -17,7 +17,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 @private
     NSBundle *_localisedStringsBundle;
     
-    OLocator *_locator;
     OReplicator *_replicator;
     OActivityIndicator *_activityIndicator;
     
@@ -67,7 +66,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     if (_user) {
         [self.replicator loadUserReplicationState];
     } else {
-        _user = [OMember instanceWithId:_userId];
+        _user = [OMember instanceWithId:_userId proxy:nil];
         _user.email = _userEmail;
     }
     
@@ -83,7 +82,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     
     _user = nil;
     _userId = nil;
-    _locator = nil;
     _deviceId = nil;
     _authToken = nil;
     _authTokenExpiryDate = nil;
@@ -345,16 +343,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     }
     
     return _authToken;
-}
-
-
-- (OLocator *)locator
-{
-    if (!_locator) {
-        _locator = [[OLocator alloc] init];
-    }
-    
-    return _locator;
 }
 
 

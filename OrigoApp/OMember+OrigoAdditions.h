@@ -19,6 +19,7 @@
 @property (nonatomic) NSNumber *isMinor;
 @property (nonatomic) NSData *photo;
 @property (nonatomic) NSDate *activeSince;
+@property (nonatomic) NSString *createdIn;
 @property (nonatomic) NSString *fatherId;
 @property (nonatomic) NSString *motherId;
 @property (nonatomic) NSString *passwordHash;

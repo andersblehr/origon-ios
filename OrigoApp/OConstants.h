@@ -36,6 +36,7 @@ extern NSString * const kPropertyKeyActiveSince;
 extern NSString * const kPropertyKeyAddress;
 extern NSString * const kPropertyKeyCountryCode;
 extern NSString * const kPropertyKeyCreatedBy;
+extern NSString * const kPropertyKeyCreatedIn;
 extern NSString * const kPropertyKeyDateCreated;
 extern NSString * const kPropertyKeyDateExpires;
 extern NSString * const kPropertyKeyDateOfBirth;

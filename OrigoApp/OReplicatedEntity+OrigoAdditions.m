@@ -48,9 +48,23 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 #pragma mark - Instantiation
 
-+ (instancetype)instanceWithId:(NSString *)entityId;
++ (instancetype)instanceWithId:(NSString *)entityId proxy:(id)proxy
 {
-    return [[OMeta m].context insertEntityOfClass:self entityId:entityId];
+    id instance = [[OMeta m].context insertEntityOfClass:self entityId:entityId];
+    
+    if (proxy) {
+        for (NSString *key in [self propertyKeys]) {
+            if (![key isEqualToString:kPropertyKeyEntityId]) {
+                id value = [proxy valueForKey:key];
+                
+                if (value) {
+                    [instance setValue:value forKey:key];
+                }
+            }
+        }
+    }
+
+    return instance;
 }
 
 

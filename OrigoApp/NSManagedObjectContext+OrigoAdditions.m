@@ -94,10 +94,6 @@
     entity.dateCreated = [NSDate date];
     entity.createdBy = [OMeta m].userEmail;
 
-    if (class == [OOrigo class]) {
-        entity.origoId = entityId;
-    }
-    
     NSString *expires = [entity expiresInTimeframe];
     
     if (expires) {

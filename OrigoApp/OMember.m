@@ -2,8 +2,8 @@
 //  OMember.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 09.04.14.
-//  Copyright (c) 2014 Rhelba Source. All rights reserved.
+//  Created by Anders Blehr on 21/01/15.
+//  Copyright (c) 2015 Rhelba Source. All rights reserved.
 //
 
 #import "OMember.h"
@@ -25,6 +25,7 @@
 @dynamic name;
 @dynamic passwordHash;
 @dynamic photo;
+@dynamic createdIn;
 @dynamic devices;
 @dynamic memberships;
 @dynamic settings;
