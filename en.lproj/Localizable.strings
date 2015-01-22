@@ -17,7 +17,7 @@
 "[label] address" = "Address";
 "[label] club" = "Club";
 "[label] createdBy" = "Created by";
-"[label] createdIn" = "Created in";
+"[label] createdIn" = "First registered in";
 "[label] dateOfBirth" = "Age";
 "[label] descriptionText" = "Description";
 "[label] email" = "Email";
@@ -360,9 +360,11 @@
 
 // Labels
 "Favourites and others" = "Favourites and others";
+"New!" = "New!";
 
 // Buttons
 "Yourself" = "Yourself";
+"Move out" = "Move out";
 "Hide" = "Hide";
 
 // Alerts
@@ -571,10 +573,10 @@
 "About this household" = "About this household";
 
 // Footers
-"Created: %@." = "Created: %@.";
-"Registered: %@." = "Registered: %@.";
-"Last modified: %@." = "Last modified: %@.";
+"Created: %@" = "Created: %@";
+"Registered: %@" = "Registered: %@";
 "Active since: %@" = "Active since: %@";
+"Last modified: %@" = "Last modified: %@";
 
 // Buttons
 "About" = "About";
@@ -598,9 +600,6 @@
 
 // Buttons
 "Current location" = "Current location";
-
-// Labels
-"Starting point" = "Starting point";
 
 // Alerts
 "Unknown address" = "Unknown address";

@@ -20,13 +20,14 @@ NSInteger const kHTTPStatusInternalServerError = 500;
 
 NSString * const kHTTPHeaderLocation = @"Location";
 
+static BOOL useDevServer = YES;
+
+static NSString * const kOrigoDevServer = @"http://localhost:8888";
+static NSString * const kOrigoProdServer = @"https://origoapp.appspot.com";
+
 static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
 static NSString * const kHTTPMethodDELETE = @"DELETE";
-
-static NSString * const kOrigoDevServer = @"http://localhost:8888";
-//static NSString * const kOrigoDevServer = @"https://origoapp.appspot.com";
-static NSString * const kOrigoProdServer = @"https://origoapp.appspot.com";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
@@ -85,7 +86,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
-        NSString *serverURL = [OMeta deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
+        NSString *serverURL = useDevServer ? kOrigoDevServer : kOrigoProdServer;
         
         _URLRequest.HTTPMethod = HTTPMethod;
         _URLRequest.URL = [[[[NSURL URLWithString:serverURL] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];
@@ -259,6 +260,14 @@ static NSString * const kURLParameterIdentifier = @"id";
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     
     [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookup entities:nil];
+}
+
+
+#pragma mark - Meta information
+
++ (BOOL)isUsingDevServer
+{
+    return useDevServer;
 }
 
 

@@ -43,7 +43,10 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 - (void)overlayDirections
 {
     _mapView.showsUserLocation = YES;
-    [_mapView addAnnotation:_startAnnotation];
+    
+    if (_startAnnotation) {
+        [_mapView addAnnotation:_startAnnotation];
+    }
     
     MKDirectionsRequest *request = [[MKDirectionsRequest alloc] init];
     [request setSource:_startItem];
@@ -268,11 +271,10 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
                 
                 if (buttonTag == kButtonTagStartingPointCurrentLocation) {
                     _startItem = [MKMapItem mapItemForCurrentLocation];
-                    _startAnnotation = [self pointAnnotationWithCoordinate:_mapView.userLocation.location.coordinate title:NSLocalizedString(@"Starting point", @"")];
                     
                     [self overlayDirections];
                 } else {
-                    id<OOrigo> address = [[OMeta m].user addresses][0];
+                    id<OOrigo> address = [[OMeta m].user addresses][buttonIndex];
                     
                     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
                     [geocoder geocodeAddressString:address.address completionHandler:^(NSArray *placemarks, NSError *error) {

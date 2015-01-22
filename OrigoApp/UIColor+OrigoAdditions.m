@@ -128,6 +128,12 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 }
 
 
++ (instancetype)notificationColour
+{
+    return [self supernovaColour];
+}
+
+
 + (instancetype)titleBackgroundColour
 {
     return [self globalTintColour];
@@ -157,12 +163,6 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 + (instancetype)tonedDownTextColour
 {
     return [self lightGrayColor];
-}
-
-
-+ (instancetype)notificationTextColour
-{
-    return [self globalTintColour];
 }
 
 

@@ -30,13 +30,13 @@
 + (instancetype)alertViewBackgroundColour;
 
 + (instancetype)globalTintColour;
++ (instancetype)notificationColour;
 + (instancetype)titleBackgroundColour;
 + (instancetype)titlePlaceholderColour;
 + (instancetype)imagePlaceholderBackgroundColour;
 
 + (instancetype)textColour;
 + (instancetype)tonedDownTextColour;
-+ (instancetype)notificationTextColour;
 + (instancetype)placeholderTextColour;
 + (instancetype)headerTextColour;
 + (instancetype)footerTextColour;

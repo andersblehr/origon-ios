@@ -17,7 +17,7 @@
 "[label] address" = "Adresse";
 "[label] club" = "Klubb";
 "[label] createdBy" = "Opprettet av";
-"[label] createdIn" = "Registrert i";
+"[label] createdIn" = "Først registrert i";
 "[label] dateOfBirth" = "Alder";
 "[label] descriptionText" = "Beskrivelse";
 "[label] email"  = "Epost";
@@ -47,7 +47,7 @@
 "[placeholder] club" = "Klubbens navn";
 "[placeholder] dateOfBirth" = "Fødselsdato";
 "[placeholder] descriptionText" = "En valgfri beskrivelse";
-"[placeholder] email" = "Epost-adresse";
+"[placeholder] email" = "Epostadresse";
 "[placeholder] fullName" = "Fullt navn";
 "[placeholder] givenName" = "Navn";
 "[placeholder] mobilePhone" = "Mobilnummer";
@@ -130,7 +130,7 @@
 // Member titles
 "[member] alumni" = "Alumn";
 "[member] community" = "Medlem";
-"[member] list" = "Venn/venninne";
+"[member] list" = "Venn(inne)";
 "[member] organisation" = "Medlem";
 "[member] preschoolClass" = "Barn";
 "[member] residence" = "Beboer";
@@ -359,9 +359,11 @@
 
 // Labels
 "Favourites and others" = "Favoritter og andre";
+"New!" = "Ny!";
 
 // Buttons
 "Yourself" = "Deg selv";
+"Move out" = "Flytt ut";
 "Hide" = "Skjul";
 
 // Alerts
@@ -396,7 +398,7 @@
 
 // Buttons
 "Register contact" = "Registrer kontakt";
-"Register friend" = "Registrer venn/venninne";
+"Register friend" = "Registrer venn(inne)";
 "Keep" = "Behold";
 "Decline" = "Avvis";
 "Hide" = "Skjul";
@@ -426,7 +428,7 @@
 // View title
 "About you" = "Om deg";
 "New contact" = "Ny kontakt";
-"New friend" = "Ny venn/venninne";
+"New friend" = "Ny venn(inne)";
 
 // Headers
 "Responsibility in %@" = "Ansvar i %@";
@@ -570,10 +572,10 @@
 "About this household" = "Om denne husstanden";
 
 // Footers
-"Created: %@." = "Opprettet: %@.";
-"Registered: %@." = "Registrert: %@.";
-"Last modified: %@." = "Sist endret: %@.";
+"Created: %@" = "Opprettet: %@";
+"Registered: %@" = "Registrert: %@";
 "Active since: %@" = "Aktiv siden: %@";
+"Last modified: %@" = "Sist endret: %@";
 
 // Buttons
 "About" = "Om";
@@ -597,9 +599,6 @@
 
 // Buttons
 "Current location" = "Nåværende plassering";
-
-// Labels
-"Starting point" = "Startpunkt";
 
 // Alerts
 "Unknown address" = "Ukjent adresse";

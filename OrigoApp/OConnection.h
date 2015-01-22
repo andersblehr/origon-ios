@@ -34,4 +34,6 @@ extern NSString * const kHTTPHeaderLocation;
 - (void)replicateEntities:(NSArray *)entities;
 - (void)lookupMemberWithIdentifier:(NSString *)identifier;
 
++ (BOOL)isUsingDevServer;
+
 @end

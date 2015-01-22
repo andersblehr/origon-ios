@@ -35,6 +35,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic, assign) BOOL partiallyChecked;
 @property (nonatomic, assign) NSInteger checkedState;
 @property (nonatomic) NSArray *checkedStateAccessoryViews;
+@property (nonatomic) NSString *notificationText;
 
 @property (nonatomic, weak) id<OInputCellDelegate> inputCellDelegate;
 

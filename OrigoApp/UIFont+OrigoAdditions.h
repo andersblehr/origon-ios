@@ -20,7 +20,7 @@
 + (instancetype)boldDetailFont;
 + (instancetype)listTextFont;
 + (instancetype)listDetailTextFont;
-+ (instancetype)alternateListTextFont;
++ (instancetype)notificationFont;
 
 + (CGFloat)titleFieldHeight;
 + (CGFloat)detailFieldHeight;

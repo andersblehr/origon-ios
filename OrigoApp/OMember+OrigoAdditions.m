@@ -775,8 +775,16 @@
     
     NSMutableSet *knownOrigos = [NSMutableSet setWithArray:[[OMeta m].user origosIncludeResidences:YES]];
     
+    for (OMembership *listing in [[OMeta m].user listings]) {
+        [knownOrigos addObject:listing.origo];
+    }
+    
     for (OMember *ward in [[OMeta m].user wards]) {
         [knownOrigos unionSet:[NSSet setWithArray:[ward origosIncludeResidences:YES]]];
+        
+        for (OMembership *listing in [ward listings]) {
+            [knownOrigos addObject:listing.origo];
+        }
     }
     
     for (OOrigo *origo in knownOrigos) {
@@ -1099,15 +1107,11 @@
     if ([baseOrigo isOfType:kOrigoTypeList]) {
         instance.createdIn = kOrigoTypeList;
         
-        if ([baseMember isJuvenile]) {
+        if ([baseMember isJuvenile] && [instance isJuvenile]) {
             instance.createdIn = [instance.createdIn stringByAppendingString:baseMember.givenName separator:kSeparatorList];
-            
-            if (![instance isJuvenile]) {
-                instance.createdIn = [instance.createdIn stringByAppendingString:_guardian_ separator:kSeparatorList];
-            }
         }
     } else {
-        instance.createdIn = [baseOrigo.name stringByAppendingString:baseOrigo.entityId separator:kSeparatorList];
+        instance.createdIn = [baseOrigo.entityId stringByAppendingString:[baseOrigo displayName] separator:kSeparatorList];
     }
     
     return instance;
