@@ -20,7 +20,7 @@ static CGFloat const kTitleFontSize = 17.f;
 static CGFloat const kDetailFontSize = 14.f;
 static CGFloat const kListTextFontSize = 18.f;
 static CGFloat const kListDetailFontSize = 12.f;
-static CGFloat const kAlternateListFontSize = 17.f;
+static CGFloat const kNotificationFontSize = 13.f;
 
 static CGFloat const kLineToFieldHeightFactor = 1.34f;
 static CGFloat const kLineToHeaderHeightFactor = 1.5f;
@@ -90,9 +90,9 @@ static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 }
 
 
-+ (instancetype)alternateListTextFont
++ (instancetype)notificationFont
 {
-    return [self fontWithName:kGlobalFontName size:kAlternateListFontSize];
+    return [self italicSystemFontOfSize:kNotificationFontSize];
 }
 
 

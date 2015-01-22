@@ -49,8 +49,6 @@ static NSInteger const kSectionKeyAdmins = 2;
         }
     }
     
-    [propertyKeys addObject:kPropertyKeyCreatedBy];
-    
     if ([_entity conformsToProtocol:@protocol(OMember)] && [self aspectIs:kAspectHousehold]) {
         id<OMember> member = _entity;
         
@@ -58,6 +56,8 @@ static NSInteger const kSectionKeyAdmins = 2;
             [propertyKeys addObject:kPropertyKeyCreatedIn];
         }
     }
+    
+    [propertyKeys addObject:kPropertyKeyCreatedBy];
     
     if ([_entity modifiedBy]) {
         [propertyKeys addObject:kPropertyKeyModifiedBy];
@@ -73,7 +73,7 @@ static NSInteger const kSectionKeyAdmins = 2;
 
 - (void)listCell:(OTableViewCell *)cell loadDetailsForInstigator:(id<OMember>)instigator
 {
-    cell.detailTextLabel.text = [instigator shortName];
+    cell.detailTextLabel.text = instigator.name;
     
     if ([instigator isUser] || [[_entity entityId] isEqualToString:instigator.entityId]) {
         cell.selectable = NO;
@@ -203,17 +203,15 @@ static NSInteger const kSectionKeyAdmins = 2;
                         cell.detailTextLabel.text = NSLocalizedString(kOrigoTypeList, kStringPrefixTitle);
                     } else if (numberOfComponents == 2) {
                         cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), components[1]];
-                    } else if (numberOfComponents == 3) {
-                        cell.detailTextLabel.text = [NSString stringWithFormat:[NSLocalizedString(@"%@'s friends", @"") stringByAppendingString:@" (%@)"], components[1], [OLanguage nouns][components[2]][singularIndefinite]];
                     }
                 } else {
-                    _createdIn = [[OMeta m].context entityWithId:components[1]];
+                    _createdIn = [[OMeta m].context entityWithId:components[0]];
                     
                     if (_createdIn) {
                         cell.detailTextLabel.text = [_createdIn displayName];
                         cell.destinationId = kIdentifierOrigo;
                     } else {
-                        cell.detailTextLabel.text = components[0];
+                        cell.detailTextLabel.text = components[1];
                     }
                 }
             } else if ([propertyKey isEqualToString:kPropertyKeyActiveSince]) {
@@ -331,19 +329,19 @@ static NSInteger const kSectionKeyAdmins = 2;
     
     if (sectionKey == kSectionKeyGeneral) {
         if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-            footerText = [NSString stringWithFormat:NSLocalizedString(@"Created: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
+            footerText = [NSString stringWithFormat:NSLocalizedString(@"Created: %@", @""), [[_entity dateCreated] localisedDateTimeString]];
         } else {
-            footerText = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
-        }
-        
-        if ([_entity modifiedBy]) {
-            footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
+            footerText = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@", @""), [[_entity dateCreated] localisedDateTimeString]];
         }
         
         if ([_entity conformsToProtocol:@protocol(OMember)]) {
             if ([_entity isActive] && ![_entity isOutOfBounds]) {
                 footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active since: %@", @""), [[_entity activeSince] localisedDateTimeString]] separator:kSeparatorNewline];
             }
+        }
+        
+        if ([_entity modifiedBy]) {
+            footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
         }
     }
     

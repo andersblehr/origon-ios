@@ -672,7 +672,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (BOOL)knowsAboutMember:(id<OMember>)member
 {
-    return [self hasMember:member] || [self indirectlyKnowsAboutMember:member];
+    return [self membershipForMember:member] || [self indirectlyKnowsAboutMember:member];
 }
 
 

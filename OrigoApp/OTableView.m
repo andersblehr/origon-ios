@@ -41,6 +41,7 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
             cell.accessoryView = nil;
             cell.tintColor = [UIColor globalTintColour];
             cell.destinationId = nil;
+            cell.notificationText = nil;
             
             for (UIView *subview in cell.imageView.subviews) {
                 [subview removeFromSuperview];

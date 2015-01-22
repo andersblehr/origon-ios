@@ -87,7 +87,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     BOOL canDelete = NO;
     
-    if ([self sectionKeyForIndexPath:indexPath] != kSectionKeyUser) {
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
+        canDelete = YES;
+    } else {
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         id<OMember> keyMember = nil;
         
@@ -261,16 +263,15 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
         } else {
             if ([membership.status isEqualToString:kMembershipStatusInvited]) {
-                cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
-                cell.detailTextLabel.textColor = [UIColor notificationTextColour];
+                cell.notificationText = NSLocalizedString(@"New!", @"");
             } else {
-                if ([origo isOfType:kOrigoTypeResidence]) {
-                    cell.detailTextLabel.text = [origo singleLineAddress];
-                } else {
-                    cell.detailTextLabel.text = origo.descriptionText;
-                }
-                
-                cell.detailTextLabel.textColor = [UIColor textColour];
+                cell.notificationText = nil;
+            }
+            
+            if ([origo isOfType:kOrigoTypeResidence]) {
+                cell.detailTextLabel.text = [origo singleLineAddress];
+            } else {
+                cell.detailTextLabel.text = origo.descriptionText;
             }
         }
     }
@@ -391,13 +392,31 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self sectionKeyForIndexPath:indexPath] != kSectionKeyUser;
+    BOOL canDelete = NO;
+    
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
+        if (![[self dataAtIndexPath:indexPath] isOfType:kOrigoTypeStash]) {
+            canDelete = [[[OMeta m].user residences] count] > 1;
+        }
+    } else {
+        canDelete = YES;
+    }
+    
+    return canDelete;
 }
 
 
 - (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self canDeleteOrigoAtIndexPath:indexPath] ? nil : NSLocalizedString(@"Hide", @"");
+    NSString *buttonTitle = nil;
+    
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
+        buttonTitle = NSLocalizedString(@"Move out", @"");
+    } else if (![self canDeleteOrigoAtIndexPath:indexPath]) {
+        buttonTitle = NSLocalizedString(@"Hide", @"");
+    }
+    
+    return buttonTitle;
 }
 
 
@@ -424,7 +443,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     id<OMember> keyMember = nil;
     
-    if (sectionKey == kSectionKeyOrigos) {
+    if (sectionKey == kSectionKeyUser || sectionKey == kSectionKeyOrigos) {
         keyMember = [OMeta m].user;
     } else if (sectionKey == kSectionKeyWardOrigos) {
         keyMember = _wards[self.selectedHeaderSegment];
@@ -441,6 +460,8 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     } else {
         [origo membershipForMember:keyMember].status = kMembershipStatusListed;
     }
+    
+    [[OMeta m].replicator replicate];
 }
 
 

@@ -22,6 +22,8 @@ static NSString * const kViewKeyPhotoPrompt = @"photoPrompt";
 
 static NSString * const kButtonActionFormat = @"perform%@Action";
 
+static CGFloat const kAccessoryWidth = 20.f;
+
 static CGFloat const kShakeDuration = 0.05f;
 static CGFloat const kShakeDelay = 0.f;
 static CGFloat const kShakeTranslationX = 3.f;
@@ -37,6 +39,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     NSMutableDictionary *_views;
     OInputField *_lastInputField;
+    UILabel *_notificationLabel;
 }
 
 @end
@@ -603,6 +606,36 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if ([self.accessoryView isKindOfClass:[UILabel class]]) {
             ((UILabel *)self.accessoryView).textColor = self.tintColor;
         }
+    }
+}
+
+
+- (void)setNotificationText:(NSString *)notificationText
+{
+    _notificationText = notificationText;
+    
+    if (!_notificationText && _notificationLabel) {
+        [_notificationLabel removeFromSuperview];
+        _notificationLabel = nil;
+    } else if (!_notificationLabel || ![_notificationLabel.text isEqualToString:_notificationText]) {
+        _notificationLabel = [OLabel genericLabelWithText:_notificationText];
+        _notificationLabel.font = [UIFont notificationFont];
+        _notificationLabel.textColor = [UIColor notificationColour];
+        
+        CGRect contentFrame = self.contentView.frame;
+        CGRect notificationFrame = _notificationLabel.frame;
+        notificationFrame.origin.x = contentFrame.size.width - notificationFrame.size.width - kDefaultCellPadding;
+        notificationFrame.origin.y = (contentFrame.size.height - notificationFrame.size.height) / 2.f;
+        
+        if (self.accessoryView) {
+            notificationFrame.origin.x -= self.accessoryView.frame.size.width;
+        } else if (self.accessoryType != UITableViewCellAccessoryNone) {
+            notificationFrame.origin.x -= kAccessoryWidth;
+        }
+        
+        _notificationLabel.frame = notificationFrame;
+        
+        [self.contentView addSubview:_notificationLabel];
     }
 }
 

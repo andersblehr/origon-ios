@@ -64,7 +64,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 + (instancetype)acceptDeclineButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAcceptDecline] target:target action:@selector(performAcceptDeclineAction) tag:kBarButtonTagAcceptDecline];
-    button.tintColor = [UIColor supernovaColour];
+    button.tintColor = [UIColor notificationColour];
     
     return button;
 }

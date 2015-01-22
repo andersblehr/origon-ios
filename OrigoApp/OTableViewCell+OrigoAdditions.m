@@ -69,7 +69,6 @@
 {
     if ([member isHousemateOfUser]) {
         self.textLabel.text = [member isJuvenile] ? [member givenName] : member.name;
-        self.textLabel.textColor = [UIColor globalTintColour];
     } else {
         NSString *association = nil;
         NSMutableDictionary *isParentByWard = [NSMutableDictionary dictionary];
