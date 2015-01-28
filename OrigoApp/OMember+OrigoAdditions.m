@@ -814,7 +814,7 @@
                 
                 if (!isManagedByUser) {
                     for (OOrigo *origo in [self origos]) {
-                        isManagedByUser = isManagedByUser || [origo userCanEdit];
+                        isManagedByUser = isManagedByUser || [origo isManagedByUser];
                     }
                 }
             }

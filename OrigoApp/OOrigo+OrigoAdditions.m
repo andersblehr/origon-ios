@@ -547,19 +547,33 @@ NSString * const kOrigoTypeTeam = @"team";
 
 #pragma mark - User role information
 
-- (BOOL)userCanEdit
+- (BOOL)isActiveResidence
 {
-    BOOL userCanEdit = NO;
+    BOOL isActiveResidence = NO;
     
-    if ([self isOfType:kOrigoTypeList]) {
-        userCanEdit = [self userIsOwner] || [[self owner] isWardOfUser];
-    } else if ([self hasAdmin]) {
-        userCanEdit = [self userIsAdmin];
-    } else {
-        userCanEdit = [self userIsCreator];
+    if ([self isOfType:kOrigoTypeResidence]) {
+        for (OMember *resident in [self residents]) {
+            isActiveResidence = isActiveResidence || [resident isActive];
+        }
     }
     
-    return userCanEdit;
+    return isActiveResidence;
+}
+
+
+- (BOOL)isManagedByUser
+{
+    BOOL isManagedByUser = NO;
+    
+    if ([self isOfType:kOrigoTypeList]) {
+        isManagedByUser = [self userIsOwner] || [[self owner] isWardOfUser];
+    } else if ([self hasAdmin]) {
+        isManagedByUser = [self userIsAdmin];
+    } else {
+        isManagedByUser = [self userIsCreator];
+    }
+    
+    return isManagedByUser;
 }
 
 

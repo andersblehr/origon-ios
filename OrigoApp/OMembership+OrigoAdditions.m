@@ -365,7 +365,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
     if (![self isMarkedForDeletion]) {
         [super markForDeletion];
         
-        if (![self isMirrored] || ![self.origo indirectlyKnowsAboutMember:self.member]) {
+        if (![self isMirrored]) {
             if ([self.member isUser]) {
                 for (OMembership *membership in [self.origo allMemberships]) {
                     if (![membership.member isKnownByUser]) {
