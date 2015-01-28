@@ -572,10 +572,11 @@
 "About this household" = "Om denne husstanden";
 
 // Footers
-"Created: %@" = "Opprettet: %@";
-"Registered: %@" = "Registrert: %@";
-"Active since: %@" = "Aktiv siden: %@";
-"Last modified: %@" = "Sist endret: %@";
+"Created: %@." = "Opprettet: %@.";
+"Registered: %@." = "Registrert: %@.";
+"Active since: %@." = "Aktiv siden: %@.";
+"Last modified: %@." = "Sist endret: %@.";
+"This household has active members." = "Denne husstanden har aktive medlemmer.";
 
 // Buttons
 "About" = "Om";

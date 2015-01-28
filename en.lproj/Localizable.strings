@@ -573,10 +573,11 @@
 "About this household" = "About this household";
 
 // Footers
-"Created: %@" = "Created: %@";
-"Registered: %@" = "Registered: %@";
-"Active since: %@" = "Active since: %@";
-"Last modified: %@" = "Last modified: %@";
+"Created: %@." = "Created: %@.";
+"Registered: %@." = "Registered: %@.";
+"Active since: %@." = "Active since: %@.";
+"Last modified: %@." = "Last modified: %@.";
+"This household has active members." = "This household has active members.";
 
 // Buttons
 "About" = "About";

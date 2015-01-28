@@ -246,7 +246,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
             self.usesPlainTableViewStyle = YES;
             
-            if ([_origo userCanEdit]) {
+            if ([_origo isManagedByUser]) {
                 self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
             }
             

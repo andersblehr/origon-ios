@@ -66,13 +66,14 @@ extern NSString * const kOrigoTypeTeam;
 - (id<OMembership>)membershipForMember:(id<OMember>)member;
 - (id<OMembership>)associateMembershipForMember:(id<OMember>)member;
 
-- (BOOL)userCanEdit;
 - (BOOL)userIsOwner;
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
 - (BOOL)userIsOrganiser;
 - (BOOL)userIsParentContact;
 
+- (BOOL)isManagedByUser;
+- (BOOL)isActiveResidence;
 - (BOOL)isOfType:(id)type;
 - (BOOL)isOrganised;
 - (BOOL)isJuvenile;

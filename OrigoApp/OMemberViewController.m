@@ -1081,7 +1081,7 @@ static NSInteger const kButtonIndexContinue = 1;
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
     } else if (sectionKey == kSectionKeyRoles) {
-        if ([_origo userCanEdit]) {
+        if ([_origo isManagedByUser]) {
             OInputField *roleField = [cell editableListCellField];
             roleField.placeholder = NSLocalizedString(@"Responsibility", @"");
             roleField.value = [self dataAtIndexPath:indexPath];
@@ -1253,7 +1253,7 @@ static NSInteger const kButtonIndexContinue = 1;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyRoles) {
-        canDelete = [self.state.baseOrigo userCanEdit];
+        canDelete = [self.state.baseOrigo isManagedByUser];
     } else if (sectionKey == kSectionKeyAddresses) {
         canDelete = [self numberOfRowsInSectionWithKey:sectionKey] > 1;
     }
@@ -1363,7 +1363,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles && [_origo userCanEdit];
+    return [self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles && [_origo isManagedByUser];
 }
 
 

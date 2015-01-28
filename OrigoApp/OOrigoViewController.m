@@ -53,7 +53,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     NSInteger _recipientType;
     NSArray *_recipientCandidates;
     
-    BOOL _userCanEdit;
+    BOOL _isManagedByUser;
 }
 
 @end
@@ -91,7 +91,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
     }
     
-    if ([_origo userCanEdit] && !isAwaitingActivation) {
+    if ([_origo isManagedByUser] && !isAwaitingActivation) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
     }
@@ -395,7 +395,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     _member = self.state.currentMember;
     _membership = [_origo membershipForMember:_member];
     _origoType = _origo.type;
-    _userCanEdit = [_origo userCanEdit];
+    _isManagedByUser = [_origo isManagedByUser];
     
     if ([self actionIs:kActionRegister]) {
         self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
@@ -698,7 +698,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     BOOL canDeleteCell = NO;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if ([_origo isCommitted] && [_origo userCanEdit]) {
+    if ([_origo isCommitted] && [_origo isManagedByUser]) {
         if (sectionKey == kSectionKeyMembers) {
             id entity = [self dataAtIndexPath:indexPath];
             
@@ -808,8 +808,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 _origoType = _origo.type;
             }
             
-            if (_userCanEdit && ![_origo userCanEdit]) {
-                _userCanEdit = NO;
+            if (_isManagedByUser && ![_origo isManagedByUser]) {
+                _isManagedByUser = NO;
                 
                 [self loadNavigationBarItems];
             }
@@ -962,7 +962,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                         
                         [self.navigationItem setRightBarButtonItems:rightBarButtonItems animated:YES];
                         
-                        if ([_origo userCanEdit]) {
+                        if ([_origo isManagedByUser]) {
                             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
                             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
                         }

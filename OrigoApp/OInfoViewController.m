@@ -19,7 +19,7 @@ static NSInteger const kSectionKeyAdmins = 2;
     id<OOrigo> _createdIn;
     id<OMember> _modifiedBy;
     
-    BOOL _userCanEdit;
+    BOOL _isManagedByUser;
 }
 
 @end
@@ -36,35 +36,45 @@ static NSInteger const kSectionKeyAdmins = 2;
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (![origo isOfType:kOrigoTypeResidence] || [self aspectIs:kAspectHousehold]) {
-            [propertyKeys addObject:kPropertyKeyName];
-        }
-        
-        if (![origo isOfType:kOrigoTypeResidence]) {
-            [propertyKeys addObject:kPropertyKeyType];
+        if (![origo isOfType:kOrigoTypeResidence] || [origo isManagedByUser] || ![origo hasAdmin]) {
+            if (![origo isOfType:kOrigoTypeResidence] || [self aspectIs:kAspectHousehold]) {
+                [propertyKeys addObject:kPropertyKeyName];
+            }
+            
+            if (![origo isOfType:kOrigoTypeResidence]) {
+                [propertyKeys addObject:kPropertyKeyType];
+            }
+            
+            [propertyKeys addObject:kPropertyKeyCreatedBy];
+            
+            if ([_entity modifiedBy]) {
+                [propertyKeys addObject:kPropertyKeyModifiedBy];
+            }
         }
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
-        if ([_entity isManagedByUser]) {
-            [propertyKeys addObject:kPropertyKeyGender];
-        }
-    }
-    
-    if ([_entity conformsToProtocol:@protocol(OMember)] && [self aspectIs:kAspectHousehold]) {
         id<OMember> member = _entity;
         
-        if ([member.createdIn hasValue]) {
-            [propertyKeys addObject:kPropertyKeyCreatedIn];
+        if ((![member isActive] && ![member isManaged]) || [member isHousemateOfUser]) {
+            if ([member isManagedByUser]) {
+                [propertyKeys addObject:kPropertyKeyGender];
+            }
+            
+            if ([self aspectIs:kAspectHousehold]) {
+                if ([member.createdIn hasValue]) {
+                    [propertyKeys addObject:kPropertyKeyCreatedIn];
+                }
+            }
+            
+            [propertyKeys addObject:kPropertyKeyCreatedBy];
+            
+            if ([_entity modifiedBy]) {
+                [propertyKeys addObject:kPropertyKeyModifiedBy];
+            }
         }
-    }
-    
-    [propertyKeys addObject:kPropertyKeyCreatedBy];
-    
-    if ([_entity modifiedBy]) {
-        [propertyKeys addObject:kPropertyKeyModifiedBy];
-    }
-    
-    if ([_entity conformsToProtocol:@protocol(OMember)] && ![_entity isOutOfBounds]) {
-        [propertyKeys addObject:kPropertyKeyActiveSince];
+        
+        if (![member isActive]) {
+            [propertyKeys addObject:kPropertyKeyActiveSince];
+        }
     }
     
     return propertyKeys;
@@ -92,8 +102,8 @@ static NSInteger const kSectionKeyAdmins = 2;
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (_userCanEdit != [origo userCanEdit]) {
-            _userCanEdit = [origo userCanEdit];
+        if (_isManagedByUser != [origo isManagedByUser]) {
+            _isManagedByUser = [origo isManagedByUser];
             
             [self reloadSectionWithKey:kSectionKeyGeneral];
         }
@@ -109,7 +119,7 @@ static NSInteger const kSectionKeyAdmins = 2;
     
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
-        _userCanEdit = [origo userCanEdit];
+        _isManagedByUser = [origo isManagedByUser];
         
         if ([origo isOfType:kOrigoTypeResidence]) {
             self.title = NSLocalizedString(@"About this household", @"");
@@ -137,7 +147,7 @@ static NSInteger const kSectionKeyAdmins = 2;
         id<OOrigo> origo = _entity;
         
         if (![origo isOfType:@[kOrigoTypeList, kOrigoTypeResidence]]) {
-            if ([origo userCanEdit]) {
+            if ([origo isManagedByUser]) {
                 [self setData:@[[[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter]] forSectionWithKey:kSectionKeyAdmins];
             } else {
                 [self setData:[origo admins] forSectionWithKey:kSectionKeyAdmins];
@@ -180,7 +190,7 @@ static NSInteger const kSectionKeyAdmins = 2;
             } else if ([propertyKey isEqualToString:kPropertyKeyType]) {
                 cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
                 
-                if ([origo userCanEdit] && ![origo isOfType:kOrigoTypeResidence]) {
+                if ([origo isManagedByUser] && ![origo isOfType:kOrigoTypeResidence]) {
                     cell.destinationId = kIdentifierValuePicker;
                 }
             }
@@ -243,7 +253,7 @@ static NSInteger const kSectionKeyAdmins = 2;
     } else if (sectionKey == kSectionKeyAdmins) {
         id<OOrigo> origo = _entity;
         
-        if ([origo userCanEdit]) {
+        if ([origo isManagedByUser]) {
             cell.textLabel.text = [self dataAtIndexPath:indexPath];
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo conjoin:NO];
             cell.destinationId = kIdentifierValuePicker;
@@ -276,7 +286,7 @@ static NSInteger const kSectionKeyAdmins = 2;
     } else if (sectionKey == kSectionKeyParents) {
         target = @{target: kAspectParent};
     } else if (sectionKey == kSectionKeyAdmins) {
-        if ([_entity conformsToProtocol:@protocol(OOrigo)] && [_entity userCanEdit]) {
+        if ([_entity conformsToProtocol:@protocol(OOrigo)] && [_entity isManagedByUser]) {
             target = @{target: kAspectAdmin};
         }
     }
@@ -285,12 +295,18 @@ static NSInteger const kSectionKeyAdmins = 2;
 }
 
 
+- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
+{
+    return UITableViewCellStyleValue1;
+}
+
+
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
     BOOL hasHeader = NO;
     
     if (sectionKey == kSectionKeyAdmins) {
-        hasHeader = [_entity conformsToProtocol:@protocol(OOrigo)] && ![_entity userCanEdit];
+        hasHeader = [_entity conformsToProtocol:@protocol(OOrigo)] && ![_entity isManagedByUser];
     }
     
     return hasHeader;
@@ -329,19 +345,21 @@ static NSInteger const kSectionKeyAdmins = 2;
     
     if (sectionKey == kSectionKeyGeneral) {
         if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-            footerText = [NSString stringWithFormat:NSLocalizedString(@"Created: %@", @""), [[_entity dateCreated] localisedDateTimeString]];
-        } else {
-            footerText = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@", @""), [[_entity dateCreated] localisedDateTimeString]];
-        }
-        
-        if ([_entity conformsToProtocol:@protocol(OMember)]) {
-            if ([_entity isActive] && ![_entity isOutOfBounds]) {
-                footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active since: %@", @""), [[_entity activeSince] localisedDateTimeString]] separator:kSeparatorNewline];
+            footerText = [NSString stringWithFormat:NSLocalizedString(@"Created: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
+            
+            if ([_entity isActiveResidence] && ![self aspectIs:kAspectHousehold]) {
+                footerText = [footerText stringByAppendingString:NSLocalizedString(@"This household has active members.", @"") separator:kSeparatorNewline];
+            }
+        } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
+            footerText = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
+            
+            if ([_entity isActive]) {
+                footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active since: %@.", @""), [[_entity activeSince] localisedDateTimeString]] separator:kSeparatorNewline];
             }
         }
         
         if ([_entity modifiedBy]) {
-            footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
+            footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
         }
     }
     
@@ -349,9 +367,9 @@ static NSInteger const kSectionKeyAdmins = 2;
 }
 
 
-- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
+- (NSString *)emptyTableViewFooterText
 {
-    return UITableViewCellStyleValue1;
+    return [self footerContentForSectionWithKey:kSectionKeyGeneral];
 }
 
 @end
