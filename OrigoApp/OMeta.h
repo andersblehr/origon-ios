@@ -44,10 +44,12 @@
 - (BOOL)userIsRegistered;
 
 - (BOOL)internetConnectionIsAvailable;
+- (NSBundle *)localisedStringsBundle;
+
++ (void)touchDeviceIfNeeded;
 + (BOOL)deviceIsSimulator;
 + (BOOL)iOSVersionIs:(NSString *)majorVersionNumber;
 + (CGFloat)screenWidth;
 
-- (NSBundle *)localisedStringsBundle;
 
 @end

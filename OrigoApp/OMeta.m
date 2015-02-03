@@ -225,11 +225,47 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-#pragma mark - Convenience methods
+#pragma mark - Meta information
 
 - (BOOL)internetConnectionIsAvailable
 {
     return _internetConnectionIsWiFi || _internetConnectionIsWWAN;
+}
+
+
+- (NSBundle *)localisedStringsBundle
+{
+    if (!_localisedStringsBundle) {
+        _localisedStringsBundle = [NSBundle mainBundle];
+        
+        if (![_localisedStringsBundle pathForResource:[[self class] m].language ofType:@"lproj"]) {
+            NSString *testString = [_localisedStringsBundle localizedStringForKey:kLocalisationTest value:@"" table:nil];
+            
+            if ([testString isEqualToString:kLocalisationTest] || [OSettings settings].useEnglish) {
+                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:@"lproj"]];
+            }
+        }
+    }
+    
+    return _localisedStringsBundle;
+}
+
+
+#pragma mark - Convenience methods
+
++ (void)touchDeviceIfNeeded
+{
+    static BOOL didTouchDevice = NO;
+    
+    if (!didTouchDevice) {
+        ODevice *device = [ODevice device];
+        
+        if (![device hasExpired]) {
+            [device touch];
+        }
+        
+        didTouchDevice = YES;
+    }
 }
 
 
@@ -248,26 +284,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 + (CGFloat)screenWidth
 {
     return [UIScreen mainScreen].applicationFrame.size.width;
-}
-
-
-#pragma mark - Localisation support
-
-- (NSBundle *)localisedStringsBundle
-{
-    if (!_localisedStringsBundle) {
-        _localisedStringsBundle = [NSBundle mainBundle];
-        
-        if (![_localisedStringsBundle pathForResource:[[self class] m].language ofType:@"lproj"]) {
-            NSString *testString = [_localisedStringsBundle localizedStringForKey:kLocalisationTest value:@"" table:nil];
-            
-            if ([testString isEqualToString:kLocalisationTest] || [OSettings settings].useEnglish) {
-                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:@"lproj"]];
-            }
-        }
-    }
-    
-    return _localisedStringsBundle;
 }
 
 

@@ -335,13 +335,13 @@
 
 // Buttons
 "Have code" = "Har kode";
-"Start over" = "Gå tilbake";
+"Go back" = "Gå tilbake";
 
 // Alerts
 "Activation failed" = "Aktivering mislyktes";
 "It looks like you may have lost the activation code ..." = "Det ser ut til at du har mistet aktiveringskoden eller glemt passordet ditt. La oss starte på nytt.";
 "Welcome back!" = "Velkommen tilbake!";
-"If you have handy the activation code sent to %@ ..." = "Om du har aktiveringskoden som ble sendt til %@, så kan du aktivere medlemskapet ditt nå. Om ikke, kan du gå tilbake og starte på nytt.";
+"If you have handy the activation code sent to %@ ..." = "Om du har aktiveringskoden som ble sendt til %@, så kan du aktivere medlemskapet ditt nå. Om ikke, kan du gå tilbake og få tilsendt en ny.";
 "Your password has been changed." = "Passordet ditt har blitt endret.";
 "Did you forget the password?" = "Har du glemt passordet?";
 "New password" = "Nytt passord";
@@ -405,7 +405,7 @@
 "Unhide" = "Hent fram";
 "Keep hidden" = "La forbli skjult";
 "Edit responsibilities" = "Rediger ansvarsområder";
-"Register from other list" = "Registrer fra annen liste";
+"Add from other list" = "Legg til fra annen liste";
 "Register parent contact" = "Registrer foreldrekontakt";
 "About %@" = "Om %@";
 "Register household member" = "Registrer medlem i husstanden";
@@ -465,11 +465,13 @@
 "%@ is already in %@." = "%@ er allerede med i %@.";
 "Unknown child" = "Ukjent barn";
 "No child named %@ has been registered by %@." = "Ingen barn ved navn %@ er registrert av %@.";
-"New email address" = "Ny epost-adresse";
-"You are about to change your email address from %@ to %@ ..." = "Du er i ferd med å endre epost-adressen din fra %@ til %@. Du må ha tilgang til den nye adressen for å aktivere endringen. Ønsker du å fortsette?";
+"New email address" = "Ny epostadresse";
+"You are about to change your email address from %@ to %@ ..." = "Du er i ferd med å endre epostadressen din fra %@ til %@. Du må ha tilgang til den nye adressen for å aktivere endringen. Ønsker du å fortsette?";
+"You are about to change %@'s email address from %@ to %@ ..." = "Du er i ferd med å endre epostadressen til %@ fra %@ til %@. Et varsel vil bli sendt til den nye adressen. Ønsker du å fortsette?";
 "Activation failed" = "Aktivering mislyktes";
-"The email address %@ could not be activated ..." = "Aktivering av epost-adressen %@ mislyktes. Prøv igjen, eller trykk Avbryt for avbryte endringen.";
-"The email address %@ is already in use." = "Epost-addressen %@ er allerede i bruk.";
+"The email address %@ could not be activated ..." = "Aktivering av epostadressen %@ mislyktes. Prøv igjen, eller trykk Avbryt for avbryte endringen.";
+"Address in use" = "Adressen er i bruk";
+"The email address %@ is already in use." = "Epostaddressen %@ er allerede i bruk.";
 "The mobile number %@ is already in use." = "Mobilnummeret %@ er allerede i bruk.";
 
 // Prompts
@@ -540,11 +542,10 @@
  ***/
 
 // View titles
-"Send text" = "Send melding";
-"Send email" = "Send epost";
+"Pick recipients" = "Velg mottakere";
 
 // Prompts
-"Select recipients" = "Velg mottakere";
+"Pick recipient group" = "Velg mottakergruppe";
 
 // Buttons
 "Parents" = "Foreldre";

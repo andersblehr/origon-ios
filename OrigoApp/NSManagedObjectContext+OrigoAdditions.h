@@ -14,9 +14,8 @@
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo;
 
-- (id<OMember>)memberWithEmail:(NSString *)email;
 - (id)entityWithId:(NSString *)entityId;
-- (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key;
+- (id<OMember>)memberWithEmail:(NSString *)email;
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership;
 - (void)insertAdditionalCrossReferencesForMirroredMembership:(OMembership *)membership;

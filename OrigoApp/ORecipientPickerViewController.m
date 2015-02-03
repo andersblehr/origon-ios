@@ -22,7 +22,7 @@ static NSInteger const kButtonTagGroupMembers = 1;
 static NSInteger const kButtonTagGroupOrganisers = 2;
 static NSInteger const kButtonTagGroupParents = 3;
 static NSInteger const kButtonTagGroupCoGenderParents = 4;
-static NSInteger const kButtonTagGroupCoGroupParents = 5;
+static NSInteger const kButtonTagGroupCoGroup = 5;
 
 
 @interface ORecipientPickerViewController () <UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
@@ -51,14 +51,16 @@ static NSInteger const kButtonTagGroupCoGroupParents = 5;
     
     if ([_toRecipients count]) {
         title = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"To", @""), [OUtil commaSeparatedListOfMembers:_toRecipients conjoin:NO subjective:YES]];
-    } else if ([self targetIs:kTargetText]) {
-        title = NSLocalizedString(@"Send text", @"");
-    } else if ([self targetIs:kTargetEmail]) {
-        title = NSLocalizedString(@"Send email", @"");
+    } else {
+        title = NSLocalizedString(@"Pick recipients", @"");
     }
     
-    if ([self targetIs:kTargetEmail] && [_ccRecipients count]) {
-        subtitle = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"Cc", @""), [OUtil commaSeparatedListOfMembers:_ccRecipients conjoin:NO subjective:YES]];
+    if ([self targetIs:kTargetEmail]) {
+        if ([_ccRecipients count]) {
+            subtitle = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"Cc", @""), [OUtil commaSeparatedListOfMembers:_ccRecipients conjoin:NO subjective:YES]];
+        } else {
+            subtitle = nil;
+        }
     }
     
     [self.navigationItem setTitle:title editable:NO withSubtitle:subtitle];
@@ -81,7 +83,6 @@ static NSInteger const kButtonTagGroupCoGroupParents = 5;
 {
     _selectedTitleSubsegment = _titleSubsegments.selectedSegmentIndex;
     
-    self.rowAnimation = UITableViewRowAnimationFade;
     [self reloadSections];
 }
 
@@ -124,9 +125,9 @@ static NSInteger const kButtonTagGroupCoGroupParents = 5;
         
         for (NSString *group in [_origo groups]) {
             if ([_origo isJuvenile]) {
-                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Parents in %@", @""), group] tag:kButtonTagGroupCoGroupParents];
+                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Parents in %@", @""), group] tag:kButtonTagGroupCoGroup];
             } else {
-                [actionSheet addButtonWithTitle:group];
+                [actionSheet addButtonWithTitle:group tag:kButtonTagGroupCoGroup];
             }
         }
     }
@@ -138,7 +139,7 @@ static NSInteger const kButtonTagGroupCoGroupParents = 5;
     if (!actionSheet.numberOfButtons) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
     } else {
-        actionSheet.title = NSLocalizedString(@"Select recipients", @"");
+        actionSheet.title = NSLocalizedString(@"Pick recipient group", @"");
     }
     
     [actionSheet show];
@@ -191,15 +192,13 @@ static NSInteger const kButtonTagGroupCoGroupParents = 5;
     _origo = self.meta;
     _toRecipients = [NSMutableArray array];
     
+    if ([self targetIs:kTargetEmail]) {
+        _ccRecipients = [NSMutableArray array];
+    }
+    
     self.usesSectionIndexTitles = YES;
     
-    if ([self targetIs:kTargetText]) {
-        self.title = NSLocalizedString(@"Send text", @"");
-    } else if ([self targetIs:kTargetEmail]) {
-        _ccRecipients = [NSMutableArray array];
-        
-        self.title = NSLocalizedString(@"Send email", @"");
-    }
+    [self inferTitleAndSubtitle];
     
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
     
@@ -546,14 +545,20 @@ static NSInteger const kButtonTagGroupCoGroupParents = 5;
                             }
                         }
                     }
-                } else if (buttonTag == kButtonTagGroupCoGroupParents) {
+                } else if (buttonTag == kButtonTagGroupCoGroup) {
                     NSArray *groups = [_origo groups];
                     NSString *group = groups[[groups count] - (actionSheet.numberOfButtons - buttonIndex - 1)];
                     
                     for (id<OMember> member in [_origo membersOfGroup:group]) {
-                        for (id<OMember> guardian in [member guardians]) {
-                            if ([recipientCandidates containsObject:guardian]) {
-                                [_toRecipients addObject:guardian];
+                        if ([_origo isJuvenile]) {
+                            for (id<OMember> guardian in [member guardians]) {
+                                if ([recipientCandidates containsObject:guardian]) {
+                                    [_toRecipients addObject:guardian];
+                                }
+                            }
+                        } else {
+                            if ([recipientCandidates containsObject:member]) {
+                                [_toRecipients addObject:member];
                             }
                         }
                     }

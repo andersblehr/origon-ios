@@ -143,7 +143,7 @@ static NSInteger const kSectionKeyValues = 0;
                 [self editableTitle:_affiliation withPlaceholder:placeholder];
             }
             
-            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo conjoin:NO]];
+            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:[self aspectIs:kAspectGroup]]];
             
             if ([self targetIs:kTargetRole]) {
                 _isMultiValuePicker = [_pickedValues count] > 1;
@@ -258,6 +258,8 @@ static NSInteger const kSectionKeyValues = 0;
         
         if ([self targetIs:kTargetMembers]) {
             [cell loadMember:candidate inOrigo:nil excludeRoles:YES excludeRelations:YES];
+        } else if ([self aspectIs:kAspectParentRole]) {
+            [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:NO];
         } else {
             [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:YES];
             
@@ -335,7 +337,7 @@ static NSInteger const kSectionKeyValues = 0;
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
     } else if ([self targetIs:kTargetMembers]) {
-        self.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo conjoin:NO];
+        self.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO];
         self.subtitleColour = [UIColor textColour];
         
         if (self.isModal) {
@@ -355,10 +357,12 @@ static NSInteger const kSectionKeyValues = 0;
             [[_origo membershipForMember:pickedValue] removeAffiliation:_affiliation ofType:_affiliationType];
         }
         
-        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo conjoin:NO]];
-        
         if ([self targetIs:kTargetGroup]) {
             [self cell:cell loadGroupDetailsForMember:pickedValue];
+            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:YES]];
+        } else {
+            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO]];
+            
         }
         
         if (self.isModal && _isMultiValuePicker && [_pickedValues count]) {

@@ -70,23 +70,27 @@ static NSInteger const kViewTagSubtitleLabel = 11;
         [subtitleLabel removeFromSuperview];
         subtitleLabel = nil;
     }
-    
-    CGFloat headroom = subtitle ? kTitleHeadroomWithSubtitle : kTitleHeadroom;
-    titleField.frame = CGRectMake(0.f, headroom, titleViewWidth, kTitleHeight);
-    titleField.userInteractionEnabled = editable;
-    
-    if (!self.titleView) {
-        CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kToolbarBarHeight);
-        self.titleView = [[UIView alloc] initWithFrame:titleViewFrame];
-        self.titleView.backgroundColor = [UIColor clearColor];
-    }
-    
-    if (needsAddTitleField) {
-        [self.titleView addSubview:titleField];
-    }
-    
-    if (needsAddSubtitleLabel) {
-        [self.titleView addSubview:subtitleLabel];
+
+    if (subtitleLabel || editable) {
+        CGFloat headroom = subtitle ? kTitleHeadroomWithSubtitle : kTitleHeadroom;
+        titleField.frame = CGRectMake(0.f, headroom, titleViewWidth, kTitleHeight);
+        titleField.userInteractionEnabled = editable;
+        
+        if (!self.titleView) {
+            CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kToolbarBarHeight);
+            self.titleView = [[UIView alloc] initWithFrame:titleViewFrame];
+            self.titleView.backgroundColor = [UIColor clearColor];
+        }
+        
+        if (needsAddTitleField) {
+            [self.titleView addSubview:titleField];
+        }
+        
+        if (needsAddSubtitleLabel) {
+            [self.titleView addSubview:subtitleLabel];
+        }
+    } else {
+        self.titleView = nil;
     }
     
     self.title = title;

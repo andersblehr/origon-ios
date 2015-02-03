@@ -12,33 +12,15 @@
 @interface OReplicator () <OConnectionDelegate> {
 @private
     BOOL _isReplicating;
-    
-    OTableViewController *_refreshViewController;
+
     NSMutableSet *_dirtyEntities;
+    OTableViewController *_refreshHandler;
 }
 
 @end
 
 
 @implementation OReplicator
-
-#pragma mark - Auxiliary methods
-
-- (void)touchDeviceIfNeeded
-{
-    static BOOL didTouchDevice = NO;
-    
-    if (!didTouchDevice) {
-        ODevice *device = [ODevice device];
-        
-        if (![device hasExpired]) {
-            [device touch];
-        }
-        
-        didTouchDevice = YES;
-    }
-}
-
 
 #pragma mark - Initialisation
 
@@ -102,9 +84,9 @@
 }
 
 
-- (void)refreshViewWithController:(OTableViewController *)viewController
+- (void)refreshWithRefreshHandler:(OTableViewController *)refreshHandler
 {
-    _refreshViewController = viewController;
+    _refreshHandler = refreshHandler;
     
     [self replicate];
 }
@@ -160,21 +142,21 @@
 
 #pragma mark - OConnectionDelegate conformance
 
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+- (void)connection:(OConnection *)connection didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    OTableViewController *refreshViewController = nil;
+    _isReplicating = NO;
     
     if (data) {
         [[OMeta m].context saveEntityDictionaries:data];
     }
     
-    _isReplicating = NO;
+    OTableViewController *refreshHandler = nil;
     
-    if (_refreshViewController) {
-        refreshViewController = _refreshViewController;
+    if (_refreshHandler) {
+        refreshHandler = _refreshHandler;
         
-        [_refreshViewController.refreshControl endRefreshing];
-        _refreshViewController = nil;
+        [_refreshHandler.refreshControl endRefreshing];
+        _refreshHandler = nil;
     }
     
     if ([[OMeta m] userIsSignedIn]) {
@@ -200,11 +182,11 @@
                 [self resetUserReplicationState];
             }
             
-            if (refreshViewController) {
-                [refreshViewController reloadSections];
+            if (refreshHandler) {
+                [refreshHandler reloadSections];
             }
             
-            [self touchDeviceIfNeeded];
+            [OMeta touchDeviceIfNeeded];
             [self replicateIfNeeded];
         } else if (HTTPStatus == kHTTPStatusUnauthorized) {
             [[OMeta m] signOut];
@@ -216,13 +198,13 @@
 }
 
 
-- (void)didFailWithError:(NSError *)error
+- (void)connection:(OConnection *)connection didFailWithError:(NSError *)error
 {
     OLogError(@"Error replicating with server.");
     
-    if (_refreshViewController) {
-        [_refreshViewController.refreshControl endRefreshing];
-        _refreshViewController = nil;
+    if (_refreshHandler) {
+        [_refreshHandler.refreshControl endRefreshing];
+        _refreshHandler = nil;
     }
     
     _isReplicating = NO;

@@ -45,6 +45,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     OInputField *_repeatNewPasswordField;
     
     NSInteger _signInAction;
+    NSInteger _numberOfFailedAttempts;
     NSDictionary *_authInfo;
 }
 
@@ -132,18 +133,18 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     
     [self initialiseFields];
     
+    _numberOfFailedAttempts = 0;
+    
     OLogState;
 }
 
 
 - (void)handleFailedActivationAttempt
 {
-    static NSInteger numberOfFailedActivationAttempts = 0;
+    _numberOfFailedAttempts++;
     
-    numberOfFailedActivationAttempts++;
-    
-    if (numberOfFailedActivationAttempts == kMaxAttempts) {
-        numberOfFailedActivationAttempts = 0;
+    if (_numberOfFailedAttempts == kMaxAttempts) {
+        _numberOfFailedAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") text:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
@@ -156,9 +157,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 #pragma mark - Handling server responses
 
-- (void)userDidSignUpWithData:(NSDictionary *)data
+- (void)didReceiveAuthInfo:(NSDictionary *)authInfo
 {
-    _authInfo = data;
+    _authInfo = authInfo;
     
     if ([self targetIs:kTargetUser]) {
         [ODefaults setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo] forKey:kDefaultsKeyAuthInfo];
@@ -225,6 +226,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)performCancelAction
 {
+    self.didCancel = YES;
+    
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetEmail]) {
             [self.dismisser dismissModalViewController:self];
@@ -255,7 +258,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have handy the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Start over", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have handy the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Go back", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
             alert.tag = kAlertTagWelcomeBack;
             
             [alert show];
@@ -288,6 +291,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         } else {
             self.state.action = kActionSignIn;
         }
+        
+        _numberOfFailedAttempts = 0;
     }
     
     if (![self actionIs:kActionActivate] || ![self targetIs:kTargetEmail]) {
@@ -553,15 +558,15 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 #pragma mark - OconnectionDelegate conformance
 
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+- (void)connection:(OConnection *)connection didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    [super didCompleteWithResponse:response data:data];
+    [super connection:connection didCompleteWithResponse:response data:data];
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         if (response.statusCode == kHTTPStatusCreated) {
             if ([self actionIs:kActionSignIn]) {
                 if (_signInAction == kSignInActionSignUp) {
-                    [self userDidSignUpWithData:data];
+                    [self didReceiveAuthInfo:data];
                 } else if (_signInAction == kSignInActionSignIn) {
                     [OAlert showAlertWithTitle:NSLocalizedString(@"New password", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Your password has been reset and a new password has been generated and sent to %@.", @""), _emailField.value]];
                     
@@ -571,6 +576,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 [OAlert showAlertWithTitle:@"" text:NSLocalizedString(@"Your password has been changed.", @"")];
                 
                 [self.dismisser dismissModalViewController:self];
+            } else if ([self actionIs:kActionActivate] && [self targetIs:kTargetEmail]) {
+                [self didReceiveAuthInfo:data];
             }
         } else {
             if (![OMeta m].userId) {
@@ -587,12 +594,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [self.inputCell shakeCellVibrate:YES];
         
         if ([self actionIs:kActionSignIn]) {
-            static NSInteger numberOfFailedSignInAttempts = 0;
+            _numberOfFailedAttempts++;
             
-            numberOfFailedSignInAttempts++;
-            
-            if (numberOfFailedSignInAttempts == kMaxAttempts) {
-                numberOfFailedSignInAttempts = 0;
+            if (_numberOfFailedAttempts == kMaxAttempts) {
+                _numberOfFailedAttempts = 0;
                 
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"Did you forget the password?", @"") delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
                 alert.tag = kAlertTagForgottenPassword;

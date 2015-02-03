@@ -85,7 +85,7 @@
 }
 
 
-+ (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo conjoin:(BOOL)conjoin
++ (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo subjective:(BOOL)subjective
 {
     NSMutableArray *stringItems = [NSMutableArray array];
     
@@ -98,23 +98,27 @@
             NSDictionary *isUniqueByGivenName = nil;
             
             for (id<OMember> member in members) {
-                if ([origo isJuvenile]) {
-                    if (![member isJuvenile]) {
-                        [stringItems addObject:[member shortName]];
-                    } else if ([origo hasMember:member]) {
-                        [stringItems addObject:[member displayNameInOrigo:origo]];
+                if ([origo isJuvenile] && [member isJuvenile] && [origo hasMember:member]) {
+                    [stringItems addObject:[member displayNameInOrigo:origo]];
+                } else if (subjective && [member isUser]) {
+                    NSString *pronounYou = [OLanguage pronouns][_you_][nominative];
+                    
+                    if (![stringItems count]) {
+                        pronounYou = [pronounYou stringByCapitalisingFirstLetter];
+                    }
+                    
+                    [stringItems addObject:pronounYou];
+                } else if (subjective || [member isJuvenile]) {
+                    if (!isUniqueByGivenName) {
+                        isUniqueByGivenName = [self isUniqueByGivenNameFromMembers:members];
+                    }
+                    
+                    NSString *givenName = [member givenName];
+                    
+                    if ([isUniqueByGivenName[givenName] boolValue]) {
+                        [stringItems addObject:givenName];
                     } else {
-                        if (!isUniqueByGivenName) {
-                            isUniqueByGivenName = [self isUniqueByGivenNameFromMembers:members];
-                        }
-                        
-                        NSString *givenName = [member givenName];
-                        
-                        if ([isUniqueByGivenName[givenName] boolValue]) {
-                            [stringItems addObject:givenName];
-                        } else {
-                            [stringItems addObject:[member shortName]];
-                        }
+                        [stringItems addObject:[member shortName]];
                     }
                 } else {
                     [stringItems addObject:[member shortName]];
@@ -123,7 +127,7 @@
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin conditionallyLowercase:NO];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:NO conditionallyLowercase:NO];
 }
 
 

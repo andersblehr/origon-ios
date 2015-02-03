@@ -37,9 +37,12 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
             cell.textLabel.text = nil;
             cell.detailTextLabel.text = nil;
             cell.imageView.image = nil;
+            cell.tintColor = [UIColor globalTintColour];
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.accessoryView = nil;
-            cell.tintColor = [UIColor globalTintColour];
+            cell.checked = NO;
+            cell.checkedState = 0;
+            cell.checkedStateAccessoryViews = nil;
             cell.destinationId = nil;
             cell.notificationText = nil;
             

@@ -216,7 +216,7 @@
                 if ([member isJuvenile]) {
                     self.detailTextLabel.text = [member guardianInfo];
                 } else {
-                    self.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[member wardsInOrigo:origo] inOrigo:origo conjoin:NO];
+                    self.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[member wardsInOrigo:origo] inOrigo:origo subjective:NO];
                 }
             }
         }

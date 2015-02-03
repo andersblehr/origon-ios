@@ -128,8 +128,6 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             self.title = NSLocalizedString(@"Others", @"");
         }
         
-        self.rowAnimation = UITableViewRowAnimationFade;
-        
         [self reloadSections];
     } else {
         if ([self numberOfRowsInSectionWithKey:kSectionKeyValues]) {
@@ -414,14 +412,14 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         }
         
         cell.textLabel.text = role;
-        cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders inOrigo:_origo conjoin:NO];
+        cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders inOrigo:_origo subjective:NO];
         cell.destinationId = kIdentifierValuePicker;
     } else if ([self targetIs:kTargetGroups]) {
         if ([self aspectIs:kAspectEditable]) {
             NSString *group = [self dataAtIndexPath:indexPath];
             
             cell.textLabel.text = group;
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[_origo membersOfGroup:group] conjoin:NO subjective:YES];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[_origo membersOfGroup:group] inOrigo:_origo subjective:YES];
             cell.destinationId = kIdentifierValuePicker;
         } else {
             [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo excludeRoles:NO excludeRelations:YES];

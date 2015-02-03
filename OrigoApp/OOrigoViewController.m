@@ -285,7 +285,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         _eligibleCandidates = [self.state eligibleCandidates];
         
         if ([_eligibleCandidates count]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register from other list", @"") tag:kButtonTagAddFromGroups];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other list", @"") tag:kButtonTagAddFromGroups];
         }
         
         if ([_origo isOrganised]) {
@@ -392,7 +392,13 @@ static NSInteger const kActionSheetTagRecipients = 4;
 - (void)loadState
 {
     _origo = [self.entity proxy];
-    _member = self.state.currentMember;
+    
+    if ([_origo hasMember:self.state.currentMember]) {
+        _member = self.state.currentMember;
+    } else {
+        _member = [_origo members][0];
+    }
+    
     _membership = [_origo membershipForMember:_member];
     _origoType = _origo.type;
     _isManagedByUser = [_origo isManagedByUser];
@@ -411,7 +417,11 @@ static NSInteger const kActionSheetTagRecipients = 4;
         }
     } else if ([self actionIs:kActionDisplay]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![self aspectIs:kAspectHousehold]) {
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
+            if ([_origo isManagedByUser]) {
+                self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
+            } else {
+                self.title = NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle);
+            }
         } else {
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_origo displayName]];
         }
@@ -495,7 +505,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             id<OMember> roleHolder = roleHolders[0];
             
             if (sectionKey == kSectionKeyParentContacts) {
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%@)", roleHolder.name, [OUtil commaSeparatedListOfMembers:[roleHolder wardsInOrigo:_origo] inOrigo:_origo conjoin:NO]];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%@)", roleHolder.name, [OUtil commaSeparatedListOfMembers:[roleHolder wardsInOrigo:_origo] inOrigo:_origo subjective:NO]];
             } else {
                 cell.detailTextLabel.text = roleHolder.name;
             }
@@ -512,6 +522,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
             }
         }
     }
+    
+    cell.selectable = ![_membership isHidden];
 }
 
 
@@ -559,6 +571,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
     if ([self isBottomSectionKey:sectionKey]) {
         if ([self actionIs:kActionRegister]) {
             hasFooter = [_origo isOfType:kOrigoTypeList];
+        } else if ([_origo isOfType:kOrigoTypeResidence]) {
+            hasFooter = [_origo isActiveResidence] && ![self aspectIs:kAspectHousehold];
         } else {
             hasFooter = self.isModal || ![[_origo members] count];
         }
@@ -627,8 +641,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     NSString *footerText = nil;
     
-    if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
-        footerText = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        if ([_origo isActiveResidence] && ![self aspectIs:kAspectHousehold]) {
+            footerText = NSLocalizedString(@"This household has active members.", @"");
+        } else if ([self aspectIs:kAspectJuvenile]) {
+            footerText = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
+        }
     } else if ([_origo isOfType:kOrigoTypeList]) {
         if ([self actionIs:kActionRegister]) {
             footerText = NSLocalizedString(@"Private lists are not shared and are not visible to others.", @"");

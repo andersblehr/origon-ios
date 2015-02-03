@@ -99,8 +99,8 @@ static NSString * const kURLParameterIdentifier = @"id";
             _URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
         }
         
-        if ([_delegate respondsToSelector:@selector(willSendRequest:)]) {
-            [_delegate willSendRequest:_URLRequest];
+        if ([_delegate respondsToSelector:@selector(connection:willSendRequest:)]) {
+            [_delegate connection:self willSendRequest:_URLRequest];
         }
     
         if (_requestIsValid) {
@@ -197,7 +197,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-#pragma mark - Authentication
+#pragma mark - Authentication & member lookup
 
 - (void)signUpWithEmail:(NSString *)email password:(NSString *)password
 {
@@ -237,6 +237,15 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
+- (void)lookupMemberWithEmail:(NSString *)email
+{
+    [self setValue:email forURLParameter:kURLParameterIdentifier];
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookup entities:nil];
+}
+
+
 #pragma mark - Entity replication
 
 - (void)replicateEntities:(NSArray *)entities
@@ -249,17 +258,6 @@ static NSString * const kURLParameterIdentifier = @"id";
     } else {
         [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathFetch entities:nil];
     }
-}
-
-
-#pragma mark - Member lookup
-
-- (void)lookupMemberWithIdentifier:(NSString *)identifier
-{
-    [self setValue:identifier forURLParameter:kURLParameterIdentifier];
-    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    
-    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookup entities:nil];
 }
 
 
@@ -287,6 +285,10 @@ static NSString * const kURLParameterIdentifier = @"id";
         }
     } else if (response.statusCode != kHTTPStatusNotFound) {
         OLogError(@"Server error: %@", [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode]);
+        
+        if (response.statusCode == kHTTPStatusInternalServerError) {
+            [OAlert showAlertForHTTPStatus:kHTTPStatusInternalServerError];
+        }
     }
     
     _HTTPResponse = response;
@@ -321,7 +323,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         deserialisedData = [NSJSONSerialization deserialise:_responseData];
     }
     
-    [_delegate didCompleteWithResponse:_HTTPResponse data:deserialisedData];
+    [_delegate connection:self didCompleteWithResponse:_HTTPResponse data:deserialisedData];
 }
 
 
@@ -345,7 +347,7 @@ static NSString * const kURLParameterIdentifier = @"id";
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    [_delegate didFailWithError:error];
+    [_delegate connection:self didFailWithError:error];
 }
 
 @end
