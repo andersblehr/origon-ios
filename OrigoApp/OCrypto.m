@@ -153,13 +153,13 @@ static NSInteger const kActivationCodeLength = 6;
 
 + (NSString *)UUIDByOverlayingUUID:(NSString *)UUID1 withUUID:(NSString *)UUID2
 {
-    NSString *UUID = nil;
+    NSString *UUID = [self generateUUID];
+    NSInteger UUIDLength = [UUID length];
     
     if ([OConnection isUsingDevServer]) {
         UUID = [NSString stringWithFormat:@"%@@%@", UUID1, UUID2];
-    } else {
+    } else if ([UUID1 length] == UUIDLength && [UUID2 length] == UUIDLength) {
         NSMutableString *overlaidUUID = [NSMutableString string];
-        NSInteger UUIDLength = [UUID1 length];
         
         const char *UUID1CString = [UUID1 cStringUsingEncoding:NSUTF8StringEncoding];
         const char *UUID2CString = [UUID2 cStringUsingEncoding:NSUTF8StringEncoding];

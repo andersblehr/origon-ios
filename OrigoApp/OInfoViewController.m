@@ -255,7 +255,7 @@ static NSInteger const kSectionKeyAdmins = 2;
         
         if ([origo isManagedByUser]) {
             cell.textLabel.text = [self dataAtIndexPath:indexPath];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo conjoin:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo subjective:NO];
             cell.destinationId = kIdentifierValuePicker;
         } else {
             [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo excludeRoles:NO excludeRelations:YES];
@@ -346,16 +346,8 @@ static NSInteger const kSectionKeyAdmins = 2;
     if (sectionKey == kSectionKeyGeneral) {
         if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
             footerText = [NSString stringWithFormat:NSLocalizedString(@"Created: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
-            
-            if ([_entity isActiveResidence] && ![self aspectIs:kAspectHousehold]) {
-                footerText = [footerText stringByAppendingString:NSLocalizedString(@"This household has active members.", @"") separator:kSeparatorNewline];
-            }
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
             footerText = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
-            
-            if ([_entity isActive]) {
-                footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active since: %@.", @""), [[_entity activeSince] localisedDateTimeString]] separator:kSeparatorNewline];
-            }
         }
         
         if ([_entity modifiedBy]) {

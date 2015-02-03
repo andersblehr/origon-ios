@@ -11,6 +11,29 @@
 
 @implementation NSManagedObjectContext (OrigoAdditions)
 
+#pragma mark - Auxiliary methods
+
+- (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key
+{
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(class)];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", key, value]];
+    
+    id entity = nil;
+    NSError *error = nil;
+    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
+    
+    if (resultsArray == nil) {
+        OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
+    } else if ([resultsArray count] > 1) {
+        OLogBreakage(@"Found more than one entity with '%@'='%@'.", key, value);
+    } else if ([resultsArray count] == 1) {
+        entity = resultsArray[0];
+    }
+    
+    return entity;
+}
+
+
 #pragma mark - Entity cross-reference handling
 
 - (NSString *)entityRefIdForEntity:(OReplicatedEntity *)entity inOrigoWithId:(NSString *)origoId
@@ -125,36 +148,15 @@
 
 #pragma mark - Fetching entities
 
-- (id<OMember>)memberWithEmail:(NSString *)email
-{
-    return [self entityOfClass:[OMember class] withValue:email forKey:kPropertyKeyEmail];
-}
-
-
 - (id)entityWithId:(NSString *)entityId
 {
     return [self entityOfClass:[OReplicatedEntity class] withValue:entityId forKey:kPropertyKeyEntityId];
 }
 
 
-- (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key
+- (id<OMember>)memberWithEmail:(NSString *)email
 {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(class)];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", key, value]];
-    
-    id entity = nil;
-    NSError *error = nil;
-    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
-    
-    if (resultsArray == nil) {
-        OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
-    } else if ([resultsArray count] > 1) {
-        OLogBreakage(@"Found more than one entity with '%@'='%@'.", key, value);
-    } else if ([resultsArray count] == 1) {
-        entity = resultsArray[0];
-    }
-    
-    return entity;
+    return [self entityOfClass:[OMember class] withValue:email forKey:kPropertyKeyEmail];
 }
 
 

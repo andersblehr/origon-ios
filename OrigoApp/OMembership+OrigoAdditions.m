@@ -187,13 +187,19 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (BOOL)isParticipancy
 {
-    return [self.type isEqualToString:kMembershipTypeParticipancy];
+    return [self.type isEqualToString:kMembershipTypeParticipancy] || [self isCommunityMembership];
+}
+
+
+- (BOOL)isCommunityMembership
+{
+    return [self.origo isOfType:kOrigoTypeCommunity] && (![self.member isJuvenile] || [self.member isUser]);
 }
 
 
 - (BOOL)isAssociate
 {
-    return [self.type isEqualToString:kMembershipTypeAssociate];
+    return [self.type isEqualToString:kMembershipTypeAssociate] && ![self isCommunityMembership];
 }
 
 
@@ -400,7 +406,9 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (void)expire
 {
-    if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
+    BOOL isDemotable = ![self isAssociate] && ![self isCommunityMembership];
+    
+    if (isDemotable && [self.origo indirectlyKnowsAboutMember:self.member]) {
         [self demote];
     } else {
         if ([self shouldReplicateOnExpiry]) {

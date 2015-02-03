@@ -11,10 +11,10 @@
 @protocol OConnectionDelegate <NSObject>
 
 @required
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data;
-- (void)didFailWithError:(NSError *)error;
+- (void)connection:(OConnection *)connection didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data;
+- (void)connection:(OConnection *)connection didFailWithError:(NSError *)error;
 
 @optional
-- (void)willSendRequest:(NSURLRequest *)request;
+- (void)connection:(OConnection *)connection willSendRequest:(NSURLRequest *)request;
 
 @end

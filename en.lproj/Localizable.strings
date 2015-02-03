@@ -335,13 +335,13 @@
 
 // Buttons
 "Have code" = "Have code";
-"Start over" = "Start over";
+"Go back" = "Go back";
 
 // Alerts
 "Activation failed" = "Activation failed";
 "It looks like you may have lost the activation code ..." = "It looks like you may have lost the activation code or forgotten your password. Let's start over.";
 "Welcome back!" = "Welcome back!";
-"If you have handy the activation code sent to %@ ..." = "If you have handy the activation code sent to %@, you can now activate your membership. If not, you may go back and start over.";
+"If you have handy the activation code sent to %@ ..." = "If you have handy the activation code sent to %@, you can now activate your membership. If not, go back and we'll send you a new one.";
 "Your password has been changed." = "Your password has been changed.";
 "Did you forget the password?" = "Did you forget the password?";
 "New password" = "New password";
@@ -406,7 +406,7 @@
 "Unhide" = "Unhide";
 "Keep hidden" = "Keep hidden";
 "Edit responsibilities" = "Edit responsibilities";
-"Register from other list" = "Register from other list";
+"Add from other list" = "Add from other list";
 "Register parent contact" = "Register parent contact";
 "About %@" = "About %@";
 "Register household member" = "Register household member";
@@ -468,8 +468,10 @@
 "No child named %@ has been registered by %@." = "No child named %@ has been registered by %@.";
 "New email address" = "New email address";
 "You are about to change your email address from %@ to %@ ..." = "You are about to change your email address from %@ to %@. You need access to the new address to activate this change. Do you want to continue?";
+"You are about to change %@'s email address from %@ to %@ ..." = "You are about to change %@'s email address from %@ to %@. A notification will be sent to the new address. Do you want to continue?";
 "Activation failed" = "Activation failed";
 "The email address %@ could not be activated ..." = "The email address %@ could not be activated. Please try again, or tap Cancel to cancel the change.";
+"Address in use" = "Address in use";
 "The email address %@ is already in use." = "The email address %@ is already in use.";
 "The mobile number %@ is already in use." = "The mobile number %@ is already in use.";
 
@@ -541,11 +543,10 @@
  ***/
 
 // View titles
-"Send text" = "Send text";
-"Send email" = "Send email";
+"Pick recipients" = "Pick recipients";
 
 // Prompts
-"Select recipients" = "Select recipients";
+"Pick recipient group" = "Pick recipient group";
 
 // Buttons
 "Parents" = "Parents";

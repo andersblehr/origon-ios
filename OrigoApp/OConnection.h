@@ -30,9 +30,9 @@ extern NSString * const kHTTPHeaderLocation;
 - (void)changePasswordWithEmail:(NSString *)email password:(NSString *)password;
 - (void)resetPasswordWithEmail:(NSString *)email password:(NSString *)password;
 - (void)sendActivationCodeToEmail:(NSString *)email;
+- (void)lookupMemberWithEmail:(NSString *)email;
 
 - (void)replicateEntities:(NSArray *)entities;
-- (void)lookupMemberWithIdentifier:(NSString *)identifier;
 
 + (BOOL)isUsingDevServer;
 

@@ -15,7 +15,7 @@
 - (BOOL)needsReplication;
 - (void)replicateIfNeeded;
 - (void)replicate;
-- (void)refreshViewWithController:(OTableViewController *)viewController;
+- (void)refreshWithRefreshHandler:(OTableViewController *)refreshHandler;
 
 - (void)saveUserReplicationState;
 - (void)loadUserReplicationState;

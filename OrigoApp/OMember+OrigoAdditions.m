@@ -130,7 +130,7 @@
         } else {
             BOOL isIncludedResidency = [membership isResidency] && includeResidences;
             BOOL isParticipancy = [membership isParticipancy];
-            BOOL isCommunityMembership = [membership.origo isOfType:kOrigoTypeCommunity] && ![self isJuvenile];
+            BOOL isCommunityMembership = [membership isCommunityMembership] && ![membership isHidden];
             
             if (isParticipancy || isIncludedResidency || isCommunityMembership) {
                 [origos addObject:membership.origo];
@@ -1030,17 +1030,17 @@
 {
     NSString *displayName = nil;
     
-    if (origo && [self isJuvenile]) {
+    if ([self isJuvenile] && [origo hasMember:self]) {
         NSString *givenName = [self givenName];
         NSDictionary *isUniqueByGivenName = [OUtil isUniqueByGivenNameFromMembers:[origo regulars]];
         
         if (isUniqueByGivenName[givenName]) {
             displayName = [isUniqueByGivenName[givenName] boolValue] ? givenName : [self shortName];
         } else {
-            displayName = [origo isJuvenile] ? givenName : [self shortName];
+            displayName = givenName;
         }
     } else {
-        displayName = self.name;
+        displayName = [self isJuvenile] ? [self givenName] : self.name;
     }
     
     return displayName;

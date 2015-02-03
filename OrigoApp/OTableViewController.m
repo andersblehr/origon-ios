@@ -322,12 +322,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         self.toolbarItems = [toolbarItems count] ? toolbarItems : nil;
-        
-        BOOL toolbarHidden = !self.toolbarItems;
-        
-        if (self.navigationController.toolbarHidden != toolbarHidden) {
-            [self.navigationController setToolbarHidden:toolbarHidden animated:YES];
-        }
+    }
+    
+    BOOL toolbarHidden = !self.toolbarItems;
+    
+    if (self.navigationController.toolbarHidden != toolbarHidden) {
+        [self.navigationController setToolbarHidden:toolbarHidden animated:YES];
     }
 }
 
@@ -518,7 +518,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)refresh
 {
-    [[OMeta m].replicator refreshViewWithController:self];
+    [[OMeta m].replicator refreshWithRefreshHandler:self];
 }
 
 
@@ -1165,17 +1165,18 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             if (section != NSNotFound) {
                 NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
                 NSInteger newCount = [_sectionData[sectionKey] count];
+                NSInteger adjustment = [affectedSections count] - [sectionsToInsert count];
                 
                 if (oldCount) {
                     if (newCount) {
-                        [sectionsToReload addIndex:section + [affectedSections count]];
+                        [sectionsToReload addIndex:section + adjustment];
                     } else {
                         [affectedSections addIndex:section];
                         [_sectionKeys removeObject:sectionKey];
                         [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
                     }
                 } else if (newCount) {
-                    [sectionsToInsert addIndex:section + [affectedSections count]];
+                    [sectionsToInsert addIndex:section + adjustment];
                 }
                 
                 _sectionCounts[sectionKey] = @(newCount);
@@ -1183,12 +1184,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
     }
     
-    if ([sectionsToInsert count]) {
-        [_tableView insertSections:sectionsToInsert withRowAnimation:rowAnimation];
-    }
-    
     if ([sectionsToReload count]) {
         [_tableView reloadSections:sectionsToReload withRowAnimation:rowAnimation];
+    }
+    
+    if ([sectionsToInsert count]) {
+        [_tableView insertSections:sectionsToInsert withRowAnimation:rowAnimation];
     }
     
     if ([_sectionKeys count]) {
@@ -1498,7 +1499,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (UITableViewRowAnimation)rowAnimation
 {
-    UITableViewRowAnimation rowAnimation = UITableViewRowAnimationAutomatic;
+    UITableViewRowAnimation rowAnimation = UITableViewRowAnimationFade;
     
     if (_rowAnimation != UITableViewRowAnimationNone) {
         rowAnimation = _rowAnimation;
@@ -1559,7 +1560,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - OConnectionDelegate conformance
 
-- (void)willSendRequest:(NSURLRequest *)request
+- (void)connection:(OConnection *)connection willSendRequest:(NSURLRequest *)request
 {
     if (_requiresSynchronousServerCalls) {
         [[OMeta m].activityIndicator startAnimating];
@@ -1567,7 +1568,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+- (void)connection:(OConnection *)connection didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
     if ([OMeta m].activityIndicator.isAnimating) {
         [[OMeta m].activityIndicator stopAnimating];
@@ -1575,7 +1576,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)didFailWithError:(NSError *)error
+- (void)connection:(OConnection *)connection didFailWithError:(NSError *)error
 {
     if ([OMeta m].activityIndicator.isAnimating) {
         [[OMeta m].activityIndicator stopAnimating];

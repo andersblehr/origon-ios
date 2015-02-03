@@ -394,14 +394,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     BOOL canDelete = NO;
     
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
-        if (![[self dataAtIndexPath:indexPath] isOfType:kOrigoTypeStash]) {
-            canDelete = [[[OMeta m].user residences] count] > 1;
+    if (![self targetIs:kTargetHiddenOrigos]) {
+        if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
+            if (![[self dataAtIndexPath:indexPath] isOfType:kOrigoTypeStash]) {
+                canDelete = [[[OMeta m].user residences] count] > 1;
+            }
+        } else {
+            canDelete = YES;
         }
-    } else {
-        canDelete = YES;
     }
-    
+
     return canDelete;
 }
 
@@ -426,7 +428,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
-    if ([origo userIsAdmin] && [[origo admins] count] == 1) {
+    if ([[origo members] count] > 1 && [origo userIsAdmin] && [[origo admins] count] == 1) {
         [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are the only administrator of this group ...", @"")];
         
         shouldDeleteCell = NO;
