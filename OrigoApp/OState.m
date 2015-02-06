@@ -285,6 +285,18 @@ static OState *_activeState = nil;
             if ([_currentOrigo isOfType:kOrigoTypeList]) {
                 candidates = [candidates mutableCopy];
                 [candidates removeObject:peerPivot];
+            } else if ([_currentOrigo isOfType:kOrigoTypeCommunity]) {
+                NSMutableSet *addresses = [NSMutableSet set];
+                
+                for (id<OMember> candidate in candidates) {
+                    id<OOrigo> primaryResidence = [candidate primaryResidence];
+                    
+                    if ([primaryResidence hasAddress]) {
+                        [addresses addObject:primaryResidence];
+                    }
+                }
+                
+                candidates = [[addresses allObjects] sortedArrayUsingSelector:@selector(compare:)];
             }
         } else {
             candidates = [peerPivot peers];

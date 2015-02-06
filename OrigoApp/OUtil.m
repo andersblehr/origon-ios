@@ -189,7 +189,7 @@
     } else if ([origo isJuvenile]) {
         eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeSimple, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
     } else {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeSimple, kOrigoTypeOrganisation, kOrigoTypeStudyGroup, kOrigoTypeTeam];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeSimple, kOrigoTypeStudyGroup, kOrigoTypeTeam];
     }
     
     return eligibleOrigoTypes;

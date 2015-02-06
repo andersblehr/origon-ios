@@ -244,21 +244,32 @@ static NSInteger const kSectionKeyValues = 0;
         cell.checked = [gender isEqualToString:[OLanguage genderTermForGender:self.state.currentMember.gender isJuvenile:[self.state.currentMember isJuvenile]]];
     } else if ([self aspectIs:kAspectAdmin]) {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
+        id<OMembership> membership = [_origo membershipForMember:candidate];
         
         [cell loadMember:candidate inOrigo:_origo excludeRoles:NO excludeRelations:NO];
         cell.checked = [_pickedValues containsObject:candidate];
-        
-        if (![candidate isActive]) {
+
+        if (![candidate isActive] || (![membership isAssociate] && ![membership isActive])) {
             cell.textLabel.textColor = [UIColor valueTextColour];
             cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
             cell.selectable = NO;
         }
+    } else if ([self targetIs:kTargetMembers]) {
+        if ([_origo isOfType:kOrigoTypeCommunity]) {
+            id<OOrigo> residence = [self dataAtIndexPath:indexPath];
+            
+            cell.textLabel.text = [residence shortAddress];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] conjoin:NO];
+            cell.detailTextLabel.textColor = [UIColor tonedDownIconColour];
+
+            [cell loadImageForOrigo:residence];
+        } else {
+            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:nil excludeRoles:YES excludeRelations:YES];
+        }
     } else {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
-        if ([self targetIs:kTargetMembers]) {
-            [cell loadMember:candidate inOrigo:nil excludeRoles:YES excludeRelations:YES];
-        } else if ([self aspectIs:kAspectParentRole]) {
+        if ([self aspectIs:kAspectParentRole]) {
             [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:NO];
         } else {
             [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:YES];

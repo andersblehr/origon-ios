@@ -89,6 +89,7 @@ static NSInteger const kSectionKeyAdmins = 2;
         cell.selectable = NO;
     } else {
         cell.destinationId = kIdentifierMember;
+        cell.destinationTarget = instigator;
     }
 }
 
@@ -192,6 +193,7 @@ static NSInteger const kSectionKeyAdmins = 2;
                 
                 if ([origo isManagedByUser] && ![origo isOfType:kOrigoTypeResidence]) {
                     cell.destinationId = kIdentifierValuePicker;
+                    cell.destinationTarget = kTargetOrigoType;
                 }
             }
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
@@ -202,6 +204,7 @@ static NSInteger const kSectionKeyAdmins = 2;
                 
                 if ([member isManagedByUser]) {
                     cell.destinationId = kIdentifierValuePicker;
+                    cell.destinationTarget = kTargetGender;
                 }
             } else if ([propertyKey isEqualToString:kPropertyKeyCreatedIn]) {
                 NSArray *components = [member.createdIn componentsSeparatedByString:kSeparatorList];
@@ -220,6 +223,7 @@ static NSInteger const kSectionKeyAdmins = 2;
                     if (_createdIn) {
                         cell.detailTextLabel.text = [_createdIn displayName];
                         cell.destinationId = kIdentifierOrigo;
+                        cell.destinationTarget = _createdIn;
                     } else {
                         cell.detailTextLabel.text = components[1];
                     }
@@ -249,49 +253,23 @@ static NSInteger const kSectionKeyAdmins = 2;
         }
 
         cell.destinationId = kIdentifierValuePicker;
+        cell.destinationTarget = @{propertyKey: kAspectParent};
         cell.destinationMeta = _entity;
     } else if (sectionKey == kSectionKeyAdmins) {
         id<OOrigo> origo = _entity;
         
         if ([origo isManagedByUser]) {
-            cell.textLabel.text = [self dataAtIndexPath:indexPath];
+            NSString *adminLabel = [self dataAtIndexPath:indexPath];
+            
+            cell.textLabel.text = adminLabel;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo subjective:NO];
             cell.destinationId = kIdentifierValuePicker;
+            cell.destinationTarget = @{adminLabel: kAspectAdmin};
         } else {
             [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo excludeRoles:NO excludeRelations:YES];
             cell.destinationId = kIdentifierMember;
         }
     }
-}
-
-
-- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    
-    id target = [self dataAtIndexPath:indexPath];
-    
-    if (sectionKey == kSectionKeyGeneral) {
-        if ([target isEqualToString:kPropertyKeyType]) {
-            target = kTargetOrigoType;
-        } else if ([target isEqualToString:kPropertyKeyGender]) {
-            target = kTargetGender;
-        } else if ([target isEqualToString:kPropertyKeyCreatedBy]) {
-            target = _createdBy;
-        } else if ([target isEqualToString:kPropertyKeyCreatedIn]) {
-            target = _createdIn;
-        } else if ([target isEqualToString:kPropertyKeyModifiedBy]) {
-            target = _modifiedBy;
-        }
-    } else if (sectionKey == kSectionKeyParents) {
-        target = @{target: kAspectParent};
-    } else if (sectionKey == kSectionKeyAdmins) {
-        if ([_entity conformsToProtocol:@protocol(OOrigo)] && [_entity isManagedByUser]) {
-            target = @{target: kAspectAdmin};
-        }
-    }
-    
-    return target;
 }
 
 

@@ -23,14 +23,13 @@ static NSInteger const kButtonTagAcceptDeclineDecline = 1;
 
 static NSInteger const kActionSheetTagAdd = 1;
 static NSInteger const kButtonTagAddMember = 0;
-static NSInteger const kButtonTagAddFromGroups = 1;
+static NSInteger const kButtonTagAddFromLists = 1;
 static NSInteger const kButtonTagAddOrganiser = 2;
 static NSInteger const kButtonTagAddParentContact = 3;
 
 static NSInteger const kActionSheetTagEdit = 2;
 static NSInteger const kButtonTagEditGroup = 0;
 static NSInteger const kButtonTagEditRoles = 1;
-static NSInteger const kButtonTagEditSubgroups = 2;
 
 static NSInteger const kActionSheetTagCoHabitants = 3;
 static NSInteger const kButtonTagCoHabitantsAll = 0;
@@ -87,7 +86,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self]];
     }
     
-    if ([[_origo groups] count]) {
+    if ([[_origo groups] count] || ![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
     }
     
@@ -106,8 +105,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
         nameKey = kMappedKeyListName;
     } else if ([_origo isOfType:kOrigoTypeResidence]) {
         nameKey = kMappedKeyResidenceName;
-    } else if ([_origo isOfType:kOrigoTypeOrganisation]) {
-        nameKey = kMappedKeyOrganisation;
     } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
         nameKey = kMappedKeyPreschoolClass;
     } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
@@ -285,7 +282,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         _eligibleCandidates = [self.state eligibleCandidates];
         
         if ([_eligibleCandidates count]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other list", @"") tag:kButtonTagAddFromGroups];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other list", @"") tag:kButtonTagAddFromLists];
         }
         
         if ([_origo isOrganised]) {
@@ -311,13 +308,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
         [self scrollToTopAndToggleEditMode];
     } else {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
-        
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditGroup];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
-        
-        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]] && ![[_origo groups] count]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit groups", @"") tag:kButtonTagEditSubgroups];
-        }
         
         [actionSheet show];
     }
@@ -326,6 +318,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (void)performGroupsAction
 {
+    if (![[_origo groups] count]) {
+        self.presentStealthilyOnce = YES;
+    }
+    
     [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetGroups];
 }
 
@@ -387,6 +383,20 @@ static NSInteger const kActionSheetTagRecipients = 4;
 }
 
 
+#pragma mark - View lifecycle
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if ([self actionIs:kActionDisplay]) {
+        if ([_origo isOfType:kOrigoTypeResidence] && ![_origo hasAddress]) {
+            [self toggleEditMode];
+        }
+    }
+}
+
+
 #pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
@@ -417,11 +427,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         }
     } else if ([self actionIs:kActionDisplay]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![self aspectIs:kAspectHousehold]) {
-            if ([_origo isManagedByUser]) {
-                self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
-            } else {
-                self.title = NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle);
-            }
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
         } else {
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_origo displayName]];
         }
@@ -459,7 +465,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
                     [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
                 } else if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
-                    [self setData:[_origo memberResidences] forSectionWithKey:kSectionKeyMembers];
+                    [self setData:[_origo memberResidencesIncludeUser:YES] forSectionWithKey:kSectionKeyMembers];
                 }
             } else {
                 [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
@@ -477,7 +483,13 @@ static NSInteger const kActionSheetTagRecipients = 4;
         if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
             id<OOrigo> residence = [self dataAtIndexPath:indexPath];
             
-            cell.textLabel.text = [residence shortAddress];
+            if ([residence hasAddress]) {
+                cell.textLabel.text = [residence shortAddress];
+            } else {
+                cell.textLabel.text = NSLocalizedString(@"-no address-", @"");
+                cell.textLabel.textColor = [UIColor tonedDownTextColour];
+            }
+            
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] withRolesInOrigo:_origo];
             [cell loadImageForOrigo:residence];
             cell.destinationId = [_membership isHidden] ? nil : kIdentifierOrigo;
@@ -512,43 +524,24 @@ static NSInteger const kActionSheetTagRecipients = 4;
             
             [cell loadImageForMember:roleHolder];
             cell.destinationId = [_membership isHidden] ? nil : kIdentifierMember;
+            cell.destinationTarget = roleHolder;
         } else {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];
             [cell loadTonedDownIconWithFileName:kIconFileRoleHolders];
             
             if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierValueList;
-                cell.destinationMeta = role;
+                
+                if (sectionKey == kSectionKeyOrganisers) {
+                    cell.destinationTarget = @{role: kAspectOrganiserRole};
+                } else if (sectionKey == kSectionKeyParentContacts) {
+                    cell.destinationTarget = @{role: kAspectParentRole};
+                }
             }
         }
     }
     
     cell.selectable = ![_membership isHidden];
-}
-
-
-- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath
-{
-    id target = [self dataAtIndexPath:indexPath];
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    
-    if (sectionKey != kSectionKeyMembers) {
-        NSArray *roleHolders = [self roleHoldersForRoleAtIndexPath:indexPath];
-        
-        if ([roleHolders count] == 1) {
-            target = roleHolders[0];
-        } else {
-            NSString *role = [self dataAtIndexPath:indexPath];
-            
-            if (sectionKey == kSectionKeyOrganisers) {
-                target = @{role: kAspectOrganiserRole};
-            } else if (sectionKey == kSectionKeyParentContacts) {
-                target = @{role: kAspectParentRole};
-            }
-        }
-    }
-    
-    return target;
 }
 
 
@@ -798,20 +791,19 @@ static NSInteger const kActionSheetTagRecipients = 4;
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {
                 [self reloadSections];
-            } else if ([viewController targetIs:kTargetGroups]) {
-                BOOL hasGroups = [[_origo groups] count] > 0;
-                UIBarButtonItem *groupsButton = [self.navigationItem rightBarButtonItemWithTag:kBarButtonTagGroups];
-                
-                if (!groupsButton && hasGroups) {
-                    [self.navigationItem insertRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self] atIndex:[_origo hasAddress] ? 2 : 1];
-                } else if (groupsButton && !hasGroups) {
-                    [self.navigationItem removeRightBarButtonItem:groupsButton];
-                }
             }
         } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             if ([viewController targetIs:kTargetMembers]) {
-                for (id<OMember> member in viewController.returnData) {
-                    [_origo addMember:member];
+                if ([_origo isOfType:kOrigoTypeCommunity]) {
+                    for (id<OOrigo> residence in viewController.returnData) {
+                        for (id<OMember> elder in [residence elders]) {
+                            [_origo addMember:elder];
+                        }
+                    }
+                } else {
+                    for (id<OMember> member in viewController.returnData) {
+                        [_origo addMember:member];
+                    }
                 }
                 
                 [self reloadSectionWithKey:kSectionKeyMembers];
@@ -842,6 +834,22 @@ static NSInteger const kActionSheetTagRecipients = 4;
 }
 
 
+- (void)didToggleEditMode
+{
+    if ([_origo isOfType:kOrigoTypeResidence] && !self.isModal) {
+        self.title = nil;
+        
+        if (![_origo hasAddress]) {
+            if ([self actionIs:kActionEdit]) {
+                self.title = NSLocalizedString(@"Register address", @"");
+            } else {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+        }
+    }
+}
+
+
 #pragma mark - OInputCellDelegate conformance
 
 - (id)targetEntity
@@ -859,9 +867,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
     if ([_origo isOfType:kOrigoTypeResidence]) {
         blueprint.detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
         blueprint.multiLineKeys = @[kPropertyKeyAddress];
-    } else if ([_origo isOfType:kOrigoTypeOrganisation]) {
-        blueprint.detailKeys = @[kMappedKeyOrganisationDescription, kPropertyKeyAddress, kPropertyKeyTelephone];
-        blueprint.multiLineKeys = @[kMappedKeyOrganisationDescription, kPropertyKeyAddress];
     } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
         blueprint.detailKeys = @[kMappedKeyPreschool, kPropertyKeyAddress];
         blueprint.multiLineKeys = @[kPropertyKeyAddress];
@@ -922,8 +927,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
             [self toggleEditMode];
             [self reloadSections];
             
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-            self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self]];
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+            self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem doneButtonWithTarget:self]];
         }
     } else {
         [self toggleEditMode];
@@ -1022,9 +1027,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
             case kActionSheetTagEdit:
                 if (buttonTag == kButtonTagEditRoles) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetRoles];
-                } else if (buttonTag == kButtonTagEditSubgroups) {
-                    self.presentStealthilyOnce = YES;
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetGroups];
                 }
                 
                 break;
@@ -1032,7 +1034,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             case kActionSheetTagAdd:
                 if (buttonTag == kButtonTagAddMember) {
                     [self addMember];
-                } else if (buttonTag == kButtonTagAddFromGroups) {
+                } else if (buttonTag == kButtonTagAddFromLists) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMembers meta:_eligibleCandidates];
                 } else if (buttonTag == kButtonTagAddOrganiser) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];

@@ -53,7 +53,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         [_origoTypes addObject:kOrigoTypeTeam];
     } else {
         [_origoTypes addObject:kOrigoTypeCommunity];
-        [_origoTypes addObject:kOrigoTypeOrganisation];
         [_origoTypes addObject:kOrigoTypeTeam];
         [_origoTypes addObject:kOrigoTypeStudyGroup];
         [_origoTypes addObject:kOrigoTypeAlumni];
@@ -241,6 +240,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     if ([origo isOfType:kOrigoTypeStash]) {
         cell.textLabel.text = NSLocalizedString(@"Favourites and others", @"");
         cell.destinationId = kIdentifierValueList;
+        cell.destinationTarget = kTargetFavourites;
     } else {
         id<OMember> member = sectionKey == kSectionKeyWardOrigos ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
         id<OMembership> membership = [origo membershipForMember:member];
@@ -289,18 +289,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (id)defaultTarget
 {
     return [[OMeta m] userIsSignedIn] ? [OMeta m].user : nil;
-}
-
-
-- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath
-{
-    id target = [self dataAtIndexPath:indexPath];
-    
-    if ([target isOfType:kOrigoTypeStash]) {
-        target = kTargetFavourites;
-    }
-    
-    return target;
 }
 
 

@@ -874,7 +874,6 @@ static NSInteger const kButtonIndexContinue = 1;
 
     if ([_cachedCandidates count]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
-        
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other list", @"") tag:kButtonTagSourceGroups];
         
@@ -986,18 +985,20 @@ static NSInteger const kButtonIndexContinue = 1;
             [self editableTitle:nil withPlaceholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
         } else if ([_origo isOfType:kOrigoTypeList]) {
             if ([_member isJuvenile]) {
-                self.title = NSLocalizedString(@"New friend", @"");
+                self.title = NSLocalizedString(@"Register friend", @"");
             } else {
-                self.title = NSLocalizedString(@"New contact", @"");
+                self.title = NSLocalizedString(@"Register contact", @"");
             }
         } else {
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
         }
         
-        if ([self targetIs:kTargetJuvenile]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
-        } else if (![self targetIs:kTargetUser]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
+        if (![self targetIs:kTargetUser]) {
+            if ([self targetIs:kTargetJuvenile]) {
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+            } else {
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
+            }
         }
     } else if ([self actionIs:kActionDisplay]) {
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
@@ -1282,11 +1283,6 @@ static NSInteger const kButtonIndexContinue = 1;
     } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
         if ([_member isJuvenile]) {
             shouldRelay = [[_member guardians] count] ? NO : viewController.didCancel;
-        }
-    } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-        if (!viewController.didCancel && [viewController.returnData instance]) {
-            self.returnData = viewController.returnData;
-            shouldRelay = YES;
         }
     }
     

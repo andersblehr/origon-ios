@@ -1013,6 +1013,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [_inputCell toggleEditMode];
     
+    if ([_instance respondsToSelector:@selector(didToggleEditMode)]) {
+        [_instance didToggleEditMode];
+    }
+    
     static UIBarButtonItem *leftBarButtonItem = nil;
     static NSArray *rightBarButtonItems = nil;
     
@@ -1165,18 +1169,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             if (section != NSNotFound) {
                 NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
                 NSInteger newCount = [_sectionData[sectionKey] count];
-                NSInteger adjustment = [affectedSections count] - [sectionsToInsert count];
                 
                 if (oldCount) {
                     if (newCount) {
-                        [sectionsToReload addIndex:section + adjustment];
+                        [sectionsToReload addIndex:section - [sectionsToInsert count]];
                     } else {
                         [affectedSections addIndex:section];
                         [_sectionKeys removeObject:sectionKey];
                         [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
                     }
                 } else if (newCount) {
-                    [sectionsToInsert addIndex:section + adjustment];
+                    [sectionsToInsert addIndex:section - [affectedSections count]];
                 }
                 
                 _sectionCounts[sectionKey] = @(newCount);
@@ -1881,15 +1884,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (cell.destinationId) {
         if (![self actionIs:kActionInput] || cell.selectableDuringInput) {
-            id target = nil;
-            
-            if ([_instance respondsToSelector:@selector(destinationTargetForIndexPath:)]) {
-                target = [_instance destinationTargetForIndexPath:indexPath];
-            }
-            
-            if (!target) {
-                target = [self dataAtIndexPath:indexPath];
-            }
+            id target = cell.destinationTarget ? cell.destinationTarget : [self dataAtIndexPath:indexPath];
             
             OTableViewController *destinationViewController = [self.storyboard instantiateViewControllerWithIdentifier:cell.destinationId];
             destinationViewController.target = target;

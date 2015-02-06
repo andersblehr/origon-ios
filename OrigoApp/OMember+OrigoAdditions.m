@@ -104,7 +104,11 @@
             for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
                 for (OMember *member in [origo members]) {
                     if ([member isJuvenile]) {
-                        [allPeers unionSet:[NSSet setWithArray:[member guardians]]];
+                        for (OMember *guardian in [member guardians]) {
+                            for (OOrigo *residence in [guardian residences]) {
+                                [allPeers unionSet:[NSSet setWithArray:[residence elders]]];
+                            }
+                        }
                     } else {
                         [allPeers addObject:member];
                     }
@@ -392,8 +396,12 @@
             primaryResidence = residence;
         } else if ([residence userIsMember] && ![primaryResidence userIsMember]) {
             primaryResidence = residence;
-        } else if ([[residence residents] count] > [[primaryResidence residents] count]) {
-            primaryResidence = residence;
+        } else if ([[residence residents] count] >= [[primaryResidence residents] count]) {
+            if ([[residence residents] count] > [[primaryResidence residents] count]) {
+                primaryResidence = residence;
+            } else if ([residence.dateCreated isBeforeDate:primaryResidence.dateCreated]) {
+                primaryResidence = residence;
+            }
         }
     }
     

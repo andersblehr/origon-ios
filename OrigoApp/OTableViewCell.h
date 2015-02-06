@@ -24,6 +24,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic) id entity;
 @property (nonatomic) OInputField *inputField;
 @property (nonatomic) NSString *destinationId;
+@property (nonatomic) id destinationTarget;
 @property (nonatomic) id destinationMeta;
 
 @property (nonatomic, assign, readonly) BOOL isInputCell;

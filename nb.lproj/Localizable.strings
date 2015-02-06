@@ -27,7 +27,6 @@
 "[label] modifiedBy" = "Sist endret av";
 "[label] motherId" = "Mor";
 "[label] name" = "Navn";
-"[label] organisationDescription" = "Beskrivelse";
 "[label] preschool" = "Barnehage";
 "[label] school" = "Skole";
 "[label] signIn" = "Registrer bruker eller logg inn";
@@ -54,8 +53,6 @@
 "[placeholder] name" = "Navn";
 "[placeholder] newPassword" = "Nytt passord";
 "[placeholder] oldPassword" = "Gammelt passord";
-"[placeholder] organisation" = "Organisasjonens navn";
-"[placeholder] organisationDescription" = "Kort beskrivelse av organisasjonen";
 "[placeholder] password" = "Passord";
 "[placeholder] photo" = "Bilde";
 "[placeholder] preschool" = "Barnehagens navn";
@@ -87,11 +84,10 @@
 "[title] alumni" = "Alumnigruppe";
 "[title] community" = "Nabolag";
 "[title] list" = "Privat liste";
-"[title] organisation" = "Organisasjon";
 "[title] preschoolClass" = "Barnehageavdeling";
 "[title] residence" = "Husstand";
 "[title] schoolClass" = "Skoleklasse";
-"[title] simple" = "Enkel delt liste";
+"[title] simple" = "Enkel liste";
 "[title] studyGroup" = "Studiegruppe";
 "[title] team" = "Lag";
 
@@ -99,7 +95,6 @@
 "[registration footer] alumni" = "Trykk + for å legge til alumner.";
 "[registration footer] community" = "Trykk + for å legge til husstander.";
 "[registration footer] list" = "Trykk + for å legge til venner.";
-"[registration footer] organisation" = "Trykk + for å legge til medlemmer.";
 "[registration footer] preschoolClass" = "Trykk + for å legge til barn i avdelingen.";
 "[registration footer] residence" = "Trykk + for å legge til medlemmer i husstanden.";
 "[registration footer] schoolClass" = "Trykk + for å legge til elever i klassen.";
@@ -109,8 +104,7 @@
 
 // Member registration button titles
 "[add member] alumni" = "Registrer alumn";
-"[add member] community" = "Registrer medlem";
-"[add member] organisation" = "Registrer medlem";
+"[add member] community" = "Registrer husstand";
 "[add member] preschoolClass" = "Registrer barn";
 "[add member] residence" = "Nytt medlem";
 "[add member] schoolClass" = "Registrer elev";
@@ -121,7 +115,6 @@
 // Member role titles
 "[member role] alumni" = "Ansvarsområde";
 "[member role] community" = "Ansvarsområde";
-"[member role] organisation" = "Ansvarsområde";
 "[member role] schoolClass" = "Ansvarsområde";
 "[member role] simple" = "Ansvarsområde";
 "[member role] studyGroup" = "Ansvarsområde";
@@ -131,7 +124,6 @@
 "[member] alumni" = "Alumn";
 "[member] community" = "Medlem";
 "[member] list" = "Venn(inne)";
-"[member] organisation" = "Medlem";
 "[member] preschoolClass" = "Barn";
 "[member] residence" = "Beboer";
 "[member] schoolClass" = "Elev";
@@ -143,7 +135,6 @@
 "[members] alumni" = "Alumni";
 "[members] community" = "Medlemmer";
 "[members] list" = "Venner";
-"[members] organisation" = "Medlemmer";
 "[members] preschoolClass" = "I avdelingen";
 "[members] residence" = "I husstanden";
 "[members] schoolClass" = "Elever";
@@ -152,32 +143,29 @@
 "[members] team" = "Spillere";
 
 // New member titles
-"[new member] alumni" = "Ny alumn";
-"[new member] community" = "Nytt medlem";
-"[new member] organisation" = "Nytt medlem";
+"[new member] alumni" = "Registrer alumn";
+"[new member] community" = "Registrer medlem";
 "[new member] preschoolClass" = "I avdelingen";
 "[new member] residence" = "I husstanden";
-"[new member] schoolClass" = "Ny elev";
-"[new member] simple" = "Nytt medlem";
-"[new member] studyGroup" = "Ny student";
-"[new member] team" = "Ny spiller";
+"[new member] schoolClass" = "Registrer elev";
+"[new member] simple" = "Registrer medlem";
+"[new member] studyGroup" = "Registrer student";
+"[new member] team" = "Registrer spiller";
 
-// New member titles
-"[new members] alumni" = "Nye alumni";
-"[new members] community" = "Nye medlemmer";
-"[new members] list" = "Nye venner/venninner";
-"[new members] organisation" = "Nye medlemmer";
-"[new members] preschoolClass" = "Nye barn";
-"[new members] schoolClass" = "Nye elever";
-"[new members] simple" = "Nye medlemmer";
-"[new members] studyGroup" = "Nye studenter";
-"[new members] team" = "Nye spillere";
+// New members titles
+"[new members] alumni" = "Legg til alumni";
+"[new members] community" = "Legg til husstander";
+"[new members] list" = "Legg til venn(inn)er";
+"[new members] preschoolClass" = "Legg til barn";
+"[new members] schoolClass" = "Legg til elever";
+"[new members] simple" = "Legg til medlemmer";
+"[new members] studyGroup" = "Legg til studenter";
+"[new members] team" = "Legg til spillere";
 
 // Origo collective titles
 "[all members] alumni" = "Alle alumni";
 "[all members] community" = "Alle medlemmer";
 "[all members] list" = "Alle";
-"[all members] organisation" = "Alle medlemmer";
 "[all members] residence" = "Alle i husstanden";
 "[all members] simple" = "Alle medlemmer";
 "[all members] studyGroup" = "Alle i gruppa";
@@ -266,7 +254,13 @@
 "Cancel" = "Avbryt";
 "Home: %@" = "Hjem: %@";
 
+// Labels
+"-no address-" = "-uten adresse-";
+
 // Prompts
+"Register contact" = "Registrer kontakt";
+"Register friend" = "Registrer venn(inne)";
+"Register address" = "Registrer adresse";
 "Who do you want to text?" = "Hvem vil du sende melding til?";
 "Who do you want to call?" = "Hvem vil du ringe?";
 "Who do you want to email?" = "Hvem vil du sende epost til?";
@@ -397,8 +391,6 @@
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
 
 // Buttons
-"Register contact" = "Registrer kontakt";
-"Register friend" = "Registrer venn(inne)";
 "Keep" = "Behold";
 "Decline" = "Avvis";
 "Hide" = "Skjul";
@@ -406,6 +398,7 @@
 "Keep hidden" = "La forbli skjult";
 "Edit responsibilities" = "Rediger ansvarsområder";
 "Add from other list" = "Legg til fra annen liste";
+"Add households" = "Legg til husstander";
 "Register parent contact" = "Registrer foreldrekontakt";
 "About %@" = "Om %@";
 "Register household member" = "Registrer medlem i husstanden";
@@ -427,8 +420,6 @@
 
 // View title
 "About you" = "Om deg";
-"New contact" = "Ny kontakt";
-"New friend" = "Ny venn(inne)";
 
 // Headers
 "Responsibility in %@" = "Ansvar i %@";
@@ -441,7 +432,6 @@
 
 // Buttons
 "To some of them" = "Til noen av dem";
-"Register address" = "Registrer adresse";
 "Register an address" = "Registrer en adresse";
 "Register guardian" = "Registrer foresatt";
 "Other address" = "Annen adresse";
@@ -518,6 +508,8 @@
 // Footers
 "All persons marked as favourites will be listed here ..." = "Alle personer markert som favoritter vil bli listet opp her. Trykk på ☆ i personbildet for å markere en person som favoritt.";
 "All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter vil bli listet opp her.";
+"Tap + to add a responsibility." = "Trykk + for å legge til et ansvarsområde.";
+"Tap + to create a group." = "Trykk + for å opprette en gruppe.";
 
 
 /***

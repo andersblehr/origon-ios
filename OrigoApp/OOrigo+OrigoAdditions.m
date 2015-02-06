@@ -11,7 +11,6 @@
 NSString * const kOrigoTypeAlumni = @"alumni";
 NSString * const kOrigoTypeCommunity = @"community";
 NSString * const kOrigoTypeList = @"list";
-NSString * const kOrigoTypeOrganisation = @"organisation";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
@@ -242,24 +241,12 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableSet *members = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
-        OMember *member = membership.member;
-        
-        if ([self isOfType:kOrigoTypeStash]) {
-            if ([membership isFavourite]) {
-                [members addObject:member];
-            }
-        } else if ([self isOfType:kOrigoTypeList]) {
-            if ([membership isListing]) {
-                [members addObject:member];
-            }
-        } else if ([self isOfType:kOrigoTypeCommunity]) {
-            if (![member isJuvenile]) {
-                [members addObject:member];
-            }
-        } else {
-            if ([membership isShared]) {
-                [members addObject:member];
-            }
+        if ([self isOfType:kOrigoTypeStash] && [membership isFavourite]) {
+            [members addObject:membership.member];
+        } else if ([self isOfType:kOrigoTypeList] && [membership isListing]) {
+            [members addObject:membership.member];
+        } else if ([membership isShared]) {
+            [members addObject:membership.member];
         }
     }
     
@@ -389,15 +376,17 @@ NSString * const kOrigoTypeTeam = @"team";
 
 #pragma mark - Member residences
 
-- (NSArray *)memberResidences
+- (NSArray *)memberResidencesIncludeUser:(BOOL)includeUser
 {
-    NSMutableSet *residences = [NSMutableSet set];
+    NSMutableSet *memberResidences = [NSMutableSet set];
     
     for (OMember *member in [self members]) {
-        [residences unionSet:[NSSet setWithArray:[member residences]]];
+        if (![member isUser] || includeUser) {
+            [memberResidences addObject:[member primaryResidence]];
+        }
     }
     
-    return [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    return [[memberResidences allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -701,7 +690,17 @@ NSString * const kOrigoTypeTeam = @"team";
         for (OMembership *membership in [self allMemberships]) {
             if ([membership isMirrored]) {
                 if (membership != directMembership && ![membership isMarkedForDeletion]) {
-                    for (OMembership *residency in [membership.member residencies]) {
+                    id residencies = [NSMutableSet set];
+                    
+                    if ([self isJuvenile]) {
+                        for (OMember *guardian in [membership.member guardians]) {
+                            [residencies unionSet:[guardian residencies]];
+                        }
+                    } else {
+                        residencies = [membership.member residencies];
+                    }
+                    
+                    for (OMembership *residency in residencies) {
                         if (residency.origo != self && ![residency isMarkedForDeletion]) {
                             indirectlyKnows = indirectlyKnows || [residency.origo hasMember:member];
                         }

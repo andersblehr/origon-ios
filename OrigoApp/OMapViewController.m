@@ -58,7 +58,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
             for (MKRoute *route in [response routes]) {
                 [_mapView addOverlay:[route polyline] level:MKOverlayLevelAboveRoads];
                 
-                self.navigationItem.rightBarButtonItem = [UIBarButtonItem navigationButtonWithTarget:self];
+                self.navigationItem.leftBarButtonItem = [UIBarButtonItem navigationButtonWithTarget:self];
             }
         } else {
             [self showAlertForError:error info:nil];
@@ -103,7 +103,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
         [OAlert showAlertWithTitle:NSLocalizedString(@"Error", @"") text:NSLocalizedString(@"An error occurred. Please try again another time.", @"")];
     }
     
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+    self.navigationItem.leftBarButtonItem.enabled = NO;
 }
 
 
@@ -111,7 +111,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 {
     [OAlert showAlertWithTitle:NSLocalizedString(@"Unclear address", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The address %@ is unclear and could not be not found in the map.", @""), [origo singleLineAddress]]];
     
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+    self.navigationItem.leftBarButtonItem.enabled = NO;
 }
 
 
@@ -195,8 +195,8 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
     }];
     
     self.title = [origo shortAddress];
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem directionsButtonWithTarget:self];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem directionsButtonWithTarget:self];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
 }
 
 
