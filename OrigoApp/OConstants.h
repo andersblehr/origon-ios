@@ -70,8 +70,6 @@ extern NSString * const kMappedKeyClub;
 extern NSString * const kMappedKeyFullName;
 extern NSString * const kMappedKeyInstitution;
 extern NSString * const kMappedKeyListName;
-extern NSString * const kMappedKeyOrganisation;
-extern NSString * const kMappedKeyOrganisationDescription;
 extern NSString * const kMappedKeyPreschool;
 extern NSString * const kMappedKeyPreschoolClass;
 extern NSString * const kMappedKeyResidenceName;

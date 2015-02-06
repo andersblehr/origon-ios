@@ -138,8 +138,6 @@ static NSDictionary *_keyMappings = nil;
             kMappedKeyFullName : kPropertyKeyName,
             kMappedKeyInstitution : kPropertyKeyDescriptionText,
             kMappedKeyListName : kPropertyKeyName,
-            kMappedKeyOrganisation : kPropertyKeyName,
-            kMappedKeyOrganisationDescription : kPropertyKeyDescriptionText,
             kMappedKeyPreschoolClass : kPropertyKeyName,
             kMappedKeyPreschool : kPropertyKeyDescriptionText,
             kMappedKeyResidenceName : kPropertyKeyName,

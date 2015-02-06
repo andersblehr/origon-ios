@@ -23,7 +23,6 @@
 - (void)didSetEntity:(id)entity;
 
 - (id)defaultTarget;
-- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath;
 - (NSString *)reuseIdentifierForInputSection;
 
 - (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey;
@@ -61,6 +60,7 @@
 - (void)didFinishEditingListCellField:(OInputField *)listCellField;
 
 - (BOOL)supportsPullToRefresh;
+- (void)didToggleEditMode;
 - (void)didResumeFromBackground;
 - (void)didSignOut;
 

@@ -226,27 +226,24 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [self setRoleTitleSubsegments];
         [self inferSelectedTitleSubsegment];
         
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
     } else if ([self targetIs:kTargetGroups]) {
         if ([self aspectIs:kAspectEditable]) {
-            if ([[_origo groups] count]) {
-                self.title = NSLocalizedString(@"Edit groups", @"");
-                self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Groups", @"")];
-            } else {
-                self.title = NSLocalizedString(@"Groups", @"");
-            }
+            self.title = NSLocalizedString(@"Edit groups", @"");
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Groups", @"")];
             
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         } else {
             self.title = NSLocalizedString(@"Groups", @"");
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
-            self.usesPlainTableViewStyle = YES;
-            
+
             if ([_origo isManagedByUser]) {
-                self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
+                self.navigationItem.leftBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
             }
+            
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
+            self.usesPlainTableViewStyle = YES;
             
             NSArray *groups = [_origo groups];
             
@@ -374,6 +371,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         }
         
         cell.destinationId = kIdentifierValuePicker;
+        cell.destinationTarget = @{parentKey: kAspectParent};
         cell.destinationMeta = ward;
     } else if ([self targetIs:kTargetDevices]) {
         ODevice *device = [self dataAtIndexPath:indexPath];
@@ -405,10 +403,13 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         
         if (_selectedTitleSubsegment == kTitleSubsegmentParents) {
             roleHolders = [_origo parentsWithRole:role];
+            cell.destinationTarget = @{role: kAspectParentRole};
         } else if (_selectedTitleSubsegment == kTitleSubsegmentOrganisers) {
             roleHolders = [_origo organisersWithRole:role];
+            cell.destinationTarget = @{role: kAspectOrganiserRole};
         } else if (_selectedTitleSubsegment == kTitleSubsegmentMembers) {
             roleHolders = [_origo membersWithRole:role];
+            cell.destinationTarget = @{role: kAspectMemberRole};
         }
         
         cell.textLabel.text = role;
@@ -421,33 +422,12 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             cell.textLabel.text = group;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[_origo membersOfGroup:group] inOrigo:_origo subjective:YES];
             cell.destinationId = kIdentifierValuePicker;
+            cell.destinationTarget = @{group: kAspectGroup};
         } else {
             [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo excludeRoles:NO excludeRelations:YES];
             cell.selectable = NO;
         }
     }
-}
-
-
-- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath
-{
-    id target = [self dataAtIndexPath:indexPath];
-    
-    if ([self targetIs:kTargetParents]) {
-        target = @{target: kAspectParent};
-    } else if ([self targetIs:kTargetRoles]) {
-        if (_selectedTitleSubsegment == kTitleSubsegmentParents) {
-            target = @{target: kAspectParentRole};
-        } else if (_selectedTitleSubsegment == kTitleSubsegmentOrganisers) {
-            target = @{target: kAspectOrganiserRole};
-        } else if (_selectedTitleSubsegment == kTitleSubsegmentMembers) {
-            target = @{target: kAspectMemberRole};
-        }
-    } else if ([self targetIs:kTargetGroups]) {
-        target = @{target: kAspectGroup};
-    }
-    
-    return target;
 }
 
 
@@ -485,6 +465,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         } else if (_selectedTitleSubsegment == kTitleSubsegmentOthers) {
             footerText = NSLocalizedString(@"All who are not marked as favourites will be listed here.", @"");
         }
+    } else if ([self targetIs:kTargetRoles]) {
+        footerText = NSLocalizedString(@"Tap + to add a responsibility.", @"");
+    } else if ([self targetIs:kTargetGroups]) {
+        footerText = NSLocalizedString(@"Tap + to create a group.", @"");
     }
     
     return footerText;

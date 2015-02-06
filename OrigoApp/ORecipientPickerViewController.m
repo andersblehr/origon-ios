@@ -256,7 +256,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             [self setData:[_origo recipientCandidates] sectionIndexLabelKey:kPropertyKeyName];
         } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
             if ([_origo isOfType:kOrigoTypeCommunity]) {
-                [self setData:[_origo memberResidences] sectionIndexLabelKey:kPropertyKeyAddress];
+                [self setData:[_origo memberResidencesIncludeUser:NO] sectionIndexLabelKey:kPropertyKeyAddress];
             } else {
                 [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
             }
@@ -372,7 +372,12 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         }
         
         if ([_origo isOfType:kOrigoTypeCommunity]) {
-            cell.textLabel.text = [pivot shortAddress];
+            if ([pivot hasAddress]) {
+                cell.textLabel.text = [pivot shortAddress];
+            } else {
+                cell.textLabel.text = NSLocalizedString(@"-no address-", @"");
+                cell.textLabel.textColor = [UIColor tonedDownTextColour];
+            }
             
             if ([nonRecipientCandidatesForGroup count]) {
                 if ([recipientCandidatesForGroup count]) {

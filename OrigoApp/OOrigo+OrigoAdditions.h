@@ -11,7 +11,6 @@
 extern NSString * const kOrigoTypeAlumni;
 extern NSString * const kOrigoTypeCommunity;
 extern NSString * const kOrigoTypeList;
-extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeSchoolClass;
@@ -48,7 +47,7 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)parentContacts;
 - (NSArray *)admins;
 - (NSArray *)adminCandidates;
-- (NSArray *)memberResidences;
+- (NSArray *)memberResidencesIncludeUser:(BOOL)includeUser;
 
 - (NSArray *)memberRoles;
 - (NSArray *)membersWithRole:(NSString *)role;
