@@ -50,13 +50,13 @@ extern NSString * const kPropertyKeyHashCode;
 extern NSString * const kPropertyKeyIsAwaitingDeletion;
 extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyIsMinor;
-extern NSString * const kPropertyKeyLastSeen;
 extern NSString * const kPropertyKeyMobilePhone;
 extern NSString * const kPropertyKeyModifiedBy;
 extern NSString * const kPropertyKeyMotherId;
 extern NSString * const kPropertyKeyName;
 extern NSString * const kPropertyKeyOrigoId;
 extern NSString * const kPropertyKeyPasswordHash;
+extern NSString * const kPropertyKeyPermissions;
 extern NSString * const kPropertyKeyPhoto;
 extern NSString * const kPropertyKeyTelephone;
 extern NSString * const kPropertyKeyType;
@@ -78,39 +78,41 @@ extern NSString * const kMappedKeySchoolClass;
 extern NSString * const kMappedKeyStudyGroup;
 extern NSString * const kMappedKeyTeam;
 
-// External keys
-extern NSString * const kExternalKeyActivate;
-extern NSString * const kExternalKeyActivationCode;
-extern NSString * const kExternalKeyAuthEmail;
-extern NSString * const kExternalKeyChangePassword;
-extern NSString * const kExternalKeyDeviceId;
-extern NSString * const kExternalKeyEditableListCellContent;
-extern NSString * const kExternalKeyEntityClass;
-extern NSString * const kExternalKeyNewPassword;
-extern NSString * const kExternalKeyOldPassword;
-extern NSString * const kExternalKeyPassword;
-extern NSString * const kExternalKeyRepeatNewPassword;
-extern NSString * const kExternalKeyRepeatPassword;
-extern NSString * const kExternalKeySignIn;
-extern NSString * const kExternalKeySignOut;
+// Internal keys
+extern NSString * const kInternalKeyDeviceId;
+extern NSString * const kInternalKeyEditableListCellContent;
+extern NSString * const kInternalKeyEntityClass;
 
-// Button keys
-extern NSString * const kButtonKeySignUp;
-extern NSString * const kButtonKeySignIn;
-extern NSString * const kButtonKeyActivate;
-extern NSString * const kButtonKeyChangePassword;
-extern NSString * const kButtonKeyCancel;
+// Label keys
+extern NSString * const kLabelKeyActivate;
+extern NSString * const kLabelKeyAdmins;
+extern NSString * const kLabelKeyRegisterOrSignIn;
+
+// Input keys
+extern NSString * const kInputKeyActivationCode;
+extern NSString * const kInputKeyAuthEmail;
+extern NSString * const kInputKeyNewPassword;
+extern NSString * const kInputKeyOldPassword;
+extern NSString * const kInputKeyPassword;
+extern NSString * const kInputKeyRepeatNewPassword;
+extern NSString * const kInputKeyRepeatPassword;
+
+// Action keys
+extern NSString * const kActionKeyActivate;
+extern NSString * const kActionKeyCancel;
+extern NSString * const kActionKeyChangePassword;
+extern NSString * const kActionKeySignIn;
+extern NSString * const kActionKeySignOut;
+extern NSString * const kActionKeySignUp;
 
 // Placeholders
 extern NSString * const kPlaceholderDefaultValue;
 
-// String key prefixes
-extern NSString * const kStringPrefixDefault;
+// String prefixes
 extern NSString * const kStringPrefixLabel;
 extern NSString * const kStringPrefixAlternateLabel;
 extern NSString * const kStringPrefixTitle;
 extern NSString * const kStringPrefixSettingLabel;
-extern NSString * const kStringPrefixSettingListLabel;
 extern NSString * const kStringPrefixPlaceholder;
 extern NSString * const kStringPrefixOrigoTitle;
 extern NSString * const kStringPrefixFooter;

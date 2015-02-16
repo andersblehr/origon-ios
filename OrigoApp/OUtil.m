@@ -11,6 +11,60 @@
 
 @implementation OUtil
 
+#pragma mark - Auxiliary methods
+
++ (NSMutableDictionary *)keyValuePairsFromKeyValueString:(NSString *)keyValueString
+{
+    NSMutableDictionary *keyValuePairs = [NSMutableDictionary dictionary];
+    NSArray *keysWithValues = [keyValueString componentsSeparatedByString:kSeparatorList];
+    
+    for (NSString *keyWithValue in keysWithValues) {
+        NSArray *keyValuePair = [keyWithValue componentsSeparatedByString:kSeparatorMapping];
+        
+        keyValuePairs[keyValuePair[0]] = keyValuePair[1];
+    }
+    
+    return keyValuePairs;
+}
+
+
++ (NSString *)keyValueStringFromKeyValuePairs:(NSDictionary *)keyValuePairs
+{
+    NSString *keyValueString = nil;
+    
+    for (NSString *key in [[keyValuePairs allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
+        NSString *value = keyValuePairs[key];
+        NSString *keyWithValue = [key stringByAppendingString:value separator:kSeparatorMapping];
+        
+        if ([keyValueString length]) {
+            keyValueString = [keyValueString stringByAppendingString:keyWithValue separator:kSeparatorList];
+        } else {
+            keyValueString = keyWithValue;
+        }
+    }
+    
+    return keyValueString;
+}
+
+
+#pragma mark - Handling settings
+
++ (NSString *)keyValueString:(NSString *)keyValueString setValue:(id)value forKey:(NSString *)key
+{
+    NSMutableDictionary *keyValuePairs = [self keyValuePairsFromKeyValueString:keyValueString];
+    
+    keyValuePairs[key] = [value isKindOfClass:[NSNumber class]] ? [value stringValue] : value;
+    
+    return [self keyValueStringFromKeyValuePairs:keyValuePairs];
+}
+
+
++ (NSString *)keyValueString:(NSString *)keyValueString valueForKey:(NSString *)key
+{
+    return [self keyValuePairsFromKeyValueString:keyValueString][key];
+}
+
+
 #pragma mark - Comma-separated lists
 
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin

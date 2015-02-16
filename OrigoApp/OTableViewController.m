@@ -364,47 +364,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)reloadFooterForSectionPrecedingSection:(NSInteger)section
+- (void)reloadHeaderForSection:(NSInteger)section
 {
-    NSInteger precedingSectionKey = [self sectionKeyForSectionNumber:section - 1];
-    BOOL hasPrecedingFooter = NO;
-    
-    if ([_instance respondsToSelector:@selector(hasFooterForSectionWithKey:)]) {
-        hasPrecedingFooter = [_instance hasFooterForSectionWithKey:precedingSectionKey];
-    }
-    
-    if (hasPrecedingFooter) {
-        id footerContent = [_instance footerContentForSectionWithKey:precedingSectionKey];
-        
-        if ([footerContent isKindOfClass:[NSString class]]) {
-            [_sectionFooterLabels[@(precedingSectionKey)] setText:footerContent];
-        }
-    } else if ([_sectionFooterLabels[@(precedingSectionKey)] text]) {
-        [_sectionFooterLabels[@(precedingSectionKey)] setText:nil];
-    }
+    [self reloadHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]];
 }
 
 
-- (void)reloadHeaderForSectionFollowingSection:(NSInteger)section
+- (void)reloadFooterForSection:(NSInteger)section
 {
-    NSInteger followingSectionKey = [self sectionKeyForSectionNumber:section + 1];
-    BOOL hasFollowingHeader = NO;
-    
-    if ([_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
-        hasFollowingHeader = [_instance hasHeaderForSectionWithKey:followingSectionKey];
-    } else {
-        hasFollowingHeader = [self sectionNumberForSectionKey:followingSectionKey] > 0;
-    }
-    
-    if (hasFollowingHeader) {
-        id headerContent = [_instance headerContentForSectionWithKey:followingSectionKey];
-        
-        if ([headerContent isKindOfClass:[NSString class]]) {
-            [_sectionHeaderLabels[@(followingSectionKey)] setText:headerContent];
-        }
-    } else if ([_sectionHeaderLabels[@(followingSectionKey)] text]) {
-        [_sectionHeaderLabels[@(followingSectionKey)] setText:nil];
-    }
+    [self reloadFooterForSectionWtihKey:[self sectionKeyForSectionNumber:section]];
 }
 
 
@@ -1153,9 +1121,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [_instance loadData];
     
     NSArray *sectionKeys = [[_sectionData allKeys] sortedArrayUsingSelector:@selector(compare:)];
-    NSMutableIndexSet *affectedSections = [NSMutableIndexSet indexSet];
-    NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
+    NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
+    NSMutableIndexSet *sectionsToDelete = [NSMutableIndexSet indexSet];
     UITableViewRowAnimation rowAnimation = [self rowAnimation];
     
     for (NSNumber *sectionKey in sectionKeys) {
@@ -1174,12 +1142,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                     if (newCount) {
                         [sectionsToReload addIndex:section - [sectionsToInsert count]];
                     } else {
-                        [affectedSections addIndex:section];
-                        [_sectionKeys removeObject:sectionKey];
-                        [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
+                        [sectionsToDelete addIndex:section - [sectionsToInsert count]];
                     }
                 } else if (newCount) {
-                    [sectionsToInsert addIndex:section - [affectedSections count]];
+                    [sectionsToInsert addIndex:section];
                 }
                 
                 _sectionCounts[sectionKey] = @(newCount);
@@ -1195,9 +1161,22 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [_tableView insertSections:sectionsToInsert withRowAnimation:rowAnimation];
     }
     
+    if ([sectionsToDelete count]) {
+        [_tableView deleteSections:sectionsToDelete withRowAnimation:rowAnimation];
+        
+        NSInteger deletedSection = [sectionsToDelete firstIndex];
+        
+        while (deletedSection != NSNotFound) {
+            [_sectionKeys removeObject:@([self sectionKeyForSectionNumber:deletedSection])];
+            deletedSection = [sectionsToDelete indexGreaterThanIndex:deletedSection];
+        }
+    }
+    
     if ([_sectionKeys count]) {
-        [affectedSections addIndexes:sectionsToInsert];
+        NSMutableIndexSet *affectedSections = [NSMutableIndexSet indexSet];
         [affectedSections addIndexes:sectionsToReload];
+        [affectedSections addIndexes:sectionsToInsert];
+        [affectedSections addIndexes:sectionsToDelete];
         
         NSInteger topmostAffectedSection = [affectedSections firstIndex];
         NSInteger bottomAffectedSection = [affectedSections lastIndex];
@@ -1205,11 +1184,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if (topmostAffectedSection != NSNotFound) {
             if (topmostAffectedSection > 0) {
-                [self reloadFooterForSectionPrecedingSection:topmostAffectedSection];
+                [self reloadFooterForSection:topmostAffectedSection - 1];
             }
             
             if (bottomAffectedSection < bottomSection) {
-                [self reloadHeaderForSectionFollowingSection:bottomAffectedSection];
+                [self reloadHeaderForSection:bottomAffectedSection + 1];
             }
         }
     }
@@ -1240,12 +1219,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         NSInteger bottomSection = [self sectionNumberForSectionKey:[[_sectionKeys lastObject] integerValue]];
         
         if (section == 0 && section < bottomSection) {
-            [self reloadHeaderForSectionFollowingSection:section];
+            [self reloadHeaderForSection:section + 1];
         } else if (section < bottomSection) {
-            [self reloadFooterForSectionPrecedingSection:section];
-            [self reloadHeaderForSectionFollowingSection:section];
+            [self reloadFooterForSection:section - 1];
+            [self reloadHeaderForSection:section + 1];
         } else if (section > 0) {
-            [self reloadFooterForSectionPrecedingSection:section];
+            [self reloadFooterForSection:section - 1];
         }
         
         if (sectionExists && !sectionIsEmpty) {
@@ -1256,6 +1235,50 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_sectionKeys removeObject:@(sectionKey)];
             [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
         }
+    }
+}
+
+
+#pragma mark - Reloading headers & footers
+
+- (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    BOOL hasHeader = NO;
+    
+    if ([_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
+        hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
+    } else {
+        hasHeader = [self sectionNumberForSectionKey:sectionKey] > 0;
+    }
+    
+    if (hasHeader) {
+        id headerContent = [_instance headerContentForSectionWithKey:sectionKey];
+        
+        if ([headerContent isKindOfClass:[NSString class]]) {
+            [_sectionHeaderLabels[@(sectionKey)] setText:headerContent];
+        }
+    } else if ([_sectionHeaderLabels[@(sectionKey)] text]) {
+        [_sectionHeaderLabels[@(sectionKey)] setText:nil];
+    }
+}
+
+
+- (void)reloadFooterForSectionWtihKey:(NSInteger)sectionKey
+{
+    BOOL hasFooter = NO;
+    
+    if ([_instance respondsToSelector:@selector(hasFooterForSectionWithKey:)]) {
+        hasFooter = [_instance hasFooterForSectionWithKey:sectionKey];
+    }
+    
+    if (hasFooter) {
+        id footerContent = [_instance footerContentForSectionWithKey:sectionKey];
+        
+        if ([footerContent isKindOfClass:[NSString class]]) {
+            [_sectionFooterLabels[@(sectionKey)] setText:footerContent];
+        }
+    } else if ([_sectionFooterLabels[@(sectionKey)] text]) {
+        [_sectionFooterLabels[@(sectionKey)] setText:nil];
     }
 }
 

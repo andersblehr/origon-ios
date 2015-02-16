@@ -28,7 +28,7 @@
 @property (nonatomic, retain) NSString * createdIn;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *memberships;
-@property (nonatomic, retain) OSettings *settings;
+@property (nonatomic, retain) NSString *settings;
 @end
 
 @interface OMember (CoreDataGeneratedAccessors)

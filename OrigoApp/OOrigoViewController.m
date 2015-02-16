@@ -52,7 +52,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     NSInteger _recipientType;
     NSArray *_recipientCandidates;
     
-    BOOL _isManagedByUser;
+    BOOL _userIsAdmin;
 }
 
 @end
@@ -80,19 +80,28 @@ static NSInteger const kActionSheetTagRecipients = 4;
         isAwaitingActivation = YES;
     }
     
-    [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
-    
-    if ([_origo hasAddress]) {
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self]];
-    }
-    
-    if ([[_origo groups] count] || ![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
-    }
-    
-    if ([_origo isManagedByUser] && !isAwaitingActivation) {
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
+    if (!isAwaitingActivation) {
+        if (![_origo isOfType:kOrigoTypeResidence] && _userIsAdmin) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem settingsButtonWithTarget:self]];
+        } else {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
+        }
+        
+        if ([_origo hasAddress]) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self]];
+        }
+
+        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+        }
+        
+        if (_userIsAdmin || _origo.membersCanEdit) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
+        }
+        
+        if (_userIsAdmin || _origo.membersCanAdd) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
+        }
     }
 }
 
@@ -332,6 +341,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
 }
 
 
+- (void)performSettingsAction
+{
+    [self performInfoAction];
+}
+
+
 - (void)performInfoAction
 {
     [self presentModalViewControllerWithIdentifier:kIdentifierInfo target:_origo];
@@ -403,7 +418,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     _origo = [self.entity proxy];
     
-    if ([_origo hasMember:self.state.currentMember]) {
+    if ([_origo isOfType:kOrigoTypeList] || [_origo hasMember:self.state.currentMember]) {
         _member = self.state.currentMember;
     } else {
         _member = [_origo members][0];
@@ -411,7 +426,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     
     _membership = [_origo membershipForMember:_member];
     _origoType = _origo.type;
-    _isManagedByUser = [_origo isManagedByUser];
+    _userIsAdmin = [_origo userIsAdmin];
     
     if ([self actionIs:kActionRegister]) {
         self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
@@ -564,10 +579,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
     if ([self isBottomSectionKey:sectionKey]) {
         if ([self actionIs:kActionRegister]) {
             hasFooter = [_origo isOfType:kOrigoTypeList];
+        } else if (self.isModal || ![[_origo members] count]) {
+            hasFooter = YES;
         } else if ([_origo isOfType:kOrigoTypeResidence]) {
-            hasFooter = [_origo isActiveResidence] && ![self aspectIs:kAspectHousehold];
-        } else {
-            hasFooter = self.isModal || ![[_origo members] count];
+            hasFooter = [_origo hasAdmin] && ![self aspectIs:kAspectHousehold];
         }
     }
     
@@ -577,7 +592,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (id)headerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    id content = nil;
+    id headerContent = nil;
     NSInteger number;
     
     if (sectionKey == kSectionKeyOrganisers) {
@@ -594,65 +609,63 @@ static NSInteger const kActionSheetTagRecipients = 4;
         }
         
         number = [[_origo organisers] count] > 1 ? pluralIndefinite : singularIndefinite;
-        content = [[OLanguage nouns][contactTitle][number] stringByCapitalisingFirstLetter];
+        headerContent = [[OLanguage nouns][contactTitle][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyParentContacts) {
         number = [[_origo parentContacts] count] > 1 ? pluralIndefinite : singularIndefinite;
-        content = [[OLanguage nouns][_parentContact_][number] stringByCapitalisingFirstLetter];
+        headerContent = [[OLanguage nouns][_parentContact_][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyMembers) {
         NSString *membersTitle = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
         
         if ([_origo isJuvenile]) {
             if ([self actionIs:kActionRegister]) {
-                content = membersTitle;
+                headerContent = membersTitle;
             } else {
-                content = @[membersTitle, [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
+                headerContent = @[membersTitle, [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
             }
         } else if ([_origo isOfType:kOrigoTypeCommunity]) {
             if ([self actionIs:kActionRegister]) {
-                content = membersTitle;
+                headerContent = membersTitle;
             } else {
-                content = @[membersTitle, NSLocalizedString(@"Households", @"")];
+                headerContent = @[membersTitle, NSLocalizedString(@"Households", @"")];
             }
         } else {
             if (![_origo isCommitted] && [_origo isOfType:kOrigoTypeResidence]) {
                 if (![_member isCommitted] && [self aspectIs:kAspectJuvenile]) {
-                    content = NSLocalizedString(@"Guardians in the household", @"");
+                    headerContent = NSLocalizedString(@"Guardians in the household", @"");
                 } else {
-                    content = membersTitle;
+                    headerContent = membersTitle;
                 }
             } else {
-                content = membersTitle;
+                headerContent = membersTitle;
             }
         }
     }
     
-    return content;
+    return headerContent;
 }
 
 
 - (NSString *)footerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *footerText = nil;
+    NSString *footerContent = NSLocalizedString(_origo.type, kStringPrefixFooter);
     
     if ([_origo isOfType:kOrigoTypeResidence]) {
-        if ([_origo isActiveResidence] && ![self aspectIs:kAspectHousehold]) {
-            footerText = NSLocalizedString(@"This household has active members.", @"");
+        if ([_origo hasAdmin] && ![self aspectIs:kAspectHousehold]) {
+            footerContent = NSLocalizedString(@"This household is active on Origo.", @"");
         } else if ([self aspectIs:kAspectJuvenile]) {
-            footerText = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
+            footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
         }
     } else if ([_origo isOfType:kOrigoTypeList]) {
         if ([self actionIs:kActionRegister]) {
-            footerText = NSLocalizedString(@"Private lists are not shared and are not visible to others.", @"");
+            footerContent = NSLocalizedString(@"Private lists are not shared and are not visible to others.", @"");
         } else if ([_member isJuvenile]) {
-            footerText = NSLocalizedString(@"Tap + to register friends.", @"");
+            footerContent = NSLocalizedString(@"Tap + to register friends.", @"");
         } else {
-            footerText = NSLocalizedString(@"Tap + to register contacts.", @"");
+            footerContent = NSLocalizedString(@"Tap + to register contacts.", @"");
         }
-    } else {
-        footerText = NSLocalizedString(_origo.type, kStringPrefixFooter);
     }
     
-    return footerText;
+    return footerContent;
 }
 
 
@@ -707,9 +720,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDeleteCell = NO;
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if ([_origo isCommitted] && [_origo isManagedByUser]) {
+    if ([_origo isCommitted] && (_userIsAdmin || _origo.membersCanDelete)) {
+        NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+        
         if (sectionKey == kSectionKeyMembers) {
             id entity = [self dataAtIndexPath:indexPath];
             
@@ -724,12 +738,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
     }
     
     return canDeleteCell;
-}
-
-
-- (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
-{
-    return NSLocalizedString(@"Remove", @"");
 }
 
 
@@ -818,8 +826,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 _origoType = _origo.type;
             }
             
-            if (_isManagedByUser && ![_origo isManagedByUser]) {
-                _isManagedByUser = NO;
+            if (_userIsAdmin && ![_origo userIsAdmin]) {
+                _userIsAdmin = NO;
                 
                 [self loadNavigationBarItems];
             }
@@ -975,20 +983,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                     if (wasHidden) {
                         [self.navigationController popViewControllerAnimated:YES];
                     } else {
-                        NSMutableArray *rightBarButtonItems = [NSMutableArray array];
-                        
-                        for (UIBarButtonItem *button in self.navigationItem.rightBarButtonItems) {
-                            if (button.tag != kBarButtonTagAcceptDecline) {
-                                [rightBarButtonItems addObject:button];
-                            }
-                        }
-                        
-                        [self.navigationItem setRightBarButtonItems:rightBarButtonItems animated:YES];
-                        
-                        if ([_origo isManagedByUser]) {
-                            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
-                            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
-                        }
+                        [self loadNavigationBarItems];
                     }
                 } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
                     if (![_membership isHidden]) {

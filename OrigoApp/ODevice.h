@@ -15,7 +15,6 @@
 @interface ODevice : OReplicatedEntity
 
 @property (nonatomic, retain) NSString * type;
-@property (nonatomic, retain) NSDate * lastSeen;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) OMember *user;
 

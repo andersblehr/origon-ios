@@ -148,7 +148,7 @@ static CGFloat const kTextInsetY = 1.2f;
     if (self) {
         _key = key;
         _inputCellDelegate = delegate;
-        _isEditableListCellField = [key isEqualToString:kExternalKeyEditableListCellContent];
+        _isEditableListCellField = [key isEqualToString:kInternalKeyEditableListCellContent];
         _supportsMultiLineText = NO;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;

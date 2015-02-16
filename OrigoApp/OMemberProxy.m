@@ -230,9 +230,9 @@
 }
 
 
-- (BOOL)isManagedByUser
+- (BOOL)isEditableByUser
 {
-    return [self instance] ? [[self instance] isManagedByUser] : ![self isReplicated];
+    return [self instance] ? [[self instance] isEditableByUser] : ![self isReplicated];
 }
 
 

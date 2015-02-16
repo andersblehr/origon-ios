@@ -50,13 +50,13 @@ NSString * const kPropertyKeyHashCode = @"hashCode";
 NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
 NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyIsMinor = @"isMinor";
-NSString * const kPropertyKeyLastSeen = @"lastSeen";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
 NSString * const kPropertyKeyModifiedBy = @"modifiedBy";
 NSString * const kPropertyKeyMotherId = @"motherId";
 NSString * const kPropertyKeyName = @"name";
 NSString * const kPropertyKeyOrigoId = @"origoId";
 NSString * const kPropertyKeyPasswordHash = @"passwordHash";
+NSString * const kPropertyKeyPermissions = @"permissions";
 NSString * const kPropertyKeyPhoto = @"photo";
 NSString * const kPropertyKeyTelephone = @"telephone";
 NSString * const kPropertyKeyType = @"type";
@@ -78,39 +78,42 @@ NSString * const kMappedKeySchoolClass = @"schoolClass";
 NSString * const kMappedKeyStudyGroup = @"studyGroup";
 NSString * const kMappedKeyTeam = @"team";
 
-// External keys
-NSString * const kExternalKeyActivate = @"activate";
-NSString * const kExternalKeyActivationCode = @"activationCode";
-NSString * const kExternalKeyAuthEmail = @"authEmail";
-NSString * const kExternalKeyChangePassword = @"changePassword";
-NSString * const kExternalKeyDeviceId = @"deviceId";
-NSString * const kExternalKeyEditableListCellContent = @"editableListCellContent";
-NSString * const kExternalKeyEntityClass = @"entityClass";
-NSString * const kExternalKeyNewPassword = @"newPassword";
-NSString * const kExternalKeyOldPassword = @"oldPassword";
-NSString * const kExternalKeyPassword = @"password";
-NSString * const kExternalKeyRepeatNewPassword = @"repeatNewPassword";
-NSString * const kExternalKeyRepeatPassword = @"repeatPassword";
-NSString * const kExternalKeySignIn = @"signIn";
-NSString * const kExternalKeySignOut = @"signOut";
+// Internal keys
+NSString * const kInternalKeyDeviceId = @"deviceId";
+NSString * const kInternalKeyEditableListCellContent = @"editableListCellContent";
+NSString * const kInternalKeyEntityClass = @"entityClass";
 
-// Button keys
-NSString * const kButtonKeySignUp = @"signUp";
-NSString * const kButtonKeySignIn = @"signIn";
-NSString * const kButtonKeyActivate = @"activate";
-NSString * const kButtonKeyChangePassword = @"changePassword";
-NSString * const kButtonKeyCancel = @"cancel";
+// Label keys
+NSString * const kLabelKeyActivate = @"activate";
+NSString * const kLabelKeyAdmins = @"admins";
+NSString * const kLabelKeyRegisterOrSignIn = @"registerOrSignIn";
+
+// Input keys
+NSString * const kInputKeyActivationCode = @"activationCode";
+NSString * const kInputKeyAuthEmail = @"authEmail";
+NSString * const kInputKeyNewPassword = @"newPassword";
+NSString * const kInputKeyOldPassword = @"oldPassword";
+NSString * const kInputKeyPassword = @"password";
+NSString * const kInputKeyRepeatNewPassword = @"repeatNewPassword";
+NSString * const kInputKeyRepeatPassword = @"repeatPassword";
+
+// Action keys
+NSString * const kActionKeyActivate = @"activate";
+NSString * const kActionKeyCancel = @"cancel";
+NSString * const kActionKeyChangePassword = @"changePassword";
+NSString * const kActionKeySignIn = @"signIn";
+NSString * const kActionKeySignOut = @"signOut";
+NSString * const kActionKeySignUp = @"signUp";
 
 // Placeholders
 NSString * const kPlaceholderDefaultValue = @"defaultValue";
 
-// String key prefixes
-NSString * const kStringPrefixDefault = @"[default]";
+// String prefixes
 NSString * const kStringPrefixLabel = @"[label]";
 NSString * const kStringPrefixAlternateLabel = @"[alternate label]";
 NSString * const kStringPrefixTitle = @"[title]";
+NSString * const kStringPrefixSettingTitle = @"[setting]";
 NSString * const kStringPrefixSettingLabel = @"[setting label]";
-NSString * const kStringPrefixSettingListLabel = @"[setting list label]";
 NSString * const kStringPrefixPlaceholder = @"[placeholder]";
 NSString * const kStringPrefixOrigoTitle = @"[title]";
 NSString * const kStringPrefixFooter = @"[registration footer]";
@@ -127,7 +130,6 @@ NSString * const kStringPrefixOrganiserRoleTitle = @"[organiser role]";
 NSString * const kStringPrefixAddOrganiserRoleButton = @"[add organiser role]";
 NSString * const kStringPrefixEditOrganiserRoleButton = @"[edit organiser role]";
 NSString * const kStringPrefixMemberRoleTitle = @"[member role]";
-NSString * const kStringPrefixSettingTitle = @"[setting title]";
 
 // Icon file names
 NSString * const kIconFileResidence = @"ro-750-home-toolbar-selected.png";

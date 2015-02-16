@@ -23,7 +23,13 @@
 @property (nonatomic) NSString *fatherId;
 @property (nonatomic) NSString *motherId;
 @property (nonatomic) NSString *passwordHash;
-@property (nonatomic) id<OSettings> settings;
+@property (nonatomic) NSString *settings;
+
+@property (nonatomic, assign) BOOL useEnglish;
+
+- (NSArray *)settingKeys;
+- (NSArray *)settingListKeys;
+- (NSString *)defaultSettings;
 
 - (NSComparisonResult)compare:(id<OMember>)other;
 - (NSComparisonResult)subjectiveCompare:(id<OMember>)other;
@@ -73,7 +79,7 @@
 - (BOOL)isWardOfUser;
 - (BOOL)isHousemateOfUser;
 - (BOOL)isKnownByUser;
-- (BOOL)isManagedByUser;
+- (BOOL)isEditableByUser;
 - (BOOL)isManaged;
 - (BOOL)isFavourite;
 - (BOOL)isMale;

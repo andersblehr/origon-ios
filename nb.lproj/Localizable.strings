@@ -8,15 +8,16 @@
 
 
 /***
- * Property derived strings
+ * Key derived strings
  ***/
 
 // Labels
 "[label] activate" = "Oppgi aktiveringskode";
+"[label] admins" = "Administratorer";
 "[label] changePassword" = "Bytt passord";
 "[label] address" = "Adresse";
 "[label] club" = "Klubb";
-"[label] createdBy" = "Opprettet av";
+"[label] createdBy" = "Registrert av";
 "[label] createdIn" = "Først registrert i";
 "[label] dateOfBirth" = "Alder";
 "[label] descriptionText" = "Beskrivelse";
@@ -28,8 +29,8 @@
 "[label] motherId" = "Mor";
 "[label] name" = "Navn";
 "[label] preschool" = "Barnehage";
+"[label] registerOrSignIn" = "Registrer bruker eller logg inn";
 "[label] school" = "Skole";
-"[label] signIn" = "Registrer bruker eller logg inn";
 "[label] signOut" = "Logg ut";
 "[label] telephone" = "Telefon";
 "[label] type" = "Type";
@@ -37,7 +38,7 @@
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Født";
-"[alternate label] createdBy" = "Registrert av";
+"[alternate label] createdBy" = "Opprettet av";
 
 // Placeholders
 "[placeholder] activationCode" = "Aktiveringskode fra epost";
@@ -82,7 +83,7 @@
 
 // Origo titles
 "[title] alumni" = "Alumnigruppe";
-"[title] community" = "Nabolag";
+"[title] community" = "Nærmiljø";
 "[title] list" = "Privat liste";
 "[title] preschoolClass" = "Barnehageavdeling";
 "[title] residence" = "Husstand";
@@ -226,7 +227,7 @@
 "guardian" = "foresatt;-;foresatte;-;-;-";
 "lecturer" = "foreleser;-;forelesere;-;-;-";
 "mother" = "mor;moren;-;-;moren din;moren til %@";
-"parent" = "-;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
+"parent" = "forelder;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
 "parentContact" = "foreldrekontakt;-;foreldrekontakter;-;-;-";
 "preschoolTeacher" = "personale;-;personale;-;-;-";
 "teacher" = "lærer;-;lærere;-;-;-";
@@ -276,7 +277,7 @@
 "Cannot place call" = "Kan ikke ringe";
 "Please verify that %@ is a valid phone number." = "Verifiser at %@ er et gyldig telefonnummer.";
 "Authentication required" = "Autentisering kreves";
-"You have been signed out. Please sign in again to continue to use Origo on this device." = "Du er blitt logget ut. Logg inn på nytt for å fortsette å bruke Origo på denne enheten.";
+"You have been signed out. Please sign in again to continue using Origo on this device." = "Du er blitt logget ut. Logg inn på nytt for å fortsette å bruke Origo på denne enheten.";
 
 // Generic terms
 "Close" = "Lukk";
@@ -293,12 +294,17 @@
 "Households" = "Husstander";
 "Home number" = "Hjemmenummer";
 "Neither" = "Ingen av dem";
+"None" = "Ingen";
 "Both" = "Begge";
 "All" = "Alle";
 "Favourites" = "Favoritter";
 "None of them" = "Ingen av dem";
 "None of you" = "Ingen av dere";
 "All of them" = "Alle";
+"Member permissions" = "Medlemstilganger";
+"add" = "legge til";
+"delete" = "slette";
+"edit" = "redigere";
 
 // Formats
 "%@ at %@" = "%@ kl %@";
@@ -387,7 +393,7 @@
 // Footers
 "Private lists are not shared and are not visible to others." = "Private lister deles ikke og er ikke synlige for andre.";
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
-"Tap + to register friends." = "Trykk + for å registrere venner/venninner.";
+"Tap + to register friends." = "Trykk + for å registrere venn(inn)er.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
 
 // Buttons
@@ -403,7 +409,6 @@
 "About %@" = "Om %@";
 "Register household member" = "Registrer medlem i husstanden";
 "Other guardian" = "Annen foresatt";
-"Remove" = "Meld ut";
 
 // Prompts
 "Do you want to keep this listing?" = "Vil du beholde denne oppføringen?";
@@ -501,9 +506,14 @@
 "Groups" = "Grupper";
 "Edit groups" = "Rediger grupper";
 
-// List titles
-"[setting list label] devices" = "Aktive enheter";
-"[setting list label] hidden" = "Skjulte lister";
+// Setting labels
+"[setting label] devices" = "Aktive enheter";
+"[setting label] hidden" = "Skjulte lister";
+
+// Permission labels
+"[setting label] edit" = "Redigere listedetaljer";
+"[setting label] add" = "Legge til medlemmer i lista";
+"[setting label] delete" = "Slette medlemmer fra lista";
 
 // Footers
 "All persons marked as favourites will be listed here ..." = "Alle personer markert som favoritter vil bli listet opp her. Trykk på ☆ i personbildet for å markere en person som favoritt.";
@@ -567,16 +577,19 @@
 // Footers
 "Created: %@." = "Opprettet: %@.";
 "Registered: %@." = "Registrert: %@.";
-"Active since: %@." = "Aktiv siden: %@.";
+"Active on Origo since: %@." = "Aktiv på Origo siden: %@.";
 "Last modified: %@." = "Sist endret: %@.";
-"This household has active members." = "Denne husstanden har aktive medlemmer.";
+"This household is active on Origo." = "Denne husstanden er aktiv på Origo.";
 
 // Buttons
 "About" = "Om";
 
 // Labels
-"Active" = "Aktiv";
+"Active on Origo" = "Aktiv på Origo";
 "Through household" = "Gjennom husstand";
+"My membership" = "Mitt medlemskap";
+"Regular member" = "Ordinært medlem";
+"Community member" = "Nærmiljø";
 
 
 /***

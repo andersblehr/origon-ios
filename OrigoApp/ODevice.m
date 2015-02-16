@@ -13,7 +13,6 @@
 @implementation ODevice
 
 @dynamic type;
-@dynamic lastSeen;
 @dynamic name;
 @dynamic user;
 

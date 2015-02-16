@@ -19,7 +19,7 @@ NSString *kDeviceType_iPodTouch = @"iPod";
 
 - (NSComparisonResult)compare:(ODevice *)other
 {
-    return [other.lastSeen compare:self.lastSeen];
+    return [other.name compare:self.name];
 }
 
 
@@ -39,7 +39,6 @@ NSString *kDeviceType_iPodTouch = @"iPod";
         device = [[OMeta m].context insertEntityOfClass:[self class] inOrigo:[[OMeta m].user stash] entityId:deviceId];
         device.type = [UIDevice currentDevice].model;
         device.name = [UIDevice currentDevice].name;
-        device.lastSeen = [NSDate date];
         device.user = [OMeta m].user;
     }
     
@@ -66,8 +65,6 @@ NSString *kDeviceType_iPodTouch = @"iPod";
     if (![self.name isEqualToString:[UIDevice currentDevice].name]) {
         self.name = [UIDevice currentDevice].name;
     }
-    
-    self.lastSeen = [NSDate date];
 }
 
 

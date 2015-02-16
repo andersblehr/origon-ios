@@ -17,7 +17,6 @@ static NSInteger const kSectionKeyValues = 0;
     NSMutableArray *_pickedValues;
     BOOL _isMultiValuePicker;
     
-    id<OSettings> _settings;
     NSString *_settingKey;
     NSMutableDictionary *_valuesByKey;
     
@@ -77,7 +76,6 @@ static NSInteger const kSectionKeyValues = 0;
     
     if ([self targetIs:kTargetSetting]) {
         _settingKey = self.target;
-        _settings = [OSettings settings];
         
         self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
     } else if ([self targetIs:kTargetParent]) {
@@ -134,8 +132,8 @@ static NSInteger const kSectionKeyValues = 0;
                 _affiliationType = kAffiliationTypeGroup;
                 _pickedValues = _affiliation ? [[_origo membersOfGroup:_affiliation] mutableCopy] : nil;
                 placeholder = NSLocalizedString(@"Group name", @"");
-            } else if ([self aspectIs:kAspectAdmin]) {
-                self.title = self.target;
+            } else if ([self targetIs:kTargetAdmins]) {
+                self.title = NSLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
                 _pickedValues = [[_origo admins] mutableCopy];
             }
             
@@ -154,7 +152,7 @@ static NSInteger const kSectionKeyValues = 0;
                     
                     [self.navigationItem addRightBarButtonItem:_multiRoleButtonOff];
                 }
-            } else if ([self targetIs:@[kTargetGroup, kTargetAdmin]]) {
+            } else if ([self targetIs:@[kTargetGroup, kTargetAdmins]]) {
                 _isMultiValuePicker = YES;
             }
         }
@@ -206,7 +204,7 @@ static NSInteger const kSectionKeyValues = 0;
             [self setData:[_origo guardians] sectionIndexLabelKey:kPropertyKeyName];
         } else if ([self aspectIs:kAspectGroup]) {
             [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
-        } else if ([self aspectIs:kAspectAdmin]) {
+        } else if ([self targetIs:kTargetAdmins]) {
             [self setData:[_origo adminCandidates] sectionIndexLabelKey:kPropertyKeyName];
         }
     } else if ([self targetIs:@[kTargetMember, kTargetMembers]]) {
@@ -218,7 +216,7 @@ static NSInteger const kSectionKeyValues = 0;
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self targetIs:kTargetSetting]) {
-        cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
+        cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[OUtil keyValueString:[OMeta m].settings valueForKey:_settingKey]];
     } else if ([self targetIs:kTargetParent]) {
         id<OMember> parentCandidate = [self dataAtIndexPath:indexPath];
         
@@ -242,7 +240,7 @@ static NSInteger const kSectionKeyValues = 0;
         
         cell.textLabel.text = [gender stringByCapitalisingFirstLetter];
         cell.checked = [gender isEqualToString:[OLanguage genderTermForGender:self.state.currentMember.gender isJuvenile:[self.state.currentMember isJuvenile]]];
-    } else if ([self aspectIs:kAspectAdmin]) {
+    } else if ([self targetIs:kTargetAdmins]) {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         id<OMembership> membership = [_origo membershipForMember:candidate];
         
@@ -334,7 +332,7 @@ static NSInteger const kSectionKeyValues = 0;
     }
     
     if ([self targetIs:kTargetSetting]) {
-        [_settings setValue:pickedValue forSettingKey:_settingKey];
+        [OMeta m].settings = [OUtil keyValueString:[OMeta m].settings setValue:pickedValue forKey:_settingKey];
     } else if ([self targetIs:kTargetParent]) {
         if ([_parentGender isEqualToString:kGenderFemale]) {
             _ward.motherId = cell.checked ? [pickedValue entityId] : nil;
@@ -354,7 +352,7 @@ static NSInteger const kSectionKeyValues = 0;
         if (self.isModal) {
             self.returnData = _pickedValues;
         }
-    } else if ([self aspectIs:kAspectAdmin]) {
+    } else if ([self targetIs:kTargetAdmins]) {
         [_origo membershipForMember:pickedValue].isAdmin = @(cell.checked);
         [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:NO]];
     } else if ([self targetIs:kTargetAffiliation]) {

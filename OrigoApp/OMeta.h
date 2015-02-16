@@ -13,6 +13,7 @@
 @property (nonatomic) NSString *userId;
 @property (nonatomic) NSString *userEmail;
 @property (nonatomic) NSString *deviceId;
+@property (nonatomic) NSString *settings;
 @property (nonatomic) NSString *lastReplicationDate;
 
 @property (nonatomic, readonly) NSString *appName;
@@ -44,7 +45,6 @@
 - (BOOL)userIsRegistered;
 
 - (BOOL)internetConnectionIsAvailable;
-- (NSBundle *)localisedStringsBundle;
 
 + (void)touchDeviceIfNeeded;
 + (BOOL)deviceIsSimulator;

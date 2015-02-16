@@ -136,4 +136,7 @@
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey rowAnimation:(UITableViewRowAnimation)rowAnimation;
 
+- (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey;
+- (void)reloadFooterForSectionWtihKey:(NSInteger)sectionKey;
+
 @end

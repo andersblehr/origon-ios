@@ -80,7 +80,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
-#pragma mark - Type alignment
+#pragma mark - Meta data alignment
 
 - (void)alignWithOrigoIsAssociate:(BOOL)isAssociate
 {
@@ -89,8 +89,8 @@ static NSString * const kPlaceholderRole = @"placeholder";
         self.status = nil;
         self.affiliations = nil;
         
-        if ([self isParticipancy]) {
-            self.isAdmin = [self.member isUser] && [self.origo userIsCreator] ? @YES : @NO;
+        if (![self.origo isOfType:@[kOrigoTypeResidence]]) {
+            self.isAdmin = @([self.member isUser] && [self.origo userIsCreator]);
         }
     } else {
         if ([self.origo isOfType:kOrigoTypeStash]) {

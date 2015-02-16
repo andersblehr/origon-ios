@@ -19,6 +19,10 @@ NSString * const kOrigoTypeStash = @"~";
 NSString * const kOrigoTypeStudyGroup = @"studyGroup";
 NSString * const kOrigoTypeTeam = @"team";
 
+static NSString * const kPermissionKeyEdit = @"edit";
+static NSString * const kPermissionKeyAdd = @"add";
+static NSString * const kPermissionKeyDelete = @"delete";
+
 
 @implementation OOrigo (OrigoAdditions)
 
@@ -138,6 +142,7 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     OOrigo *instance = [super instanceWithId:entityId proxy:proxy];
     instance.origoId = entityId;
+    instance.permissions = [instance defaultPermissions];
     
     return instance;
 }
@@ -147,6 +152,7 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     OOrigo *instance = [self instanceWithId:entityId proxy:nil];
     instance.type = type;
+    instance.permissions = [instance defaultPermissions];
     
     if ([instance isOfType:kOrigoTypeResidence]) {
         instance.name = kPlaceholderDefaultValue;
@@ -536,45 +542,19 @@ NSString * const kOrigoTypeTeam = @"team";
 
 #pragma mark - User role information
 
-- (BOOL)isActiveResidence
+- (BOOL)userIsAdmin
 {
-    BOOL isActiveResidence = NO;
+    BOOL userIsAdmin = [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
     
-    if ([self isOfType:kOrigoTypeResidence]) {
-        for (OMember *resident in [self residents]) {
-            isActiveResidence = isActiveResidence || [resident isActive];
+    if (!userIsAdmin) {
+        if ([self isOfType:kOrigoTypeResidence]) {
+            userIsAdmin = ![self hasAdmin];
+        } else if ([self isOfType:kOrigoTypeList]) {
+            userIsAdmin = [[self owner] isUser] || [[self owner] isWardOfUser];
         }
     }
     
-    return isActiveResidence;
-}
-
-
-- (BOOL)isManagedByUser
-{
-    BOOL isManagedByUser = NO;
-    
-    if ([self isOfType:kOrigoTypeList]) {
-        isManagedByUser = [self userIsOwner] || [[self owner] isWardOfUser];
-    } else if ([self hasAdmin]) {
-        isManagedByUser = [self userIsAdmin];
-    } else {
-        isManagedByUser = [self userIsCreator];
-    }
-    
-    return isManagedByUser;
-}
-
-
-- (BOOL)userIsOwner
-{
-    return [[self membershipForMember:[OMeta m].user] isOwnership];
-}
-
-
-- (BOOL)userIsAdmin
-{
-    return [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
+    return userIsAdmin;
 }
 
 
@@ -822,6 +802,30 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
+- (NSString *)displayPermissions
+{
+    NSString *displayPermissions = [NSString string];
+    
+    BOOL membersCanAdd = self.membersCanAdd;
+    BOOL membersCanDelete = self.membersCanDelete;
+    BOOL membersCanEdit = self.membersCanEdit;
+    
+    if (membersCanAdd && membersCanDelete && membersCanEdit) {
+        displayPermissions = NSLocalizedString(@"All", @"");
+    } else if (membersCanAdd || membersCanDelete || membersCanEdit) {
+        for (NSString *permissionKey in [self permissionKeys]) {
+            if ([[OUtil keyValueString:self.permissions valueForKey:permissionKey] boolValue]) {
+                displayPermissions = [displayPermissions stringByAppendingString:NSLocalizedString(permissionKey, @"") separator:kSeparatorComma];
+            }
+        }
+    } else {
+        displayPermissions = NSLocalizedString(@"None", @"");
+    }
+    
+    return [displayPermissions stringByCapitalisingFirstLetter];
+}
+
+
 - (NSString *)singleLineAddress
 {
     return [self.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];
@@ -861,6 +865,74 @@ NSString * const kOrigoTypeTeam = @"team";
 - (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType
 {
     return [NSString stringWithFormat:NSLocalizedString(@"Call %@", @""), [[self recipientLabel] stringByLowercasingFirstLetter]];
+}
+
+
+#pragma mark - Permissions
+
+- (void)setMembersCanEdit:(BOOL)membersCanEdit
+{
+    self.permissions = [OUtil keyValueString:self.permissions setValue:@(membersCanEdit) forKey:kPermissionKeyEdit];
+}
+
+
+- (BOOL)membersCanEdit
+{
+    return [[OUtil keyValueString:self.permissions valueForKey:kPermissionKeyEdit] boolValue];
+}
+
+
+- (void)setMembersCanAdd:(BOOL)membersCanAdd
+{
+    self.permissions = [OUtil keyValueString:self.permissions setValue:@(membersCanAdd) forKey:kPermissionKeyAdd];
+}
+
+
+- (BOOL)membersCanAdd
+{
+    return [[OUtil keyValueString:self.permissions valueForKey:kPermissionKeyAdd] boolValue];
+}
+
+
+- (void)setMembersCanDelete:(BOOL)membersCanDelete
+{
+    self.permissions = [OUtil keyValueString:self.permissions setValue:@(membersCanDelete) forKey:kPermissionKeyDelete];
+}
+
+
+- (BOOL)membersCanDelete
+{
+    return [[OUtil keyValueString:self.permissions valueForKey:kPermissionKeyDelete] boolValue];
+}
+
+
+- (NSArray *)permissionKeys
+{
+    NSArray *permissionKeys = nil;
+    
+    if (![self isOfType:@[kOrigoTypeStash, kOrigoTypeList, kOrigoTypeResidence]]) {
+        permissionKeys = @[kPermissionKeyEdit, kPermissionKeyAdd, kPermissionKeyDelete];
+    }
+    
+    return permissionKeys;
+}
+
+
+- (NSString *)defaultPermissions
+{
+    NSString *defaultPermissions = nil;
+    
+    for (NSString *permissionKey in [self permissionKeys]) {
+        if ([permissionKey isEqualToString:kPermissionKeyEdit]) {
+            defaultPermissions = [OUtil keyValueString:defaultPermissions setValue:@(YES) forKey:kPermissionKeyEdit];
+        } else if ([permissionKey isEqualToString:kPermissionKeyAdd]) {
+            defaultPermissions = [OUtil keyValueString:defaultPermissions setValue:@(YES) forKey:kPermissionKeyAdd];
+        } else if ([permissionKey isEqualToString:kPermissionKeyDelete]) {
+            defaultPermissions = [OUtil keyValueString:defaultPermissions setValue:@(NO) forKey:kPermissionKeyDelete];
+        }
+    }
+    
+    return defaultPermissions;
 }
 
 

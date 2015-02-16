@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14B25" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14C109" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ODevice" representedClassName="ODevice" parentEntity="OReplicatedEntity" syncable="YES">
-        <attribute name="lastSeen" attributeType="Date" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="user" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="devices" inverseEntity="OMember" syncable="YES"/>
@@ -22,9 +21,9 @@
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="passwordHash" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="settings" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ODevice" inverseName="user" inverseEntity="ODevice" syncable="YES"/>
         <relationship name="memberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMembership" inverseName="member" inverseEntity="OMembership" syncable="YES"/>
-        <relationship name="settings" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OSettings" inverseName="user" inverseEntity="OSettings" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
         </userInfo>
@@ -46,6 +45,7 @@
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="isForMinors" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
+        <attribute name="permissions" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="telephone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
@@ -73,20 +73,12 @@
             <entry key="expires" value="dynamic"/>
         </userInfo>
     </entity>
-    <entity name="OSettings" representedClassName="OSettings" parentEntity="OReplicatedEntity" syncable="YES">
-        <attribute name="useEnglish" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <relationship name="user" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="settings" inverseEntity="OMember" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="no"/>
-        </userInfo>
-    </entity>
     <elements>
-        <element name="ODevice" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="270"/>
+        <element name="ODevice" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="OMember" positionX="0" positionY="0" width="128" height="268"/>
         <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="180"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="128" height="195"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="195"/>
         <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OSettings" positionX="0" positionY="0" width="128" height="75"/>
     </elements>
 </model>

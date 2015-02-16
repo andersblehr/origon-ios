@@ -44,7 +44,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isDateKey:(NSString *)key
 {
     if (!_dateKeys) {
-        _dateKeys = @[kPropertyKeyActiveSince, kPropertyKeyDateCreated, kPropertyKeyDateExpires, kPropertyKeyDateReplicated, kPropertyKeyLastSeen];
+        _dateKeys = @[kPropertyKeyActiveSince, kPropertyKeyDateCreated, kPropertyKeyDateExpires, kPropertyKeyDateReplicated];
     }
     
     return [self isAgeKey:key] || [_dateKeys containsObject:key];
@@ -54,7 +54,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isEmailKey:(NSString *)key
 {
     if (!_emailKeys) {
-        _emailKeys = @[kExternalKeyAuthEmail, kPropertyKeyEmail];
+        _emailKeys = @[kInputKeyAuthEmail, kPropertyKeyEmail];
     }
     
     return [_emailKeys containsObject:key];
@@ -74,7 +74,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isPasswordKey:(NSString *)key
 {
     if (!_passwordKeys) {
-        _passwordKeys = @[kExternalKeyPassword, kExternalKeyRepeatPassword, kExternalKeyOldPassword, kExternalKeyNewPassword, kExternalKeyRepeatNewPassword];
+        _passwordKeys = @[kInputKeyPassword, kInputKeyRepeatPassword, kInputKeyOldPassword, kInputKeyNewPassword, kInputKeyRepeatNewPassword];
     }
     
     return [_passwordKeys containsObject:key];
@@ -109,7 +109,7 @@ static NSDictionary *_keyMappings = nil;
 {
     NSMutableDictionary *reference = [NSMutableDictionary dictionary];
     
-    reference[kExternalKeyEntityClass] = NSStringFromClass(entity.entityClass);
+    reference[kInternalKeyEntityClass] = NSStringFromClass(entity.entityClass);
     reference[kPropertyKeyEntityId] = entity.entityId;
     
     if ([entity conformsToProtocol:@protocol(OMember)]) {

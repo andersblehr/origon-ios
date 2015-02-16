@@ -38,6 +38,7 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)acceptDeclineButtonWithTarget:(id)target;
 + (instancetype)actionButtonWithTarget:(id)target;
 + (instancetype)editButtonWithTarget:(id)target;
++ (instancetype)systemEditButtonWithTarget:(id)target;
 + (instancetype)groupsButtonWithTarget:(id)target;
 + (instancetype)infoButtonWithTarget:(id)target;
 + (instancetype)lookupButtonWithTarget:(id)target;

@@ -20,6 +20,7 @@
 @dynamic photo;
 @dynamic telephone;
 @dynamic type;
+@dynamic permissions;
 @dynamic memberships;
 
 @end

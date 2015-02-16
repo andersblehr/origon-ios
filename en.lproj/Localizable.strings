@@ -8,15 +8,16 @@
 
 
 /***
- * Property derived strings
+ * Key derived strings
  ***/
 
 // Labels
 "[label] activate" = "Enter activation code";
+"[label] admins" = "Administrators";
 "[label] changePassword" = "Change password";
 "[label] address" = "Address";
 "[label] club" = "Club";
-"[label] createdBy" = "Created by";
+"[label] createdBy" = "Registered by";
 "[label] createdIn" = "First registered in";
 "[label] dateOfBirth" = "Age";
 "[label] descriptionText" = "Description";
@@ -28,8 +29,8 @@
 "[label] motherId" = "Mother";
 "[label] name" = "Name";
 "[label] preschool" = "Preschool";
+"[label] registerOrSignIn" = "Register user or sign in";
 "[label] school" = "School";
-"[label] signIn" = "Register user or sign in";
 "[label] signOut" = "Sign out";
 "[label] telephone" = "Telephone";
 "[label] type" = "Type";
@@ -37,7 +38,7 @@
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Born";
-"[alternate label] createdBy" = "Registered by";
+"[alternate label] createdBy" = "Created by";
 
 // Placeholders
 "[placeholder] activationCode" = "Activation code from email";
@@ -226,7 +227,7 @@
 "guardian" = "guardian;-;guardians;-;-;-";
 "lecturer" = "lecturer;-;lecturers;-;-;-";
 "mother" = "mother;the mother;-;-;your mother;%@'s mother";
-"parent" = "-;-;parents;the parents;your parents;%@'s parents";
+"parent" = "parent;-;parents;the parents;your parents;%@'s parents";
 "parentContact" = "parent contact;-;parent contacts;-;-;-";
 "preschoolTeacher" = "teacher;-;teachers;-;-;-";
 "teacher" = "teacher;-;teachers;-;-;-";
@@ -276,7 +277,7 @@
 "Cannot place call" = "Cannot place call";
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
 "Authentication required" = "Authentication required";
-"You have been signed out. Please sign in again to continue to use Origo on this device." = "You have been remotely signed out. Please sign in again to continue to use Origo on this device.";
+"You have been signed out. Please sign in again to continue using Origo on this device." = "You have been remotely signed out. Please sign in again to continue using Origo on this device.";
 
 // Generic terms
 "Close" = "Close";
@@ -293,12 +294,18 @@
 "Households" = "Households";
 "Home number" = "Home number";
 "Neither" = "Neither";
+"None" = "None";
 "Both" = "Both";
 "All" = "All";
 "Favourites" = "Favourites";
 "None of them" = "None of them";
 "None of you" = "None of you";
 "All of them" = "All of them";
+"Member permissions" = "Member permissions";
+"add" = "add";
+"delete" = "delete";
+"edit" = "edit";
+
 
 // Formats
 "%@ at %@" = "%@ at %@";
@@ -404,7 +411,6 @@
 "About %@" = "About %@";
 "Register household member" = "Register household member";
 "Other guardian" = "Other guardian";
-"Remove" = "Remove";
 
 // Prompts
 "Do you want to keep this listing?" = "Do you want to keep this listing?";
@@ -502,9 +508,14 @@
 "Groups" = "Groups";
 "Edit groups" = "Edit groups";
 
-// List titles
-"[setting list label] devices" = "Active devices";
-"[setting list label] hidden" = "Hidden lists";
+// Setting lables
+"[setting label] devices" = "Active devices";
+"[setting label] hidden" = "Hidden lists";
+
+// Permission labels
+"[setting label] edit" = "Edit list details";
+"[setting label] add" = "Add members to list";
+"[setting label] delete" = "Delete members from list";
 
 // Footers
 "All persons marked as favourites will be listed here ..." = "All persons marked as favourites will be listed here. Tap ☆ in the person view to mark a person as favourite.";
@@ -568,16 +579,19 @@
 // Footers
 "Created: %@." = "Created: %@.";
 "Registered: %@." = "Registered: %@.";
-"Active since: %@." = "Active since: %@.";
+"Active on Origo since: %@." = "Active on Origo since: %@.";
 "Last modified: %@." = "Last modified: %@.";
-"This household has active members." = "This household has active members.";
+"This household is active on Origo." = "This household is active on Origo.";
 
 // Buttons
 "About" = "About";
 
 // Labels
-"Active" = "Active";
+"Active on Origo" = "Active on Origo";
 "Through household" = "Through household";
+"My membership" = "My membership";
+"Regular member" = "Regular member";
+"Community member" = "Community member";
 
 
 /***
