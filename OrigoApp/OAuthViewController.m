@@ -285,7 +285,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
             
             [OMeta m].userEmail = _authInfo[kPropertyKeyEmail];
-            [OMeta m].deviceId = _authInfo[kExternalKeyDeviceId];
+            [OMeta m].deviceId = _authInfo[kInternalKeyDeviceId];
 
             self.state.action = kActionActivate;
         } else {
@@ -331,34 +331,34 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (NSString *)footerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *text = nil;
+    NSString *footerContent = nil;
     
     if ([self actionIs:kActionSignIn]) {
-        text = NSLocalizedString(@"If you are signing up, you will receive an email ...", @"");
+        footerContent = NSLocalizedString(@"If you are signing up, you will receive an email ...", @"");
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
         } else if ([self targetIs:kTargetEmail]) {
-            text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.target];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.target];
         }
     }
     
-    return text;
+    return footerContent;
 }
 
 
 - (void)willDisplayInputCell:(OTableViewCell *)inputCell
 {
     if ([self actionIs:kActionSignIn]) {
-        _emailField = [inputCell inputFieldForKey:kExternalKeyAuthEmail];
-        _passwordField = [inputCell inputFieldForKey:kExternalKeyPassword];
+        _emailField = [inputCell inputFieldForKey:kInputKeyAuthEmail];
+        _passwordField = [inputCell inputFieldForKey:kInputKeyPassword];
     } else if ([self actionIs:kActionActivate]) {
-        _activationCodeField = [inputCell inputFieldForKey:kExternalKeyActivationCode];
-        _repeatPasswordField = [inputCell inputFieldForKey:kExternalKeyRepeatPassword];
+        _activationCodeField = [inputCell inputFieldForKey:kInputKeyActivationCode];
+        _repeatPasswordField = [inputCell inputFieldForKey:kInputKeyRepeatPassword];
     } else if ([self actionIs:kActionChange]) {
-        _oldPasswordField = [inputCell inputFieldForKey:kExternalKeyOldPassword];
-        _newPasswordField = [inputCell inputFieldForKey:kExternalKeyNewPassword];
-        _repeatNewPasswordField = [inputCell inputFieldForKey:kExternalKeyRepeatNewPassword];
+        _oldPasswordField = [inputCell inputFieldForKey:kInputKeyOldPassword];
+        _newPasswordField = [inputCell inputFieldForKey:kInputKeyNewPassword];
+        _repeatNewPasswordField = [inputCell inputFieldForKey:kInputKeyRepeatNewPassword];
     }
 }
 
@@ -372,17 +372,17 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     blueprint.fieldsShouldDeemphasiseOnEndEdit = NO;
     
     if ([self actionIs:kActionSignIn]) {
-        blueprint.titleKey = kExternalKeySignIn;
-        blueprint.detailKeys = @[kExternalKeyAuthEmail, kExternalKeyPassword];
-        blueprint.buttonKeys = @[kButtonKeySignUp, kButtonKeySignIn];
+        blueprint.titleKey = kLabelKeyRegisterOrSignIn;
+        blueprint.detailKeys = @[kInputKeyAuthEmail, kInputKeyPassword];
+        blueprint.buttonKeys = @[kActionKeySignUp, kActionKeySignIn];
     } else if ([self actionIs:kActionActivate]) {
-        blueprint.titleKey = kExternalKeyActivate;
-        blueprint.detailKeys = @[kExternalKeyActivationCode, kExternalKeyRepeatPassword];
-        blueprint.buttonKeys = @[kButtonKeyCancel, kButtonKeyActivate];
+        blueprint.titleKey = kLabelKeyActivate;
+        blueprint.detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
+        blueprint.buttonKeys = @[kActionKeyCancel, kActionKeyActivate];
     } else if ([self actionIs:kActionChange]) {
-        blueprint.titleKey = kExternalKeyChangePassword;
-        blueprint.detailKeys = @[kExternalKeyOldPassword, kExternalKeyNewPassword, kExternalKeyRepeatNewPassword];
-        blueprint.buttonKeys = @[kButtonKeyCancel, kButtonKeyChangePassword];
+        blueprint.titleKey = kActionKeyChangePassword;
+        blueprint.detailKeys = @[kInputKeyOldPassword, kInputKeyNewPassword, kInputKeyRepeatNewPassword];
+        blueprint.buttonKeys = @[kActionKeyCancel, kActionKeyChangePassword];
     }
     
     return blueprint;
@@ -435,8 +435,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [self performSignInAction:_signInAction];
         } else {
             OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSignInAction];
-            [actionSheet addButtonWithTitle:NSLocalizedString(kButtonKeySignUp, kStringPrefixTitle) tag:kButtonTagSignInActionSignUp];
-            [actionSheet addButtonWithTitle:NSLocalizedString(kButtonKeySignIn, kStringPrefixTitle) tag:kButtonTagSignInActionSignIn];
+            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeySignUp, kStringPrefixTitle) tag:kButtonTagSignInActionSignUp];
+            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeySignIn, kStringPrefixTitle) tag:kButtonTagSignInActionSignIn];
             
             [actionSheet show];
         }
@@ -456,7 +456,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (BOOL)willValidateInputForKey:(NSString *)key
 {
-    return [@[kExternalKeyActivationCode, kExternalKeyRepeatPassword, kExternalKeyOldPassword, kExternalKeyNewPassword, kExternalKeyRepeatNewPassword] containsObject:key];
+    return [@[kInputKeyActivationCode, kInputKeyRepeatPassword, kInputKeyOldPassword, kInputKeyNewPassword, kInputKeyRepeatNewPassword] containsObject:key];
 }
 
 
@@ -464,12 +464,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     BOOL isValid = NO;
     
-    if ([key isEqualToString:kExternalKeyActivationCode]) {
-        NSString *activationCode = _authInfo[kExternalKeyActivationCode];
+    if ([key isEqualToString:kInputKeyActivationCode]) {
+        NSString *activationCode = _authInfo[kInputKeyActivationCode];
         NSString *activationCodeAsEntered = [inputValue lowercaseString];
         
         isValid = [activationCodeAsEntered isEqualToString:activationCode];
-    } else if ([key isEqualToString:kExternalKeyRepeatPassword]) {
+    } else if ([key isEqualToString:kInputKeyRepeatPassword]) {
         NSString *passwordHashAsEntered = [OCrypto passwordHashWithPassword:inputValue];
         NSString *passwordHash = nil;
         
@@ -480,19 +480,19 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         }
         
         isValid = [passwordHashAsEntered isEqualToString:passwordHash];
-    } else if ([key isEqualToString:kExternalKeyOldPassword]) {
+    } else if ([key isEqualToString:kInputKeyOldPassword]) {
         NSString *oldPasswordHashAsEntered = [OCrypto passwordHashWithPassword:inputValue];
         NSString *oldPasswordHash = [OMeta m].user.passwordHash;
         
         isValid = [oldPasswordHashAsEntered isEqualToString:oldPasswordHash];
-    } else if ([key isEqualToString:kExternalKeyNewPassword]) {
+    } else if ([key isEqualToString:kInputKeyNewPassword]) {
         if ([OValidator value:inputValue isValidForKey:key]) {
             NSString *newPasswordHash = [OCrypto passwordHashWithPassword:inputValue];
             NSString *oldPasswordHash = [OMeta m].user.passwordHash;
             
             isValid = ![newPasswordHash isEqualToString:oldPasswordHash];
         }
-    } else if ([key isEqualToString:kExternalKeyRepeatNewPassword]) {
+    } else if ([key isEqualToString:kInputKeyRepeatNewPassword]) {
         isValid = [inputValue isEqualToString:_newPasswordField.value];
     }
     

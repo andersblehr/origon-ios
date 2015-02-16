@@ -10,6 +10,9 @@
 
 @interface OUtil : NSObject
 
++ (NSString *)keyValueString:(NSString *)keyValueString setValue:(id)value forKey:(NSString *)key;
++ (NSString *)keyValueString:(NSString *)keyValueString valueForKey:(NSString *)key;
+
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin;
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin conditionallyLowercase:(BOOL)conditionallyLowercase;
 + (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin;

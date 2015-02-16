@@ -32,7 +32,7 @@
 @protocol OEntity, OMember, OMembership, OOrigo, OSettings;
 @protocol OTableViewController;
 @class OEntityProxy, OMemberProxy, OMembershipProxy, OOrigoProxy;
-@class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
+@class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef;
 @class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OInputCellBlueprint, OInputCellConstrainer, OLabel, OLanguage, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OTableView, OTableViewCell, OTableViewController, OTextField, OTextView;
 
 #import "OConnectionDelegate.h"
@@ -52,8 +52,6 @@
 #import "OReplicatedEntity.h"
 #import "OReplicatedEntity+OrigoAdditions.h"
 #import "OReplicatedEntityRef.h"
-#import "OSettings.h"
-#import "OSettings+OrigoAdditions.h"
 
 #import "OEntityProxy.h"
 #import "OMemberProxy.h"

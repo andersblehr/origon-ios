@@ -10,16 +10,15 @@
 
 static NSInteger const kSectionKeyGeneral = 0;
 static NSInteger const kSectionKeyParents = 1;
-static NSInteger const kSectionKeyAdmins = 2;
+static NSInteger const kSectionKeyMembership = 2;
+
 
 @interface OInfoViewController () <OTableViewController> {
 @private
     id _entity;
-    id<OMember> _createdBy;
     id<OOrigo> _createdIn;
-    id<OMember> _modifiedBy;
     
-    BOOL _isManagedByUser;
+    BOOL _userIsAdmin;
 }
 
 @end
@@ -29,60 +28,70 @@ static NSInteger const kSectionKeyAdmins = 2;
 
 #pragma mark - Auxiliary methods
 
-- (NSArray *)displayablePropertyKeys
+- (NSArray *)displayableKeys
 {
-    NSMutableArray *propertyKeys = [NSMutableArray array];
+    NSMutableArray *displayableKeys = [NSMutableArray array];
     
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (![origo isOfType:kOrigoTypeResidence] || [origo isManagedByUser] || ![origo hasAdmin]) {
+        if (![origo isOfType:kOrigoTypeResidence] || _userIsAdmin || ![origo hasAdmin]) {
             if (![origo isOfType:kOrigoTypeResidence] || [self aspectIs:kAspectHousehold]) {
-                [propertyKeys addObject:kPropertyKeyName];
+                [displayableKeys addObject:kPropertyKeyName];
             }
             
             if (![origo isOfType:kOrigoTypeResidence]) {
-                [propertyKeys addObject:kPropertyKeyType];
+                [displayableKeys addObject:kPropertyKeyType];
             }
             
-            [propertyKeys addObject:kPropertyKeyCreatedBy];
+            [displayableKeys addObject:kPropertyKeyCreatedBy];
             
             if ([_entity modifiedBy]) {
-                [propertyKeys addObject:kPropertyKeyModifiedBy];
+                [displayableKeys addObject:kPropertyKeyModifiedBy];
+            }
+        }
+        
+        if (![origo isOfType:@[kOrigoTypeStash, kOrigoTypeList, kOrigoTypeResidence]]) {
+            [displayableKeys addObject:kLabelKeyAdmins];
+            
+            if (_userIsAdmin) {
+                [displayableKeys addObject:kPropertyKeyPermissions];
             }
         }
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
         id<OMember> member = _entity;
         
         if ((![member isActive] && ![member isManaged]) || [member isHousemateOfUser]) {
-            if ([member isManagedByUser]) {
-                [propertyKeys addObject:kPropertyKeyGender];
+            if ([member isEditableByUser]) {
+                [displayableKeys addObject:kPropertyKeyGender];
             }
             
             if ([self aspectIs:kAspectHousehold]) {
                 if ([member.createdIn hasValue]) {
-                    [propertyKeys addObject:kPropertyKeyCreatedIn];
+                    [displayableKeys addObject:kPropertyKeyCreatedIn];
                 }
             }
             
-            [propertyKeys addObject:kPropertyKeyCreatedBy];
+            [displayableKeys addObject:kPropertyKeyCreatedBy];
             
             if ([_entity modifiedBy]) {
-                [propertyKeys addObject:kPropertyKeyModifiedBy];
+                [displayableKeys addObject:kPropertyKeyModifiedBy];
             }
         }
         
         if (![member isActive]) {
-            [propertyKeys addObject:kPropertyKeyActiveSince];
+            [displayableKeys addObject:kPropertyKeyActiveSince];
         }
     }
     
-    return propertyKeys;
+    return displayableKeys;
 }
 
 
-- (void)listCell:(OTableViewCell *)cell loadDetailsForInstigator:(id<OMember>)instigator
+- (void)listCell:(OTableViewCell *)cell loadDetailsForInstigatorWithEmail:(NSString *)email
 {
+    id<OMember> instigator = [[OMeta m].context memberWithEmail:email];
+    
     cell.detailTextLabel.text = instigator.name;
     
     if ([instigator isUser] || [[_entity entityId] isEqualToString:instigator.entityId]) {
@@ -103,8 +112,8 @@ static NSInteger const kSectionKeyAdmins = 2;
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (_isManagedByUser != [origo isManagedByUser]) {
-            _isManagedByUser = [origo isManagedByUser];
+        if (_userIsAdmin != [origo userIsAdmin]) {
+            _userIsAdmin = [origo userIsAdmin];
             
             [self reloadSectionWithKey:kSectionKeyGeneral];
         }
@@ -120,7 +129,7 @@ static NSInteger const kSectionKeyAdmins = 2;
     
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
-        _isManagedByUser = [origo isManagedByUser];
+        _userIsAdmin = [origo userIsAdmin];
         
         if ([origo isOfType:kOrigoTypeResidence]) {
             self.title = NSLocalizedString(@"About this household", @"");
@@ -142,20 +151,24 @@ static NSInteger const kSectionKeyAdmins = 2;
 
 - (void)loadData
 {
-    [self setData:[self displayablePropertyKeys] forSectionWithKey:kSectionKeyGeneral];
+    [self setData:[self displayableKeys] forSectionWithKey:kSectionKeyGeneral];
     
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (![origo isOfType:@[kOrigoTypeList, kOrigoTypeResidence]]) {
-            if ([origo isManagedByUser]) {
-                [self setData:@[[[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter]] forSectionWithKey:kSectionKeyAdmins];
-            } else {
-                [self setData:[origo admins] forSectionWithKey:kSectionKeyAdmins];
+        if (![origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
+            id<OMembership> membership = [origo membershipForMember:[OMeta m].user];
+        
+            [self setData:@[kPropertyKeyType, kPropertyKeyCreatedBy] forSectionWithKey:kSectionKeyMembership];
+            
+            if (membership.modifiedBy) {
+                [self appendData:@[kPropertyKeyModifiedBy] toSectionWithKey:kSectionKeyMembership];
             }
         }
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
-        if ([_entity isJuvenile] && [_entity isWardOfUser]) {
+        id<OMember> member = _entity;
+        
+        if ([member isJuvenile] && [member isWardOfUser]) {
             [self setData:@[kPropertyKeyMotherId, kPropertyKeyFatherId] forSectionWithKey:kSectionKeyParents];
         }
         
@@ -168,45 +181,66 @@ static NSInteger const kSectionKeyAdmins = 2;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyGeneral) {
-        NSString *propertyKey = [self dataAtIndexPath:indexPath];
+        NSString *displayKey = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixLabel);
+        cell.textLabel.text = NSLocalizedString(displayKey, kStringPrefixLabel);
         cell.selectable = NO;
         
-        if ([propertyKey isEqualToString:kPropertyKeyCreatedBy]) {
-            if ([_entity conformsToProtocol:@protocol(OMember)]) {
-                cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixAlternateLabel);
+        if ([displayKey isEqualToString:kPropertyKeyCreatedBy]) {
+            if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
+                cell.textLabel.text = NSLocalizedString(displayKey, kStringPrefixAlternateLabel);
             }
             
-            _createdBy = [[OMeta m].context memberWithEmail:[_entity createdBy]];
-            [self listCell:cell loadDetailsForInstigator:_createdBy];
-        } else if ([propertyKey isEqualToString:kPropertyKeyModifiedBy]) {
-            _modifiedBy = [[OMeta m].context memberWithEmail:[_entity modifiedBy]];
-            [self listCell:cell loadDetailsForInstigator:_modifiedBy];
+            [self listCell:cell loadDetailsForInstigatorWithEmail:[_entity createdBy]];
+        } else if ([displayKey isEqualToString:kPropertyKeyModifiedBy]) {
+            [self listCell:cell loadDetailsForInstigatorWithEmail:[_entity modifiedBy]];
         } else if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
             id<OOrigo> origo = _entity;
             
-            if ([propertyKey isEqualToString:kPropertyKeyName]) {
+            if ([displayKey isEqualToString:kPropertyKeyName]) {
                 cell.detailTextLabel.text = [origo displayName];
-            } else if ([propertyKey isEqualToString:kPropertyKeyType]) {
+            } else if ([displayKey isEqualToString:kPropertyKeyType]) {
                 cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
                 
-                if ([origo isManagedByUser] && ![origo isOfType:kOrigoTypeResidence]) {
+                if (_userIsAdmin && ![origo isOfType:kOrigoTypeResidence]) {
                     cell.destinationId = kIdentifierValuePicker;
                     cell.destinationTarget = kTargetOrigoType;
                 }
+            } else if ([displayKey isEqualToString:kLabelKeyAdmins]) {
+                NSInteger adminCount = [[origo admins] count];
+                
+                if (adminCount > 1) {
+                    cell.textLabel.text = [[OLanguage nouns][_administrator_][pluralIndefinite] stringByCapitalisingFirstLetter];
+                } else {
+                    cell.textLabel.text = [[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter];
+                }
+                
+                cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo subjective:NO];
+                
+                if (_userIsAdmin) {
+                    cell.destinationId = kIdentifierValuePicker;
+                } else if (adminCount > 1) {
+                    cell.destinationId = kIdentifierValueList;
+                } else if (adminCount == 1) {
+                    cell.destinationId = kIdentifierMember;
+                    cell.destinationTarget = [origo admins][0];
+                }
+            } else if ([displayKey isEqualToString:kPropertyKeyPermissions]) {
+                cell.textLabel.text = NSLocalizedString(@"Member permissions", @"");
+                cell.detailTextLabel.text = [origo displayPermissions];
+                cell.destinationId = kIdentifierValueList;
             }
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
             id<OMember> member = _entity;
             
-            if ([propertyKey isEqualToString:kPropertyKeyGender]) {
+            if ([displayKey isEqualToString:kPropertyKeyGender]) {
                 cell.detailTextLabel.text = [[OLanguage genderTermForGender:member.gender isJuvenile:[member isJuvenile]] stringByCapitalisingFirstLetter];
                 
-                if ([member isManagedByUser]) {
+                if ([member isEditableByUser]) {
                     cell.destinationId = kIdentifierValuePicker;
                     cell.destinationTarget = kTargetGender;
                 }
-            } else if ([propertyKey isEqualToString:kPropertyKeyCreatedIn]) {
+            } else if ([displayKey isEqualToString:kPropertyKeyCreatedIn]) {
                 NSArray *components = [member.createdIn componentsSeparatedByString:kSeparatorList];
                 
                 if ([components[0] isEqualToString:kOrigoTypeList]) {
@@ -228,8 +262,8 @@ static NSInteger const kSectionKeyAdmins = 2;
                         cell.detailTextLabel.text = components[1];
                     }
                 }
-            } else if ([propertyKey isEqualToString:kPropertyKeyActiveSince]) {
-                cell.textLabel.text = NSLocalizedString(@"Active", @"");
+            } else if ([displayKey isEqualToString:kPropertyKeyActiveSince]) {
+                cell.textLabel.text = NSLocalizedString(@"Active on Origo", @"");
                 
                 if ([member isActive]) {
                     cell.detailTextLabel.text = NSLocalizedString(@"Yes", @"");
@@ -255,19 +289,36 @@ static NSInteger const kSectionKeyAdmins = 2;
         cell.destinationId = kIdentifierValuePicker;
         cell.destinationTarget = @{propertyKey: kAspectParent};
         cell.destinationMeta = _entity;
-    } else if (sectionKey == kSectionKeyAdmins) {
+    } else if (sectionKey == kSectionKeyMembership) {
         id<OOrigo> origo = _entity;
+        id<OMembership> membership = [origo membershipForMember:[OMeta m].user];
         
-        if ([origo isManagedByUser]) {
-            NSString *adminLabel = [self dataAtIndexPath:indexPath];
+        NSString *propertyKey = [self dataAtIndexPath:indexPath];
+        
+        if ([propertyKey isEqualToString:kPropertyKeyType]) {
+            cell.textLabel.text = NSLocalizedString(@"My membership", @"");
             
-            cell.textLabel.text = adminLabel;
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo subjective:NO];
-            cell.destinationId = kIdentifierValuePicker;
-            cell.destinationTarget = @{adminLabel: kAspectAdmin};
+            if ([origo userIsAdmin]) {
+                cell.detailTextLabel.text = [[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter];
+            } else if ([[membership organiserRoles] count]) {
+                cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrganiserTitle);
+            } else if ([[membership parentRoles] count]) {
+                cell.detailTextLabel.text = [[OLanguage nouns][_parentContact_][singularIndefinite] stringByCapitalisingFirstLetter];
+            } else if ([[[OMeta m].user wardsInOrigo:origo] count]) {
+                cell.detailTextLabel.text = [[OLanguage nouns][_guardian_][singularIndefinite] stringByCapitalisingFirstLetter];
+            } else if ([membership isParticipancy]) {
+                cell.detailTextLabel.text = NSLocalizedString(@"Regular member", @"");
+            } else if ([membership isCommunityMembership]) {
+                cell.detailTextLabel.text = NSLocalizedString(@"Community member", @"");
+            }
         } else {
-            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo excludeRoles:NO excludeRelations:YES];
-            cell.destinationId = kIdentifierMember;
+            cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixLabel);
+            
+            if ([propertyKey isEqualToString:kPropertyKeyCreatedBy]) {
+                [self listCell:cell loadDetailsForInstigatorWithEmail:membership.createdBy];
+            } else if ([propertyKey isEqualToString:kPropertyKeyModifiedBy]) {
+                [self listCell:cell loadDetailsForInstigatorWithEmail:membership.modifiedBy];
+            }
         }
     }
 }
@@ -281,59 +332,41 @@ static NSInteger const kSectionKeyAdmins = 2;
 
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
-    BOOL hasHeader = NO;
-    
-    if (sectionKey == kSectionKeyAdmins) {
-        hasHeader = [_entity conformsToProtocol:@protocol(OOrigo)] && ![_entity isManagedByUser];
-    }
-    
-    return hasHeader;
+    return NO;
 }
 
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return sectionKey == kSectionKeyGeneral;
-}
-
-
-- (id)headerContentForSectionWithKey:(NSInteger)sectionKey
-{
-    NSString *headerText = nil;
-    
-    if (sectionKey == kSectionKeyAdmins) {
-        if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-            NSInteger numberOfAdmins = [[_entity admins] count];
-            
-            if (numberOfAdmins == 1) {
-                headerText = [[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter];
-            } else {
-                headerText = [[OLanguage nouns][_administrator_][pluralIndefinite] stringByCapitalisingFirstLetter];
-            }
-        }
-    }
-    
-    return headerText;
+    return sectionKey == kSectionKeyGeneral || sectionKey == kSectionKeyMembership;
 }
 
 
 - (id)footerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *footerText = nil;
+    NSString *footerContent = nil;
     
     if (sectionKey == kSectionKeyGeneral) {
         if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-            footerText = [NSString stringWithFormat:NSLocalizedString(@"Created: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Created: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
-            footerText = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
         }
         
         if ([_entity modifiedBy]) {
-            footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
+            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
+        }
+    } else if (sectionKey == kSectionKeyMembership) {
+        id<OMembership> membership = [_entity membershipForMember:[OMeta m].user];
+        
+        footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [membership.dateCreated localisedDateTimeString]];
+        
+        if (membership.modifiedBy) {
+            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [membership.dateReplicated localisedDateTimeString]] separator:kSeparatorNewline];
         }
     }
     
-    return footerText;
+    return footerContent;
 }
 
 

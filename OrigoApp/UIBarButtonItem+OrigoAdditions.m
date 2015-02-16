@@ -82,6 +82,12 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (instancetype)systemEditButtonWithTarget:(id)target
+{
+    return [self barButtonWithVisuals:@(UIBarButtonSystemItemEdit) target:target action:@selector(performEditAction) tag:kbarButtonTagEdit];
+}
+
+
 + (instancetype)groupsButtonWithTarget:(id)target
 {
     return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileGroups] target:target action:@selector(performGroupsAction) tag:kBarButtonTagGroups];
@@ -146,7 +152,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)settingsButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSettings] target:target action:@selector(openSettings) tag:kBarButtonTagSettings];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSettings] target:target action:@selector(performSettingsAction) tag:kBarButtonTagSettings];
 }
 
 
@@ -209,7 +215,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)signOutButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(kExternalKeySignOut, kStringPrefixLabel) target:target action:@selector(signOut) tag:kBarButtonTagSignOut];
+    return [self barButtonWithVisuals:NSLocalizedString(kActionKeySignOut, kStringPrefixLabel) target:target action:@selector(signOut) tag:kBarButtonTagSignOut];
 }
 
 

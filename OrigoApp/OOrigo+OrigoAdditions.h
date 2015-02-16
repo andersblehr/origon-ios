@@ -29,6 +29,14 @@ extern NSString * const kOrigoTypeTeam;
 @property (nonatomic) NSString *telephone;
 @property (nonatomic) NSString *countryCode;
 @property (nonatomic) NSString *type;
+@property (nonatomic) NSString *permissions;
+
+@property (nonatomic, assign) BOOL membersCanAdd;
+@property (nonatomic, assign) BOOL membersCanDelete;
+@property (nonatomic, assign) BOOL membersCanEdit;
+
+- (NSArray *)permissionKeys;
+- (NSString *)defaultPermissions;
 
 - (NSComparisonResult)compare:(id<OOrigo>)other;
 
@@ -65,14 +73,11 @@ extern NSString * const kOrigoTypeTeam;
 - (id<OMembership>)membershipForMember:(id<OMember>)member;
 - (id<OMembership>)associateMembershipForMember:(id<OMember>)member;
 
-- (BOOL)userIsOwner;
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
 - (BOOL)userIsOrganiser;
 - (BOOL)userIsParentContact;
 
-- (BOOL)isManagedByUser;
-- (BOOL)isActiveResidence;
 - (BOOL)isOfType:(id)type;
 - (BOOL)isOrganised;
 - (BOOL)isJuvenile;
@@ -92,6 +97,7 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)emailRecipients;
 
 - (NSString *)displayName;
+- (NSString *)displayPermissions;
 - (NSString *)singleLineAddress;
 - (NSString *)shortAddress;
 - (NSString *)recipientLabel;

@@ -70,7 +70,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 + (instancetype)instanceFromDictionary:(NSDictionary *)dictionary
 {
-    Class entityClass = NSClassFromString(dictionary[kExternalKeyEntityClass]);
+    Class entityClass = NSClassFromString(dictionary[kInternalKeyEntityClass]);
     NSString *entityId = dictionary[kPropertyKeyEntityId];
     OReplicatedEntity *entity = [[OMeta m].context entityWithId:entityId];
     
@@ -325,7 +325,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
-    dictionary[kExternalKeyEntityClass] = NSStringFromClass([self class]);
+    dictionary[kInternalKeyEntityClass] = NSStringFromClass([self class]);
     
     for (NSString *key in [[self class] propertyKeys]) {
         if ([self hasValueForKey:key] && ![self isTransientProperty:key]) {

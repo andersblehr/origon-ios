@@ -53,7 +53,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
         _entityClass = entityClass;
         _propertyKeys = [_entityClass propertyKeys];
         _toOneRelationshipKeys = [_entityClass toOneRelationshipKeys];
-        _valuesByKey = [NSMutableDictionary dictionaryWithObject:NSStringFromClass(_entityClass) forKey:kExternalKeyEntityClass];
+        _valuesByKey = [NSMutableDictionary dictionaryWithObject:NSStringFromClass(_entityClass) forKey:kInternalKeyEntityClass];
 
         [self setValue:entityId forKey:kPropertyKeyEntityId];
         
@@ -100,7 +100,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary
 {
-    self = [self initWithEntityClass:NSClassFromString(dictionary[kExternalKeyEntityClass]) entityId:dictionary[kPropertyKeyEntityId] isCommitted:NO];
+    self = [self initWithEntityClass:NSClassFromString(dictionary[kInternalKeyEntityClass]) entityId:dictionary[kPropertyKeyEntityId] isCommitted:NO];
     
     if (self) {
         for (NSString *key in _propertyKeys) {
@@ -147,7 +147,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 + (instancetype)proxyForEntityWithDictionary:(NSDictionary *)dictionary
 {
-    Class entityClass = NSClassFromString(dictionary[kExternalKeyEntityClass]);
+    Class entityClass = NSClassFromString(dictionary[kInternalKeyEntityClass]);
     
     return [[[entityClass proxyClass] alloc] initWithDictionary:dictionary];
 }
@@ -400,7 +400,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     
     if (!_instance) {
         _valuesByKey[kPropertyKeyEntityId] = [OCrypto generateUUID];
-        _valuesByKey[kExternalKeyEntityClass] = NSStringFromClass(_entityClass);
+        _valuesByKey[kInternalKeyEntityClass] = NSStringFromClass(_entityClass);
     }
     
     if ([[OMeta m].appDelegate hasPersistentStore]) {

@@ -19,7 +19,7 @@ extern NSString * const kActionPick;
 extern NSString * const kActionRegister;
 extern NSString * const kActionSignIn;
 
-extern NSString * const kTargetAdmin;
+extern NSString * const kTargetAdmins;
 extern NSString * const kTargetAffiliation;
 extern NSString * const kTargetCall;
 extern NSString * const kTargetDevices;
@@ -40,6 +40,7 @@ extern NSString * const kTargetOrigoType;
 extern NSString * const kTargetParent;
 extern NSString * const kTargetParents;
 extern NSString * const kTargetPassword;
+extern NSString * const kTargetPermissions;
 extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
 extern NSString * const kTargetSetting;
@@ -48,7 +49,6 @@ extern NSString * const kTargetText;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
 
-extern NSString * const kAspectAdmin;
 extern NSString * const kAspectDefault;
 extern NSString * const kAspectEditable;
 extern NSString * const kAspectGlobal;

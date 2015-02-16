@@ -239,9 +239,9 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-- (BOOL)isManagedByUser
+- (BOOL)userIsAdmin
 {
-    return [self instance] ? [[self instance] isManagedByUser] : YES;
+    return [self instance] ? [[self instance] userIsAdmin] : YES;
 }
 
 

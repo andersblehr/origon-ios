@@ -40,10 +40,15 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
             cell.tintColor = [UIColor globalTintColour];
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.accessoryView = nil;
+            cell.selectable = NO;
+            cell.selectableDuringInput = NO;
+            cell.editable = NO;
             cell.checked = NO;
             cell.checkedState = 0;
             cell.checkedStateAccessoryViews = nil;
             cell.destinationId = nil;
+            cell.destinationTarget = nil;
+            cell.destinationMeta = nil;
             cell.notificationText = nil;
             
             for (UIView *subview in cell.imageView.subviews) {

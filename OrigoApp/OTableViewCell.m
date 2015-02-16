@@ -111,6 +111,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
     button.backgroundColor = [UIColor globalTintColour];
+    button.showsTouchWhenHighlighted = YES;
     button.titleLabel.font = [UIFont detailFont];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
     [button setTitle:NSLocalizedString(key, kStringPrefixTitle) forState:UIControlStateNormal];

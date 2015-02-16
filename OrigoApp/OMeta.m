@@ -233,24 +233,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-- (NSBundle *)localisedStringsBundle
-{
-    if (!_localisedStringsBundle) {
-        _localisedStringsBundle = [NSBundle mainBundle];
-        
-        if (![_localisedStringsBundle pathForResource:[[self class] m].language ofType:@"lproj"]) {
-            NSString *testString = [_localisedStringsBundle localizedStringForKey:kLocalisationTest value:@"" table:nil];
-            
-            if ([testString isEqualToString:kLocalisationTest] || [OSettings settings].useEnglish) {
-                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:@"lproj"]];
-            }
-        }
-    }
-    
-    return _localisedStringsBundle;
-}
-
-
 #pragma mark - Convenience methods
 
 + (void)touchDeviceIfNeeded
@@ -351,6 +333,18 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
+- (void)setSettings:(NSString *)settings
+{
+    _user.settings = settings;
+}
+
+
+- (NSString *)settings
+{
+    return _user.settings;
+}
+
+
 - (NSString *)authToken
 {
     if (!_authToken) {
@@ -359,6 +353,24 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     }
     
     return _authToken;
+}
+
+
+- (NSBundle *)localisedStringsBundle
+{
+    if (!_localisedStringsBundle) {
+        _localisedStringsBundle = [NSBundle mainBundle];
+        
+        if (![_localisedStringsBundle pathForResource:_language ofType:@"lproj"]) {
+            NSString *testString = [_localisedStringsBundle localizedStringForKey:kLocalisationTest value:@"" table:nil];
+            
+            if ([testString isEqualToString:kLocalisationTest] || [OMeta m].user.useEnglish) {
+                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:@"lproj"]];
+            }
+        }
+    }
+    
+    return _localisedStringsBundle;
 }
 
 

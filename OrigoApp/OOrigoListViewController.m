@@ -107,7 +107,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 #pragma mark - Selector implementations
 
-- (void)openSettings
+- (void)performSettingsAction
 {
     [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetSettings];
 }
@@ -175,7 +175,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (void)loadState
 {
     if ([self targetIs:kTargetHiddenOrigos]) {
-        self.title = NSLocalizedString(self.target, kStringPrefixSettingListLabel);
+        self.title = NSLocalizedString(self.target, kStringPrefixSettingLabel);
     } else {
         self.title = [OMeta m].appName;
         [self setSubtitle:[OMeta m].user.name];

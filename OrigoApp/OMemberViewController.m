@@ -350,7 +350,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     [[ward primaryResidence] addMember:_member];
                     [self.dismisser dismissModalViewController:self];
                 }
-            } else if (![_member hasAddress] && [_member isManagedByUser]) {
+            } else if (![_member hasAddress] && [_member isEditableByUser]) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
             } else {
                 [self.dismisser dismissModalViewController:self];
@@ -1010,7 +1010,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
         
-        if ([_member isManagedByUser]) {
+        if ([_member isEditableByUser]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
         }
     }
@@ -1068,7 +1068,7 @@ static NSInteger const kButtonIndexContinue = 1;
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
     } else if (sectionKey == kSectionKeyRoles) {
-        if ([_origo isManagedByUser]) {
+        if ([_origo userIsAdmin] || _origo.membersCanEdit) {
             OInputField *roleField = [cell editableListCellField];
             roleField.placeholder = NSLocalizedString(@"Responsibility", @"");
             roleField.value = [self dataAtIndexPath:indexPath];
@@ -1105,7 +1105,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (id)headerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *text = nil;
+    NSString *headerContent = nil;
     
     if (sectionKey == kSectionKeyGuardians) {
         NSArray *guardians = [_member guardians];
@@ -1114,58 +1114,58 @@ static NSInteger const kButtonIndexContinue = 1;
             id<OMember> guardian = guardians[0];
             
             if ([_member hasParent:guardian]) {
-                text = [guardian parentNoun][singularIndefinite];
+                headerContent = [guardian parentNoun][singularIndefinite];
             } else {
-                text = [OLanguage nouns][_guardian_][singularIndefinite];
+                headerContent = [OLanguage nouns][_guardian_][singularIndefinite];
             }
         } else if ([_member guardiansAreParents]) {
-            text = [OLanguage nouns][_parent_][pluralIndefinite];
+            headerContent = [OLanguage nouns][_parent_][pluralIndefinite];
         } else {
-            text = [OLanguage nouns][_guardian_][pluralIndefinite];
+            headerContent = [OLanguage nouns][_guardian_][pluralIndefinite];
         }
     } else if (sectionKey == kSectionKeyAddresses) {
         NSInteger numberOfAddresses = [[_member addresses] count];
         
         if (numberOfAddresses == 1) {
-            text = [OLanguage nouns][_address_][singularIndefinite];
+            headerContent = [OLanguage nouns][_address_][singularIndefinite];
         } else if (numberOfAddresses > 1) {
-            text = [OLanguage nouns][_address_][pluralIndefinite];
+            headerContent = [OLanguage nouns][_address_][pluralIndefinite];
         }
     } else if (sectionKey == kSectionKeyRoles) {
         if ([[[_origo membershipForMember:_member] roles] count] == 1) {
-            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibility in %@", @""), _roleMembership.origo.name];
+            headerContent = [NSString stringWithFormat:NSLocalizedString(@"Responsibility in %@", @""), _roleMembership.origo.name];
         } else {
-            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibilities in %@", @""), _roleMembership.origo.name];
+            headerContent = [NSString stringWithFormat:NSLocalizedString(@"Responsibilities in %@", @""), _roleMembership.origo.name];
         }
     }
     
-    return [text stringByCapitalisingFirstLetter];
+    return [headerContent stringByCapitalisingFirstLetter];
 }
 
 
 - (NSString *)footerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *text = nil;
+    NSString *footerContent = nil;
     
     if (![_member isUser]) {
         if ([self actionIs:kActionRegister]) {
-            text = NSLocalizedString(@"A notification will be sent to the email address you provide.", @"");
+            footerContent = NSLocalizedString(@"A notification will be sent to the email address you provide.", @"");
             
             if ([_member isJuvenile]) {
-                text = NSLocalizedString(@"Tap + to register additional guardians.", @"");
+                footerContent = NSLocalizedString(@"Tap + to register additional guardians.", @"");
             } else {
                 id ancestor = [self.entity ancestor];
                 
                 if ([ancestor conformsToProtocol:@protocol(OMember)] && ![[ancestor guardians] count]) {
-                    text = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:text separator:kSeparatorSpace];
+                    footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:kSeparatorSpace];
                 }
             }
         } else {
-            text = [NSString stringWithFormat:NSLocalizedString(@"Active since: %@.", @""), [[_member activeSince] localisedDateTimeString]];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Active on Origo since: %@.", @""), [[_member activeSince] localisedDateTimeString]];
         }
     }
     
-    return text;
+    return footerContent;
 }
 
 
@@ -1249,7 +1249,7 @@ static NSInteger const kButtonIndexContinue = 1;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyRoles) {
-        canDelete = [self.state.baseOrigo isManagedByUser];
+        canDelete = [self.state.baseOrigo userIsAdmin] || self.state.baseOrigo.membersCanEdit;
     } else if (sectionKey == kSectionKeyAddresses) {
         canDelete = [self numberOfRowsInSectionWithKey:sectionKey] > 1;
     }
@@ -1356,7 +1356,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles && [_origo isManagedByUser];
+    return [self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles && ([_origo userIsAdmin] || _origo.membersCanEdit);
 }
 
 
@@ -1389,7 +1389,7 @@ static NSInteger const kButtonIndexContinue = 1;
     blueprint.detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
 
     // LATER: Introduce photos in later release
-    // blueprint.hasPhoto = _member.photo || ([self aspectIs:kAspectHousehold] && [_member isManagedByUser]);
+    // blueprint.hasPhoto = _member.photo || ([self aspectIs:kAspectHousehold] && [_member isEditableByUser]);
     
     return blueprint;
 }

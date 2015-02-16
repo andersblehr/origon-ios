@@ -38,7 +38,7 @@ CGFloat const kPhotoFrameWidth = 55.f;
 + (OInputCellBlueprint *)editableListCellBlueprint
 {
     OInputCellBlueprint *blueprint = [[self alloc] init];
-    blueprint.titleKey = kExternalKeyEditableListCellContent;
+    blueprint.titleKey = kInternalKeyEditableListCellContent;
     blueprint.fieldsAreLabeled = NO;
     blueprint.isEditableListCellBlueprint = YES;
     

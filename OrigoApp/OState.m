@@ -19,7 +19,7 @@ NSString * const kActionPick = @"pick";
 NSString * const kActionRegister = @"register";
 NSString * const kActionSignIn = @"signin";
 
-NSString * const kTargetAdmin = @"admin";
+NSString * const kTargetAdmins = @"admins";
 NSString * const kTargetCall = @"call";
 NSString * const kTargetAffiliation = @"affiliation";
 NSString * const kTargetDevices = @"devices";
@@ -40,6 +40,7 @@ NSString * const kTargetOrigoType = @"origoType";
 NSString * const kTargetParent = @"parent";
 NSString * const kTargetParents = @"parents";
 NSString * const kTargetPassword = @"password";
+NSString * const kTargetPermissions = @"permissions";
 NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
@@ -48,7 +49,6 @@ NSString * const kTargetText = @"text";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
 
-NSString * const kAspectAdmin = @"admin";
 NSString * const kAspectDefault = @"default";
 NSString * const kAspectEditable = @"editable";
 NSString * const kAspectGlobal = @"global";
@@ -174,12 +174,10 @@ static OState *_activeState = nil;
                 isMatch = isMatch || [self aspectIs:kAspectParentRole];
             } else if ([target isEqualToString:kTargetGroup]) {
                 isMatch = isMatch || [self aspectIs:kAspectGroup];
-            } else if ([target isEqualToString:kTargetAdmin]) {
-                isMatch = isMatch || [self aspectIs:kAspectAdmin];
             } else if ([target isEqualToString:kTargetAffiliation]) {
                 isMatch = isMatch || [self targetIs:kTargetRole];
                 isMatch = isMatch || [self targetIs:kTargetGroup];
-                isMatch = isMatch || [self targetIs:kTargetAdmin];
+                isMatch = isMatch || [self targetIs:kTargetAdmins];
             } else if ([target isEqualToString:kTargetSetting]) {
                 // TODO: OR together all setting keys
             }

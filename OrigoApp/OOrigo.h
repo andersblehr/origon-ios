@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSData * photo;
 @property (nonatomic, retain) NSString * telephone;
 @property (nonatomic, retain) NSString * type;
+@property (nonatomic, retain) NSString * permissions;
 @property (nonatomic, retain) NSSet *memberships;
 @end
 

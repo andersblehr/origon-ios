@@ -8,6 +8,8 @@
 
 #import "OMember+OrigoAdditions.h"
 
+static NSString * const kSettingKeyUseEnglish = @"useEnglish";
+
 
 @implementation OMember (OrigoAdditions)
 
@@ -23,27 +25,23 @@
 {
     id visibleMembers = [NSMutableArray array];
     
-    if ([self isManagedByUser]) {
-        visibleMembers = members;
+    NSArray *userWards = nil;
+    
+    if ([[OMeta m].user isJuvenile]) {
+        userWards = @[[OMeta m].user];
     } else {
-        NSArray *userWards = nil;
-        
-        if ([[OMeta m].user isJuvenile]) {
-            userWards = @[[OMeta m].user];
-        } else {
-            userWards = [[OMeta m].user allWards];
-        }
-        
-        NSMutableSet *userWardPeers = [NSMutableSet setWithArray:userWards];
-        
-        for (OMember *userWard in userWards) {
-            [userWardPeers unionSet:[NSSet setWithArray:[userWard allPeers]]];
-        }
-        
-        for (OMember *member in members) {
-            if (![member isJuvenile] || [userWardPeers containsObject:member]) {
-                [visibleMembers addObject:member];
-            }
+        userWards = [[OMeta m].user allWards];
+    }
+    
+    NSMutableSet *userWardPeers = [NSMutableSet setWithArray:userWards];
+    
+    for (OMember *userWard in userWards) {
+        [userWardPeers unionSet:[NSSet setWithArray:[userWard allPeers]]];
+    }
+    
+    for (OMember *member in members) {
+        if (![member isJuvenile] || [userWardPeers containsObject:member]) {
+            [visibleMembers addObject:member];
         }
     }
     
@@ -736,7 +734,7 @@
         [ward defaultFriendList];
     }
     
-    self.settings = [OSettings settings];
+    self.settings = [self defaultSettings];
     self.activeSince = [NSDate date];
 }
 
@@ -803,33 +801,9 @@
 }
 
 
-- (BOOL)isManagedByUser
+- (BOOL)isEditableByUser
 {
-    BOOL isManagedByUser = [self isUser];
-    
-    if (!isManagedByUser && ![[OMeta m].user isJuvenile]) {
-        isManagedByUser = [self isHousemateOfUser] && (![self isActive] || [self isJuvenile]);
-        
-        if (!isManagedByUser) {
-            BOOL mightBeManagedByUser = YES;
-            
-            for (OOrigo *residence in [self residences]) {
-                mightBeManagedByUser = mightBeManagedByUser && ![residence hasAdmin];
-            }
-            
-            if (mightBeManagedByUser) {
-                isManagedByUser = [self userIsCreator];
-                
-                if (!isManagedByUser) {
-                    for (OOrigo *origo in [self origos]) {
-                        isManagedByUser = isManagedByUser || [origo isManagedByUser];
-                    }
-                }
-            }
-        }
-    }
-    
-    return isManagedByUser;
+    return [self isUser] || ([self isWardOfUser] && ![self isActive]) || ![self isManaged];
 }
 
 
@@ -1099,6 +1073,56 @@
     }
     
     return [NSString stringWithFormat:recipientLabelFormat, [self recipientLabel]];
+}
+
+
+#pragma mark - Settings
+
+- (void)setUseEnglish:(BOOL)useEnglish
+{
+    self.settings = [OUtil keyValueString:self.settings setValue:@(useEnglish) forKey:kSettingKeyUseEnglish];
+}
+
+
+- (BOOL)useEnglish
+{
+    return [[OUtil keyValueString:self.settings valueForKey:kSettingKeyUseEnglish] boolValue];
+}
+
+
+- (NSArray *)settingKeys
+{
+    return [NSArray array];
+}
+
+
+- (NSArray *)settingListKeys
+{
+    NSMutableArray *settingListKeys = [NSMutableArray array];
+    
+    BOOL hasHiddenOrigos = [[self hiddenOrigos] count] > 0;
+    
+    if (!hasHiddenOrigos) {
+        for (OMember *ward in [self wards]) {
+            hasHiddenOrigos = hasHiddenOrigos || [[ward hiddenOrigos] count] > 0;
+        }
+    }
+    
+    if (hasHiddenOrigos) {
+        [settingListKeys addObject:kTargetHiddenOrigos];
+    }
+    
+    if ([[self registeredDevices] count] > 1) {
+        [settingListKeys addObject:kTargetDevices];
+    }
+    
+    return settingListKeys;
+}
+
+
+- (NSString *)defaultSettings
+{
+    return nil;
 }
 
 

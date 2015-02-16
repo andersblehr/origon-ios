@@ -9,7 +9,6 @@
 #import "OMember.h"
 #import "ODevice.h"
 #import "OMembership.h"
-#import "OSettings.h"
 
 
 @implementation OMember
