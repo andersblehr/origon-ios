@@ -134,16 +134,6 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)multiRoleButtonWithTarget:(id)target on:(BOOL)on
-{
-    NSString *iconFileName = on ? kIconFileMultiRoleOn : kIconFileMultiRoleOff;
-    UIBarButtonItem *button = [[self alloc] initWithImage:[UIImage imageNamed:iconFileName] style:UIBarButtonItemStylePlain target:target action:@selector(toggleMultiRole)];
-    button.tag = kBarButtonTagMultiRole;
-    
-    return button;
-}
-
-
 + (instancetype)plusButtonWithTarget:(id)target
 {
     return [self barButtonWithVisuals:@(UIBarButtonSystemItemAdd) target:target action:@selector(performAddAction) tag:kBarButtonTagPlus];
@@ -190,16 +180,20 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)doneButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = [self barButtonWithVisuals:NSLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing) tag:kBarButtonTagDone];
-    button.style = UIBarButtonItemStyleDone;
+    return [self doneButtonWithTitle:NSLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing)];
+}
 
-    return button;
+
++ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target
+{
+    return [self doneButtonWithTitle:title target:target action:@selector(didFinishEditing)];
 }
 
 
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
 {
-    UIBarButtonItem *button = [self doneButtonWithTarget:target];
+    UIBarButtonItem *button = [self barButtonWithVisuals:title target:target action:action tag:kBarButtonTagDone];
+    button.style = UIBarButtonItemStyleDone;
     button.title = title;
     button.action = action;
     

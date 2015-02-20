@@ -560,7 +560,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 }
 
 
-- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self targetIs:kTargetDevices]) {
         [[self dataAtIndexPath:indexPath] expire];

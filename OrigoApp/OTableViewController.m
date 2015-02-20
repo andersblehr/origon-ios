@@ -1688,8 +1688,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (BOOL)tableView:(OTableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDeleteCell = NO;
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if ([self sectionKeyForIndexPath:indexPath] != _inputSectionKey) {
+    if (sectionKey != _inputSectionKey && ![OMeta m].replicator.isReplicating) {
         if ([_instance respondsToSelector:@selector(canDeleteCellAtIndexPath:)]) {
             canDeleteCell = [_instance canDeleteCellAtIndexPath:indexPath];
         }
@@ -1721,8 +1722,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         if (shouldDeleteCell) {
-            if ([_instance respondsToSelector:@selector(willDeleteCellAtIndexPath:)]) {
-                [_instance willDeleteCellAtIndexPath:indexPath];
+            if ([_instance respondsToSelector:@selector(deleteCellAtIndexPath:)]) {
+                [_instance deleteCellAtIndexPath:indexPath];
             }
             
             NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
@@ -1732,6 +1733,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             } else {
                 [self reloadSectionWithKey:sectionKey];
             }
+            
+            [[OMeta m].replicator replicateIfNeeded];
         }
     }
 }

@@ -175,10 +175,6 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 + (void)cacheProxiesForEntitiesWithDictionaries:(NSArray *)entityDictionaries
 {
-    if (!_cachedProxiesByEntityId) {
-        _cachedProxiesByEntityId = [NSMutableDictionary dictionary];
-    }
-    
     for (NSDictionary *entityDictionary in entityDictionaries) {
         [OEntityProxy proxyForEntityWithDictionary:entityDictionary];
     }
@@ -207,7 +203,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 #pragma mark - Proxy cache reset
 
-+ (void)clearProxyCache
++ (void)clearCachedProxies
 {
     if (![[OMeta m].appDelegate hasPersistentStore]) {
         for (OEntityProxy *proxy in [[_cachedProxiesByEntityId allValues] copy]) {
@@ -217,7 +213,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
         }
     }
     
-    [_cachedProxiesByEntityId removeAllObjects];
+    _cachedProxiesByEntityId = nil;
 }
 
 
@@ -465,7 +461,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
             [[proxy instance] expire];
         }
         
-        [_cachedProxiesByEntityId removeAllObjects];
+        _cachedProxiesByEntityId = nil;
         
         isCommitting = NO;
     }

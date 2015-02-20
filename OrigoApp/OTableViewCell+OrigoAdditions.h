@@ -12,7 +12,7 @@
 
 - (void)loadImageForOrigo:(id<OOrigo>)origo;
 - (void)loadImageForMember:(id<OMember>)member;
-- (void)loadTonedDownIconWithFileName:(NSString *)fileName;
+- (void)loadImageForMembers:(NSArray *)members;
 
 - (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo;
 - (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo excludeRoles:(BOOL)excludeRoles excludeRelations:(BOOL)excludeRelations;

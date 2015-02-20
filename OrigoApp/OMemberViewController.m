@@ -39,7 +39,7 @@ static NSInteger const kButtonTagGuardianAddressYes = 0;
 static NSInteger const kActionSheetTagGuardianAddress = 6;
 static NSInteger const kActionSheetTagEditRole = 7;
 
-static NSInteger const kActionSheetTagRecipients = 7;
+static NSInteger const kActionSheetTagRecipients = 8;
 
 static NSInteger const kAlertTagEmailChange = 0;
 static NSInteger const kButtonIndexContinue = 1;
@@ -733,8 +733,6 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
         
-        CFRelease(multiValues);
-        
         if ([mobilePhoneNumbers count]) {
             _mobilePhoneField.value = mobilePhoneNumbers;
             
@@ -743,6 +741,8 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
+    
+    CFRelease(multiValues);
 }
 
 
@@ -762,8 +762,6 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
         
-        CFRelease(multiValues);
-        
         if ([emailAddresses count]) {
             _emailField.value = emailAddresses;
             
@@ -772,6 +770,8 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
+    
+    CFRelease(multiValues);
 }
 
 
@@ -787,11 +787,11 @@ static NSInteger const kButtonIndexContinue = 1;
             NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
             
             if ([label isEqualToString:(NSString *)kABHomeLabel]) {
-                [_addressBookAddresses addObject:[OOrigoProxy proxyFromAddressBookAddress:ABMultiValueCopyValueAtIndex(multiValues, i)]];
+                CFTypeRef address = ABMultiValueCopyValueAtIndex(multiValues, i);
+                [_addressBookAddresses addObject:[OOrigoProxy proxyFromAddressBookAddress:address]];
+                CFRelease(address);
             }
         }
-        
-        CFRelease(multiValues);
         
         if ([_addressBookAddresses count] == 1) {
             [_addressBookAddresses[0] addMember:_member];
@@ -811,6 +811,8 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
+    
+    CFRelease(multiValues);
 }
 
 
@@ -906,13 +908,14 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)performCallAction
 {
-    if ([_member isJuvenile]) {
+    _recipientCandidates = [_member callRecipients];
+    
+    if ([_member isJuvenile] || [_recipientCandidates count] > 1) {
         _recipientType = kRecipientTypeCall;
-        _recipientCandidates = [_member callRecipients];
         
         [self presentRecipientsSheet];
     } else {
-        [self callRecipient:_member];
+        [self callRecipient:_recipientCandidates[0]];
     }
 }
 
@@ -1064,6 +1067,8 @@ static NSInteger const kButtonIndexContinue = 1;
         if ([_member isJuvenile] && [[_member residences] count] > 1) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] conjoin:NO];
             cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+        } else if ([residence hasTelephone]) {
+            cell.detailTextLabel.text = [[OPhoneNumberFormatter formatterForNumber:residence.telephone] formattedNumber];
         }
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
@@ -1258,7 +1263,7 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
@@ -1512,12 +1517,16 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)didCommitEntity:(id)entity
 {
-    if ([_cachedResidencesById count] && ![_member isActive]) {
-        for (id<OOrigo> residence in [_member residences]) {
-            id<OOrigo> cachedResidence = _cachedResidencesById[residence.entityId];
-            
-            if (!residence.telephone && cachedResidence.telephone) {
-                residence.telephone = cachedResidence.telephone;
+    if ([self actionIs:kActionRegister]) {
+        self.returnData = entity;
+        
+        if ([_cachedResidencesById count] && ![_member isActive]) {
+            for (id<OOrigo> residence in [_member residences]) {
+                id<OOrigo> cachedResidence = _cachedResidencesById[residence.entityId];
+                
+                if (!residence.telephone && cachedResidence.telephone) {
+                    residence.telephone = cachedResidence.telephone;
+                }
             }
         }
     }
@@ -1528,7 +1537,14 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)examinerDidFinishExamination
 {
-    [self persistMember];
+    if ([_origo isOfType:kOrigoTypeCommunity]) {
+        _membership = [_origo addMember:_member];
+        
+        [self toggleEditMode];
+        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
+    } else {
+        [self persistMember];
+    }
 }
 
 

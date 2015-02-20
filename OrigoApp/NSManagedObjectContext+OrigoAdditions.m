@@ -209,6 +209,18 @@
                 [self createEntityRefForEntity:origo inOrigo:residence];
             }
         }
+        
+        if (![member isJuvenile]) {
+            for (OMember *elder in [origo elders]) {
+                if (elder != member && [elder primaryResidence] == origo) {
+                    for (OOrigo *origo in [elder origos]) {
+                        if ([origo isOfType:kOrigoTypeCommunity]) {
+                            [origo addMember:member];
+                        }
+                    }
+                }
+            }
+        }
     }
     
     for (OMember *housemate in [member allHousemates]) {
@@ -278,6 +290,16 @@
                 
                 if (![origo hasMembersInCommonWithOrigo:residence]) {
                     [self expireEntityRefForEntity:origo inOrigo:residence];
+                }
+            }
+        }
+        
+        for (OMember *elder in [origo elders]) {
+            if (elder != member && [elder primaryResidence] == origo) {
+                for (OOrigo *origo in [elder origos]) {
+                    if ([origo isOfType:kOrigoTypeCommunity]) {
+                        [[origo membershipForMember:member] expire];
+                    }
                 }
             }
         }

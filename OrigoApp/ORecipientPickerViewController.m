@@ -32,7 +32,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     UISegmentedControl *_titleSubsegments;
     NSInteger _selectedTitleSubsegment;
     
-    NSMutableDictionary *_recipientCandidatesByPivotId;
+    NSMutableDictionary *_recipientCandidatesByMemberId;
     NSMutableArray *_toRecipients;
     NSMutableArray *_ccRecipients;
 }
@@ -221,8 +221,8 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     if ([self aspectIs:kAspectGlobal]) {
         _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"All", @""), NSLocalizedString(@"Favourites", @"")]];
     } else if ([_origo isOfType:kOrigoTypeCommunity] || [_origo isJuvenile]) {
-        NSString *allLabel = nil;
-        NSString *groupedLabel = nil;
+        NSString *allLabel = [NSString string];
+        NSString *groupedLabel = [NSString string];
         
         if ([_origo isOfType:kOrigoTypeCommunity]) {
             allLabel = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
@@ -230,15 +230,15 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         } else if ([_origo isJuvenile]) {
             if ([[_origo organisers] count]) {
                 allLabel = [NSString stringWithFormat:NSLocalizedString(@"Parents and %@", @""), [NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]];
+                groupedLabel = NSLocalizedString(@"Parents, grouped", @"");
             } else {
                 allLabel = NSLocalizedString(@"Parents", @"");
+                groupedLabel = NSLocalizedString(@"Grouped", @"");
             }
-            
-            groupedLabel = NSLocalizedString(@"Parents, grouped", @"");
         }
         
         _titleSubsegments = [self titleSubsegmentsWithTitles:@[allLabel, groupedLabel]];
-        _recipientCandidatesByPivotId = [NSMutableDictionary dictionary];
+        _recipientCandidatesByMemberId = [NSMutableDictionary dictionary];
     }
 }
 
@@ -256,7 +256,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             [self setData:[_origo recipientCandidates] sectionIndexLabelKey:kPropertyKeyName];
         } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
             if ([_origo isOfType:kOrigoTypeCommunity]) {
-                [self setData:[_origo memberResidencesIncludeUser:NO] sectionIndexLabelKey:kPropertyKeyAddress];
+                [self setData:[OUtil singleMemberPerPrimaryAddressFromMembers:[_origo members] includeUser:NO] sectionIndexLabelKey:kPropertyKeyName];
             } else {
                 [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
             }
@@ -268,11 +268,10 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self targetIs:kTargetEmail] && !cell.checkedStateAccessoryViews) {
-        UILabel *noLabel = [OLabel genericLabelWithText:@""];
         UILabel *toLabel = [OLabel genericLabelWithText:NSLocalizedString(@"To", @"")];
         UILabel *ccLabel = [OLabel genericLabelWithText:NSLocalizedString(@"Cc", @"")];
         
-        cell.checkedStateAccessoryViews = @[noLabel, toLabel, ccLabel];
+        cell.checkedStateAccessoryViews = @[[NSNull null], toLabel, ccLabel];
     }
     
     if (_selectedTitleSubsegment == kTitleSubsegmentAll || [self aspectIs:kAspectGlobal]) {
@@ -302,35 +301,36 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
         BOOL isCommunity = [_origo isOfType:kOrigoTypeCommunity];
         
-        id pivot = [self dataAtIndexPath:indexPath];
+        id<OMember> member = [self dataAtIndexPath:indexPath];
+        id<OOrigo> residence = isCommunity ? [member primaryResidence] : nil;
         
-        NSArray *elders = isCommunity ? [pivot elders] : [pivot parentsOrGuardians];
-        NSMutableArray *recipientCandidatesForGroup = [NSMutableArray array];
-        NSMutableArray *nonRecipientCandidatesForGroup = [NSMutableArray array];
+        NSMutableArray *recipientCandidates = [NSMutableArray array];
+        id elders = isCommunity ? [residence elders] : [member parentsOrGuardians];
+        
+        if ([elders containsObject:[OMeta m].user]) {
+            elders = [elders mutableCopy];
+            [elders removeObject:[OMeta m].user];
+        }
         
         for (id<OMember> elder in elders) {
-            if (![elder isUser]) {
-                BOOL isRecipientCandidate = NO;
-                
-                if ([self targetIs:kTargetText]) {
-                    isRecipientCandidate = [elder.mobilePhone hasValue];
-                } else if ([self targetIs:kTargetEmail]) {
-                    isRecipientCandidate = [elder.email hasValue];
-                }
-                
-                if (isRecipientCandidate) {
-                    [recipientCandidatesForGroup addObject:elder];
-                } else {
-                    [nonRecipientCandidatesForGroup addObject:elder];
-                }
+            BOOL isRecipientCandidate = NO;
+            
+            if ([self targetIs:kTargetText]) {
+                isRecipientCandidate = [elder.mobilePhone hasValue];
+            } else if ([self targetIs:kTargetEmail]) {
+                isRecipientCandidate = [elder.email hasValue];
+            }
+            
+            if (isRecipientCandidate) {
+                [recipientCandidates addObject:elder];
             }
         }
         
         if ([self targetIs:kTargetText]) {
             BOOL includesSome = NO;
-            BOOL includesAll = [recipientCandidatesForGroup count] > 0;
+            BOOL includesAll = [recipientCandidates count] > 0;
             
-            for (id<OMember> recipientCandidate in recipientCandidatesForGroup) {
+            for (id<OMember> recipientCandidate in recipientCandidates) {
                 if ([_toRecipients containsObject:recipientCandidate]) {
                     includesSome = YES;
                 } else {
@@ -346,10 +346,10 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         } else if ([self targetIs:kTargetEmail]) {
             BOOL includesSomeAsTo = NO;
             BOOL includesSomeAsCc = NO;
-            BOOL includesAllAsTo = [recipientCandidatesForGroup count] > 0;
-            BOOL includesAllAsCc = [recipientCandidatesForGroup count] > 0;
+            BOOL includesAllAsTo = [recipientCandidates count] > 0;
+            BOOL includesAllAsCc = [recipientCandidates count] > 0;
             
-            for (id<OMember> recipientCandidate in recipientCandidatesForGroup) {
+            for (id<OMember> recipientCandidate in recipientCandidates) {
                 if ([_toRecipients containsObject:recipientCandidate]) {
                     includesSomeAsTo = YES;
                 } else if ([_ccRecipients containsObject:recipientCandidate]) {
@@ -371,55 +371,25 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             }
         }
         
-        if ([_origo isOfType:kOrigoTypeCommunity]) {
-            if ([pivot hasAddress]) {
-                cell.textLabel.text = [pivot shortAddress];
-            } else {
-                cell.textLabel.text = NSLocalizedString(@"-no address-", @"");
-                cell.textLabel.textColor = [UIColor tonedDownTextColour];
-            }
-            
-            if ([nonRecipientCandidatesForGroup count]) {
-                if ([recipientCandidatesForGroup count]) {
-                    cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:recipientCandidatesForGroup withRolesInOrigo:_origo];
-                } else {
-                    cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:nonRecipientCandidatesForGroup withRolesInOrigo:_origo];
-                }
-            } else {
-                cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:recipientCandidatesForGroup withRolesInOrigo:_origo];
-            }
+        cell.textLabel.text = [OUtil labelForElders:elders conjoin:YES];
+        
+        if (isCommunity) {
+            cell.detailTextLabel.text = [residence shortAddress];
         } else {
-            if ([nonRecipientCandidatesForGroup count]) {
-                if ([recipientCandidatesForGroup count]) {
-                    cell.textLabel.text = [OUtil commaSeparatedListOfMembers:recipientCandidatesForGroup conjoin:NO];
-                } else {
-                    cell.textLabel.text = [OUtil commaSeparatedListOfMembers:nonRecipientCandidatesForGroup conjoin:NO];
-                }
-            } else if ([pivot isWardOfUser]) {
-                cell.textLabel.text = [OUtil commaSeparatedListOfMembers:recipientCandidatesForGroup conjoin:NO];
-            } else {
-                cell.textLabel.text = [pivot guardianInfo];
-            }
-            
-            cell.detailTextLabel.text = [pivot displayNameInOrigo:_origo];
+            cell.detailTextLabel.text = [member displayNameInOrigo:_origo];
             cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         }
         
-        cell.selectable = [recipientCandidatesForGroup count] > 0;
-        
-        NSArray *countableElders = nil;
+        cell.selectable = [recipientCandidates count] > 0;
         
         if (cell.selectable) {
-            countableElders = recipientCandidatesForGroup;
-            _recipientCandidatesByPivotId[[pivot entityId]] = recipientCandidatesForGroup;
-        } else {
-            countableElders = elders;
+            _recipientCandidatesByMemberId[member.entityId] = recipientCandidates;
         }
         
-        if ([countableElders count] > 1) {
-            [cell loadTonedDownIconWithFileName:kIconFileRoleHolders];
+        if ([elders count] == 1) {
+            [cell loadImageForMember:elders[0]];
         } else {
-            [cell loadImageForMember:countableElders[0]];
+            [cell loadImageForMembers:elders];
         }
     }
     
@@ -447,12 +417,12 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
             cell.checked = cell.partiallyChecked ? YES : !cell.checked;
             
-            id<OEntity> pivot = [self dataAtIndexPath:indexPath];
+            id<OEntity> member = [self dataAtIndexPath:indexPath];
             
             if (cell.checked) {
-                [self addCandidates:_recipientCandidatesByPivotId[pivot.entityId] toRecipients:_toRecipients];
+                [self addCandidates:_recipientCandidatesByMemberId[member.entityId] toRecipients:_toRecipients];
             } else {
-                [_toRecipients removeObjectsInArray:_recipientCandidatesByPivotId[pivot.entityId]];
+                [_toRecipients removeObjectsInArray:_recipientCandidatesByMemberId[member.entityId]];
             }
         }
     } else if ([self targetIs:kTargetEmail]) {
@@ -470,8 +440,8 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
                 [_ccRecipients removeObject:recipientCandidate];
             }
         } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
-            id<OEntity> groupPivot = [self dataAtIndexPath:indexPath];
-            NSArray *recipientCandidates = _recipientCandidatesByPivotId[groupPivot.entityId];
+            id<OEntity> member = [self dataAtIndexPath:indexPath];
+            NSArray *recipientCandidates = _recipientCandidatesByMemberId[member.entityId];
             
             if (cell.checkedState == kCellCheckedStateTo) {
                 [self addCandidates:recipientCandidates toRecipients:_toRecipients];

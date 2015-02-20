@@ -22,8 +22,8 @@ NSString * const kHTTPHeaderLocation = @"Location";
 
 static BOOL useDevServer = YES;
 
-static NSString * const kOrigoDevServer = @"http://localhost:8888";
-static NSString * const kOrigoProdServer = @"https://origoapp.appspot.com";
+static NSString * const kDevServer = @"http://localhost:8888";
+static NSString * const kProdServer = @"https://origoapp.appspot.com";
 
 static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
@@ -86,7 +86,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
-        NSString *serverURL = useDevServer ? kOrigoDevServer : kOrigoProdServer;
+        NSString *serverURL = useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kProdServer;
         
         _URLRequest.HTTPMethod = HTTPMethod;
         _URLRequest.URL = [[[[NSURL URLWithString:serverURL] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];

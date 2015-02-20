@@ -145,23 +145,13 @@
 
 // New member titles
 "[new member] alumni" = "Registrer alumn";
-"[new member] community" = "Registrer medlem";
+"[new member] community" = "I husstanden";
 "[new member] preschoolClass" = "I avdelingen";
 "[new member] residence" = "I husstanden";
 "[new member] schoolClass" = "Registrer elev";
 "[new member] simple" = "Registrer medlem";
 "[new member] studyGroup" = "Registrer student";
 "[new member] team" = "Registrer spiller";
-
-// New members titles
-"[new members] alumni" = "Legg til alumni";
-"[new members] community" = "Legg til husstander";
-"[new members] list" = "Legg til venn(inn)er";
-"[new members] preschoolClass" = "Legg til barn";
-"[new members] schoolClass" = "Legg til elever";
-"[new members] simple" = "Legg til medlemmer";
-"[new members] studyGroup" = "Legg til studenter";
-"[new members] team" = "Legg til spillere";
 
 // Origo collective titles
 "[all members] alumni" = "Alle alumni";
@@ -403,12 +393,13 @@
 "Unhide" = "Hent fram";
 "Keep hidden" = "La forbli skjult";
 "Edit responsibilities" = "Rediger ansvarsområder";
-"Add from other list" = "Legg til fra annen liste";
+"Add from other lists" = "Legg til fra andre lister";
 "Add households" = "Legg til husstander";
 "Register parent contact" = "Registrer foreldrekontakt";
 "About %@" = "Om %@";
 "Register household member" = "Registrer medlem i husstanden";
 "Other guardian" = "Annen foresatt";
+"Remove" = "Meld ut";
 
 // Prompts
 "Do you want to keep this listing?" = "Vil du beholde denne oppføringen?";
@@ -527,7 +518,11 @@
  ***/
 
 // View titles
+"Listed elsewhere" = "Oppført i andre lister";
 "Type" = "Type";
+
+// Buttons
+"Add" = "Legg til";
 
 // Footers
 "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ og %@ må være oppført på samme adresse. Du kan registrere en egen adresse for dem om du ikke bor sammen med %@.";
@@ -550,9 +545,10 @@
 "Pick recipient group" = "Velg mottakergruppe";
 
 // Buttons
+"Parents and %@" = "Foreldre og %@";
 "Parents" = "Foreldre";
 "Parents, grouped" = "Foreldre, gruppert";
-"Parents and %@" = "Foreldre og %@";
+"Grouped" = "Gruppert";
 "Everybody" = "Alle";
 "Select all" = "Velg alle";
 "All %@" = "Alle %@";
@@ -585,7 +581,7 @@
 "About" = "Om";
 
 // Labels
-"Active on Origo" = "Aktiv på Origo";
+"Active on %@" = "Aktiv på %@";
 "Through household" = "Gjennom husstand";
 "My membership" = "Mitt medlemskap";
 "Regular member" = "Ordinært medlem";

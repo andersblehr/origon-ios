@@ -120,7 +120,6 @@ extern NSString * const kStringPrefixAddMemberButton;
 extern NSString * const kStringPrefixMemberTitle;
 extern NSString * const kStringPrefixMembersTitle;
 extern NSString * const kStringPrefixNewMemberTitle;
-extern NSString * const kStringPrefixNewMembersTitle;
 extern NSString * const kStringPrefixAllMembersTitle;
 extern NSString * const kStringPrefixOrganiserRoleTitle;
 extern NSString * const kStringPrefixAddOrganiserButton;
@@ -155,9 +154,7 @@ extern NSString * const kIconFileAcceptDecline;
 extern NSString * const kIconFileCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
-extern NSString * const kIconFileRoleHolders;
-extern NSString * const kIconFileMultiRoleOff;
-extern NSString * const kIconFileMultiRoleOn;
+extern NSString * const kIconFileTwoHeads;
 extern NSString * const kIconFileGroups;
 
 // Gender codes

@@ -103,7 +103,6 @@ extern NSString * const kOrigoTypeTeam;
 - (NSString *)recipientLabel;
 - (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType;
 
-- (void)expireCommunityResidence:(id<OOrigo>)residence;
 - (void)convertToType:(NSString *)type;
 
 @end

@@ -113,4 +113,6 @@
 
 @interface OMember (OrigoAdditions) <OMember>
 
++ (void)clearCachedPeers;
+
 @end

@@ -288,10 +288,14 @@ static NSInteger const kActionSheetTagRecipients = 4;
             [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
         }
         
-        _eligibleCandidates = [self.state eligibleCandidates];
+        if ([_origo isOfType:kOrigoTypeCommunity]) {
+            _eligibleCandidates = [OUtil singleMemberPerPrimaryAddressFromMembers:[self.state eligibleCandidates] includeUser:NO];
+        } else {
+            _eligibleCandidates = [self.state eligibleCandidates];
+        }
         
         if ([_eligibleCandidates count]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other list", @"") tag:kButtonTagAddFromLists];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other lists", @"") tag:kButtonTagAddFromLists];
         }
         
         if ([_origo isOrganised]) {
@@ -437,8 +441,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
             if ([primaryResidence hasAddress] && [primaryResidence isCommitted]) {
                 self.title = NSLocalizedString(kPropertyKeyAddress, kStringPrefixLabel);
             }
-            
-            self.cancelImpliesSkip = ![_member hasAddress] && ![_origo isReplicated] && ![[_member housemates] count];
+
+            if (![self.state.baseOrigo isOfType:kOrigoTypeCommunity]) {
+                self.cancelImpliesSkip = ![_member hasAddress] && ![_origo isReplicated] && ![[_member housemates] count];
+            }
         }
     } else if ([self actionIs:kActionDisplay]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![self aspectIs:kAspectHousehold]) {
@@ -480,7 +486,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
                     [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
                 } else if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
-                    [self setData:[_origo memberResidencesIncludeUser:YES] forSectionWithKey:kSectionKeyMembers];
+                    [self setData:[OUtil singleMemberPerPrimaryAddressFromMembers:[_origo members] includeUser:YES] forSectionWithKey:kSectionKeyMembers];
                 }
             } else {
                 [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
@@ -495,22 +501,29 @@ static NSInteger const kActionSheetTagRecipients = 4;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyMembers) {
-        if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
-            id<OOrigo> residence = [self dataAtIndexPath:indexPath];
+        id<OMember> member = [self dataAtIndexPath:indexPath];
+
+        BOOL isCommunityResidence = [_origo isOfType:kOrigoTypeCommunity] && self.selectedHeaderSegment == kHeaderSegmentResidences;
+        
+        if (isCommunityResidence) {
+            id<OOrigo> communityResidence = [member primaryResidence];
+            NSArray *elders = [communityResidence elders];
             
-            if ([residence hasAddress]) {
-                cell.textLabel.text = [residence shortAddress];
+            cell.textLabel.text = [OUtil labelForElders:elders conjoin:YES];
+            cell.detailTextLabel.text = [communityResidence shortAddress];
+            
+            if ([elders count] == 1) {
+                [cell loadImageForMember:elders[0]];
             } else {
-                cell.textLabel.text = NSLocalizedString(@"-no address-", @"");
-                cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                [cell loadImageForMembers:elders];
             }
             
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] withRolesInOrigo:_origo];
-            [cell loadImageForOrigo:residence];
-            cell.destinationId = [_membership isHidden] ? nil : kIdentifierOrigo;
+            if (![_membership isHidden]) {
+                cell.destinationId = kIdentifierOrigo;
+                cell.destinationTarget = communityResidence;
+            }
         } else {
             id<OOrigo> origo = self.state.baseOrigo ? self.state.baseOrigo : _origo;
-            id<OMember> member = [self dataAtIndexPath:indexPath];
             
             if ([_origo isJuvenile] && self.selectedHeaderSegment == kHeaderSegmentParents) {
                 [cell loadMember:member inOrigo:origo excludeRoles:YES excludeRelations:NO];
@@ -542,7 +555,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             cell.destinationTarget = roleHolder;
         } else {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];
-            [cell loadTonedDownIconWithFileName:kIconFileRoleHolders];
+            [cell loadImageForMembers:roleHolders];
             
             if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierValueList;
@@ -722,15 +735,15 @@ static NSInteger const kActionSheetTagRecipients = 4;
     BOOL canDeleteCell = NO;
     
     if ([_origo isCommitted] && (_userIsAdmin || _origo.membersCanDelete)) {
-        NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-        
-        if (sectionKey == kSectionKeyMembers) {
-            id entity = [self dataAtIndexPath:indexPath];
+        if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
+            id<OMember> member = [self dataAtIndexPath:indexPath];
             
-            if ([entity conformsToProtocol:@protocol(OMember)]) {
-                canDeleteCell = ![_origo isOfType:kOrigoTypeCommunity] && ![entity isUser];
-            } else if ([entity conformsToProtocol:@protocol(OOrigo)]) {
-                canDeleteCell = ![[[OMeta m].user residences] containsObject:entity];
+            if ([_origo isOfType:kOrigoTypeCommunity]) {
+                if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
+                    canDeleteCell = ![[member primaryResidence] userIsMember];
+                }
+            } else if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
+                canDeleteCell = ![member isUser];
             }
         } else {
             canDeleteCell = [[self roleHoldersForRoleAtIndexPath:indexPath] count] == 1;
@@ -741,32 +754,43 @@ static NSInteger const kActionSheetTagRecipients = 4;
 }
 
 
-- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+- (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NSLocalizedString(@"Remove", @"");
+}
+
+
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyMembers) {
-        if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
-            [_origo expireCommunityResidence:[self dataAtIndexPath:indexPath]];
-        } else {
-            id<OMember> member = [self dataAtIndexPath:indexPath];
-            id<OMembership> membership = [_origo membershipForMember:member];
-            
-            if ([membership isResidency] && member.email && [[member residencies] count] == 1) {
-                id<OOrigo> newPrimaryResidence = [OOrigo instanceWithType:kOrigoTypeResidence];
-                [newPrimaryResidence addMember:member];
+        id<OMember> member = [self dataAtIndexPath:indexPath];
+        
+        if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
+            if (![_origo isOfType:kOrigoTypeCommunity]) {
+                id<OMembership> membership = [_origo membershipForMember:member];
                 
-                if (![member isJuvenile]) {
-                    for (id<OMember> minor in [_origo minors]) {
-                        [newPrimaryResidence addMember:minor];
+                if ([membership isResidency] && member.email && [[member residencies] count] == 1) {
+                    id<OOrigo> newPrimaryResidence = [OOrigo instanceWithType:kOrigoTypeResidence];
+                    [newPrimaryResidence addMember:member];
+                    
+                    if (![member isJuvenile]) {
+                        for (id<OMember> minor in [_origo minors]) {
+                            [newPrimaryResidence addMember:minor];
+                        }
                     }
                 }
+                
+                [membership expire];
+                
+                if ([_origo userIsMember]) {
+                    [self.inputCell readData];
+                }
             }
-            
-            [membership expire];
-            
-            if ([_origo userIsMember]) {
-                [self.inputCell readData];
+        } else if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
+            for (OMember *elder in [[member primaryResidence] elders]) {
+                [[_origo membershipForMember:elder] expire];
             }
         }
     } else {
@@ -790,11 +814,17 @@ static NSInteger const kActionSheetTagRecipients = 4;
             if ([viewController targetIs:kTargetOrganiser]) {
                 [self reloadSectionWithKey:kSectionKeyOrganisers];
             } else {
-                [self reloadSectionWithKey:kSectionKeyMembers];
-                
                 if ([_origo isOfType:kOrigoTypeResidence]) {
                     [self.inputCell readData];
+                } else if ([_origo isOfType:kOrigoTypeCommunity]) {
+                    id<OMember> member = viewController.returnData;
+                    
+                    for (id<OMember> elder in [[member primaryResidence] elders]) {
+                        [_origo addMember:elder];
+                    }
                 }
+                
+                [self reloadSectionWithKey:kSectionKeyMembers];
             }
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {
@@ -803,8 +833,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
         } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             if ([viewController targetIs:kTargetMembers]) {
                 if ([_origo isOfType:kOrigoTypeCommunity]) {
-                    for (id<OOrigo> residence in viewController.returnData) {
-                        for (id<OMember> elder in [residence elders]) {
+                    for (id<OMember> member in viewController.returnData) {
+                        for (id<OMember> elder in [[member primaryResidence] elders]) {
                             [_origo addMember:elder];
                         }
                     }
@@ -962,7 +992,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (BOOL)shouldCommitEntity:(id)entity
 {
-    return [self.entity.ancestor isCommitted];
+    return [self.entity.ancestor isCommitted] || [self.state.baseOrigo isOfType:kOrigoTypeCommunity];
 }
 
 

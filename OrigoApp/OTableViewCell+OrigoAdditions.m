@@ -79,7 +79,9 @@
         for (id<OMembership> membership in [self associationMembershipsForMember:member]) {
             origo = membership.origo;
             
-            if ((![member isJuvenile] && [membership isAssociate]) || [[membership parentRoles] count]) {
+            BOOL hasParentRole = [[membership parentRoles] count] > 0;
+            
+            if (hasParentRole || (![member isJuvenile] && [membership isAssociate])) {
                 for (OMember *ward in [member wardsInOrigo:origo]) {
                     if (!associationsByWard[ward.entityId]) {
                         isParentByWard[ward.entityId] = @([ward hasParent:member]);
@@ -173,6 +175,22 @@
         } else {
             [self loadTonedDownIconWithFileName:iconFileName];
         }
+    }
+}
+
+
+- (void)loadImageForMembers:(NSArray *)members
+{
+    BOOL containsActiveMember = NO;
+    
+    for (id<OMember> member in members) {
+        containsActiveMember = containsActiveMember || [member isActive];
+    }
+    
+    if (containsActiveMember) {
+        self.imageView.image = [UIImage imageNamed:kIconFileTwoHeads];
+    } else {
+        [self loadTonedDownIconWithFileName:kIconFileTwoHeads];
     }
 }
 

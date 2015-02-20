@@ -85,6 +85,8 @@ static NSString * const kPermissionKeyDelete = @"delete";
             
             [[OMeta m].context insertCrossReferencesForMembership:membership];
         }
+        
+        [OMember clearCachedPeers];
     } else {
         membership = [[self proxy] addMember:member];
     }
@@ -655,7 +657,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (BOOL)knowsAboutMember:(id<OMember>)member
 {
-    return [self membershipForMember:member] || [self indirectlyKnowsAboutMember:member];
+    return [self hasMember:member] || [self indirectlyKnowsAboutMember:member];
 }
 
 
@@ -936,21 +938,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 }
 
 
-#pragma mark - Miscellaneous
-
-- (void)expireCommunityResidence:(id<OOrigo>)residence
-{
-    if ([self isOfType:kOrigoTypeCommunity]) {
-        for (OMember *resident in [residence residents]) {
-            OMembership *membership = [self membershipForMember:resident];
-            
-            if (![membership isAssociate]) {
-                [membership expire];
-            }
-        }
-    }
-}
-
+#pragma mark - Type conversion
 
 - (void)convertToType:(NSString *)type
 {

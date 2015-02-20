@@ -10,6 +10,8 @@
 
 static NSString * const kSettingKeyUseEnglish = @"useEnglish";
 
+static NSMutableDictionary *_cachedPeersByMemberId = nil;
+
 
 @implementation OMember (OrigoAdditions)
 
@@ -67,57 +69,75 @@ static NSString * const kSettingKeyUseEnglish = @"useEnglish";
 
 - (NSArray *)allPeers
 {
-    NSMutableSet *allPeers = [NSMutableSet set];
-    
-    for (OOrigo *origo in [self origosIncludeResidences:YES]) {
-        for (OMember *member in [origo members]) {
-            if ([member isJuvenile] == [self isJuvenile]) {
-                [allPeers addObject:member];
-            }
-        }
+    if (!_cachedPeersByMemberId) {
+        _cachedPeersByMemberId = [NSMutableDictionary dictionary];
     }
     
-    if ([self isJuvenile]) {
-        NSMutableSet *siblings = [NSMutableSet set];
+    if (!_cachedPeersByMemberId[self.entityId]) {
+        NSMutableSet *allPeers = [NSMutableSet set];
         
-        for (OMember *guardian in [self guardians]) {
-            for (OMember *sibling in [guardian allWards]) {
-                if (sibling != self) {
-                    [siblings addObject:sibling];
-                }
-            }
-        }
-        
-        for (OMember *sibling in siblings) {
-            for (OOrigo *origo in [sibling origosIncludeResidences:YES]) {
-                for (OMember *member in [origo members]) {
-                    if ([member isJuvenile]) {
-                        [allPeers addObject:member];
-                    }
-                }
-            }
-        }
-    } else {
-        for (OMember *ward in [self wards]) {
-            for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
-                for (OMember *member in [origo members]) {
-                    if ([member isJuvenile]) {
-                        for (OMember *guardian in [member guardians]) {
-                            for (OOrigo *residence in [guardian residences]) {
-                                [allPeers unionSet:[NSSet setWithArray:[residence elders]]];
+        for (OOrigo *origo in [self origosIncludeResidences:YES]) {
+            for (OMember *member in [origo members]) {
+                if ([member isJuvenile] == [self isJuvenile]) {
+                    [allPeers addObject:member];
+                    
+                    for (OOrigo *residence in [member residences]) {
+                        for (OMembership *membership in [residence allMemberships]) {
+                            if ([membership isResidency] && membership.member != member) {
+                                if ([membership.member isJuvenile] == [self isJuvenile]) {
+                                    [allPeers addObject:membership.member];
+                                }
                             }
                         }
-                    } else {
-                        [allPeers addObject:member];
                     }
                 }
             }
         }
+        
+        if ([self isJuvenile]) {
+            NSMutableSet *siblings = [NSMutableSet set];
+            
+            for (OMember *guardian in [self guardians]) {
+                for (OMember *sibling in [guardian allWards]) {
+                    if (sibling != self) {
+                        [siblings addObject:sibling];
+                    }
+                }
+            }
+            
+            for (OMember *sibling in siblings) {
+                for (OOrigo *origo in [sibling origosIncludeResidences:YES]) {
+                    for (OMember *member in [origo members]) {
+                        if ([member isJuvenile]) {
+                            [allPeers addObject:member];
+                        }
+                    }
+                }
+            }
+        } else {
+            for (OMember *ward in [self wards]) {
+                for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
+                    for (OMember *member in [origo members]) {
+                        if ([member isJuvenile]) {
+                            for (OMember *guardian in [member guardians]) {
+                                for (OOrigo *residence in [guardian residences]) {
+                                    [allPeers unionSet:[NSSet setWithArray:[residence elders]]];
+                                }
+                            }
+                        } else {
+                            [allPeers addObject:member];
+                        }
+                    }
+                }
+            }
+        }
+        
+        [allPeers removeObject:self];
+        
+        _cachedPeersByMemberId[self.entityId] = [allPeers allObjects];
     }
     
-    [allPeers removeObject:self];
-    
-    return [allPeers allObjects];
+    return _cachedPeersByMemberId[self.entityId];
 }
 
 
@@ -1034,20 +1054,7 @@ static NSString * const kSettingKeyUseEnglish = @"useEnglish";
     NSString *guardianInfo = nil;
     
     if ([self isJuvenile]) {
-        NSArray *guardians = [self parentsOrGuardians];
-        
-        if ([guardians count] == 2) {
-            NSString *lastName1 = [[[guardians[0] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
-            NSString *lastName2 = [[[guardians[1] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
-            
-            if ([lastName1 isEqualToString:lastName2]) {
-                guardianInfo = [NSString stringWithFormat:@"%@%@%@ %@", [guardians[0] givenName], NSLocalizedString(@" and ", @""), [guardians[1] givenName], lastName1];
-            }
-        }
-        
-        if (!guardianInfo) {
-            guardianInfo = [OUtil commaSeparatedListOfMembers:guardians conjoin:NO];
-        }
+        guardianInfo = [OUtil labelForElders:[self parentsOrGuardians] conjoin:NO];
     }
     
     return guardianInfo;
@@ -1123,6 +1130,14 @@ static NSString * const kSettingKeyUseEnglish = @"useEnglish";
 - (NSString *)defaultSettings
 {
     return nil;
+}
+
+
+#pragma mark - Reset internal caching of peers
+
++ (void)clearCachedPeers
+{
+    _cachedPeersByMemberId = nil;
 }
 
 

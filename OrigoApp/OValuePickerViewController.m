@@ -23,8 +23,6 @@ static NSInteger const kSectionKeyValues = 0;
     id<OOrigo> _origo;
     NSString *_affiliation;
     NSString *_affiliationType;
-    UIBarButtonItem *_multiRoleButtonOff;
-    UIBarButtonItem *_multiRoleButtonOn;
     
     id<OMember> _ward;
     NSString *_parentGender;
@@ -48,22 +46,6 @@ static NSInteger const kSectionKeyValues = 0;
         cell.detailTextLabel.textColor = [UIColor textColour];
     } else {
         cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
-    }
-}
-
-
-#pragma mark - Selector implementations
-
-- (void)toggleMultiRole
-{
-    if ([_pickedValues count] < 2) {
-        if (_isMultiValuePicker) {
-            self.navigationItem.rightBarButtonItem = _multiRoleButtonOff;
-        } else {
-            self.navigationItem.rightBarButtonItem = _multiRoleButtonOn;
-        }
-        
-        _isMultiValuePicker = !_isMultiValuePicker;
     }
 }
 
@@ -104,9 +86,14 @@ static NSInteger const kSectionKeyValues = 0;
             _origo = self.state.currentOrigo;
             _isMultiValuePicker = YES;
             
-            self.title = NSLocalizedString(_origo.type, kStringPrefixNewMembersTitle);
+            if ([_origo isOfType:kOrigoTypeCommunity]) {
+                self.title = NSLocalizedString(@"Households", @"");
+            } else {
+                self.title = NSLocalizedString(@"Listed elsewhere", @"");
+            }
         } else if ([self targetIs:kTargetAffiliation]) {
             _origo = self.state.currentOrigo;
+            _isMultiValuePicker = YES;
             
             if ([@[kTargetRole, kTargetGroup] containsObject:self.target]) {
                 _affiliation = nil;
@@ -142,19 +129,6 @@ static NSInteger const kSectionKeyValues = 0;
             }
             
             [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:[self aspectIs:kAspectGroup]]];
-            
-            if ([self targetIs:kTargetRole]) {
-                _isMultiValuePicker = [_pickedValues count] > 1;
-                
-                if (!_isMultiValuePicker) {
-                    _multiRoleButtonOn = [UIBarButtonItem multiRoleButtonWithTarget:self on:YES];
-                    _multiRoleButtonOff = [UIBarButtonItem multiRoleButtonWithTarget:self on:NO];
-                    
-                    [self.navigationItem addRightBarButtonItem:_multiRoleButtonOff];
-                }
-            } else if ([self targetIs:@[kTargetGroup, kTargetAdmins]]) {
-                _isMultiValuePicker = YES;
-            }
         }
     }
     
@@ -162,7 +136,12 @@ static NSInteger const kSectionKeyValues = 0;
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         
         if (_isMultiValuePicker) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+            if ([self targetIs:kTargetMembers]) {
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Add", @"") target:self];
+            } else {
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+            }
+            
             self.navigationItem.rightBarButtonItem.enabled = [_pickedValues count] > 0;
         }
     }
@@ -254,13 +233,19 @@ static NSInteger const kSectionKeyValues = 0;
         }
     } else if ([self targetIs:kTargetMembers]) {
         if ([_origo isOfType:kOrigoTypeCommunity]) {
-            id<OOrigo> residence = [self dataAtIndexPath:indexPath];
+            id<OMember> candidate = [self dataAtIndexPath:indexPath];
+            id<OOrigo> primaryResidence = [candidate primaryResidence];
+            NSArray *elders = [primaryResidence elders];
             
-            cell.textLabel.text = [residence shortAddress];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] conjoin:NO];
+            cell.textLabel.text = [OUtil labelForElders:elders conjoin:YES];
+            cell.detailTextLabel.text = [primaryResidence shortAddress];
             cell.detailTextLabel.textColor = [UIColor tonedDownIconColour];
-
-            [cell loadImageForOrigo:residence];
+            
+            if ([elders count] == 1) {
+                [cell loadImageForMember:elders[0]];
+            } else {
+                [cell loadImageForMembers:elders];
+            }
         } else {
             [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:nil excludeRoles:YES excludeRelations:YES];
         }
@@ -316,7 +301,7 @@ static NSInteger const kSectionKeyValues = 0;
                 oldValue = [self dataAtIndexPath:[self.tableView indexPathForCell:_checkedCell]];
                 
                 _checkedCell.checked = NO;
-                [_pickedValues removeAllObjects];
+                [_pickedValues removeObject:oldValue];
             }
             
             _checkedCell = cell;
@@ -324,11 +309,7 @@ static NSInteger const kSectionKeyValues = 0;
         
         [_pickedValues insertObject:pickedValue atIndex:0];
     } else {
-        if ([_pickedValues count] > 1 || [self targetIs:kTargetParent]) {
-            [_pickedValues removeObject:pickedValue];
-        } else {
-            cell.checked = YES;
-        }
+        [_pickedValues removeObject:pickedValue];
     }
     
     if ([self targetIs:kTargetSetting]) {
@@ -346,8 +327,17 @@ static NSInteger const kSectionKeyValues = 0;
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
     } else if ([self targetIs:kTargetMembers]) {
-        self.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO];
-        self.subtitleColour = [UIColor textColour];
+        if ([_origo isOfType:kOrigoTypeCommunity]) {
+            NSMutableArray *pickedAddresses = [NSMutableArray array];
+            
+            for (id<OMember> pickedMember in _pickedValues) {
+                [pickedAddresses addObject:[[pickedMember primaryResidence] shortAddress]];
+            }
+            
+            self.subtitle = [OUtil commaSeparatedListOfStrings:pickedAddresses conjoin:NO];
+        } else {
+            self.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO];
+        }
         
         if (self.isModal) {
             self.returnData = _pickedValues;
@@ -372,12 +362,6 @@ static NSInteger const kSectionKeyValues = 0;
         } else {
             [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO]];
             
-        }
-        
-        if (self.isModal && _isMultiValuePicker && [_pickedValues count]) {
-            if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
-                self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-            }
         }
     }
     
