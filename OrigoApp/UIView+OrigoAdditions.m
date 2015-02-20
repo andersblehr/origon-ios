@@ -42,7 +42,7 @@ static CGFloat const kImageShadowOffset = 1.5f;
         [padding appendString:@" "];
     }
     
-    NSLog(@"%@+%@", padding, view);
+    OLogDebug(@"%@+%@", padding, view);
     
     level++;
     
@@ -79,9 +79,9 @@ static CGFloat const kImageShadowOffset = 1.5f;
 
 - (void)dumpSubviewsUsingTitle:(NSString *)title;
 {
-    NSLog(@"==== START DUMP: %@ ====", title);
+    OLogDebug(@"==== START DUMP: %@ ====", title);
     [self dumpSubviewsFromView:self];
-    NSLog(@"===== END DUMP: %@ =====", title);
+    OLogDebug(@"===== END DUMP: %@ =====", title);
 }
 
 @end

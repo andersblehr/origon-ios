@@ -22,6 +22,6 @@
 + (void)cacheProxiesForEntitiesWithDictionaries:(NSArray *)entityDictionaries;
 + (id)cachedProxyForEntityWithId:(NSString *)entityId;
 + (NSArray *)cachedProxiesForEntityClass:(Class)entityClass;
-+ (void)clearProxyCache;
++ (void)clearCachedProxies;
 
 @end

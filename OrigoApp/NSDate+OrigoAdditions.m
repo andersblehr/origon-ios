@@ -124,12 +124,6 @@ static NSCalendar *_calendar = nil;
 
 #pragma mark - Convenience methods
 
-- (NSInteger)daysBeforeNow
-{
-    return [self dateComponentsBeforeDate:[[self class] date]].day;
-}
-
-
 - (NSInteger)yearsBeforeNow
 {
     return [self yearsBeforeDate:[[self class] date]];
@@ -138,7 +132,7 @@ static NSCalendar *_calendar = nil;
 
 - (NSInteger)yearsBeforeDate:(NSDate *)date
 {
-    return [self dateComponentsBeforeDate:date].year;
+    return [[NSDate calendar] components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions].year;
 }
 
 
@@ -150,7 +144,16 @@ static NSCalendar *_calendar = nil;
 
 - (BOOL)isBirthDateOfMinor
 {
-    return [self yearsBeforeNow] < kAgeOfMajority;
+    static NSDate *earliestBirthDateOfMinor = nil;
+    
+    if (!earliestBirthDateOfMinor) {
+        NSDateComponents *negativeAgeOfMajority = [NSDateComponents new];
+        negativeAgeOfMajority.year = -kAgeOfMajority;
+        negativeAgeOfMajority.day = -1;
+        earliestBirthDateOfMinor = [[NSCalendar currentCalendar] dateByAddingComponents:negativeAgeOfMajority toDate:[NSDate date] options:kNilOptions];
+    }
+    
+    return [self earlierDate:earliestBirthDateOfMinor] == earliestBirthDateOfMinor ? YES : NO;
 }
 
 @end

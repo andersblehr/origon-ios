@@ -47,7 +47,7 @@
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
 - (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)shouldDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;
 - (void)willDismissModalViewController:(OTableViewController *)viewController;

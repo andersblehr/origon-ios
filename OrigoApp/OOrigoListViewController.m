@@ -426,7 +426,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
-- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     

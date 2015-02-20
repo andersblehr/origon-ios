@@ -263,7 +263,7 @@ static NSInteger const kSectionKeyMembership = 2;
                     }
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyActiveSince]) {
-                cell.textLabel.text = NSLocalizedString(@"Active on Origo", @"");
+                cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Active on %@", @""), [OMeta m].appName];
                 
                 if ([member isActive]) {
                     cell.detailTextLabel.text = NSLocalizedString(@"Yes", @"");

@@ -16,12 +16,12 @@
 @property (strong, nonatomic, readonly) NSString *text;
 @property (strong, nonatomic, readonly) NSString *key;
 
-@property (nonatomic) BOOL editable;
-@property (nonatomic) BOOL hasEmphasis;
-@property (nonatomic) BOOL isTitleField;
-@property (nonatomic, readonly) BOOL isEditableListCellField;
-@property (nonatomic, readonly) BOOL supportsMultiLineText;
-@property (nonatomic, readonly) BOOL didChange;
+@property (nonatomic, assign) BOOL editable;
+@property (nonatomic, assign) BOOL hasEmphasis;
+@property (nonatomic, assign) BOOL isTitleField;
+@property (nonatomic, assign, readonly) BOOL isEditableListCellField;
+@property (nonatomic, assign, readonly) BOOL supportsMultiLineText;
+@property (nonatomic, assign, readonly) BOOL didChange;
 
 - (BOOL)hasMultiValue;
 - (BOOL)hasValidValue;

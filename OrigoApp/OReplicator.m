@@ -11,8 +11,6 @@
 
 @interface OReplicator () <OConnectionDelegate> {
 @private
-    BOOL _isReplicating;
-
     NSMutableSet *_dirtyEntities;
     OTableViewController *_refreshHandler;
 }

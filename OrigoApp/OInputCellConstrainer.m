@@ -369,7 +369,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 - (NSArray *)centredVerticalConstraints
 {
     NSMutableArray *constraints = [NSMutableArray array];
-    NSString *constraintsFormat = nil;
+    NSString *constraintsFormat = [NSString string];
     
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
@@ -378,7 +378,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {
-            if (!constraintsFormat) {
+            if (![constraintsFormat hasValue]) {
                 constraintsFormat = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
             }
             

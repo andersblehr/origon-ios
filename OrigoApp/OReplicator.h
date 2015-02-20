@@ -12,6 +12,8 @@
 
 @interface OReplicator : NSObject
 
+@property (nonatomic, assign, readonly) BOOL isReplicating;
+
 - (BOOL)needsReplication;
 - (void)replicateIfNeeded;
 - (void)replicate;

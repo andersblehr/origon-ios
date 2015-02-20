@@ -145,23 +145,13 @@
 
 // New member titles
 "[new member] alumni" = "Register alum";
-"[new member] community" = "Register member";
+"[new member] community" = "In the household";
 "[new member] preschoolClass" = "Register child";
 "[new member] residence" = "In the household";
 "[new member] schoolClass" = "Register student";
 "[new member] simple" = "Register member";
 "[new member] studyGroup" = "Register student";
 "[new member] team" = "Register player";
-
-// New members titles
-"[new members] alumni" = "Add alums";
-"[new members] community" = "Add households";
-"[new members] list" = "Add friends";
-"[new members] preschoolClass" = "Add children";
-"[new members] schoolClass" = "Add students";
-"[new members] simple" = "Add members";
-"[new members] studyGroup" = "Add students";
-"[new members] team" = "Add players";
 
 // Origo collective titles
 "[all members] alumni" = "All alumni";
@@ -405,12 +395,13 @@
 "Unhide" = "Unhide";
 "Keep hidden" = "Keep hidden";
 "Edit responsibilities" = "Edit responsibilities";
-"Add from other list" = "Add from other list";
+"Add from other lists" = "Add from other lists";
 "Add households" = "Add households";
 "Register parent contact" = "Register parent contact";
 "About %@" = "About %@";
 "Register household member" = "Register household member";
 "Other guardian" = "Other guardian";
+"Remove" = "Remove";
 
 // Prompts
 "Do you want to keep this listing?" = "Do you want to keep this listing?";
@@ -529,7 +520,11 @@
  ***/
 
 // View titles
+"Listed elsewhere" = "Listed elsewhere";
 "Type" = "Type";
+
+// Buttons
+"Add" = "Add";
 
 // Footers
 "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.";
@@ -552,9 +547,10 @@
 "Pick recipient group" = "Pick recipient group";
 
 // Buttons
+"Parents and %@" = "Parents and %@";
 "Parents" = "Parents";
 "Parents, grouped" = "Parents, grouped";
-"Parents and %@" = "Parents and %@";
+"Grouped" = "Grouped";
 "Everybody" = "Everybody";
 "Select all" = "Select all";
 "All %@" = "All %@";
@@ -587,7 +583,7 @@
 "About" = "About";
 
 // Labels
-"Active on Origo" = "Active on Origo";
+"Active on %@" = "Active on %@";
 "Through household" = "Through household";
 "My membership" = "My membership";
 "Regular member" = "Regular member";

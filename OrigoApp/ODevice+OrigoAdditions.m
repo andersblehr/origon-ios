@@ -19,7 +19,7 @@ NSString *kDeviceType_iPodTouch = @"iPod";
 
 - (NSComparisonResult)compare:(ODevice *)other
 {
-    return [other.name compare:self.name];
+    return [self.name compare:other.name];
 }
 
 

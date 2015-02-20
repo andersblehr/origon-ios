@@ -121,7 +121,6 @@ NSString * const kStringPrefixAddMemberButton = @"[add member]";
 NSString * const kStringPrefixMemberTitle = @"[member]";
 NSString * const kStringPrefixMembersTitle = @"[members]";
 NSString * const kStringPrefixNewMemberTitle = @"[new member]";
-NSString * const kStringPrefixNewMembersTitle = @"[new members]";
 NSString * const kStringPrefixAllMembersTitle = @"[all members]";
 NSString * const kStringPrefixAddOrganiserButton = @"[add organiser]";
 NSString * const kStringPrefixOrganiserTitle = @"[organiser]";
@@ -155,9 +154,7 @@ NSString * const kIconFileAcceptDecline = @"739-question-selected.png";
 NSString * const kIconFileCall = @"735-phone.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
-NSString * const kIconFileRoleHolders = @"ro-role-holders.png";
-NSString * const kIconFileMultiRoleOff = @"779-users-toolbar.png";
-NSString * const kIconFileMultiRoleOn = @"779-users-toolbar-selected.png";
+NSString * const kIconFileTwoHeads = @"ro-two-heads.png";
 NSString * const kIconFileGroups = @"895-user-group-toolbar.png";
 
 // Gender codes

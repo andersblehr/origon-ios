@@ -109,13 +109,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addButtonForKey:(NSString *)key
 {
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
-    button.backgroundColor = [UIColor globalTintColour];
-    button.showsTouchWhenHighlighted = YES;
-    button.titleLabel.font = [UIFont detailFont];
-    [button setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [button setTitle:NSLocalizedString(key, kStringPrefixTitle) forState:UIControlStateNormal];
-    [button addTarget:_inputCellDelegate action:NSSelectorFromString([NSString stringWithFormat:kButtonActionFormat, [key stringByCapitalisingFirstLetter]]) forControlEvents:UIControlEventTouchUpInside];
+    OButton *button = [[OButton alloc] initWithTitle:NSLocalizedString(key, kStringPrefixTitle) target:_inputCellDelegate action:NSSelectorFromString([NSString stringWithFormat:kButtonActionFormat, [key stringByCapitalisingFirstLetter]])];
     
     _views[[key stringByAppendingString:kViewKeySuffixButton]] = button;
     [self.contentView addSubview:button];
@@ -602,7 +596,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (checkedState < [_checkedStateAccessoryViews count]) {
         _checkedState = checkedState;
         
-        self.accessoryView = _checkedStateAccessoryViews[checkedState];
+        if (_checkedStateAccessoryViews[checkedState] != [NSNull null]) {
+            self.accessoryView = _checkedStateAccessoryViews[checkedState];
+        } else {
+            self.accessoryView = nil;
+        }
         
         if ([self.accessoryView isKindOfClass:[UILabel class]]) {
             ((UILabel *)self.accessoryView).textColor = self.tintColor;

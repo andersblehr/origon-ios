@@ -90,7 +90,8 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     _isSignedIn = @NO;
     
     [self.appDelegate releasePersistentStore];
-    [OEntityProxy clearProxyCache];
+    [OEntityProxy clearCachedProxies];
+    [OMember clearCachedPeers];
 }
 
 

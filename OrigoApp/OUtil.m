@@ -65,7 +65,28 @@
 }
 
 
-#pragma mark - Comma-separated lists
+#pragma mark - List generation
+
++ (NSString *)labelForElders:(NSArray *)elders conjoin:(BOOL)conjoin
+{
+    NSString *label = nil;
+    
+    if ([elders count] == 2) {
+        NSString *lastName1 = [[[elders[0] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
+        NSString *lastName2 = [[[elders[1] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
+        
+        if ([lastName1 isEqualToString:lastName2]) {
+            label = [NSString stringWithFormat:@"%@%@%@ %@", [elders[0] givenName], NSLocalizedString(@" and ", @""), [elders[1] givenName], lastName1];
+        }
+    }
+    
+    if (!label) {
+        label = [OUtil commaSeparatedListOfMembers:elders conjoin:conjoin];
+    }
+    
+    return label;
+}
+
 
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin
 {
@@ -247,6 +268,26 @@
     }
     
     return eligibleOrigoTypes;
+}
+
+
++ (NSArray *)singleMemberPerPrimaryAddressFromMembers:(NSArray *)members includeUser:(BOOL)includeUser
+{
+    NSMutableArray *singleMemberPerPrimaryAddress = [NSMutableArray array];
+    NSMutableSet *processedCandidates = [NSMutableSet set];
+    
+    for (id<OMember> member in members) {
+        if (![member isUser] || includeUser) {
+            id<OOrigo> primaryResidence = [member primaryResidence];
+            
+            if ([primaryResidence hasAddress] && ![processedCandidates containsObject:member]) {
+                [singleMemberPerPrimaryAddress addObject:member];
+                [processedCandidates addObjectsFromArray:[primaryResidence elders]];
+            }
+        }
+    }
+    
+    return singleMemberPerPrimaryAddress;
 }
 
 

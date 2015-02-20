@@ -377,27 +377,29 @@ static NSString * const kPlaceholderRole = @"placeholder";
     if (![self isMarkedForDeletion]) {
         [super markForDeletion];
         
-        if (![self isMirrored]) {
-            if ([self.member isUser]) {
-                for (OMembership *membership in [self.origo allMemberships]) {
-                    if (![membership.member isKnownByUser]) {
-                        [membership.member markForDeletion];
+        if (![self.origo isOfType:kOrigoTypeStash]) {
+            if (![self isMirrored] || ![self.origo indirectlyKnowsAboutMember:self.member]) {
+                if ([self.member isUser]) {
+                    for (OMembership *membership in [self.origo allMemberships]) {
+                        if (![membership.member isKnownByUser]) {
+                            [membership.member markForDeletion];
+                        }
+                        
+                        [membership markForDeletion];
                     }
                     
-                    [membership markForDeletion];
-                }
-                
-                [self.origo markForDeletion];
-            } else if (![self.member isKnownByUser]) {
-                for (OMembership *membership in [self.member allMemberships]) {
-                    if ([membership isMirrored]) {
-                        [membership.origo markForDeletion];
+                    [self.origo markForDeletion];
+                } else if (![self.member isKnownByUser]) {
+                    for (OMembership *membership in [self.member allMemberships]) {
+                        if ([membership isMirrored]) {
+                            [membership.origo markForDeletion];
+                        }
+                        
+                        [membership markForDeletion];
                     }
                     
-                    [membership markForDeletion];
+                    [self.member markForDeletion];
                 }
-                
-                [self.member markForDeletion];
             }
         }
     }
@@ -427,6 +429,8 @@ static NSString * const kPlaceholderRole = @"placeholder";
             [super expire];
         }
     }
+    
+    [OMember clearCachedPeers];
 }
 
 
