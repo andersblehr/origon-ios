@@ -41,8 +41,8 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (void)presentAddOrigoSheet
 {
     _origoTypes = [NSMutableArray array];
-    [_origoTypes addObject:kOrigoTypeList];
-    [_origoTypes addObject:kOrigoTypeSimple];
+    [_origoTypes addObject:kOrigoTypePrivate];
+    [_origoTypes addObject:kOrigoTypeStandard];
     
     if ([_member isJuvenile]) {
         if (![_member isOlderThan:kAgeThresholdInSchool]) {
@@ -67,7 +67,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[prompt stringByAppendingString:@"?"] delegate:self tag:kActionSheetTagOrigoType];
     
     for (NSString *origoType in _origoTypes) {
-        if ([origoType isEqualToString:kOrigoTypeList]) {
+        if ([origoType isEqualToString:kOrigoTypePrivate]) {
             if ([_member isJuvenile]) {
                 [actionSheet addButtonWithTitle:@"Privat venneliste"];
             } else {
@@ -92,7 +92,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         id<OMember> keyMember = nil;
         
-        if ([origo isOfType:kOrigoTypeList]) {
+        if ([origo isOfType:kOrigoTypePrivate]) {
             keyMember = [origo owner];
         } else if ([[origo members] count] == 1) {
             keyMember = [origo members][0];
@@ -226,7 +226,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         [self setData:wardOrigos forSectionWithKey:kSectionKeyWardOrigos];
     } else {
-        [self setData:[NSArray array] forSectionWithKey:kSectionKeyWardOrigos];
+        [self setData:@[] forSectionWithKey:kSectionKeyWardOrigos];
     }
 }
 
@@ -245,7 +245,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         id<OMember> member = sectionKey == kSectionKeyWardOrigos ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
         id<OMembership> membership = [origo membershipForMember:member];
         
-        if ([origo isOfType:kOrigoTypeList] && ![member isUser] && [member isJuvenile]) {
+        if ([origo isOfType:kOrigoTypePrivate] && ![member isUser] && [member isJuvenile]) {
             if ([[origo displayName] isEqualToString:NSLocalizedString(@"Friends", @"")]) {
                 cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), [member givenName]];
             } else {
@@ -440,7 +440,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     }
     
     if ([self canDeleteOrigoAtIndexPath:indexPath]) {
-        if ([origo isOfType:kOrigoTypeList]) {
+        if ([origo isOfType:kOrigoTypePrivate]) {
             for (id<OMember> member in [origo members]) {
                 [[origo membershipForMember:member] expire];
             }

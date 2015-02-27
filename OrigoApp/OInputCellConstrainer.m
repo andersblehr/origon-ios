@@ -13,8 +13,8 @@ static NSString * const kDelimitingSpace               = @"-10-";
 static NSString * const kVConstraintsInitial           = @"V:|";
 static NSString * const kVConstraintsInitialWithTitle  = @"V:|-44-";
 
-static NSString * const kVConstraintsEditableListCell  = @"V:|-10-[editableListCellContentField(25)]";
-static NSString * const kHConstraintsEditableListCell  = @"H:|-12-[editableListCellContentField]-12-|";
+static NSString * const kVConstraintsInlineCell        = @"V:|-10-[inlineCellContentField(25)]";
+static NSString * const kHConstraintsInlineCell        = @"H:|-12-[inlineCellContentField]-12-|";
 
 static NSString * const kVConstraintsElementTopmost    = @"[%@(%.f)]";
 static NSString * const kVConstraintsElement           = @"-%.f-[%@(%.f)]";
@@ -212,17 +212,17 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 
 #pragma mark - Generating visual constraints strings
 
-- (NSArray *)editableListCellConstraints
+- (NSArray *)inlineCellConstraints
 {
     NSArray *constraints = nil;
     
     if (_titleKey) {
         [self configureElementsForKey:_titleKey];
         
-        constraints = @[kVConstraintsEditableListCell, kHConstraintsEditableListCell];
+        constraints = @[kVConstraintsInlineCell, kHConstraintsInlineCell];
     }
     
-    return constraints ? constraints : [NSArray array];
+    return constraints ? constraints : @[];
 }
 
 
@@ -292,7 +292,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         }
     }
     
-    return constraints ? [NSArray arrayWithObject:constraints] : [NSArray array];
+    return constraints ? [NSArray arrayWithObject:constraints] : @[];
 }
 
 
@@ -333,7 +333,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         }
     }
     
-    return constraints ? [NSArray arrayWithObject:constraints] : [NSArray array];
+    return constraints ? [NSArray arrayWithObject:constraints] : @[];
 }
 
 
@@ -369,7 +369,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 - (NSArray *)centredVerticalConstraints
 {
     NSMutableArray *constraints = [NSMutableArray array];
-    NSString *constraintsFormat = [NSString string];
+    NSString *constraintsFormat = @"";
     
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
@@ -490,8 +490,8 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         NSNumber *allTrailingOption = @(NSLayoutFormatAlignAllTrailing);
         NSNumber *noAlignmentOption = @0;
         
-        if (_blueprint.isEditableListCellBlueprint) {
-            constraints[noAlignmentOption] = [self editableListCellConstraints];
+        if (_blueprint.isInlineBlueprint) {
+            constraints[noAlignmentOption] = [self inlineCellConstraints];
         } else if (_blueprint.fieldsAreLabeled) {
             NSMutableArray *allTrailingConstraints = [NSMutableArray array];
             [allTrailingConstraints addObjectsFromArray:[self labeledVerticalLabelConstraints]];
@@ -565,7 +565,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         inputField = [[OTextField alloc] initWithKey:key delegate:_delegate];
     }
     
-    if (!inputField.isEditableListCellField) {
+    if (!inputField.isInlineField) {
         inputField.isTitleField = [key isEqualToString:_titleKey];
     }
     

@@ -114,7 +114,7 @@ static NSInteger const kSectionKeyValues = 0;
             } else if ([self aspectIs:kAspectMemberRole]) {
                 _affiliationType = kAffiliationTypeMemberRole;
                 _pickedValues = _affiliation ? [[_origo membersWithRole:_affiliation] mutableCopy] : nil;
-                placeholder = NSLocalizedString(_origo.type, kStringPrefixMemberRoleTitle);
+                placeholder = NSLocalizedString(@"Responsibility", @"");
             } else if ([self aspectIs:kAspectGroup]) {
                 _affiliationType = kAffiliationTypeGroup;
                 _pickedValues = _affiliation ? [[_origo membersOfGroup:_affiliation] mutableCopy] : nil;
@@ -125,7 +125,7 @@ static NSInteger const kSectionKeyValues = 0;
             }
             
             if (!self.title) {
-                [self editableTitle:_affiliation withPlaceholder:placeholder];
+                [self setEditableTitle:_affiliation placeholder:placeholder];
             }
             
             [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:[self aspectIs:kAspectGroup]]];

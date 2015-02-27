@@ -77,7 +77,7 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
 }
 
 
-- (id)editableListCellWithData:(id)data delegate:(id)delegate
+- (id)inlineCellWithData:(id)data delegate:(id)delegate
 {
     return [self listCellWithStyle:UITableViewCellStyleDefault data:data delegate:delegate];
 }

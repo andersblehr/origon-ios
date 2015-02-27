@@ -51,7 +51,7 @@ static NSString * const kAddressTemplatesByCountryCode =
     formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderState withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressStateKey)];
     formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressZIPKey)];
     
-    self.address = formattedAddress;
+    self.address = [formattedAddress stringByRemovingRedundantWhitespaceKeepNewlines:YES];
     self.countryCode = countryCode;
 }
 
@@ -94,7 +94,10 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 + (instancetype)proxyFromAddressBookAddress:(CFDictionaryRef)address
 {
-    return [[self alloc] initWithAddressBookAddress:address];
+    OOrigoProxy *proxy = [[self alloc] initWithAddressBookAddress:address];
+    proxy.name = kPlaceholderDefaultValue;
+    
+    return proxy;
 }
 
 
@@ -138,12 +141,22 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (NSArray *)residents
 {
-    NSArray *residents = nil;
+    id residents = nil;
 
     if ([self instance]) {
         residents = [[self instance] residents];
     } else if ([self isOfType:kOrigoTypeResidence]) {
-        residents = [self members];
+        if ([self isReplicated]) {
+            residents = [NSMutableArray array];
+            
+            for (id<OMember> member in [self members]) {
+                if (![member isJuvenile]) {
+                    [residents addObject:member];
+                }
+            }
+        } else {
+            residents = [self members];
+        }
     }
     
     return residents;
@@ -165,7 +178,7 @@ static NSString * const kAddressTemplatesByCountryCode =
                     [members addObject:membership.member];
                 }
             }
-        } else if (![self isOfType:kOrigoTypeList]) {
+        } else if (![self isOfType:kOrigoTypePrivate]) {
             [members addObject:[self ancestorConformingToProtocol:@protocol(OMember)]];
         }
         
@@ -296,6 +309,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 - (BOOL)hasAddress
 {
     return [self.address hasValue];
+}
+
+
+- (BOOL)hasTelephone
+{
+    return [self.telephone hasValue];
 }
 
 

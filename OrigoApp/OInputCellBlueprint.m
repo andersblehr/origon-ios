@@ -26,7 +26,7 @@ CGFloat const kPhotoFrameWidth = 55.f;
         _hasPhoto = NO;
         _fieldsAreLabeled = YES;
         _fieldsShouldDeemphasiseOnEndEdit = YES;
-        _isEditableListCellBlueprint = NO;
+        _isInlineBlueprint = NO;
     }
     
     return self;
@@ -35,12 +35,12 @@ CGFloat const kPhotoFrameWidth = 55.f;
 
 #pragma mark - Factory methods
 
-+ (OInputCellBlueprint *)editableListCellBlueprint
++ (OInputCellBlueprint *)inlineCellBlueprint
 {
     OInputCellBlueprint *blueprint = [[self alloc] init];
-    blueprint.titleKey = kInternalKeyEditableListCellContent;
+    blueprint.titleKey = kInternalKeyInlineCellContent;
     blueprint.fieldsAreLabeled = NO;
-    blueprint.isEditableListCellBlueprint = YES;
+    blueprint.isInlineBlueprint = YES;
     
     return blueprint;
 }

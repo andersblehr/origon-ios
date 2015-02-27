@@ -36,7 +36,7 @@ static CGFloat const kTextInsetLeft = -1.f;
 @synthesize key = _key;
 @synthesize hasEmphasis = _hasEmphasis;
 @synthesize isTitleField = _isTitleField;
-@synthesize isEditableListCellField = _isEditableListCellField;
+@synthesize isInlineField = _isInlineField;
 @synthesize supportsMultiLineText = _supportsMultiLineText;
 @synthesize didChange = _didChange;
 
@@ -122,7 +122,7 @@ static CGFloat const kTextInsetLeft = -1.f;
         _key = key;
         _constrainer = constrainer;
         _placeholder = NSLocalizedString(_key, kStringPrefixPlaceholder);
-        _isEditableListCellField = NO;
+        _isInlineField = NO;
         _supportsMultiLineText = YES;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeSentences;

@@ -147,7 +147,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     NSMutableArray *origos = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwnership]) {
+        if ([membership.origo isOfType:kOrigoTypePrivate] && [membership isOwnership]) {
             [lists addObject:membership.origo];
         } else {
             BOOL isIncludedResidency = [membership isResidency] && includeResidences;
@@ -437,7 +437,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     OOrigo *list = nil;
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwnership]) {
+        if ([membership.origo isOfType:kOrigoTypePrivate] && [membership isOwnership]) {
             if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {
                 list = membership.origo;
             }
@@ -445,7 +445,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     if (!list) {
-        OOrigo *list = [OOrigo instanceWithType:kOrigoTypeList];
+        OOrigo *list = [OOrigo instanceWithType:kOrigoTypePrivate];
         list.name = kPlaceholderDefaultValue;
         
         [list addMember:self];
@@ -858,7 +858,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     BOOL isListedOnly = YES;
     
     for (OOrigo *origo in [self origos]) {
-        isListedOnly = isListedOnly && [origo isOfType:kOrigoTypeList];
+        isListedOnly = isListedOnly && [origo isOfType:kOrigoTypePrivate];
     }
     
     return isListedOnly;
@@ -1099,7 +1099,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)settingKeys
 {
-    return [NSArray array];
+    return @[];
 }
 
 
@@ -1151,8 +1151,8 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     OOrigo *baseOrigo = [OState s].baseOrigo;
     OMember *baseMember = [OState s].baseMember;
     
-    if ([baseOrigo isOfType:kOrigoTypeList]) {
-        instance.createdIn = kOrigoTypeList;
+    if ([baseOrigo isOfType:kOrigoTypePrivate]) {
+        instance.createdIn = kOrigoTypePrivate;
         
         if ([baseMember isJuvenile] && [instance isJuvenile]) {
             instance.createdIn = [instance.createdIn stringByAppendingString:baseMember.givenName separator:kSeparatorList];

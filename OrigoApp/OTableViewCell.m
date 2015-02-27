@@ -202,7 +202,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             _inputCellDelegate = delegate;
             _blueprint = [_inputCellDelegate inputCellBlueprint];
         } else if (_editable) {
-            _blueprint = [OInputCellBlueprint editableListCellBlueprint];
+            _blueprint = [OInputCellBlueprint inlineCellBlueprint];
         }
         
         _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint delegate:delegate];
@@ -264,7 +264,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (OInputField *)editableListCellField
+- (OInputField *)inlineField
 {
     return _editable && !_isInputCell ? [self inputFieldForKey:_constrainer.titleKey] : nil;
 }

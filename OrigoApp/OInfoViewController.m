@@ -51,7 +51,7 @@ static NSInteger const kSectionKeyMembership = 2;
             }
         }
         
-        if (![origo isOfType:@[kOrigoTypeStash, kOrigoTypeList, kOrigoTypeResidence]]) {
+        if (![origo isOfType:@[kOrigoTypeStash, kOrigoTypePrivate, kOrigoTypeResidence]]) {
             [displayableKeys addObject:kLabelKeyAdmins];
             
             if (_userIsAdmin) {
@@ -156,7 +156,7 @@ static NSInteger const kSectionKeyMembership = 2;
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (![origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
+        if (![origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]]) {
             id<OMembership> membership = [origo membershipForMember:[OMeta m].user];
         
             [self setData:@[kPropertyKeyType, kPropertyKeyCreatedBy] forSectionWithKey:kSectionKeyMembership];
@@ -243,11 +243,11 @@ static NSInteger const kSectionKeyMembership = 2;
             } else if ([displayKey isEqualToString:kPropertyKeyCreatedIn]) {
                 NSArray *components = [member.createdIn componentsSeparatedByString:kSeparatorList];
                 
-                if ([components[0] isEqualToString:kOrigoTypeList]) {
+                if ([components[0] isEqualToString:kOrigoTypePrivate]) {
                     NSInteger numberOfComponents = [components count];
                     
                     if (numberOfComponents == 1) {
-                        cell.detailTextLabel.text = NSLocalizedString(kOrigoTypeList, kStringPrefixTitle);
+                        cell.detailTextLabel.text = NSLocalizedString(kOrigoTypePrivate, kStringPrefixTitle);
                     } else if (numberOfComponents == 2) {
                         cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), components[1]];
                     }
@@ -348,21 +348,21 @@ static NSInteger const kSectionKeyMembership = 2;
     
     if (sectionKey == kSectionKeyGeneral) {
         if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Created: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Created %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered %@.", @""), [[_entity dateCreated] localisedDateTimeString]];
         }
         
         if ([_entity modifiedBy]) {
-            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
+            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified %@.", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
         }
     } else if (sectionKey == kSectionKeyMembership) {
         id<OMembership> membership = [_entity membershipForMember:[OMeta m].user];
         
-        footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered: %@.", @""), [membership.dateCreated localisedDateTimeString]];
+        footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered %@.", @""), [membership.dateCreated localisedDateTimeString]];
         
         if (membership.modifiedBy) {
-            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [membership.dateReplicated localisedDateTimeString]] separator:kSeparatorNewline];
+            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified %@.", @""), [membership.dateReplicated localisedDateTimeString]] separator:kSeparatorNewline];
         }
     }
     

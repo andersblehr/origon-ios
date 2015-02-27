@@ -50,6 +50,9 @@ static UIViewController * _reinstantiatedRootViewController;
     UISegmentedControl *_segmentedHeader;
     NSInteger _segmentedHeaderSectionKey;
     
+    OTableViewCell *_inlineCell;
+    UIGestureRecognizer *_inlineCellCancelRecogniser;
+    
     NSIndexPath *_selectedIndexPath;
     OActivityIndicator *_activityIndicator;
     
@@ -206,36 +209,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)setEditingTitle:(BOOL)editing
+- (void)reloadHeaderForSection:(NSInteger)section
 {
-    static UIBarButtonItem *leftBarButtonItem = nil;
-    static NSArray *rightBarButtonItems = nil;
-    
-    if (editing) {
-        leftBarButtonItem = self.navigationItem.leftBarButtonItem;
-        rightBarButtonItems = self.navigationItem.rightBarButtonItems;
-        
-        if (!self.isModal || [_titleField.text hasValue]) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self action:@selector(didCancelEditingTitle)];
-        }
-        
-        self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Use", @"") target:self action:@selector(didFinishEditingTitle)]];
-        
-        [_tableView dim];
-    } else {
-        self.navigationItem.leftBarButtonItem = leftBarButtonItem;
-        self.navigationItem.rightBarButtonItems = rightBarButtonItems;
-        
-        [_tableView undim];
-        
-        if ([_titleField isFirstResponder]) {
-            [_titleField resignFirstResponder];
-        }
-        
-        if ([self actionIs:kActionRegister]) {
-            [_inputCell resumeFirstResponder];
-        }
-    }
+    [self reloadHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]];
+}
+
+
+- (void)reloadFooterForSection:(NSInteger)section
+{
+    [self reloadFooterForSectionWtihKey:[self sectionKeyForSectionNumber:section]];
 }
 
 
@@ -364,15 +346,54 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)reloadHeaderForSection:(NSInteger)section
+- (void)setEditingTitle:(BOOL)editing
 {
-    [self reloadHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]];
+    static UIBarButtonItem *leftBarButtonItem = nil;
+    static NSArray *rightBarButtonItems = nil;
+    
+    if (editing) {
+        leftBarButtonItem = self.navigationItem.leftBarButtonItem;
+        rightBarButtonItems = self.navigationItem.rightBarButtonItems;
+        
+        if (!self.isModal || [_titleField.text hasValue]) {
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self action:@selector(didCancelEditingTitle)];
+        }
+        
+        self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Use", @"") target:self action:@selector(didFinishEditingTitle)]];
+        
+        [_tableView dim];
+    } else {
+        self.navigationItem.leftBarButtonItem = leftBarButtonItem;
+        self.navigationItem.rightBarButtonItems = rightBarButtonItems;
+        
+        [_tableView undim];
+        
+        if ([_titleField isFirstResponder]) {
+            [_titleField resignFirstResponder];
+        }
+        
+        if ([self actionIs:kActionRegister]) {
+            [_inputCell resumeFirstResponder];
+        }
+    }
 }
 
 
-- (void)reloadFooterForSection:(NSInteger)section
+- (void)finishInlineEditing
 {
-    [self reloadFooterForSectionWtihKey:[self sectionKeyForSectionNumber:section]];
+    OInputField *inlineField = [_inlineCell inlineField];
+    [inlineField resignFirstResponder];
+    inlineField.editable = NO;
+    
+    if ([_instance respondsToSelector:@selector(didFinishEditingInlineField:)]) {
+        [_instance didFinishEditingInlineField:[_inlineCell inlineField]];
+    }
+    
+    [self.view removeGestureRecognizer:_inlineCellCancelRecogniser];
+    
+    _inlineCell.selectable = YES;
+    _inlineCell = nil;
+    _inlineCellCancelRecogniser = nil;
 }
 
 
@@ -1029,9 +1050,37 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+#pragma mark - Inline editing
+
+- (void)editInlineInCell:(OTableViewCell *)inlineCell
+{
+    _inlineCell = inlineCell;
+    _inlineCell.selectable = NO;
+    _inlineCellCancelRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancelInlineEditingIfOngoing)];
+    
+    OInputField *inlineField = [_inlineCell inlineField];
+    inlineField.editable = YES;
+    [inlineField becomeFirstResponder];
+    
+    [self.view addGestureRecognizer:_inlineCellCancelRecogniser];
+}
+
+
+- (void)cancelInlineEditingIfOngoing
+{
+    if (_inlineCell && !_inlineCell.selectable) {
+        _didCancel = YES;
+        
+        [self finishInlineEditing];
+        
+        _didCancel = NO;
+    }
+}
+
+
 #pragma mark - Custom title & footer elements
 
-- (UITextField *)editableTitle:(NSString *)title withPlaceholder:(NSString *)placeholder
+- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder
 {
     _titleField = [self.navigationItem setTitle:title editable:YES withSubtitle:nil];
     _titleField.placeholder = placeholder;
@@ -1212,6 +1261,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     BOOL sectionExists = [_sectionCounts[@(sectionKey)] integerValue] > 0;
     BOOL sectionIsEmpty = ![_sectionData[@(sectionKey)] count];
     
+    [_tableView beginUpdates];
+    
     if (sectionExists || !sectionIsEmpty) {
         _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
         
@@ -1236,6 +1287,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
         }
     }
+    
+    [self setTableViewFooterViewIfNeeded];
+    
+    [_tableView endUpdates];
 }
 
 
@@ -1662,14 +1717,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _inputCell = cell;
     } else {
         id data = [self dataAtIndexPath:indexPath];
-        BOOL isEditableListCell = NO;
+        BOOL isInlineCell = NO;
         
-        if ([_instance respondsToSelector:@selector(isEditableListCellAtIndexPath:)]) {
-            isEditableListCell = [_instance isEditableListCellAtIndexPath:indexPath];
+        if ([_instance respondsToSelector:@selector(isInlineCellAtIndexPath:)]) {
+            isInlineCell = [_instance isInlineCellAtIndexPath:indexPath];
         }
         
-        if (isEditableListCell) {
-            cell = [tableView editableListCellWithData:data delegate:_instance];
+        if (isInlineCell) {
+            cell = [tableView inlineCellWithData:data delegate:_instance];
         } else {
             UITableViewCellStyle style = UITableViewCellStyleSubtitle;
             
@@ -1985,11 +2040,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if ([_titleField.text hasValue]) {
             [_titleField resignFirstResponder];
         }
-    } else if (textField.isEditableListCellField) {
+    } else if (textField.isInlineField) {
         if ([textField hasValidValue]) {
-            if ([_instance respondsToSelector:@selector(didFinishEditingListCellField:)]) {
-                [_instance didFinishEditingListCellField:textField];
-            }
+            [self finishInlineEditing];
         }
     }
     

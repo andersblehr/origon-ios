@@ -173,9 +173,9 @@ static CGFloat const kMatchingEditDistancePercentage = 0.4f;
         copyBeforePass = copy;
         
         copy = [copy stringByReplacingSubstring:doubleSpace withString:kSeparatorSpace];
+        copy = [copy stringByReplacingSubstring:doubleNewline withString:kSeparatorNewline];
         
         if (keepNewlines) {
-            copy = [copy stringByReplacingSubstring:doubleNewline withString:kSeparatorNewline];
             copy = [copy stringByReplacingSubstring:spaceNewline withString:kSeparatorNewline];
             copy = [copy stringByReplacingSubstring:newlineSpace withString:kSeparatorNewline];
         } else {

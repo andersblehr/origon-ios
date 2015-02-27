@@ -280,7 +280,7 @@ static OState *_activeState = nil;
                 candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
             }
             
-            if ([_currentOrigo isOfType:kOrigoTypeList]) {
+            if ([_currentOrigo isOfType:kOrigoTypePrivate]) {
                 candidates = [candidates mutableCopy];
                 [candidates removeObject:peerPivot];
             }
@@ -289,7 +289,7 @@ static OState *_activeState = nil;
         }
     }
     
-    return candidates ? candidates : [NSArray array];
+    return candidates ? candidates : @[];
 }
 
 

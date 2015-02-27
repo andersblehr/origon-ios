@@ -337,18 +337,26 @@
 
 - (void)save
 {
-    for (OReplicatedEntity *entity in [self pendingEntities]) {
-        if ([entity isMarkedForDeletion]) {
-            [self deleteObject:entity];
+    static BOOL hasDataError = NO;
+    
+    if (!hasDataError) {
+        for (OReplicatedEntity *entity in [self pendingEntities]) {
+            if ([entity isMarkedForDeletion]) {
+                [self deleteObject:entity];
+            }
         }
-    }
-    
-    NSError *error;
-    
-    if ([self save:&error]) {
-        OLogDebug(@"Entities successfully saved to device.");
-    } else {
-        OLogError(@"Error saving to device: %@ [%@]", [error localizedDescription], [error userInfo]);
+        
+        NSError *error;
+        
+        if ([self save:&error]) {
+            OLogDebug(@"Entities successfully saved to device.");
+        } else {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Data error", @"") text:[NSString stringWithFormat:NSLocalizedString(@"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.", @""), [OMeta m].appName]];
+            
+            hasDataError = YES;
+            
+            OLogError(@"Error saving to device: %@ [%@]", [error localizedDescription], [error userInfo]);
+        }
     }
 }
 

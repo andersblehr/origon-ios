@@ -80,7 +80,7 @@ extern NSString * const kMappedKeyTeam;
 
 // Internal keys
 extern NSString * const kInternalKeyDeviceId;
-extern NSString * const kInternalKeyEditableListCellContent;
+extern NSString * const kInternalKeyInlineCellContent;
 extern NSString * const kInternalKeyEntityClass;
 
 // Label keys
@@ -127,7 +127,6 @@ extern NSString * const kStringPrefixOrganiserTitle;
 extern NSString * const kStringPrefixOrganisersTitle;
 extern NSString * const kStringPrefixAddOrganiserRoleButton;
 extern NSString * const kStringPrefixEditOrganiserRoleButton;
-extern NSString * const kStringPrefixMemberRoleTitle;
 extern NSString * const kStringPrefixSettingTitle;
 
 // Icon file names
