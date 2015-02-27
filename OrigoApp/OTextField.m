@@ -26,7 +26,7 @@ static CGFloat const kTextInsetY = 1.2f;
 @synthesize key = _key;
 @synthesize hasEmphasis = _hasEmphasis;
 @synthesize isTitleField = _isTitleField;
-@synthesize isEditableListCellField = _isEditableListCellField;
+@synthesize isInlineField = _isInlineField;
 @synthesize supportsMultiLineText = _supportsMultiLineText;
 @synthesize didChange = _didChange;
 
@@ -148,7 +148,7 @@ static CGFloat const kTextInsetY = 1.2f;
     if (self) {
         _key = key;
         _inputCellDelegate = delegate;
-        _isEditableListCellField = [key isEqualToString:kInternalKeyEditableListCellContent];
+        _isInlineField = [key isEqualToString:kInternalKeyInlineCellContent];
         _supportsMultiLineText = NO;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -157,11 +157,11 @@ static CGFloat const kTextInsetY = 1.2f;
         self.contentMode = UIViewContentModeRedraw;
         self.delegate = delegate;
         self.enabled = NO;
-        self.font = _isEditableListCellField ? [UIFont titleFont] : [UIFont detailFont];
+        self.font = _isInlineField ? [UIFont titleFont] : [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
         self.placeholder = NSLocalizedString(key, kStringPrefixPlaceholder);
-        self.returnKeyType = _isEditableListCellField ? UIReturnKeyDone : UIReturnKeyNext;
+        self.returnKeyType = _isInlineField ? UIReturnKeyDone : UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
         self.layer.borderWidth = kBorderWidth;
         self.layer.borderColor = [[UIColor clearColor] CGColor];

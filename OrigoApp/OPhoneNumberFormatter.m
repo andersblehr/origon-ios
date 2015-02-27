@@ -278,7 +278,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
                 }
             } else if ([kWhitespaceCharacters containsString:character]) {
                 _tokenOffset--;
-                matchedCharacters = [NSString string];
+                matchedCharacters = @"";
             } else if ([kWhitespaceCharacters containsString:token]) {
                 matchedCharacters = [self matchCharacter:character];
                 
@@ -296,7 +296,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
             }
         }
     } else {
-        matchedCharacters = [NSString string];
+        matchedCharacters = @"";
     }
     
     return matchedCharacters;
@@ -308,7 +308,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     _format = format;
     _tokenOffset = 0;
     _canonicalOffset = 0;
-    _formattedNumber = [NSString string];
+    _formattedNumber = @"";
     
     for (NSInteger i = 0; _formattedNumber && i < [phoneNumber length]; i++) {
         NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
@@ -331,7 +331,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 {
     _formattedNumber = nil;
     _canonicalisedNumber = nil;
-    _flattenedNumber = [NSString string];
+    _flattenedNumber = @"";
     
     for (NSInteger i = 0; i < [phoneNumber length]; i++) {
         NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];

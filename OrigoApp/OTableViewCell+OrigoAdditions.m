@@ -88,7 +88,7 @@
                         
                         if ([ward isListedOnly]) {
                             associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [[origo owner] givenName]];
-                        } else if (![origo isOfType:kOrigoTypeList]) {
+                        } else if (![origo isOfType:kOrigoTypePrivate]) {
                             if ([ward isWardOfUser]) {
                                 associationsByWard[ward.entityId] = [ward givenName];
                             } else {
@@ -143,7 +143,7 @@
         self.imageView.image = [UIImage imageNamed:kIconFileResidence];
     } else if ([origo isOfType:kOrigoTypeStash]) {
         self.imageView.image = [UIImage imageNamed:kIconFileFavouriteYes];
-    } else if ([origo isOfType:kOrigoTypeList]) {
+    } else if ([origo isOfType:kOrigoTypePrivate]) {
         self.imageView.image = [UIImage imageNamed:kIconFileList];
     } else {
         self.imageView.image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?

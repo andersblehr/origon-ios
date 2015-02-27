@@ -102,7 +102,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)lookupButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:@(UIBarButtonSystemItemSearch) target:target action:@selector(performLookupAction) tag:kBarButtonTagLookup];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileLookup] target:target action:@selector(performLookupAction) tag:kBarButtonTagLookup];
 }
 
 

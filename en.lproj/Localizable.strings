@@ -83,25 +83,24 @@
 
 // Origo titles
 "[title] alumni" = "Alumni group";
-"[title] community" = "Neighbourhood";
-"[title] list" = "Private list";
+"[title] community" = "Local community";
 "[title] preschoolClass" = "Preschool class";
+"[title] private" = "Private list";
 "[title] residence" = "Household";
 "[title] schoolClass" = "School class";
-"[title] simple" = "Simple list";
+"[title] standard" = "Standard list";
 "[title] studyGroup" = "Study group";
-"[title] team" = "Team";
+"[title] team" = "Sports group";
 
 // Registration footers
-"[registration footer] alumni" = "Tap + to add alums.";
-"[registration footer] community" = "Tap + to add households.";
-"[registration footer] list" = "Tap + to add friends.";
-"[registration footer] preschoolClass" = "Tap + to add children to the class.";
-"[registration footer] residence" = "Tap + to add members to the household.";
-"[registration footer] schoolClass" = "Tap + to add students to the class.";
-"[registration footer] simple" = "Tap + to add members.";
-"[registration footer] studyGroup" = "Tap + to add students to the class.";
-"[registration footer] team" = "Tap + to add players.";
+"[registration footer] alumni" = "Tap + to register alums.";
+"[registration footer] community" = "Tap + to register households.";
+"[registration footer] preschoolClass" = "Tap + to register children and teachers.";
+"[registration footer] residence" = "Tap + to register members of the household.";
+"[registration footer] schoolClass" = "Tap + to register students and teachers.";
+"[registration footer] standard" = "Tap + to register members.";
+"[registration footer] studyGroup" = "Tap + to register students and lecturers.";
+"[registration footer] team" = "Tap + to register participants and coaches.";
 
 // Member registration button titles
 "[add member] alumni" = "Register alum";
@@ -109,39 +108,31 @@
 "[add member] preschoolClass" = "Register child";
 "[add member] residence" = "New member";
 "[add member] schoolClass" = "Register student";
-"[add member] simple" = "Register member";
+"[add member] standard" = "Register member";
 "[add member] studyGroup" = "Register student";
-"[add member] team" = "Register player";
-
-// Member role titles
-"[member role] alumni" = "Responsibility";
-"[member role] community" = "Responsibility";
-"[member role] schoolClass" = "Responsibility";
-"[member role] simple" = "Responsibility";
-"[member role] studyGroup" = "Responsibility";
-"[member role] team" = "Team role";
+"[add member] team" = "Register participant";
 
 // Member titles
 "[member] alumni" = "Alum";
 "[member] community" = "Member";
-"[member] list" = "Friend";
 "[member] preschoolClass" = "Child";
+"[member] private" = "Friend";
 "[member] residence" = "Resident";
 "[member] schoolClass" = "Student";
-"[member] simple" = "Member";
+"[member] standard" = "Member";
 "[member] studyGroup" = "Student";
-"[member] team" = "Player";
+"[member] team" = "Participant";
 
 // Member list titles
 "[members] alumni" = "Alumni";
 "[members] community" = "Members";
-"[members] list" = "Friends";
 "[members] preschoolClass" = "Children";
+"[members] private" = "Friends";
 "[members] residence" = "In the household";
 "[members] schoolClass" = "Students";
-"[members] simple" = "Members";
-"[members] studyGroup" = "Participants";
-"[members] team" = "Players";
+"[members] standard" = "Members";
+"[members] studyGroup" = "Students";
+"[members] team" = "Participants";
 
 // New member titles
 "[new member] alumni" = "Register alum";
@@ -149,18 +140,18 @@
 "[new member] preschoolClass" = "Register child";
 "[new member] residence" = "In the household";
 "[new member] schoolClass" = "Register student";
-"[new member] simple" = "Register member";
+"[new member] standard" = "Register member";
 "[new member] studyGroup" = "Register student";
-"[new member] team" = "Register player";
+"[new member] team" = "Register participant";
 
 // Origo collective titles
 "[all members] alumni" = "All alumni";
 "[all members] community" = "All members";
-"[all members] list" = "Everybody";
+"[all members] private" = "Everybody";
 "[all members] residence" = "The whole household";
-"[all members] simple" = "All members";
+"[all members] standard" = "All members";
 "[all members] studyGroup" = "The whole group";
-"[all members] team" = "The whole team";
+"[all members] team" = "The whole group";
 
 // Organiser registration button titles
 "[add organiser] preschoolClass" = "Register teacher";
@@ -183,7 +174,7 @@
 // Organiser roles
 "[organiser role] preschoolClass" = "Responsibility";
 "[organiser role] schoolClass" = "Responsibility";
-"[organiser role] studyGroup" = "Responsibility";
+"[organiser role] studyGroup" = "Topic";
 "[organiser role] team" = "Coach role";
 
 // Register organiser role button titles
@@ -268,6 +259,8 @@
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
 "Authentication required" = "Authentication required";
 "You have been signed out. Please sign in again to continue using Origo on this device." = "You have been remotely signed out. Please sign in again to continue using Origo on this device.";
+"Data error" = "Data error";
+"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.";
 
 // Generic terms
 "Close" = "Close";
@@ -387,6 +380,7 @@
 "Tap + to register contacts." = "Tap + to register contacts.";
 "Tap + to register friends." = "Tap + to register friends.";
 "Tap + to register additional guardians in the household." = "Tap + to register additional guardians in the household.";
+"This household is active on %@." = "This household is active on %@.";
 
 // Buttons
 "Keep" = "Keep";
@@ -427,6 +421,7 @@
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
 "Tap + to register additional guardians." = "Tap + to register additional guardians.";
+"Active on %@ since %@." = "Active on %@ since %@.";
 
 // Buttons
 "To some of them" = "To some of them";
@@ -573,11 +568,9 @@
 "About this household" = "About this household";
 
 // Footers
-"Created: %@." = "Created: %@.";
-"Registered: %@." = "Registered: %@.";
-"Active on Origo since: %@." = "Active on Origo since: %@.";
-"Last modified: %@." = "Last modified: %@.";
-"This household is active on Origo." = "This household is active on Origo.";
+"Created %@." = "Created %@.";
+"Registered %@." = "Registered %@.";
+"Last modified %@." = "Last modified %@.";
 
 // Buttons
 "About" = "About";

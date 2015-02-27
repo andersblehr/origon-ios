@@ -19,7 +19,7 @@
 @property (nonatomic, assign) BOOL editable;
 @property (nonatomic, assign) BOOL hasEmphasis;
 @property (nonatomic, assign) BOOL isTitleField;
-@property (nonatomic, assign, readonly) BOOL isEditableListCellField;
+@property (nonatomic, assign, readonly) BOOL isInlineField;
 @property (nonatomic, assign, readonly) BOOL supportsMultiLineText;
 @property (nonatomic, assign, readonly) BOOL didChange;
 

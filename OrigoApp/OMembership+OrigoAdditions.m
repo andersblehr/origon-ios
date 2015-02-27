@@ -99,7 +99,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
             } else {
                 self.type = kMembershipTypeFavourite;
             }
-        } else if ([self.origo isOfType:kOrigoTypeList]) {
+        } else if ([self.origo isOfType:kOrigoTypePrivate]) {
             if ([self.member isUser] || [self.member isWardOfUser]) {
                 self.type = kMembershipTypeOwnership;
             } else {
@@ -149,7 +149,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (BOOL)isMirrored
 {
-    return [self isShared] || [self isListing] || ([self.origo isOfType:kOrigoTypeList] && ![self isAssociate]);
+    return [self isShared] || [self isListing] || ([self.origo isOfType:kOrigoTypePrivate] && ![self isAssociate]);
 }
 
 
@@ -289,7 +289,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
     NSArray *affiliations = [self unmarshalAffiliations][type];
     
     if (!affiliations) {
-        affiliations = [NSArray array];
+        affiliations = @[];
     }
     
     return [affiliations sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
@@ -381,21 +381,25 @@ static NSString * const kPlaceholderRole = @"placeholder";
             if (![self isMirrored] || ![self.origo indirectlyKnowsAboutMember:self.member]) {
                 if ([self.member isUser]) {
                     for (OMembership *membership in [self.origo allMemberships]) {
-                        if (![membership.member isKnownByUser]) {
-                            [membership.member markForDeletion];
+                        if (![membership isMarkedForDeletion]) {
+                            if (![membership.member isKnownByUser]) {
+                                [membership.member markForDeletion];
+                            }
+                            
+                            [membership markForDeletion];
                         }
-                        
-                        [membership markForDeletion];
                     }
                     
                     [self.origo markForDeletion];
                 } else if (![self.member isKnownByUser]) {
                     for (OMembership *membership in [self.member allMemberships]) {
-                        if ([membership isMirrored]) {
-                            [membership.origo markForDeletion];
+                        if (![membership isMarkedForDeletion]) {
+                            if ([membership isMirrored]) {
+                                [membership.origo markForDeletion];
+                            }
+                            
+                            [membership markForDeletion];
                         }
-                        
-                        [membership markForDeletion];
                     }
                     
                     [self.member markForDeletion];

@@ -221,8 +221,8 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     if ([self aspectIs:kAspectGlobal]) {
         _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"All", @""), NSLocalizedString(@"Favourites", @"")]];
     } else if ([_origo isOfType:kOrigoTypeCommunity] || [_origo isJuvenile]) {
-        NSString *allLabel = [NSString string];
-        NSString *groupedLabel = [NSString string];
+        NSString *allLabel = @"";
+        NSString *groupedLabel = @"";
         
         if ([_origo isOfType:kOrigoTypeCommunity]) {
             allLabel = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);

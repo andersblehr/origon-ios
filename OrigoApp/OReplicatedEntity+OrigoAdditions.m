@@ -114,7 +114,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (NSString *)SHA1HashCode
 {
-    NSString *hashableString = [NSString string];
+    NSString *hashableString = @"";
     
     for (NSString *key in [[self class] propertyKeys]) {
         if (![self isTransientProperty:key]) {

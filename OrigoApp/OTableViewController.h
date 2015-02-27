@@ -56,8 +56,9 @@
 
 - (BOOL)shouldFinishEditingViewTitleField:(UITextField *)viewTitleField;
 - (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField;
-- (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)didFinishEditingListCellField:(OInputField *)listCellField;
+
+- (BOOL)isInlineCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)didFinishEditingInlineField:(OInputField *)inlineField;
 
 - (BOOL)supportsPullToRefresh;
 - (void)didToggleEditMode;
@@ -129,7 +130,10 @@
 - (void)toggleEditMode;
 - (void)endEditing;
 
-- (UITextField *)editableTitle:(NSString *)title withPlaceholder:(NSString *)placeholder;
+- (void)editInlineInCell:(OTableViewCell *)inlineCell;
+- (void)cancelInlineEditingIfOngoing;
+
+- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
 - (UISegmentedControl *)titleSubsegmentsWithTitles:(NSArray *)subsegmentTitles;
 
 - (void)reloadSections;

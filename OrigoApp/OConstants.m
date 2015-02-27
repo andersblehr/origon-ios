@@ -80,7 +80,7 @@ NSString * const kMappedKeyTeam = @"team";
 
 // Internal keys
 NSString * const kInternalKeyDeviceId = @"deviceId";
-NSString * const kInternalKeyEditableListCellContent = @"editableListCellContent";
+NSString * const kInternalKeyInlineCellContent = @"inlineCellContent";
 NSString * const kInternalKeyEntityClass = @"entityClass";
 
 // Label keys
@@ -128,7 +128,6 @@ NSString * const kStringPrefixOrganisersTitle = @"[organisers]";
 NSString * const kStringPrefixOrganiserRoleTitle = @"[organiser role]";
 NSString * const kStringPrefixAddOrganiserRoleButton = @"[add organiser role]";
 NSString * const kStringPrefixEditOrganiserRoleButton = @"[edit organiser role]";
-NSString * const kStringPrefixMemberRoleTitle = @"[member role]";
 
 // Icon file names
 NSString * const kIconFileResidence = @"ro-750-home-toolbar-selected.png";
@@ -147,7 +146,7 @@ NSString * const kIconFileLocation = @"722-location-pin-toolbar.png";
 NSString * const kIconFileDirections = @"852-map-toolbar.png";
 NSString * const kIconFileNavigation = @"113-navigation.png";
 NSString * const kIconFileInfo = @"724-info-toolbar.png";
-NSString * const kIconFileLookup = @"01-magnify.png";
+NSString * const kIconFileLookup = @"779-users-toolbar.png";
 NSString * const kIconFileFavouriteNo = @"726-star-toolbar.png";
 NSString * const kIconFileFavouriteYes = @"726-star-toolbar-selected.png";
 NSString * const kIconFileAcceptDecline = @"739-question-selected.png";

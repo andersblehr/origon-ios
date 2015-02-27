@@ -258,13 +258,13 @@
     NSArray *eligibleOrigoTypes = nil;
     
     if ([origo isOfType:kOrigoTypeAlumni]) {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeSimple];
-    } else if ([origo isOfType:kOrigoTypeList]) {
-        eligibleOrigoTypes = @[kOrigoTypeList, kOrigoTypeSimple];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard];
+    } else if ([origo isOfType:kOrigoTypePrivate]) {
+        eligibleOrigoTypes = @[kOrigoTypePrivate, kOrigoTypeStandard];
     } else if ([origo isJuvenile]) {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeSimple, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
     } else {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeSimple, kOrigoTypeStudyGroup, kOrigoTypeTeam];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeStandard, kOrigoTypeStudyGroup, kOrigoTypeTeam];
     }
     
     return eligibleOrigoTypes;

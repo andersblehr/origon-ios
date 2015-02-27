@@ -83,18 +83,18 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)initialiseFields
 {
     if ([self actionIs:kActionSignIn]) {
-        _passwordField.value = [NSString string];
+        _passwordField.value = @"";
         
         if ([OMeta m].userEmail) {
             _emailField.value = [OMeta m].userEmail;
             [_passwordField becomeFirstResponder];
         } else {
-            _emailField.value = [NSString string];
+            _emailField.value = @"";
             [_emailField becomeFirstResponder];
         }
     } else if ([self actionIs:kActionActivate]) {
-        _activationCodeField.value = [NSString string];
-        _repeatPasswordField.value = [NSString string];
+        _activationCodeField.value = @"";
+        _repeatPasswordField.value = @"";
         
         [_activationCodeField becomeFirstResponder];
     } else if ([self actionIs:kActionChange]) {

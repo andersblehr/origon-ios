@@ -50,7 +50,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     _titleSubSegmentMappings = [NSMutableArray array];
     NSMutableArray *titleSegments = [NSMutableArray array];
     
-    if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypeSimple]) {
+    if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypeStandard]) {
         [_titleSubSegmentMappings addObject:@(kTitleSubsegmentParents)];
         [titleSegments addObject:[[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
     }
@@ -333,7 +333,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         if ([self aspectIs:kAspectEditable]) {
             [self setData:groups forSectionWithKey:kSectionKeyValues];
         } else {
-            NSString *group = [groups count] ? groups[_selectedTitleSubsegment] : [NSString string];
+            NSString *group = [groups count] ? groups[_selectedTitleSubsegment] : @"";
             
             [self setData:[_origo membersOfGroup:group] forSectionWithKey:kSectionKeyValues];
         }

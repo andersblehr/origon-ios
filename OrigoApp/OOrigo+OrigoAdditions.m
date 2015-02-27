@@ -10,11 +10,11 @@
 
 NSString * const kOrigoTypeAlumni = @"alumni";
 NSString * const kOrigoTypeCommunity = @"community";
-NSString * const kOrigoTypeList = @"list";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
+NSString * const kOrigoTypePrivate = @"private";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
-NSString * const kOrigoTypeSimple = @"simple";
+NSString * const kOrigoTypeStandard = @"standard";
 NSString * const kOrigoTypeStash = @"~";
 NSString * const kOrigoTypeStudyGroup = @"studyGroup";
 NSString * const kOrigoTypeTeam = @"team";
@@ -251,7 +251,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     for (OMembership *membership in [self allMemberships]) {
         if ([self isOfType:kOrigoTypeStash] && [membership isFavourite]) {
             [members addObject:membership.member];
-        } else if ([self isOfType:kOrigoTypeList] && [membership isListing]) {
+        } else if ([self isOfType:kOrigoTypePrivate] && [membership isListing]) {
             [members addObject:membership.member];
         } else if ([membership isShared]) {
             [members addObject:membership.member];
@@ -551,7 +551,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     if (!userIsAdmin) {
         if ([self isOfType:kOrigoTypeResidence]) {
             userIsAdmin = ![self hasAdmin];
-        } else if ([self isOfType:kOrigoTypeList]) {
+        } else if ([self isOfType:kOrigoTypePrivate]) {
             userIsAdmin = [[self owner] isUser] || [[self owner] isWardOfUser];
         }
     }
@@ -657,7 +657,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (BOOL)knowsAboutMember:(id<OMember>)member
 {
-    return [self hasMember:member] || [self indirectlyKnowsAboutMember:member];
+    return [self owner] == member || [self hasMember:member] || [self indirectlyKnowsAboutMember:member];
 }
 
 
@@ -716,7 +716,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (NSArray *)recipientCandidates
 {
-    NSArray *recipientCandidates = [NSArray array];
+    NSArray *recipientCandidates = @[];
     
     if ([self isOfType:kOrigoTypeResidence]) {
         for (OMember *resident in [self residents]) {
@@ -806,7 +806,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (NSString *)displayPermissions
 {
-    NSString *displayPermissions = [NSString string];
+    NSString *displayPermissions = @"";
     
     BOOL membersCanAdd = self.membersCanAdd;
     BOOL membersCanDelete = self.membersCanDelete;
@@ -912,7 +912,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSArray *permissionKeys = nil;
     
-    if (![self isOfType:@[kOrigoTypeStash, kOrigoTypeList, kOrigoTypeResidence]]) {
+    if (![self isOfType:@[kOrigoTypeStash, kOrigoTypePrivate, kOrigoTypeResidence]]) {
         permissionKeys = @[kPermissionKeyEdit, kPermissionKeyAdd, kPermissionKeyDelete];
     }
     
@@ -973,7 +973,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
             } else {
                 defaultValue = NSLocalizedString(@"My place", @"");
             }
-        } else if ([self isOfType:kOrigoTypeList]) {
+        } else if ([self isOfType:kOrigoTypePrivate]) {
             OMember *owner = [self owner];
             
             if ([owner isUser] || [owner isWardOfUser]) {

@@ -84,24 +84,23 @@
 // Origo titles
 "[title] alumni" = "Alumnigruppe";
 "[title] community" = "Nærmiljø";
-"[title] list" = "Privat liste";
 "[title] preschoolClass" = "Barnehageavdeling";
+"[title] private" = "Privat liste";
 "[title] residence" = "Husstand";
 "[title] schoolClass" = "Skoleklasse";
-"[title] simple" = "Enkel liste";
+"[title] standard" = "Standardliste";
 "[title] studyGroup" = "Studiegruppe";
-"[title] team" = "Lag";
+"[title] team" = "Sportsgruppe";
 
 // Registration footers
-"[registration footer] alumni" = "Trykk + for å legge til alumner.";
-"[registration footer] community" = "Trykk + for å legge til husstander.";
-"[registration footer] list" = "Trykk + for å legge til venner.";
-"[registration footer] preschoolClass" = "Trykk + for å legge til barn i avdelingen.";
-"[registration footer] residence" = "Trykk + for å legge til medlemmer i husstanden.";
-"[registration footer] schoolClass" = "Trykk + for å legge til elever i klassen.";
-"[registration footer] simple" = "Trykk + for å legge til medlemmer.";
-"[registration footer] studyGroup" = "Trykk + for å legge til studenter.";
-"[registration footer] team" = "Trykk + for å legge til spillere.";
+"[registration footer] alumni" = "Trykk + for å registrere alumner.";
+"[registration footer] community" = "Trykk + for å registrere husstander.";
+"[registration footer] preschoolClass" = "Trykk + for å registrere barn og personale.";
+"[registration footer] residence" = "Trykk + for å registrere medlemmer i husstanden.";
+"[registration footer] schoolClass" = "Trykk + for å registrere elever og lærere.";
+"[registration footer] standard" = "Trykk + for å registrere medlemmer.";
+"[registration footer] studyGroup" = "Trykk + for å registrere studenter og forelesere.";
+"[registration footer] team" = "Trykk + for å registrere deltakere og trenere.";
 
 // Member registration button titles
 "[add member] alumni" = "Registrer alumn";
@@ -109,39 +108,31 @@
 "[add member] preschoolClass" = "Registrer barn";
 "[add member] residence" = "Nytt medlem";
 "[add member] schoolClass" = "Registrer elev";
-"[add member] simple" = "Registrer medlem";
+"[add member] standard" = "Registrer medlem";
 "[add member] studyGroup" = "Registrer student";
-"[add member] team" = "Registrer spiller";
-
-// Member role titles
-"[member role] alumni" = "Ansvarsområde";
-"[member role] community" = "Ansvarsområde";
-"[member role] schoolClass" = "Ansvarsområde";
-"[member role] simple" = "Ansvarsområde";
-"[member role] studyGroup" = "Ansvarsområde";
-"[member role] team" = "Lagrolle";
+"[add member] team" = "Registrer deltaker";
 
 // Member titles
 "[member] alumni" = "Alumn";
 "[member] community" = "Medlem";
-"[member] list" = "Venn(inne)";
 "[member] preschoolClass" = "Barn";
+"[member] private" = "Venn(inne)";
 "[member] residence" = "Beboer";
 "[member] schoolClass" = "Elev";
-"[member] simple" = "Medlem";
+"[member] standard" = "Medlem";
 "[member] studyGroup" = "Student";
-"[member] team" = "Spiller";
+"[member] team" = "Deltaker";
 
 // Member list titles
 "[members] alumni" = "Alumni";
 "[members] community" = "Medlemmer";
-"[members] list" = "Venner";
 "[members] preschoolClass" = "I avdelingen";
+"[members] private" = "Venner";
 "[members] residence" = "I husstanden";
 "[members] schoolClass" = "Elever";
-"[members] simple" = "Medlemmer";
-"[members] studyGroup" = "Deltakere";
-"[members] team" = "Spillere";
+"[members] standard" = "Medlemmer";
+"[members] studyGroup" = "Studenter";
+"[members] team" = "Deltakere";
 
 // New member titles
 "[new member] alumni" = "Registrer alumn";
@@ -149,18 +140,18 @@
 "[new member] preschoolClass" = "I avdelingen";
 "[new member] residence" = "I husstanden";
 "[new member] schoolClass" = "Registrer elev";
-"[new member] simple" = "Registrer medlem";
+"[new member] standard" = "Registrer medlem";
 "[new member] studyGroup" = "Registrer student";
-"[new member] team" = "Registrer spiller";
+"[new member] team" = "Registrer deltaker";
 
 // Origo collective titles
 "[all members] alumni" = "Alle alumni";
 "[all members] community" = "Alle medlemmer";
-"[all members] list" = "Alle";
+"[all members] private" = "Alle";
 "[all members] residence" = "Alle i husstanden";
-"[all members] simple" = "Alle medlemmer";
+"[all members] standard" = "Alle medlemmer";
 "[all members] studyGroup" = "Alle i gruppa";
-"[all members] team" = "Alle spillere";
+"[all members] team" = "Alle i gruppa";
 
 // Organiser registration button titles
 "[add organiser] preschoolClass" = "Registrer personale";
@@ -183,7 +174,7 @@
 // Organiser roles
 "[organiser role] preschoolClass" = "Ansvarsområde";
 "[organiser role] schoolClass" = "Ansvarsområde";
-"[organiser role] studyGroup" = "Ansvarsområde";
+"[organiser role] studyGroup" = "Fag";
 "[organiser role] team" = "Trenerrolle";
 
 // Register organiser role button titles
@@ -268,6 +259,8 @@
 "Please verify that %@ is a valid phone number." = "Verifiser at %@ er et gyldig telefonnummer.";
 "Authentication required" = "Autentisering kreves";
 "You have been signed out. Please sign in again to continue using Origo on this device." = "Du er blitt logget ut. Logg inn på nytt for å fortsette å bruke Origo på denne enheten.";
+"Data error" = "Datafeil";
+"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "Det har oppstått en uopprettelig datafeil. For å sikre at du fortsatt har helhetlige data, må du slette og reinstallere %@ på denne enheten.";
 
 // Generic terms
 "Close" = "Lukk";
@@ -385,6 +378,7 @@
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
 "Tap + to register friends." = "Trykk + for å registrere venn(inn)er.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
+"This household is active on %@." = "Denne husstanden er aktiv på %@.";
 
 // Buttons
 "Keep" = "Behold";
@@ -425,6 +419,7 @@
 "A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
 "Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
 "Tap + to register additional guardians." = "Trykk + for å registrere flere foresatte.";
+"Active on %@ since %@." = "Aktiv på %@ siden %@.";
 
 // Buttons
 "To some of them" = "Til noen av dem";
@@ -571,11 +566,9 @@
 "About this household" = "Om denne husstanden";
 
 // Footers
-"Created: %@." = "Opprettet: %@.";
-"Registered: %@." = "Registrert: %@.";
-"Active on Origo since: %@." = "Aktiv på Origo siden: %@.";
-"Last modified: %@." = "Sist endret: %@.";
-"This household is active on Origo." = "Denne husstanden er aktiv på Origo.";
+"Created %@." = "Opprettet %@.";
+"Registered %@." = "Registrert %@.";
+"Last modified %@." = "Sist endret %@.";
 
 // Buttons
 "About" = "Om";
