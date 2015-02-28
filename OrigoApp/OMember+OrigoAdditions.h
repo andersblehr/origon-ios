@@ -78,7 +78,6 @@
 - (BOOL)isUser;
 - (BOOL)isWardOfUser;
 - (BOOL)isHousemateOfUser;
-- (BOOL)isKnownByUser;
 - (BOOL)isEditableByUser;
 - (BOOL)isManaged;
 - (BOOL)isFavourite;

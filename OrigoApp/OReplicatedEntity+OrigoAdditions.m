@@ -182,33 +182,13 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (BOOL)isTransient
 {
-    return [self hasExpired];
+    return NO;
 }
 
 
 - (BOOL)isDirty
 {
     return ![self.hashCode isEqualToString:[self SHA1HashCode]];
-}
-
-
-#pragma mark - Expiration handling
-
-- (BOOL)shouldReplicateOnExpiry
-{
-    return ![self hasExpired] && [self isReplicated];
-}
-
-
-- (NSString *)expiresInTimeframe
-{
-    NSString *expires = [self.entity userInfo][@"expires"];
-    
-    if (!expires) {
-        // TODO: Keep track of and act on entity expiry dates
-    }
-    
-    return expires;
 }
 
 
@@ -351,7 +331,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (void)expire
 {
-    if ([self shouldReplicateOnExpiry]) {
+    if ([self isReplicated]) {
         self.isExpired = @YES;
     } else {
         [self markForDeletion];

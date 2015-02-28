@@ -51,6 +51,8 @@
         entityRef = [self insertEntityOfClass:[OReplicatedEntityRef class] inOrigo:origo entityId:entityRefId];
         entityRef.referencedEntityId = entity.entityId;
         entityRef.referencedEntityOrigoId = entity.origoId;
+    } else if ([entityRef hasExpired]) {
+        [entityRef unexpire];
     }
     
     return entityRef;
@@ -117,12 +119,6 @@
     entity.dateCreated = [NSDate date];
     entity.createdBy = [OMeta m].userEmail;
 
-    NSString *expires = [entity expiresInTimeframe];
-    
-    if (expires) {
-        // TODO: Process expiry instructions
-    }
-    
     return entity;
 }
 

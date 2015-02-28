@@ -53,6 +53,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     NSArray *_recipientCandidates;
     
     BOOL _userIsAdmin;
+    BOOL _needsReloadSections;
 }
 
 @end
@@ -66,21 +67,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     self.navigationItem.rightBarButtonItems = nil;
 
-    BOOL isAwaitingActivation = NO;
-    
     if (_membership && ![_membership isActive] && ([_member isUser] || [_member isWardOfUser])) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptDeclineButtonWithTarget:self]];
-        
-        if ([_membership.status isEqualToString:kMembershipStatusInvited]) {
-            _membership.status = kMembershipStatusWaiting;
-        } else if ([_membership.status isEqualToString:kMembershipStatusWaiting]) {
-            _membership.status = kMembershipStatusActive;
-        }
-        
-        isAwaitingActivation = YES;
-    }
-    
-    if (!isAwaitingActivation) {
+    } else  {
         if (![_origo isOfType:kOrigoTypeResidence] && _userIsAdmin) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem settingsButtonWithTarget:self]];
         } else {
@@ -416,6 +405,18 @@ static NSInteger const kActionSheetTagRecipients = 4;
 }
 
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    if ([_membership.status isEqualToString:kMembershipStatusInvited]) {
+        _membership.status = kMembershipStatusWaiting;
+    } else if ([_membership.status isEqualToString:kMembershipStatusWaiting]) {
+        _membership.status = kMembershipStatusActive;
+    }
+
+    [super viewWillDisappear:animated];
+}
+
+
 #pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
@@ -516,7 +517,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 [cell loadImageForMembers:elders];
             }
             
-            if (![_membership isHidden]) {
+            if ([_membership isActive]) {
                 cell.destinationId = kIdentifierOrigo;
                 cell.destinationTarget = communityResidence;
             }
@@ -531,7 +532,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 [cell loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:YES];
             }
             
-            cell.destinationId = [_membership isHidden] ? nil : kIdentifierMember;
+            cell.destinationId = [_membership isActive] ? kIdentifierMember : nil;
         }
     } else {
         NSString *role = [self dataAtIndexPath:indexPath];
@@ -549,13 +550,16 @@ static NSInteger const kActionSheetTagRecipients = 4;
             }
             
             [cell loadImageForMember:roleHolder];
-            cell.destinationId = [_membership isHidden] ? nil : kIdentifierMember;
-            cell.destinationTarget = roleHolder;
+            
+            if ([_membership isActive]) {
+                cell.destinationId = kIdentifierMember;
+                cell.destinationTarget = roleHolder;
+            }
         } else {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];
             [cell loadImageForMembers:roleHolders];
             
-            if (![_membership isHidden]) {
+            if ([_membership isActive]) {
                 cell.destinationId = kIdentifierValueList;
                 
                 if (sectionKey == kSectionKeyOrganisers) {
@@ -1019,6 +1023,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
                         [self.navigationController popViewControllerAnimated:YES];
                     } else {
                         [self loadNavigationBarItems];
+                        
+                        _needsReloadSections = YES;
                     }
                 } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
                     if (![_membership isHidden]) {
@@ -1113,6 +1119,13 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 }
                 
                 break;
+                
+            case kActionSheetTagAcceptDecline:
+                if (_needsReloadSections) {
+                    [self reloadSections];
+                    
+                    _needsReloadSections = NO;
+                }
                 
             default:
                 break;

@@ -197,7 +197,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-#pragma mark - Authentication & member lookup
+#pragma mark - Authentication
 
 - (void)signUpWithEmail:(NSString *)email password:(NSString *)password
 {
@@ -237,16 +237,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-- (void)lookupMemberWithEmail:(NSString *)email
-{
-    [self setValue:email forURLParameter:kURLParameterIdentifier];
-    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    
-    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookup entities:nil];
-}
-
-
-#pragma mark - Entity replication
+#pragma mark - Entity replication & lookup
 
 - (void)replicateEntities:(NSArray *)entities
 {
@@ -258,6 +249,15 @@ static NSString * const kURLParameterIdentifier = @"id";
     } else {
         [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathFetch entities:nil];
     }
+}
+
+
+- (void)lookupMemberWithEmail:(NSString *)email
+{
+    [self setValue:email forURLParameter:kURLParameterIdentifier];
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookup entities:nil];
 }
 
 

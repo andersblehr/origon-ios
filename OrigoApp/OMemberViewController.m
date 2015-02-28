@@ -145,16 +145,18 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     BOOL isUniqueEmail = YES;
     
-    id<OMember> existingMember = [[OMeta m].context memberWithEmail:_emailField.value];
-    
-    if (existingMember) {
-        isUniqueEmail = [self actionIs:kActionRegister] && [existingMember.name fuzzyMatches:_nameField.value] && [self reflectIfEligibleMember:existingMember];
-    }
-    
-    if (!isUniqueEmail) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Address in use", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), _emailField.value]];
+    if (![_member.email hasValue] || ![email isEqualToString:_member.email]) {
+        id<OMember> existingMember = [[OMeta m].context memberWithEmail:_emailField.value];
         
-        [_emailField becomeFirstResponder];
+        if (existingMember) {
+            isUniqueEmail = [self actionIs:kActionRegister] && [existingMember.name fuzzyMatches:_nameField.value] && [self reflectIfEligibleMember:existingMember];
+        }
+        
+        if (!isUniqueEmail) {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Address in use", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), _emailField.value]];
+            
+            [_emailField becomeFirstResponder];
+        }
     }
     
     return isUniqueEmail;
@@ -862,9 +864,13 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     [self.view endEditing:YES];
     
-    _cachedCandidates = [self targetIs:kTargetGuardian] ? [self.state eligibleCandidates] : @[];
+    if ([self targetIs:@[kTargetGuardian, kTargetOrganiser]]) {
+        _cachedCandidates = [self.state eligibleCandidates];
+    } else {
+        _cachedCandidates = nil;
+    }
     
-    if ([_cachedCandidates count]) {
+    if (_cachedCandidates && [_cachedCandidates count]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other list", @"") tag:kButtonTagSourceGroups];

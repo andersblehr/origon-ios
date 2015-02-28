@@ -4,9 +4,6 @@
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="user" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="devices" inverseEntity="OMember" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="no"/>
-        </userInfo>
     </entity>
     <entity name="OMember" representedClassName="OMember" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
@@ -24,9 +21,6 @@
         <attribute name="settings" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ODevice" inverseName="user" inverseEntity="ODevice" syncable="YES"/>
         <relationship name="memberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMembership" inverseName="member" inverseEntity="OMembership" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="no"/>
-        </userInfo>
     </entity>
     <entity name="OMembership" representedClassName="OMembership" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="affiliations" optional="YES" attributeType="String" syncable="YES"/>
@@ -35,9 +29,6 @@
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="member" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
         <relationship name="origo" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="memberships" inverseEntity="OOrigo" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="no"/>
-        </userInfo>
     </entity>
     <entity name="OOrigo" representedClassName="OOrigo" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
@@ -50,9 +41,6 @@
         <attribute name="telephone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="OMembership" inverseName="origo" inverseEntity="OMembership" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="no"/>
-        </userInfo>
     </entity>
     <entity name="OReplicatedEntity" representedClassName="OReplicatedEntity" isAbstract="YES" syncable="YES">
         <attribute name="createdBy" attributeType="String" syncable="YES"/>
@@ -69,13 +57,10 @@
     <entity name="OReplicatedEntityRef" representedClassName="OReplicatedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="referencedEntityId" attributeType="String" syncable="YES"/>
         <attribute name="referencedEntityOrigoId" attributeType="String" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="dynamic"/>
-        </userInfo>
     </entity>
     <elements>
         <element name="ODevice" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="268"/>
+        <element name="OMember" positionX="0" positionY="0" width="128" height="270"/>
         <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
         <element name="OOrigo" positionX="0" positionY="0" width="128" height="195"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="195"/>

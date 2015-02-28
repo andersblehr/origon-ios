@@ -57,9 +57,6 @@
 - (BOOL)isTransient;
 - (BOOL)isDirty;
 
-- (BOOL)shouldReplicateOnExpiry;
-- (NSString *)expiresInTimeframe;
-
 + (Class)proxyClass;
 + (NSArray *)propertyKeys;
 + (NSArray *)toOneRelationshipKeys;
