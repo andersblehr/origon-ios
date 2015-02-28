@@ -33,7 +33,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (includeExpired || (![membership hasExpired] && ![membership isMarkedForDeletion])) {
+        if (![membership hasExpired] || includeExpired) {
             [memberships addObject:membership];
         }
     }
@@ -80,11 +80,11 @@ static NSString * const kPermissionKeyDelete = @"delete";
         } else {
             membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self entityId:[OCrypto UUIDByOverlayingUUID:member.entityId withUUID:self.entityId]];
             membership.member = member;
-            
-            [membership alignWithOrigoIsAssociate:isAssociate];
-            
-            [[OMeta m].context insertCrossReferencesForMembership:membership];
         }
+        
+        [membership alignWithOrigoIsAssociate:isAssociate];
+        
+        [[OMeta m].context insertCrossReferencesForMembership:membership];
         
         [OMember clearCachedPeers];
     } else {
@@ -988,13 +988,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (BOOL)isTransient
 {
-    BOOL isTransient = [super isTransient];
-    
-    if (!isTransient) {
-        isTransient = [self isOfType:kOrigoTypeStash] && self != [[OMeta m].user stash];
-    }
-    
-    return isTransient;
+    return [self isOfType:kOrigoTypeStash] && ![[self owner] isUser];
 }
 
 

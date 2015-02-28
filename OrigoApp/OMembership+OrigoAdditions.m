@@ -372,47 +372,9 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
-- (void)markForDeletion
-{
-    if (![self isMarkedForDeletion]) {
-        [super markForDeletion];
-        
-        if (![self.origo isOfType:kOrigoTypeStash]) {
-            if (![self isMirrored] || ![self.origo indirectlyKnowsAboutMember:self.member]) {
-                if ([self.member isUser]) {
-                    for (OMembership *membership in [self.origo allMemberships]) {
-                        if (![membership isMarkedForDeletion]) {
-                            if (![membership.member isKnownByUser]) {
-                                [membership.member markForDeletion];
-                            }
-                            
-                            [membership markForDeletion];
-                        }
-                    }
-                    
-                    [self.origo markForDeletion];
-                } else if (![self.member isKnownByUser]) {
-                    for (OMembership *membership in [self.member allMemberships]) {
-                        if (![membership isMarkedForDeletion]) {
-                            if ([membership isMirrored]) {
-                                [membership.origo markForDeletion];
-                            }
-                            
-                            [membership markForDeletion];
-                        }
-                    }
-                    
-                    [self.member markForDeletion];
-                }
-            }
-        }
-    }
-}
-
-
 - (BOOL)isTransient
 {
-    return [super isTransient] || [self.origo isTransient];
+    return [self.origo isTransient];
 }
 
 
@@ -421,16 +383,14 @@ static NSString * const kPlaceholderRole = @"placeholder";
     if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
         [self demote];
     } else {
-        if ([self shouldReplicateOnExpiry]) {
-            [super expire];
-            
+        [super expire];
+        
+        if ([self isReplicated]) {
             self.isAdmin = @NO;
             self.status = kMembershipStatusExpired;
             self.affiliations = nil;
             
             [[OMeta m].context expireCrossReferencesForMembership:self];
-        } else {
-            [super expire];
         }
     }
     

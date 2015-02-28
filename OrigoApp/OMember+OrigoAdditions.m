@@ -795,32 +795,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
-- (BOOL)isKnownByUser
-{
-    BOOL isKnownByUser = NO;
-    
-    NSMutableSet *knownOrigos = [NSMutableSet setWithArray:[[OMeta m].user origosIncludeResidences:YES]];
-    
-    for (OMembership *listing in [[OMeta m].user listings]) {
-        [knownOrigos addObject:listing.origo];
-    }
-    
-    for (OMember *ward in [[OMeta m].user wards]) {
-        [knownOrigos unionSet:[NSSet setWithArray:[ward origosIncludeResidences:YES]]];
-        
-        for (OMembership *listing in [ward listings]) {
-            [knownOrigos addObject:listing.origo];
-        }
-    }
-    
-    for (OOrigo *origo in knownOrigos) {
-        isKnownByUser = isKnownByUser || [origo knowsAboutMember:self];
-    }
-    
-    return isKnownByUser;
-}
-
-
 - (BOOL)isEditableByUser
 {
     return [self isUser] || ([self isWardOfUser] && ![self isActive]) || ![self isManaged];
