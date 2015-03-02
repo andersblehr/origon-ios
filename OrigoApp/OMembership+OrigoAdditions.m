@@ -89,23 +89,23 @@ static NSString * const kPlaceholderRole = @"placeholder";
         self.status = nil;
         self.affiliations = nil;
         
-        if (![self.origo isOfType:@[kOrigoTypeResidence]]) {
+        if (![self.origo isResidence]) {
             self.isAdmin = @([self.member isUser] && [self.origo userIsCreator]);
         }
     } else {
-        if ([self.origo isOfType:kOrigoTypeStash]) {
+        if ([self.origo isStash]) {
             if ([self.origo.entityId hasSuffix:self.member.entityId]) {
                 self.type = kMembershipTypeOwnership;
             } else {
                 self.type = kMembershipTypeFavourite;
             }
-        } else if ([self.origo isOfType:kOrigoTypePrivate]) {
+        } else if ([self.origo isPrivate]) {
             if ([self.member isUser] || [self.member isWardOfUser]) {
                 self.type = kMembershipTypeOwnership;
             } else {
                 self.type = kMembershipTypeListing;
             }
-        } else if ([self.origo isOfType:kOrigoTypeResidence]) {
+        } else if ([self.origo isResidence]) {
             self.type = kMembershipTypeResidency;
         } else {
             self.type = kMembershipTypeParticipancy;
@@ -119,7 +119,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
         } else {
             if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
                 self.status = kMembershipStatusListed;
-            } else if ([self.type isEqualToString:kMembershipTypeResidency]) {
+            } else if ([self isResidency]) {
                 if (![self.member isJuvenile] && [[self.member addresses] count] > 1) {
                     self.status = kMembershipStatusInvited;
                 } else {
@@ -149,13 +149,13 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (BOOL)isMirrored
 {
-    return [self isShared] || [self isListing] || ([self.origo isOfType:kOrigoTypePrivate] && ![self isAssociate]);
+    return [self isShared] || [self isListing] || ([self.origo isPrivate] && ![self isAssociate]);
 }
 
 
 - (BOOL)isHidden
 {
-    return [self isShared] && [self.status isEqualToString:kMembershipStatusListed];
+    return ([self isShared] || [self isCommunityMembership]) && [self.status isEqualToString:kMembershipStatusListed];
 }
 
 
@@ -195,7 +195,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
 {
     BOOL isCommunityMembership = NO;
     
-    if ([self.origo isOfType:kOrigoTypeCommunity]) {
+    if ([self.origo isCommunity]) {
         isCommunityMembership = [self isParticipancy] || ([self isAssociate] && [self.member isJuvenile] && [self.member isUser]);
     }
     
@@ -380,21 +380,35 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (void)expire
 {
-    if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
-        [self demote];
-    } else {
-        [super expire];
-        
-        if ([self isReplicated]) {
-            self.isAdmin = @NO;
-            self.status = kMembershipStatusExpired;
-            self.affiliations = nil;
+    if (![self hasExpired]) {
+        if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
+            [self demote];
+        } else {
+            [super expire];
             
-            [[OMeta m].context expireCrossReferencesForMembership:self];
+            id<OMember> owner = [self.origo isPrivate] ? [self.origo owner] : nil;
+            
+            if (owner && [owner isWardOfUser]) {
+                [[self.origo membershipForMember:owner] expire];
+            }
+            
+            if ([self isReplicated]) {
+                self.isAdmin = nil;
+                self.status = kMembershipStatusExpired;
+                self.affiliations = nil;
+                
+                [[OMeta m].context expireCrossReferencesForMembership:self];
+            }
         }
+        
+        [OMember clearCachedPeers];
     }
-    
-    [OMember clearCachedPeers];
+}
+
+
+- (BOOL)isSane
+{
+    return self.origo && self.member;
 }
 
 

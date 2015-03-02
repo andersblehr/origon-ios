@@ -145,10 +145,13 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 {
     NSMutableArray *lists = [NSMutableArray array];
     NSMutableArray *origos = [NSMutableArray array];
+    id<OOrigo> pinnedFriendList = [self pinnedFriendList];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership.origo isOfType:kOrigoTypePrivate] && [membership isOwnership]) {
-            [lists addObject:membership.origo];
+        if ([membership.origo isPrivate] && [membership isOwnership]) {
+            if (!pinnedFriendList || membership.origo != pinnedFriendList) {
+                [lists addObject:membership.origo];
+            }
         } else {
             BOOL isIncludedResidency = [membership isResidency] && includeResidences;
             BOOL isParticipancy = [membership isParticipancy];
@@ -160,7 +163,11 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         }
     }
     
-    return [[lists sortedArrayUsingSelector:@selector(compare:)] arrayByAddingObjectsFromArray:[origos sortedArrayUsingSelector:@selector(compare:)]];
+    NSArray *sortedOrigos = pinnedFriendList ? @[pinnedFriendList] : @[];
+    sortedOrigos = [sortedOrigos arrayByAddingObjectsFromArray:[lists sortedArrayUsingSelector:@selector(compare:)]];
+    sortedOrigos = [sortedOrigos arrayByAddingObjectsFromArray:[origos sortedArrayUsingSelector:@selector(compare:)]];
+    
+    return sortedOrigos;
 }
 
 
@@ -313,7 +320,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.origo isOfType:kOrigoTypeStash]) {
+        if (![membership.origo isStash]) {
             if (![membership isHidden] && ![membership hasExpired]) {
                 [memberships addObject:membership];
             }
@@ -387,7 +394,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     OOrigo *stash = nil;
     
     for (OMembership *membership in self.memberships) {
-        if (!stash && [membership.origo isOfType:kOrigoTypeStash]) {
+        if (!stash && [membership.origo isStash]) {
             stash = membership.origo;
         }
     }
@@ -432,23 +439,25 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
-- (id<OOrigo>)defaultFriendList
+- (id<OOrigo>)pinnedFriendList
 {
     OOrigo *list = nil;
     
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership.origo isOfType:kOrigoTypePrivate] && [membership isOwnership]) {
-            if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {
-                list = membership.origo;
+    if ([self isJuvenile]) {
+        for (OMembership *membership in [self allMemberships]) {
+            if ([membership.origo isPrivate] && [membership isOwnership]) {
+                if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {
+                    list = membership.origo;
+                }
             }
         }
-    }
-    
-    if (!list) {
-        OOrigo *list = [OOrigo instanceWithType:kOrigoTypePrivate];
-        list.name = kPlaceholderDefaultValue;
         
-        [list addMember:self];
+        if (!list) {
+            list = [OOrigo instanceWithType:kOrigoTypePrivate];
+            list.name = kPlaceholderDefaultValue;
+            
+            [list addMember:self];
+        }
     }
     
     return list;
@@ -574,7 +583,15 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)wards
 {
-    return [self visibleMembersFromMembers:[self allWards]];
+    NSArray *wards = [self allWards];
+    
+    if ([self isUser]) {
+        wards = [wards sortedArrayUsingSelector:@selector(compare:)];
+    } else {
+        wards = [self visibleMembersFromMembers:wards];
+    }
+    
+    return wards;
 }
 
 
@@ -695,7 +712,15 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)housemates
 {
-    return [self visibleMembersFromMembers:[self allHousemates]];
+    NSArray *housemates = [self allHousemates];
+    
+    if ([self isUser]) {
+        housemates = [housemates sortedArrayUsingSelector:@selector(compare:)];
+    } else {
+        housemates = [self visibleMembersFromMembers:housemates];
+    }
+    
+    return housemates;
 }
 
 
@@ -751,7 +776,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     for (OMember *ward in [self wards]) {
-        [ward defaultFriendList];
+        [ward pinnedFriendList];
     }
     
     self.settings = [self defaultSettings];
@@ -824,18 +849,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 - (BOOL)isMale
 {
     return [self.gender hasPrefix:kGenderMale];
-}
-
-
-- (BOOL)isListedOnly
-{
-    BOOL isListedOnly = YES;
-    
-    for (OOrigo *origo in [self origos]) {
-        isListedOnly = isListedOnly && [origo isOfType:kOrigoTypePrivate];
-    }
-    
-    return isListedOnly;
 }
 
 
@@ -1125,7 +1138,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     OOrigo *baseOrigo = [OState s].baseOrigo;
     OMember *baseMember = [OState s].baseMember;
     
-    if ([baseOrigo isOfType:kOrigoTypePrivate]) {
+    if ([baseOrigo isPrivate]) {
         instance.createdIn = kOrigoTypePrivate;
         
         if ([baseMember isJuvenile] && [instance isJuvenile]) {
@@ -1136,6 +1149,12 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     return instance;
+}
+
+
+- (BOOL)isSane
+{
+    return [self.memberships count] > 0;
 }
 
 

@@ -47,7 +47,6 @@ NSString * const kPropertyKeyEntityId = @"entityId";
 NSString * const kPropertyKeyFatherId = @"fatherId";
 NSString * const kPropertyKeyGender = @"gender";
 NSString * const kPropertyKeyHashCode = @"hashCode";
-NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
 NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyIsMinor = @"isMinor";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
@@ -66,6 +65,7 @@ NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
 // Mapped keys
+NSString * const kMappedKeyArena = @"arena";
 NSString * const kMappedKeyClub = @"club";
 NSString * const kMappedKeyFullName = @"fullName";
 NSString * const kMappedKeyInstitution = @"institution";
@@ -76,7 +76,6 @@ NSString * const kMappedKeyResidenceName = @"residenceName";
 NSString * const kMappedKeySchool = @"school";
 NSString * const kMappedKeySchoolClass = @"schoolClass";
 NSString * const kMappedKeyStudyGroup = @"studyGroup";
-NSString * const kMappedKeyTeam = @"team";
 
 // Internal keys
 NSString * const kInternalKeyDeviceId = @"deviceId";

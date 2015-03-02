@@ -14,11 +14,9 @@
 
 @property (nonatomic, retain) NSString * createdBy;
 @property (nonatomic, retain) NSDate * dateCreated;
-@property (nonatomic, retain) NSDate * dateExpires;
 @property (nonatomic, retain) NSDate * dateReplicated;
 @property (nonatomic, retain) NSString * entityId;
 @property (nonatomic, retain) NSString * hashCode;
-@property (nonatomic, retain) NSNumber * isAwaitingDeletion;
 @property (nonatomic, retain) NSNumber * isExpired;
 @property (nonatomic, retain) NSString * origoId;
 @property (nonatomic, retain) NSString * modifiedBy;

@@ -77,12 +77,6 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
 }
 
 
-- (id)inlineCellWithData:(id)data delegate:(id)delegate
-{
-    return [self listCellWithStyle:UITableViewCellStyleDefault data:data delegate:delegate];
-}
-
-
 - (id)inputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass([entity entityClass])];

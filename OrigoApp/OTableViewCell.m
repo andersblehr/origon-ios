@@ -8,6 +8,8 @@
 
 #import "OTableViewCell.h"
 
+UITableViewCellStyle const kTableViewCellStyleInline = UITableViewCellStyleDefault;
+
 NSString * const kReuseIdentifierList = @"list";
 
 NSString * const kViewKeySuffixLabel = @"Label";
@@ -144,7 +146,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
         
         self.editable = [_state actionIs:kActionInput];
-    } else if (_editable) {
+    } else if (_isInlineCell) {
         [self addInputFieldForKey:_constrainer.titleKey];
     }
 }
@@ -162,7 +164,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _isInputCell = ![reuseIdentifier hasPrefix:kReuseIdentifierList];
         
         if (!_isInputCell) {
-            _editable = style == UITableViewCellStyleDefault;
+            _isInlineCell = style == kTableViewCellStyleInline;
             _selectable = ![_state actionIs:kActionInput];
         }
     }
@@ -197,11 +199,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     self = [self initWithStyle:style reuseIdentifier:reuseIdentifier state:state];
     
-    if (self && (_isInputCell || _editable)) {
+    if (self && (_isInputCell || _isInlineCell)) {
         if (_isInputCell) {
             _inputCellDelegate = delegate;
             _blueprint = [_inputCellDelegate inputCellBlueprint];
-        } else if (_editable) {
+        } else if (_isInlineCell) {
             _blueprint = [OInputCellBlueprint inlineCellBlueprint];
         }
         
@@ -266,7 +268,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (OInputField *)inlineField
 {
-    return _editable && !_isInputCell ? [self inputFieldForKey:_constrainer.titleKey] : nil;
+    return _isInlineCell ? [self inputFieldForKey:_constrainer.titleKey] : nil;
 }
 
 
@@ -645,7 +647,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super updateConstraints];
 
-    if (_isInputCell || _editable) {
+    if (_isInputCell || _isInlineCell) {
         [self removeConstraints:[self constraints]];
         
         NSDictionary *alignedConstraints = [_constrainer constraintsWithAlignmentOptions];
@@ -666,7 +668,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super prepareForReuse];
     
-    if (!_isInputCell && !_editable) {
+    if (!_isInputCell && !_isInlineCell) {
         self.textLabel.textColor = [UIColor textColour];
         
         if ([self styleIsSubtitle]) {

@@ -18,7 +18,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (BOOL)isTransientProperty:(NSString *)propertyKey
 {
-    NSArray *transientPropertyKeys = @[kPropertyKeyPasswordHash, kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
+    NSArray *transientPropertyKeys = @[kPropertyKeyPasswordHash, kPropertyKeyHashCode];
     
     return [transientPropertyKeys containsObject:propertyKey];
 }
@@ -168,18 +168,6 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 #pragma mark - Meta information
 
-- (void)markForDeletion
-{
-    self.isAwaitingDeletion = @YES;
-}
-
-
-- (BOOL)isMarkedForDeletion
-{
-    return [self.isAwaitingDeletion boolValue];
-}
-
-
 - (BOOL)isTransient
 {
     return NO;
@@ -189,6 +177,12 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 - (BOOL)isDirty
 {
     return ![self.hashCode isEqualToString:[self SHA1HashCode]];
+}
+
+
+- (BOOL)isSane
+{
+    return YES;
 }
 
 
@@ -331,17 +325,13 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (void)expire
 {
-    if ([self isReplicated]) {
-        self.isExpired = @YES;
-    } else {
-        [self markForDeletion];
-    }
+    self.isExpired = @YES;
 }
 
 
 - (void)unexpire
 {
-    self.isExpired = @NO;
+    self.isExpired = nil;
 }
 
 

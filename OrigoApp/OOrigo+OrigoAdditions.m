@@ -71,8 +71,12 @@ static NSString * const kPermissionKeyDelete = @"delete";
         membership = [self membershipForMember:member includeExpired:YES];
         
         if (membership) {
-            membership.isExpired = @NO;
-            membership.isAwaitingDeletion = @NO;
+            if ([membership hasExpired]) {
+                [membership unexpire];
+                [membership alignWithOrigoIsAssociate:isAssociate];
+                
+                [[OMeta m].context insertCrossReferencesForMembership:membership];
+            }
             
             if ([membership isAssociate] && !isAssociate) {
                 [membership promote];
@@ -80,11 +84,11 @@ static NSString * const kPermissionKeyDelete = @"delete";
         } else {
             membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self entityId:[OCrypto UUIDByOverlayingUUID:member.entityId withUUID:self.entityId]];
             membership.member = member;
+            
+            [membership alignWithOrigoIsAssociate:isAssociate];
+            
+            [[OMeta m].context insertCrossReferencesForMembership:membership];
         }
-        
-        [membership alignWithOrigoIsAssociate:isAssociate];
-        
-        [[OMeta m].context insertCrossReferencesForMembership:membership];
         
         [OMember clearCachedPeers];
     } else {
@@ -156,7 +160,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     instance.type = type;
     instance.permissions = [instance defaultPermissions];
     
-    if ([instance isOfType:kOrigoTypeResidence]) {
+    if ([instance isResidence]) {
         instance.name = kPlaceholderDefaultValue;
     }
     
@@ -214,7 +218,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSMutableSet *residents = [NSMutableSet set];
     
-    if ([self isOfType:kOrigoTypeResidence]) {
+    if ([self isResidence]) {
         NSMutableSet *minors = [NSMutableSet set];
         NSMutableSet *visibleMinors = [NSMutableSet set];
         
@@ -249,12 +253,14 @@ static NSString * const kPermissionKeyDelete = @"delete";
     NSMutableSet *members = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([self isOfType:kOrigoTypeStash] && [membership isFavourite]) {
-            [members addObject:membership.member];
-        } else if ([self isOfType:kOrigoTypePrivate] && [membership isListing]) {
-            [members addObject:membership.member];
-        } else if ([membership isShared]) {
-            [members addObject:membership.member];
+        if (![membership isAssociate]) {
+            if ([self isStash] && [membership isFavourite]) {
+                [members addObject:membership.member];
+            } else if ([self isPrivate] && [membership isListing]) {
+                [members addObject:membership.member];
+            } else if ([membership isShared]) {
+                [members addObject:membership.member];
+            }
         }
     }
     
@@ -290,7 +296,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSMutableArray *elders = [NSMutableArray array];
     
-    if ([self isOfType:kOrigoTypeResidence]) {
+    if ([self isResidence]) {
         for (OMember *resident in [self residents]) {
             if (![resident isJuvenile]) {
                 [elders addObject:resident];
@@ -306,7 +312,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSMutableArray *minors = [NSMutableArray array];
     
-    if ([self isOfType:kOrigoTypeResidence]) {
+    if ([self isResidence]) {
         for (OMember *resident in [self residents]) {
             if ([resident isJuvenile]) {
                 [minors addObject:resident];
@@ -366,7 +372,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     
     for (OMember *member in [self members]) {
         if ([member isJuvenile]) {
-            if (![self isOfType:kOrigoTypeResidence]) {
+            if (![self isResidence]) {
                 [adminCandidates addObjectsFromArray:[member guardians]];
             }
             
@@ -505,7 +511,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     id<OMembership> membership = nil;
     
     if ([member instance]) {
-        if ([self isOfType:kOrigoTypeResidence]) {
+        if ([self isResidence]) {
             membership = [self addResident:member];
         } else {
             if (![self.memberships count] && [member isJuvenile]) {
@@ -549,9 +555,9 @@ static NSString * const kPermissionKeyDelete = @"delete";
     BOOL userIsAdmin = [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
     
     if (!userIsAdmin) {
-        if ([self isOfType:kOrigoTypeResidence]) {
+        if ([self isResidence]) {
             userIsAdmin = ![self hasAdmin];
-        } else if ([self isOfType:kOrigoTypePrivate]) {
+        } else if ([self isPrivate]) {
             userIsAdmin = [[self owner] isUser] || [[self owner] isWardOfUser];
         }
     }
@@ -578,7 +584,31 @@ static NSString * const kPermissionKeyDelete = @"delete";
 }
 
 
-#pragma mark - Origo meta information
+#pragma mark - Origo type information
+
+- (BOOL)isStash
+{
+    return [self isOfType:kOrigoTypeStash];
+}
+
+
+- (BOOL)isResidence
+{
+    return [self isOfType:kOrigoTypeResidence];
+}
+
+
+- (BOOL)isPrivate
+{
+    return [self isOfType:kOrigoTypePrivate];
+}
+
+
+- (BOOL)isCommunity
+{
+    return [self isOfType:kOrigoTypeCommunity];
+}
+
 
 - (BOOL)isOfType:(id)type
 {
@@ -593,6 +623,8 @@ static NSString * const kPermissionKeyDelete = @"delete";
     return isOfType;
 }
 
+
+#pragma mark - Origo meta information
 
 - (BOOL)isOrganised
 {
@@ -671,7 +703,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
         
         for (OMembership *membership in [self allMemberships]) {
             if ([membership isMirrored]) {
-                if (membership != directMembership && ![membership isMarkedForDeletion]) {
+                if (membership != directMembership) {
                     id residencies = [NSMutableSet set];
                     
                     if ([self isJuvenile]) {
@@ -683,7 +715,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
                     }
                     
                     for (OMembership *residency in residencies) {
-                        if (residency.origo != self && ![residency isMarkedForDeletion]) {
+                        if (residency.origo != self) {
                             indirectlyKnows = indirectlyKnows || [residency.origo hasMember:member];
                         }
                     }
@@ -718,7 +750,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSArray *recipientCandidates = @[];
     
-    if ([self isOfType:kOrigoTypeResidence]) {
+    if ([self isResidence]) {
         for (OMember *resident in [self residents]) {
             if (![resident isUser]) {
                 recipientCandidates = [recipientCandidates arrayByAddingObject:resident];
@@ -762,7 +794,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSMutableArray *callRecipients = [NSMutableArray array];
     
-    if ([self isOfType:kOrigoTypeResidence]) {
+    if ([self isResidence]) {
         [callRecipients addObjectsFromArray:[self textRecipients]];
     }
     
@@ -849,7 +881,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     } else {
         NSString *formattedPhoneNumber = [[OPhoneNumberFormatter formatterForNumber:self.telephone] formattedNumber];
         
-        if ([self isOfType:kOrigoTypeResidence]) {
+        if ([self isResidence]) {
             if ([self hasAddress]) {
                 recipientLabel = [self shortAddress];
             } else {
@@ -938,26 +970,6 @@ static NSString * const kPermissionKeyDelete = @"delete";
 }
 
 
-#pragma mark - Type conversion
-
-- (void)convertToType:(NSString *)type
-{
-    if (![type isEqualToString:self.type]) {
-        if ([self isOfType:kOrigoTypeCommunity]) {
-            for (id<OMember> member in [self members]) {
-                id<OMembership> membership = [self membershipForMember:member];
-                
-                if ([membership isAssociate]) {
-                    [membership promote];
-                }
-            }
-        }
-        
-        self.type = type;
-    }
-}
-
-
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
 - (id)defaultValueForKey:(NSString *)key
@@ -967,13 +979,13 @@ static NSString * const kPermissionKeyDelete = @"delete";
     NSString *unmappedKey = [OValidator unmappedKeyForKey:key];
     
     if ([unmappedKey isEqualToString:kPropertyKeyName]) {
-        if ([self isOfType:kOrigoTypeResidence]) {
+        if ([self isResidence]) {
             if ([[self residents] count] > 1) {
                 defaultValue = NSLocalizedString(@"Our place", @"");
             } else {
                 defaultValue = NSLocalizedString(@"My place", @"");
             }
-        } else if ([self isOfType:kOrigoTypePrivate]) {
+        } else if ([self isPrivate]) {
             OMember *owner = [self owner];
             
             if ([owner isUser] || [owner isWardOfUser]) {
@@ -988,7 +1000,13 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (BOOL)isTransient
 {
-    return [self isOfType:kOrigoTypeStash] && ![[self owner] isUser];
+    return [self isStash] && ![[self owner] isUser];
+}
+
+
+- (BOOL)isSane
+{
+    return [self.memberships count] > 0;
 }
 
 

@@ -40,7 +40,10 @@ NSString *kDeviceType_iPodTouch = @"iPod";
         device.type = [UIDevice currentDevice].model;
         device.name = [UIDevice currentDevice].name;
         device.user = [OMeta m].user;
+    } else if (![device.name isEqualToString:[UIDevice currentDevice].name]) {
+        device.name = [UIDevice currentDevice].name;
     }
+
     
     return device;
 }
@@ -51,20 +54,6 @@ NSString *kDeviceType_iPodTouch = @"iPod";
 - (BOOL)isOfType:(NSString *)deviceType
 {
     return [self.type hasPrefix:deviceType];
-}
-
-
-#pragma mark - Touching device
-
-- (void)touch
-{
-    if ([self hasExpired]) {
-        [self unexpire];
-    }
-    
-    if (![self.name isEqualToString:[UIDevice currentDevice].name]) {
-        self.name = [UIDevice currentDevice].name;
-    }
 }
 
 

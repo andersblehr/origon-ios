@@ -173,7 +173,6 @@ static void uncaughtExceptionHandler(NSException *exception)
         }
     } else {
         if ([[OMeta m] userIsAllSet]) {
-            [OMeta touchDeviceIfNeeded];
             [[OMeta m].replicator replicate];
         }
     }

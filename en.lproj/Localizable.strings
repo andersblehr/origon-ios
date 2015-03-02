@@ -13,9 +13,10 @@
 
 // Labels
 "[label] activate" = "Enter activation code";
-"[label] admins" = "Administrators";
-"[label] changePassword" = "Change password";
 "[label] address" = "Address";
+"[label] admins" = "Administrators";
+"[label] arena" = "Arena";
+"[label] changePassword" = "Change password";
 "[label] club" = "Club";
 "[label] createdBy" = "Registered by";
 "[label] createdIn" = "First registered in";
@@ -24,6 +25,7 @@
 "[label] email" = "Email";
 "[label] fatherId" = "Father";
 "[label] gender" = "Gender";
+"[label] institution" = "Institution";
 "[label] mobilePhone" = "Mobile";
 "[label] modifiedBy" = "Last modified by";
 "[label] motherId" = "Mother";
@@ -34,7 +36,6 @@
 "[label] signOut" = "Sign out";
 "[label] telephone" = "Telephone";
 "[label] type" = "Type";
-"[label] institution" = "Institution";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Born";
@@ -43,6 +44,7 @@
 // Placeholders
 "[placeholder] activationCode" = "Activation code from email";
 "[placeholder] address" = "Street address\nPostal code and city/town";
+"[placeholder] arena" = "Home arena\nOptional address";
 "[placeholder] authEmail" = "Your email address";
 "[placeholder] club" = "Name of club";
 "[placeholder] dateOfBirth" = "Date of birth";
@@ -50,6 +52,8 @@
 "[placeholder] email" = "A valid email address";
 "[placeholder] fullName" = "Full name";
 "[placeholder] givenName" = "Name";
+"[placeholder] institution" = "Name of university or school";
+"[placeholder] listName" = "List name";
 "[placeholder] mobilePhone" = "Mobile phone number";
 "[placeholder] name"  = "Name";
 "[placeholder] newPassword" = "New password";
@@ -61,13 +65,10 @@
 "[placeholder] repeatNewPassword" = "Repeat new password";
 "[placeholder] repeatPassword" = "Repeat your password";
 "[placeholder] residenceName" = "Moniker for this address";
-"[placeholder] listName" = "List name";
 "[placeholder] school" = "Name of school";
 "[placeholder] schoolClass" = "Class";
 "[placeholder] studyGroup" = "Group moniker";
-"[placeholder] team" = "Name of team";
 "[placeholder] telephone" = "Telephone number";
-"[placeholder] institution" = "Name of university or school";
 
 // Titles
 "[title] signUp" = "Register user";
@@ -380,7 +381,6 @@
 "Tap + to register contacts." = "Tap + to register contacts.";
 "Tap + to register friends." = "Tap + to register friends.";
 "Tap + to register additional guardians in the household." = "Tap + to register additional guardians in the household.";
-"This household is active on %@." = "This household is active on %@.";
 
 // Buttons
 "Keep" = "Keep";
@@ -418,10 +418,10 @@
 "Responsibilities in %@" = "Responsibilities in %@";
 
 // Footers
-"A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
+"New %@ members will receive an invitation by email." = "New %@ members will receive an invitation by email.";
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
 "Tap + to register additional guardians." = "Tap + to register additional guardians.";
-"Active on %@ since %@." = "Active on %@ since %@.";
+"%@ is active on %@." = "%@ is active on %@.";
 
 // Buttons
 "To some of them" = "To some of them";
@@ -570,6 +570,7 @@
 // Footers
 "Created %@." = "Created %@.";
 "Registered %@." = "Registered %@.";
+"Active on %@ since %@." = "Active on %@ since %@.";
 "Last modified %@." = "Last modified %@.";
 
 // Buttons

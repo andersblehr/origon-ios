@@ -168,7 +168,7 @@
                 
                 for (OReplicatedEntity *entity in _dirtyEntities) {
                     if ([entity isTransient]) {
-                        [entity markForDeletion];
+                        [[OMeta m].context deleteObject:entity];
                     } else {
                         entity.dateReplicated = now;
                         entity.hashCode = [entity SHA1HashCode];
@@ -184,7 +184,6 @@
                 [refreshHandler reloadSections];
             }
             
-            [OMeta touchDeviceIfNeeded];
             [self replicateIfNeeded];
         } else if (HTTPStatus == kHTTPStatusUnauthorized) {
             [[OMeta m] signOut];

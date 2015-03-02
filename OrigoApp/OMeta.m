@@ -236,22 +236,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 
 #pragma mark - Convenience methods
 
-+ (void)touchDeviceIfNeeded
-{
-    static BOOL didTouchDevice = NO;
-    
-    if (!didTouchDevice) {
-        ODevice *device = [ODevice device];
-        
-        if (![device hasExpired]) {
-            [device touch];
-        }
-        
-        didTouchDevice = YES;
-    }
-}
-
-
 + (BOOL)deviceIsSimulator
 {
     return [[UIDevice currentDevice].model containsString:@"Simulator"];

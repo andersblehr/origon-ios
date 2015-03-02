@@ -41,7 +41,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (void)presentAddOrigoSheet
 {
     _origoTypes = [NSMutableArray array];
-    [_origoTypes addObject:kOrigoTypePrivate];
     [_origoTypes addObject:kOrigoTypeStandard];
     
     if ([_member isJuvenile]) {
@@ -49,14 +48,12 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             [_origoTypes addObject:kOrigoTypePreschoolClass];
         }
         
-        [_origoTypes addObject:kOrigoTypeSchoolClass];
-        [_origoTypes addObject:kOrigoTypeTeam];
+        [_origoTypes addObjectsFromArray:@[kOrigoTypeSchoolClass, kOrigoTypeTeam]];
     } else {
-        [_origoTypes addObject:kOrigoTypeCommunity];
-        [_origoTypes addObject:kOrigoTypeTeam];
-        [_origoTypes addObject:kOrigoTypeStudyGroup];
-        [_origoTypes addObject:kOrigoTypeAlumni];
+        [_origoTypes addObjectsFromArray:@[kOrigoTypeCommunity, kOrigoTypeTeam, kOrigoTypeStudyGroup, kOrigoTypeAlumni]];
     }
+    
+    [_origoTypes addObject:kOrigoTypePrivate];
     
     NSString *prompt = NSLocalizedString(@"What sort of list do you want to create", @"");
     
@@ -92,13 +89,21 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         id<OMember> keyMember = nil;
         
-        if ([origo isOfType:kOrigoTypePrivate]) {
+        if ([origo isPrivate]) {
             keyMember = [origo owner];
         } else if ([[origo members] count] == 1) {
             keyMember = [origo members][0];
         }
 
-        canDelete = [keyMember isUser] || ([keyMember isWardOfUser] && ![keyMember isActive]);
+        if ([keyMember isUser]) {
+            if ([keyMember isJuvenile]) {
+                canDelete = origo != [keyMember pinnedFriendList];
+            } else {
+                canDelete = YES;
+            }
+        } else if ([keyMember isWardOfUser] && ![keyMember isActive]) {
+            canDelete = origo != [keyMember pinnedFriendList];
+        }
     }
     
     return canDelete;
@@ -166,6 +171,8 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         }
         
         [self presentModalViewControllerWithIdentifier:kIdentifierMember target:[OMeta m].user];
+    } else if (![[OMeta m].user isActive]) {
+        [[OMeta m].user makeActive];
     }
 }
 
@@ -237,7 +244,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
-    if ([origo isOfType:kOrigoTypeStash]) {
+    if ([origo isStash]) {
         cell.textLabel.text = NSLocalizedString(@"Favourites and others", @"");
         cell.destinationId = kIdentifierValueList;
         cell.destinationTarget = kTargetFavourites;
@@ -245,7 +252,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         id<OMember> member = sectionKey == kSectionKeyWardOrigos ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
         id<OMembership> membership = [origo membershipForMember:member];
         
-        if ([origo isOfType:kOrigoTypePrivate] && ![member isUser] && [member isJuvenile]) {
+        if ([origo isPrivate] && ![member isUser] && [member isJuvenile]) {
             if ([[origo displayName] isEqualToString:NSLocalizedString(@"Friends", @"")]) {
                 cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), [member givenName]];
             } else {
@@ -268,7 +275,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
                 cell.notificationText = nil;
             }
             
-            if ([origo isOfType:kOrigoTypeResidence]) {
+            if ([origo isResidence]) {
                 cell.detailTextLabel.text = [origo singleLineAddress];
             } else {
                 cell.detailTextLabel.text = origo.descriptionText;
@@ -283,12 +290,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (void)didSetEntity:(id)entity
 {
     _member = entity;
-}
-
-
-- (id)defaultTarget
-{
-    return [[OMeta m] userIsSignedIn] ? [OMeta m].user : nil;
 }
 
 
@@ -383,12 +384,21 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     BOOL canDelete = NO;
     
     if (![self targetIs:kTargetHiddenOrigos]) {
-        if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
-            if (![[self dataAtIndexPath:indexPath] isOfType:kOrigoTypeStash]) {
+        NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+        id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+        
+        if (sectionKey == kSectionKeyUser) {
+            if (![origo isStash]) {
                 canDelete = [[[OMeta m].user residences] count] > 1;
             }
-        } else {
-            canDelete = YES;
+        } else if (sectionKey == kSectionKeyOrigos) {
+            canDelete = ![_member isJuvenile] || [origo userIsCreator] || [origo isCommunity];
+        } else if (sectionKey == kSectionKeyWardOrigos) {
+            if ([origo isPrivate]) {
+                canDelete = [self canDeleteOrigoAtIndexPath:indexPath];
+            } else {
+                canDelete = YES;
+            }
         }
     }
 
@@ -399,11 +409,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *buttonTitle = nil;
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
+    if (sectionKey == kSectionKeyUser) {
         buttonTitle = NSLocalizedString(@"Move out", @"");
-    } else if (![self canDeleteOrigoAtIndexPath:indexPath]) {
-        buttonTitle = NSLocalizedString(@"Hide", @"");
+    } else {
+        id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+        
+        if (![origo isPrivate] && ![self canDeleteOrigoAtIndexPath:indexPath]) {
+            buttonTitle = NSLocalizedString(@"Hide", @"");
+        }
     }
     
     return buttonTitle;
@@ -440,7 +455,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     }
     
     if ([self canDeleteOrigoAtIndexPath:indexPath]) {
-        if ([origo isOfType:kOrigoTypePrivate]) {
+        if ([origo isPrivate]) {
             for (id<OMember> member in [origo members]) {
                 [[origo membershipForMember:member] expire];
             }

@@ -264,7 +264,7 @@
     } else if ([origo isJuvenile]) {
         eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
     } else {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeStandard, kOrigoTypeStudyGroup, kOrigoTypeTeam];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard, kOrigoTypeStudyGroup, kOrigoTypeTeam];
     }
     
     return eligibleOrigoTypes;
@@ -338,8 +338,8 @@
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo
 {
-    NSString *value = [origo isOfType:kOrigoTypeResidence] ? origo.address : [origo displayName];
-    NSString *otherValue = [otherOrigo isOfType:kOrigoTypeResidence] ? otherOrigo.address : [otherOrigo displayName];
+    NSString *value = [origo isResidence] ? origo.address : [origo displayName];
+    NSString *otherValue = [otherOrigo isResidence] ? otherOrigo.address : [otherOrigo displayName];
     
     return [value localizedCaseInsensitiveCompare:otherValue];
 }

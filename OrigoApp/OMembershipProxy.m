@@ -14,7 +14,7 @@
 
 + (instancetype)proxyForMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo
 {
-    NSString *meta = [origo isOfType:kOrigoTypeResidence] ? kMembershipTypeResidency : kMembershipTypeParticipancy;
+    NSString *meta = [origo isResidence] ? kMembershipTypeResidency : kMembershipTypeParticipancy;
     
     OMembershipProxy *proxy = [self proxyForEntityOfClass:[OMembership class] meta:meta];
     proxy.member = member;
