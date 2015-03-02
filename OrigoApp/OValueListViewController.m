@@ -260,7 +260,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         } else {
             self.title = NSLocalizedString(@"Groups", @"");
 
-            if ([_origo userIsAdmin] || _origo.membersCanEdit) {
+            if ([_origo userCanEdit]) {
                 self.navigationItem.leftBarButtonItem = [UIBarButtonItem systemEditButtonWithTarget:self];
             }
             

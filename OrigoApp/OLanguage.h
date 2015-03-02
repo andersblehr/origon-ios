@@ -62,6 +62,7 @@ extern NSString * const _you_;
 + (NSString *)questionWithSubject:(id)subject verb:(NSString *)verb argument:(NSString *)argument;
 
 + (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
++ (NSString *)labelForParentsRelativeToOffspringWithGender:(NSString *)gender;
 + (NSString *)labelForParentWithGender:(NSString *)gender relativeToOffspringWithGender:(NSString *)offspringGender;
 
 @end

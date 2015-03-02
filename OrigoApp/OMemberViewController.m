@@ -1068,7 +1068,7 @@ static NSInteger const kButtonIndexContinue = 1;
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
     } else if (sectionKey == kSectionKeyRoles) {
-        if ([_roleMembership.origo userIsAdmin] || _roleMembership.origo.membersCanEdit) {
+        if ([_roleMembership.origo userCanEdit]) {
             OInputField *roleField = [cell inlineField];
             roleField.placeholder = NSLocalizedString(@"Responsibility", @"");
             roleField.value = [self dataAtIndexPath:indexPath];
@@ -1086,7 +1086,7 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     UITableViewCellStyle cellStyle = UITableViewCellStyleSubtitle;
     
-    if (sectionKey == kSectionKeyRoles && ([_origo userIsAdmin] || _origo.membersCanEdit)) {
+    if (sectionKey == kSectionKeyRoles && ([_origo userCanEdit])) {
         cellStyle = kTableViewCellStyleInline;
     }
     
@@ -1259,7 +1259,7 @@ static NSInteger const kButtonIndexContinue = 1;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyRoles) {
-        canDelete = [self.state.baseOrigo userIsAdmin] || self.state.baseOrigo.membersCanEdit;
+        canDelete = [self.state.baseOrigo userCanEdit];
     } else if (sectionKey == kSectionKeyAddresses) {
         canDelete = [self numberOfRowsInSectionWithKey:sectionKey] > 1;
     }

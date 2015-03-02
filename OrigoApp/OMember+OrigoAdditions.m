@@ -822,7 +822,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (BOOL)isEditableByUser
 {
-    return [self isUser] || ([self isWardOfUser] && ![self isActive]) || ![self isManaged];
+    return [self isUser] || ([self isWardOfUser] && ![self isActive]) || (![self isManaged] && ![[OMeta m].user isJuvenile]);
 }
 
 

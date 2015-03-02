@@ -135,6 +135,18 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 #pragma mark - Meta information
 
+- (BOOL)needsAccepting
+{
+    BOOL needsAccepting = NO;
+    
+    if ([self.member isUser] || [self.member isWardOfUser]) {
+        needsAccepting = ![self isActive] && ![self isOwnership];
+    }
+    
+    return needsAccepting;
+}
+
+
 - (BOOL)isActive
 {
     return [self.status isEqualToString:kMembershipStatusActive];
@@ -380,29 +392,27 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (void)expire
 {
-    if (![self hasExpired]) {
-        if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
-            [self demote];
-        } else {
-            [super expire];
-            
-            id<OMember> owner = [self.origo isPrivate] ? [self.origo owner] : nil;
-            
-            if (owner && [owner isWardOfUser]) {
-                [[self.origo membershipForMember:owner] expire];
-            }
-            
-            if ([self isReplicated]) {
-                self.isAdmin = nil;
-                self.status = kMembershipStatusExpired;
-                self.affiliations = nil;
-                
-                [[OMeta m].context expireCrossReferencesForMembership:self];
-            }
+    if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
+        [self demote];
+    } else {
+        [super expire];
+        
+        id<OMember> owner = [self.origo isPrivate] ? [self.origo owner] : nil;
+        
+        if (owner && [owner isWardOfUser]) {
+            [[self.origo membershipForMember:owner] expire];
         }
         
-        [OMember clearCachedPeers];
+        if ([self isReplicated]) {
+            self.isAdmin = nil;
+            self.status = kMembershipStatusExpired;
+            self.affiliations = nil;
+            
+            [[OMeta m].context expireCrossReferencesForMembership:self];
+        }
     }
+    
+    [OMember clearCachedPeers];
 }
 
 

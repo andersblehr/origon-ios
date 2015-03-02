@@ -230,6 +230,20 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 }
 
 
++ (NSString *)labelForParentsRelativeToOffspringWithGender:(NSString *)gender
+{
+    NSString *parentsLabel = nil;
+    
+    if ([gender isEqualToString:kGenderMale]) {
+        parentsLabel = NSLocalizedString(@"his parents", @"");
+    } else if ([gender isEqualToString:kGenderFemale]) {
+        parentsLabel = NSLocalizedString(@"her parents", @"");
+    }
+    
+    return parentsLabel;
+}
+
+
 + (NSString *)labelForParentWithGender:(NSString *)parentGender relativeToOffspringWithGender:(NSString *)offspringGender
 {
     NSString *parentLabel = nil;

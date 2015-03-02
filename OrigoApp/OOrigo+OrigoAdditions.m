@@ -584,6 +584,26 @@ static NSString * const kPermissionKeyDelete = @"delete";
 }
 
 
+#pragma mark - User permissions
+
+- (BOOL)userCanEdit
+{
+    return [self userIsAdmin] || (self.membersCanEdit && ![[OMeta m].user isJuvenile]);
+}
+
+
+- (BOOL)userCanAdd
+{
+    return [self userIsAdmin] || (self.membersCanAdd && ![[OMeta m].user isJuvenile]);
+}
+
+
+- (BOOL)userCanDelete
+{
+    return [self userIsAdmin] || (self.membersCanDelete && ![[OMeta m].user isJuvenile]);
+}
+
+
 #pragma mark - Origo type information
 
 - (BOOL)isStash
