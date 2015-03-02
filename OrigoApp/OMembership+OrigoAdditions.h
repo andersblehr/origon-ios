@@ -37,6 +37,7 @@ extern NSString * const kAffiliationTypeGroup;
 @property (nonatomic) NSString *status;
 @property (nonatomic) NSString *affiliations;
 
+- (BOOL)needsAccepting;
 - (BOOL)isActive;
 - (BOOL)isShared;
 - (BOOL)isMirrored;

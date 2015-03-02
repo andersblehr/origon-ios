@@ -96,7 +96,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isDefaultableKey:(NSString *)key
 {
     if (!_defaultableKeys) {
-        _defaultableKeys = @[kMappedKeyResidenceName, kMappedKeyListName];
+        _defaultableKeys = @[kMappedKeyResidenceName, kMappedKeyPrivateListName];
     }
     
     return [_defaultableKeys containsObject:key];
@@ -138,9 +138,9 @@ static NSDictionary *_keyMappings = nil;
             kMappedKeyClub : kPropertyKeyDescriptionText,
             kMappedKeyFullName : kPropertyKeyName,
             kMappedKeyInstitution : kPropertyKeyDescriptionText,
-            kMappedKeyListName : kPropertyKeyName,
             kMappedKeyPreschoolClass : kPropertyKeyName,
             kMappedKeyPreschool : kPropertyKeyDescriptionText,
+            kMappedKeyPrivateListName : kPropertyKeyName,
             kMappedKeyResidenceName : kPropertyKeyName,
             kMappedKeySchool : kPropertyKeyDescriptionText,
             kMappedKeySchoolClass : kPropertyKeyName,

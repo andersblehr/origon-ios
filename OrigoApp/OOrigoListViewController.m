@@ -66,9 +66,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     for (NSString *origoType in _origoTypes) {
         if ([origoType isEqualToString:kOrigoTypePrivate]) {
             if ([_member isJuvenile]) {
-                [actionSheet addButtonWithTitle:@"Privat venneliste"];
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Private list of friends", @"")];
             } else {
-                [actionSheet addButtonWithTitle:@"Privat kontaktliste"];
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Private contact list", @"")];
             }
         } else {
             [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kStringPrefixOrigoTitle)];
@@ -95,14 +95,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             keyMember = [origo members][0];
         }
 
-        if ([keyMember isUser]) {
-            if ([keyMember isJuvenile]) {
-                canDelete = origo != [keyMember pinnedFriendList];
-            } else {
-                canDelete = YES;
+        if (keyMember && origo != [keyMember pinnedFriendList]) {
+            if ([keyMember isUser]) {
+                if ([keyMember isJuvenile]) {
+                    canDelete = [origo userIsCreator];
+                } else {
+                    canDelete = YES;
+                }
+            } else if ([keyMember isWardOfUser]) {
+                canDelete = ![keyMember isActive] || [origo userIsCreator];
             }
-        } else if ([keyMember isWardOfUser] && ![keyMember isActive]) {
-            canDelete = origo != [keyMember pinnedFriendList];
         }
     }
     
@@ -269,7 +271,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         if (userIsOrigoElder && sectionKey == kSectionKeyOrigos) {
             cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
         } else {
-            if ([membership.status isEqualToString:kMembershipStatusInvited]) {
+            if (![membership isHidden] && [membership needsAccepting]) {
                 cell.notificationText = NSLocalizedString(@"New!", @"");
             } else {
                 cell.notificationText = nil;

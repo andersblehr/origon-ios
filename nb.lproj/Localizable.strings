@@ -53,7 +53,6 @@
 "[placeholder] fullName" = "Fullt navn";
 "[placeholder] givenName" = "Navn";
 "[placeholder] institution" = "Universitetets eller skolens navn";
-"[placeholder] listName" = "Listens navn";
 "[placeholder] mobilePhone" = "Mobilnummer";
 "[placeholder] name" = "Navn";
 "[placeholder] newPassword" = "Nytt passord";
@@ -62,6 +61,7 @@
 "[placeholder] photo" = "Bilde";
 "[placeholder] preschool" = "Barnehagens navn";
 "[placeholder] preschoolClass" = "Navn på avdelingen";
+"[placeholder] privateListName" = "Navn";
 "[placeholder] repeatNewPassword" = "Gjenta nytt passord";
 "[placeholder] repeatPassword" = "Gjenta passordet ditt";
 "[placeholder] residenceName" = "Kallenavn for denne adressen";
@@ -239,6 +239,8 @@
 
 // Labels
 "-no address-" = "-uten adresse-";
+"Private list of friends" = "Privat venneliste";
+"Private contact list" = "Privat kontaktliste";
 
 // Prompts
 "Register contact" = "Registrer kontakt";
@@ -375,7 +377,10 @@
 "Guardians in the household" = "Foresatte i husstanden";
 
 // Footers
-"Private lists are not shared and are not visible to others." = "Private lister deles ikke og er ikke synlige for andre.";
+"This list is only visible to you." = "Denne lista er bare synlig for deg.";
+"This list is only visible to you and your parents." = "Denne lista er bare synlig for deg og foreldrene dine.";
+"This list is only visible to %@." = "Denne lista er bare synlig for %@.";
+"This list is only visible to %@ and %@." = "Denne lista er bare synlig for %@ og %@.";
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
 "Tap + to register friends." = "Trykk + for å registrere venn(inn)er.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
@@ -475,6 +480,8 @@
 "Does %@ live with %@ or %@?" = "Bor %@ med %@ eller %@?";
 
 // Terms
+"his parents" = "foreldrene hans";
+"her parents" = "foreldrene hennes";
 "his father" = "faren hans";
 "her father" = "faren hennes";
 "his mother" = "moren hans";

@@ -53,7 +53,6 @@
 "[placeholder] fullName" = "Full name";
 "[placeholder] givenName" = "Name";
 "[placeholder] institution" = "Name of university or school";
-"[placeholder] listName" = "List name";
 "[placeholder] mobilePhone" = "Mobile phone number";
 "[placeholder] name"  = "Name";
 "[placeholder] newPassword" = "New password";
@@ -62,6 +61,7 @@
 "[placeholder] photo" = "Photo";
 "[placeholder] preschool" = "Name of preschool";
 "[placeholder] preschoolClass" = "Class";
+"[placeholder] privateListName" = "Name";
 "[placeholder] repeatNewPassword" = "Repeat new password";
 "[placeholder] repeatPassword" = "Repeat your password";
 "[placeholder] residenceName" = "Moniker for this address";
@@ -239,6 +239,8 @@
 
 // Labels
 "-no address-" = "-no address-";
+"Private list of friends" = "Private list of friends";
+"Private contact list" = "Private contact list";
 
 // Prompts
 "Register contact" = "Register contact";
@@ -377,7 +379,10 @@
 "Guardians in the household" = "Guardians in the household";
 
 // Footers
-"Private lists are not shared and are not visible to others." = "Private lists are not shared and are not visible to others.";
+"This list is only visible to you." = "This list is only visible to you.";
+"This list is only visible to you and your parents." = "This list is only visible to you and your parents.";
+"This list is only visible to %@." = "This list is only visible to %@.";
+"This list is only visible to %@ and %@." = "This list is only visible to %@ and %@.";
 "Tap + to register contacts." = "Tap + to register contacts.";
 "Tap + to register friends." = "Tap + to register friends.";
 "Tap + to register additional guardians in the household." = "Tap + to register additional guardians in the household.";
@@ -477,6 +482,8 @@
 "Does %@ live with %@ or %@?" = "Does %@ live with %@ or %@?";
 
 // Terms
+"his parents" = "his parents";
+"her parents" = "her parents";
 "his father" = "his father";
 "her father" = "her father";
 "his mother" = "his mother";

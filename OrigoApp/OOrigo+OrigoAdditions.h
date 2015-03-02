@@ -31,9 +31,9 @@ extern NSString * const kOrigoTypeTeam;
 @property (nonatomic) NSString *type;
 @property (nonatomic) NSString *permissions;
 
+@property (nonatomic, assign) BOOL membersCanEdit;
 @property (nonatomic, assign) BOOL membersCanAdd;
 @property (nonatomic, assign) BOOL membersCanDelete;
-@property (nonatomic, assign) BOOL membersCanEdit;
 
 - (NSArray *)permissionKeys;
 - (NSString *)defaultPermissions;
@@ -77,6 +77,10 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)userIsMember;
 - (BOOL)userIsOrganiser;
 - (BOOL)userIsParentContact;
+
+- (BOOL)userCanEdit;
+- (BOOL)userCanAdd;
+- (BOOL)userCanDelete;
 
 - (BOOL)isStash;
 - (BOOL)isResidence;

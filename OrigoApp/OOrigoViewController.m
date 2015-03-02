@@ -67,13 +67,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     self.navigationItem.rightBarButtonItems = nil;
 
-    BOOL membershipNeedsAccepting = NO;
-    
-    if (_membership && ([_member isUser] || [_member isWardOfUser])) {
-        membershipNeedsAccepting = ![_membership isActive] && ![_membership isOwnership];
-    }
-    
-    if (membershipNeedsAccepting) {
+    if ([_membership needsAccepting]) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptDeclineButtonWithTarget:self]];
     } else  {
         if (![_origo isResidence] && _userIsAdmin) {
@@ -87,14 +81,16 @@ static NSInteger const kActionSheetTagRecipients = 4;
         }
 
         if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]]) {
-            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+            if ([_origo userCanEdit] || [[_origo groups] count]) {
+                [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+            }
         }
         
-        if (_userIsAdmin || _origo.membersCanEdit) {
+        if ([_origo userCanEdit]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
         }
         
-        if (_userIsAdmin || _origo.membersCanAdd) {
+        if ([_origo userCanAdd]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
         }
     }
@@ -106,7 +102,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     NSString *nameKey = nil;
     
     if ([_origo isOfType:kOrigoTypePrivate]) {
-        nameKey = kMappedKeyListName;
+        nameKey = kMappedKeyPrivateListName;
     } else if ([_origo isOfType:kOrigoTypeResidence]) {
         nameKey = kMappedKeyResidenceName;
     } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
@@ -411,10 +407,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    if ([_membership.status isEqualToString:kMembershipStatusInvited]) {
-        _membership.status = kMembershipStatusWaiting;
-    } else if ([_membership.status isEqualToString:kMembershipStatusWaiting]) {
-        _membership.status = kMembershipStatusActive;
+    if (![_membership isHidden] && [_membership needsAccepting]) {
+        if ([_membership.status isEqualToString:kMembershipStatusWaiting]) {
+            _membership.status = kMembershipStatusActive;
+        } else {
+            _membership.status = kMembershipStatusWaiting;
+        }
     }
 
     [super viewWillDisappear:animated];
@@ -437,18 +435,26 @@ static NSInteger const kActionSheetTagRecipients = 4;
     _userIsAdmin = [_origo userIsAdmin];
     
     if ([self actionIs:kActionRegister]) {
-        self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
-        
         if ([_origo isResidence]) {
             id<OOrigo> primaryResidence = [_member primaryResidence];
             
             if ([primaryResidence hasAddress] && [primaryResidence isCommitted]) {
                 self.title = NSLocalizedString(kPropertyKeyAddress, kStringPrefixLabel);
+            } else {
+                self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
             }
 
             if (![self.state.baseOrigo isCommunity]) {
                 self.cancelImpliesSkip = ![_member hasAddress] && ![_origo isReplicated] && ![[_member housemates] count];
             }
+        } else if ([_origo isPrivate]) {
+            if ([_member isJuvenile]) {
+                self.title = NSLocalizedString(@"Private list of friends", @"");
+            } else {
+                self.title = NSLocalizedString(@"Private contact list", @"");
+            }
+        } else {
+            self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
         }
     } else if ([self actionIs:kActionDisplay]) {
         if ([_origo isResidence] && ![self aspectIs:kAspectHousehold]) {
@@ -669,7 +675,17 @@ static NSInteger const kActionSheetTagRecipients = 4;
         }
     } else if ([_origo isPrivate]) {
         if ([self actionIs:kActionRegister]) {
-            footerContent = NSLocalizedString(@"Private lists are not shared and are not visible to others.", @"");
+            if ([_member isJuvenile] && [[_member guardians] count]) {
+                if ([_member isUser]) {
+                    footerContent = NSLocalizedString(@"This list is only visible to you and your parents.", @"");
+                } else if ([_member isActive]) {
+                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"This list is only visible to %@ and %@.", @""), [_member givenName], [OLanguage labelForParentsRelativeToOffspringWithGender:_member.gender]];
+                } else {
+                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"This list is only visible to %@.", @""), [OLanguage possessiveClauseWithPossessor:_member noun:_parent_]];
+                }
+            } else {
+                footerContent = NSLocalizedString(@"This list is only visible to you.", @"");
+            }
         } else if (![[_origo members] count]) {
             if ([_member isJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register friends.", @"");
@@ -736,7 +752,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     BOOL canDeleteCell = NO;
     
-    if (!self.isModal && [_origo isCommitted] && (_userIsAdmin || _origo.membersCanDelete)) {
+    if (!self.isModal && [_origo isCommitted] && [_origo userCanDelete]) {
         if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
             id<OMember> member = [self dataAtIndexPath:indexPath];
             
