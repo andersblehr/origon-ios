@@ -104,9 +104,9 @@
 }
 
 
-- (id<OOrigo>)defaultFriendList
+- (id<OOrigo>)pinnedFriendList
 {
-    return [self instance] ? [[self instance] defaultFriendList] : nil;
+    return [self instance] ? [[self instance] pinnedFriendList] : nil;
 }
 
 

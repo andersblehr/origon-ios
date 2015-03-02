@@ -274,13 +274,15 @@ static OState *_activeState = nil;
     
     if (peerPivot) {
         if (_currentOrigo) {
-            if ([self targetIs:kTargetOrganiser]) {
+            if ([self targetIs:kTargetGuardian]) {
+                candidates = [peerPivot peers];
+            } else if ([self targetIs:kTargetOrganiser]) {
                 candidates = [peerPivot peersNotInSet:[_currentOrigo organisers]];
             } else {
                 candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
             }
             
-            if ([_currentOrigo isOfType:kOrigoTypePrivate]) {
+            if ([_currentOrigo isPrivate]) {
                 candidates = [candidates mutableCopy];
                 [candidates removeObject:peerPivot];
             }
@@ -371,7 +373,7 @@ static OState *_activeState = nil;
             _currentOrigo = target;
             _target = _currentOrigo.type;
             
-            if (![_currentOrigo isOfType:kOrigoTypeResidence]) {
+            if (![_currentOrigo isResidence]) {
                 _baseOrigo = _currentOrigo;
             }
             
@@ -383,7 +385,7 @@ static OState *_activeState = nil;
                 }
             }
             
-            if ([_currentOrigo isOfType:kOrigoTypeResidence] && [_currentOrigo userIsMember]) {
+            if ([_currentOrigo isResidence] && [_currentOrigo userIsMember]) {
                 _aspect = kAspectHousehold;
             } else if ([_currentOrigo isJuvenile]) {
                 _aspect = kAspectJuvenile;

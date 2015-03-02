@@ -1560,8 +1560,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (id)target
 {
-    if (!_target && [_instance respondsToSelector:@selector(defaultTarget)]) {
-        self.target = [_instance defaultTarget];
+    if (!_target && [[OMeta m] userIsSignedIn]) {
+        self.target = [OMeta m].user;
     }
     
     return _state && [_target isKindOfClass:[NSDictionary class]] ? [_target allKeys][0] : _target;
@@ -1716,24 +1716,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         _inputCell = cell;
     } else {
-        id data = [self dataAtIndexPath:indexPath];
-        BOOL isInlineCell = NO;
+        UITableViewCellStyle style = UITableViewCellStyleSubtitle;
         
-        if ([_instance respondsToSelector:@selector(isInlineCellAtIndexPath:)]) {
-            isInlineCell = [_instance isInlineCellAtIndexPath:indexPath];
+        if ([_instance respondsToSelector:@selector(listCellStyleForSectionWithKey:)]) {
+            style = [_instance listCellStyleForSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
         }
         
-        if (isInlineCell) {
-            cell = [tableView inlineCellWithData:data delegate:_instance];
-        } else {
-            UITableViewCellStyle style = UITableViewCellStyleSubtitle;
-            
-            if ([_instance respondsToSelector:@selector(listCellStyleForSectionWithKey:)]) {
-                style = [_instance listCellStyleForSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
-            }
-            
-            cell = [tableView listCellWithStyle:style data:data delegate:_instance];
-        }
+        cell = [tableView listCellWithStyle:style data:[self dataAtIndexPath:indexPath] delegate:_instance];
     }
     
     return cell;

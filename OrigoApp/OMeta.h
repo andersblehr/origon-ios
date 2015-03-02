@@ -46,7 +46,6 @@
 
 - (BOOL)internetConnectionIsAvailable;
 
-+ (void)touchDeviceIfNeeded;
 + (BOOL)deviceIsSimulator;
 + (BOOL)iOSVersionIs:(NSString *)majorVersionNumber;
 + (CGFloat)screenWidth;

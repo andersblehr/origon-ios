@@ -13,9 +13,10 @@
 
 // Labels
 "[label] activate" = "Oppgi aktiveringskode";
-"[label] admins" = "Administratorer";
-"[label] changePassword" = "Bytt passord";
 "[label] address" = "Adresse";
+"[label] admins" = "Administratorer";
+"[label] arena" = "Arena";
+"[label] changePassword" = "Bytt passord";
 "[label] club" = "Klubb";
 "[label] createdBy" = "Registrert av";
 "[label] createdIn" = "Først registrert i";
@@ -24,6 +25,7 @@
 "[label] email"  = "Epost";
 "[label] fatherId" = "Far";
 "[label] gender" = "Kjønn";
+"[label] institution" = "Lærested";
 "[label] mobilePhone" = "Mobil";
 "[label] modifiedBy" = "Sist endret av";
 "[label] motherId" = "Mor";
@@ -34,7 +36,6 @@
 "[label] signOut" = "Logg ut";
 "[label] telephone" = "Telefon";
 "[label] type" = "Type";
-"[label] institution" = "Lærested";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Født";
@@ -43,6 +44,7 @@
 // Placeholders
 "[placeholder] activationCode" = "Aktiveringskode fra epost";
 "[placeholder] address" = "Gateadresse\nPostnummer og -sted";
+"[placeholder] arena" = "Hjemmebane\nValgfri adresse";
 "[placeholder] authEmail" = "Epostadressen din";
 "[placeholder] club" = "Klubbens navn";
 "[placeholder] dateOfBirth" = "Fødselsdato";
@@ -50,6 +52,8 @@
 "[placeholder] email" = "Epostadresse";
 "[placeholder] fullName" = "Fullt navn";
 "[placeholder] givenName" = "Navn";
+"[placeholder] institution" = "Universitetets eller skolens navn";
+"[placeholder] listName" = "Listens navn";
 "[placeholder] mobilePhone" = "Mobilnummer";
 "[placeholder] name" = "Navn";
 "[placeholder] newPassword" = "Nytt passord";
@@ -61,13 +65,10 @@
 "[placeholder] repeatNewPassword" = "Gjenta nytt passord";
 "[placeholder] repeatPassword" = "Gjenta passordet ditt";
 "[placeholder] residenceName" = "Kallenavn for denne adressen";
-"[placeholder] listName" = "Listens navn";
 "[placeholder] school" = "Skolens navn";
 "[placeholder] schoolClass" = "Klasse";
 "[placeholder] studyGroup" = "Benevnelse";
-"[placeholder] team" = "Lagets navn";
 "[placeholder] telephone" = "Telefonnummer";
-"[placeholder] institution" = "Universitetets eller skolens navn";
 
 // Titles
 "[title] signUp" = "Registrer bruker";
@@ -378,7 +379,6 @@
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
 "Tap + to register friends." = "Trykk + for å registrere venn(inn)er.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
-"This household is active on %@." = "Denne husstanden er aktiv på %@.";
 
 // Buttons
 "Keep" = "Behold";
@@ -416,10 +416,10 @@
 "Responsibilities in %@" = "Ansvar i %@";
 
 // Footers
-"A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
+"New %@ members will receive an invitation by email." = "Nye %@-medlemmer vil motta en invitasjon på epost.";
 "Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
 "Tap + to register additional guardians." = "Trykk + for å registrere flere foresatte.";
-"Active on %@ since %@." = "Aktiv på %@ siden %@.";
+"%@ is active on %@." = "%@ er aktiv på %@.";
 
 // Buttons
 "To some of them" = "Til noen av dem";
@@ -568,6 +568,7 @@
 // Footers
 "Created %@." = "Opprettet %@.";
 "Registered %@." = "Registrert %@.";
+"Active on %@ since %@." = "Aktiv på %@ siden %@.";
 "Last modified %@." = "Sist endret %@.";
 
 // Buttons

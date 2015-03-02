@@ -86,7 +86,7 @@ static NSInteger const kSectionKeyValues = 0;
             _origo = self.state.currentOrigo;
             _isMultiValuePicker = YES;
             
-            if ([_origo isOfType:kOrigoTypeCommunity]) {
+            if ([_origo isCommunity]) {
                 self.title = NSLocalizedString(@"Households", @"");
             } else {
                 self.title = NSLocalizedString(@"Listed elsewhere", @"");
@@ -232,7 +232,7 @@ static NSInteger const kSectionKeyValues = 0;
             cell.selectable = NO;
         }
     } else if ([self targetIs:kTargetMembers]) {
-        if ([_origo isOfType:kOrigoTypeCommunity]) {
+        if ([_origo isCommunity]) {
             id<OMember> candidate = [self dataAtIndexPath:indexPath];
             id<OOrigo> primaryResidence = [candidate primaryResidence];
             NSArray *elders = [primaryResidence elders];
@@ -321,13 +321,13 @@ static NSInteger const kSectionKeyValues = 0;
             _ward.fatherId = cell.checked ? [pickedValue entityId] : nil;
         }
     } else if ([self targetIs:kTargetOrigoType]) {
-        [_origo convertToType:[_valuesByKey allKeysForObject:pickedValue][0]];
+        _origo.type = [_valuesByKey allKeysForObject:pickedValue][0];
     } else if ([self targetIs:kTargetGender]) {
         self.state.currentMember.gender = [_valuesByKey allKeysForObject:pickedValue][0];
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
     } else if ([self targetIs:kTargetMembers]) {
-        if ([_origo isOfType:kOrigoTypeCommunity]) {
+        if ([_origo isCommunity]) {
             NSMutableArray *pickedAddresses = [NSMutableArray array];
             
             for (id<OMember> pickedMember in _pickedValues) {

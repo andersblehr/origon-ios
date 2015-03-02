@@ -84,7 +84,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 {
     OOrigoProxy *proxy = [self proxyForEntityOfClass:[OOrigo class] meta:type];
     
-    if ([proxy isOfType:kOrigoTypeResidence]) {
+    if ([proxy isResidence]) {
         proxy.name = kPlaceholderDefaultValue;
     }
     
@@ -145,7 +145,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
     if ([self instance]) {
         residents = [[self instance] residents];
-    } else if ([self isOfType:kOrigoTypeResidence]) {
+    } else if ([self isResidence]) {
         if ([self isReplicated]) {
             residents = [NSMutableArray array];
             
@@ -178,7 +178,7 @@ static NSString * const kAddressTemplatesByCountryCode =
                     [members addObject:membership.member];
                 }
             }
-        } else if (![self isOfType:kOrigoTypePrivate]) {
+        } else if (![self isPrivate]) {
             [members addObject:[self ancestorConformingToProtocol:@protocol(OMember)]];
         }
         
@@ -272,6 +272,30 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+- (BOOL)isStash
+{
+    return [self isOfType:kOrigoTypeStash];
+}
+
+
+- (BOOL)isResidence
+{
+    return [self isOfType:kOrigoTypeResidence];
+}
+
+
+- (BOOL)isPrivate
+{
+    return [self isOfType:kOrigoTypePrivate];
+}
+
+
+- (BOOL)isCommunity
+{
+    return [self isOfType:kOrigoTypeCommunity];
+}
+
+
 - (BOOL)isOfType:(id)type
 {
     BOOL isOfType = NO;
@@ -298,7 +322,7 @@ static NSString * const kAddressTemplatesByCountryCode =
     
     if ([self instance]) {
         isJuvenile = [[self instance] isJuvenile];
-    } else if (![self isOfType:kOrigoTypeResidence]) {
+    } else if (![self isResidence]) {
         isJuvenile = [[self ancestorConformingToProtocol:@protocol(OMember)] isJuvenile];
     }
     
@@ -322,10 +346,10 @@ static NSString * const kAddressTemplatesByCountryCode =
 {
     BOOL hasMember = NO;
     
-    if ([self instance]) {
-        hasMember = [[self instance] hasMember:member];
-    } else {
-        hasMember = [[self members] containsObject:member];
+    if ([self instance] && [member instance]) {
+        hasMember = [[self instance] hasMember:[member instance]];
+    } else if (![self instance]) {
+        hasMember = [[self members] containsObject:[member proxy]];
     }
     
     return hasMember;

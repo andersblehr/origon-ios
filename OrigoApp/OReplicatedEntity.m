@@ -13,11 +13,9 @@
 
 @dynamic createdBy;
 @dynamic dateCreated;
-@dynamic dateExpires;
 @dynamic dateReplicated;
 @dynamic entityId;
 @dynamic hashCode;
-@dynamic isAwaitingDeletion;
 @dynamic isExpired;
 @dynamic origoId;
 @dynamic modifiedBy;

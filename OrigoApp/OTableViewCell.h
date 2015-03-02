@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern UITableViewCellStyle const kTableViewCellStyleInline;
+
 extern NSString * const kReuseIdentifierList;
 
 extern NSString * const kViewKeySuffixLabel;
@@ -28,6 +30,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic) id destinationMeta;
 
 @property (nonatomic, assign, readonly) BOOL isInputCell;
+@property (nonatomic, assign, readonly) BOOL isInlineCell;
 @property (nonatomic, assign) BOOL selectable;
 @property (nonatomic, assign) BOOL selectableDuringInput;
 @property (nonatomic, assign) BOOL editable;

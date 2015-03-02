@@ -47,7 +47,6 @@ extern NSString * const kPropertyKeyEntityId;
 extern NSString * const kPropertyKeyFatherId;
 extern NSString * const kPropertyKeyGender;
 extern NSString * const kPropertyKeyHashCode;
-extern NSString * const kPropertyKeyIsAwaitingDeletion;
 extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyIsMinor;
 extern NSString * const kPropertyKeyMobilePhone;
@@ -66,6 +65,7 @@ extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
 
 // Mapped keys
+extern NSString * const kMappedKeyArena;
 extern NSString * const kMappedKeyClub;
 extern NSString * const kMappedKeyFullName;
 extern NSString * const kMappedKeyInstitution;
@@ -76,7 +76,6 @@ extern NSString * const kMappedKeyResidenceName;
 extern NSString * const kMappedKeySchool;
 extern NSString * const kMappedKeySchoolClass;
 extern NSString * const kMappedKeyStudyGroup;
-extern NSString * const kMappedKeyTeam;
 
 // Internal keys
 extern NSString * const kInternalKeyDeviceId;

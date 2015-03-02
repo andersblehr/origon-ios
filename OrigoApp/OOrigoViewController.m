@@ -67,10 +67,16 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     self.navigationItem.rightBarButtonItems = nil;
 
-    if (_membership && ![_membership isActive] && ([_member isUser] || [_member isWardOfUser])) {
+    BOOL membershipNeedsAccepting = NO;
+    
+    if (_membership && ([_member isUser] || [_member isWardOfUser])) {
+        membershipNeedsAccepting = ![_membership isActive] && ![_membership isOwnership];
+    }
+    
+    if (membershipNeedsAccepting) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptDeclineButtonWithTarget:self]];
     } else  {
-        if (![_origo isOfType:kOrigoTypeResidence] && _userIsAdmin) {
+        if (![_origo isResidence] && _userIsAdmin) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem settingsButtonWithTarget:self]];
         } else {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
@@ -107,8 +113,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
         nameKey = kMappedKeyPreschoolClass;
     } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
         nameKey = kMappedKeySchoolClass;
-    } else if ([_origo isOfType:kOrigoTypeTeam]) {
-        nameKey = kMappedKeyTeam;
     } else if ([_origo isOfType:kOrigoTypeStudyGroup]) {
         nameKey = kMappedKeyStudyGroup;
     } else {
@@ -141,7 +145,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     NSMutableSet *coHabitantCandidates = nil;
     
-    if ([_origo isOfType:kOrigoTypeResidence]) {
+    if ([_origo isResidence]) {
         coHabitantCandidates = [NSMutableSet setWithArray:[_member housematesNotInResidence:_origo]];
         
         for (id<OMember> housemate in [_member housemates]) {
@@ -158,7 +162,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             self.presentStealthilyOnce = YES;
             
             target = kTargetJuvenile;
-        } else if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
+        } else if ([_origo isResidence] && [self aspectIs:kAspectJuvenile]) {
             target = kTargetGuardian;
         }
         
@@ -249,7 +253,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     } else {
         prompt = NSLocalizedString(@"Do you want to keep this listing?", @"");
         acceptButtonTitle = NSLocalizedString(@"Keep", @"");
-        declineButtonTitle = [_origo isOfType:kOrigoTypeResidence] ? NSLocalizedString(@"Decline", @"") : NSLocalizedString(@"Hide", @"");
+        declineButtonTitle = [_origo isResidence] ? NSLocalizedString(@"Decline", @"") : NSLocalizedString(@"Hide", @"");
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAcceptDecline];
@@ -262,12 +266,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (void)performAddAction
 {
-    if ([_origo isOfType:kOrigoTypeResidence]) {
+    if ([_origo isResidence]) {
         [self addMember];
     } else {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
         
-        if ([_origo isOfType:kOrigoTypePrivate]) {
+        if ([_origo isPrivate]) {
             if ([_member isJuvenile]) {
                 [actionSheet addButtonWithTitle:NSLocalizedString(@"Register friend", @"") tag:kButtonTagAddMember];
             } else {
@@ -277,7 +281,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
         }
         
-        if ([_origo isOfType:kOrigoTypeCommunity]) {
+        if ([_origo isCommunity]) {
             _eligibleCandidates = [OUtil singleMemberPerPrimaryAddressFromMembers:[self.state eligibleCandidates] includeUser:NO];
         } else {
             _eligibleCandidates = [self.state eligibleCandidates];
@@ -350,7 +354,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     NSArray *recipientCandidates = [_origo textRecipients];
     
-    if (![_origo isOfType:kOrigoTypeResidence] || [recipientCandidates count] > 2) {
+    if (![_origo isResidence] || [recipientCandidates count] > 2) {
         [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:kTargetText meta:_origo];
     } else {
         _recipientType = kRecipientTypeText;
@@ -380,7 +384,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     NSArray *recipientCandidates = [_origo emailRecipients];
     
-    if (![_origo isOfType:kOrigoTypeResidence] || [recipientCandidates count] > 2) {
+    if (![_origo isResidence] || [recipientCandidates count] > 2) {
         [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:kTargetEmail meta:_origo];
     } else {
         _recipientType = kRecipientTypeEmail;
@@ -398,7 +402,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     [super viewDidAppear:animated];
     
     if ([self actionIs:kActionDisplay]) {
-        if ([_origo isOfType:kOrigoTypeResidence] && ![_origo hasAddress]) {
+        if ([_origo isResidence] && ![_origo hasAddress]) {
             [self toggleEditMode];
         }
     }
@@ -422,11 +426,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
 - (void)loadState
 {
     _origo = [self.entity proxy];
+    _member = self.state.currentMember;
     
-    if ([_origo isOfType:kOrigoTypePrivate] || [_origo hasMember:self.state.currentMember]) {
-        _member = self.state.currentMember;
-    } else {
-        _member = [_origo members][0];
+    if ([_origo isResidence] && ![_origo hasMember:_member]) {
+        _member = [_origo elders][0];
     }
     
     _membership = [_origo membershipForMember:_member];
@@ -436,19 +439,19 @@ static NSInteger const kActionSheetTagRecipients = 4;
     if ([self actionIs:kActionRegister]) {
         self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
         
-        if ([_origo isOfType:kOrigoTypeResidence]) {
+        if ([_origo isResidence]) {
             id<OOrigo> primaryResidence = [_member primaryResidence];
             
             if ([primaryResidence hasAddress] && [primaryResidence isCommitted]) {
                 self.title = NSLocalizedString(kPropertyKeyAddress, kStringPrefixLabel);
             }
 
-            if (![self.state.baseOrigo isOfType:kOrigoTypeCommunity]) {
+            if (![self.state.baseOrigo isCommunity]) {
                 self.cancelImpliesSkip = ![_member hasAddress] && ![_origo isReplicated] && ![[_member housemates] count];
             }
         }
     } else if ([self actionIs:kActionDisplay]) {
-        if ([_origo isOfType:kOrigoTypeResidence] && ![self aspectIs:kAspectHousehold]) {
+        if ([_origo isResidence] && ![self aspectIs:kAspectHousehold]) {
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
         } else {
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_origo displayName]];
@@ -467,7 +470,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     [self setDataForInputSection];
     
-    if ([_origo isOfType:kOrigoTypeResidence]) {
+    if ([_origo isResidence]) {
         [self setData:[_origo residents] forSectionWithKey:kSectionKeyMembers];
     } else if ([self actionIs:kActionRegister]) {
         [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
@@ -482,7 +485,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             } else if (self.selectedHeaderSegment == kHeaderSegmentParents) {
                 [self setData:[_origo guardians] forSectionWithKey:kSectionKeyMembers];
             }
-        } else if ([_origo isOfType:kOrigoTypeCommunity]) {
+        } else if ([_origo isCommunity]) {
             if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
                 [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
             } else if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
@@ -502,9 +505,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     if (sectionKey == kSectionKeyMembers) {
         id<OMember> member = [self dataAtIndexPath:indexPath];
 
-        BOOL isCommunityResidence = [_origo isOfType:kOrigoTypeCommunity] && self.selectedHeaderSegment == kHeaderSegmentResidences;
-        
-        if (isCommunityResidence) {
+        if ([_origo isCommunity] && self.selectedHeaderSegment == kHeaderSegmentResidences) {
             id<OOrigo> communityResidence = [member primaryResidence];
             NSArray *elders = [communityResidence elders];
             
@@ -580,7 +581,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     BOOL hasHeader = NO;
     
     if (sectionKey != kSectionKeyOrigo) {
-        hasHeader = [_member isJuvenile] ? YES : ![_origo isOfType:kOrigoTypePrivate];
+        hasHeader = [_member isJuvenile] ? YES : ![_origo isPrivate];
     }
     
     return hasHeader;
@@ -593,11 +594,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
     
     if ([self isBottomSectionKey:sectionKey]) {
         if ([self actionIs:kActionRegister]) {
-            hasFooter = [_origo isOfType:kOrigoTypePrivate];
+            hasFooter = [_origo isPrivate];
         } else if (self.isModal || ![[_origo members] count]) {
             hasFooter = YES;
-        } else if ([_origo isOfType:kOrigoTypeResidence]) {
-            hasFooter = [_origo hasAdmin] && ![self aspectIs:kAspectHousehold];
         }
     }
     
@@ -637,14 +636,14 @@ static NSInteger const kActionSheetTagRecipients = 4;
             } else {
                 headerContent = @[membersTitle, [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
             }
-        } else if ([_origo isOfType:kOrigoTypeCommunity]) {
+        } else if ([_origo isCommunity]) {
             if ([self actionIs:kActionRegister]) {
                 headerContent = membersTitle;
             } else {
                 headerContent = @[membersTitle, NSLocalizedString(@"Households", @"")];
             }
         } else {
-            if (![_origo isCommitted] && [_origo isOfType:kOrigoTypeResidence]) {
+            if (![_origo isCommitted] && [_origo isResidence]) {
                 if (![_member isCommitted] && [self aspectIs:kAspectJuvenile]) {
                     headerContent = NSLocalizedString(@"Guardians in the household", @"");
                 } else {
@@ -664,13 +663,11 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     NSString *footerContent = NSLocalizedString(_origo.type, kStringPrefixFooter);
     
-    if ([_origo isOfType:kOrigoTypeResidence]) {
-        if ([_origo hasAdmin] && ![self aspectIs:kAspectHousehold]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"This household is active on %@.", @""), [OMeta m].appName];
-        } else if ([self aspectIs:kAspectJuvenile]) {
+    if ([_origo isResidence]) {
+        if ([self aspectIs:kAspectJuvenile]) {
             footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
         }
-    } else if ([_origo isOfType:kOrigoTypePrivate]) {
+    } else if ([_origo isPrivate]) {
         if ([self actionIs:kActionRegister]) {
             footerContent = NSLocalizedString(@"Private lists are not shared and are not visible to others.", @"");
         } else if (![[_origo members] count]) {
@@ -743,7 +740,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
             id<OMember> member = [self dataAtIndexPath:indexPath];
             
-            if ([_origo isOfType:kOrigoTypeCommunity]) {
+            if ([_origo isCommunity]) {
                 if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
                     canDeleteCell = ![[member primaryResidence] userIsMember];
                 }
@@ -773,7 +770,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         id<OMember> member = [self dataAtIndexPath:indexPath];
         
         if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
-            if (![_origo isOfType:kOrigoTypeCommunity]) {
+            if (![_origo isCommunity]) {
                 id<OMembership> membership = [_origo membershipForMember:member];
                 
                 if ([membership isResidency] && member.email && [[member residencies] count] == 1) {
@@ -819,9 +816,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
             if ([viewController targetIs:kTargetOrganiser]) {
                 [self reloadSectionWithKey:kSectionKeyOrganisers];
             } else {
-                if ([_origo isOfType:kOrigoTypeResidence]) {
+                if ([_origo isResidence]) {
                     [self.inputCell readData];
-                } else if ([_origo isOfType:kOrigoTypeCommunity]) {
+                } else if ([_origo isCommunity]) {
                     id<OMember> member = viewController.returnData;
                     
                     for (id<OMember> elder in [[member primaryResidence] elders]) {
@@ -837,7 +834,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             }
         } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             if ([viewController targetIs:kTargetMembers]) {
-                if ([_origo isOfType:kOrigoTypeCommunity]) {
+                if ([_origo isCommunity]) {
                     for (id<OMember> member in viewController.returnData) {
                         for (id<OMember> elder in [[member primaryResidence] elders]) {
                             [_origo addMember:elder];
@@ -873,13 +870,13 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (BOOL)supportsPullToRefresh
 {
-    return ![_origo isOfType:kOrigoTypeResidence] && ![_origo isOfType:kOrigoTypePrivate];
+    return ![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]];
 }
 
 
 - (void)didToggleEditMode
 {
-    if ([_origo isOfType:kOrigoTypeResidence] && !self.isModal) {
+    if ([_origo isResidence] && !self.isModal) {
         self.title = nil;
         
         if (![_origo hasAddress]) {
@@ -917,7 +914,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
         blueprint.detailKeys = @[kMappedKeySchool, kPropertyKeyAddress];
         blueprint.multiLineKeys = @[kPropertyKeyAddress];
     } else if ([_origo isOfType:kOrigoTypeTeam]) {
-        blueprint.detailKeys = @[kMappedKeyClub];
+        blueprint.detailKeys = @[kMappedKeyClub, kMappedKeyArena];
+        blueprint.multiLineKeys = @[kMappedKeyArena];
     } else if ([_origo isOfType:kOrigoTypeStudyGroup]) {
         blueprint.detailKeys = @[kMappedKeyInstitution];
     } else if (![_origo isOfType:kOrigoTypePrivate]) {
@@ -964,13 +962,13 @@ static NSInteger const kActionSheetTagRecipients = 4;
             _membership.status = kMembershipStatusActive;
         }
         
-        if ([_origo isOfType:kOrigoTypeResidence] && ![_origo hasAddress]) {
+        if ([_origo isResidence] && ![_origo hasAddress]) {
             [self.dismisser dismissModalViewController:self];
         } else {
             [self toggleEditMode];
             [self reloadSections];
             
-            if ([_origo isOfType:kOrigoTypePrivate]) {
+            if ([_origo isPrivate]) {
                 [self reloadFooterForSectionWtihKey:kSectionKeyOrigo];
             }
             
@@ -1001,7 +999,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (BOOL)shouldCommitEntity:(id)entity
 {
-    return [self.entity.ancestor isCommitted] || [self.state.baseOrigo isOfType:kOrigoTypeCommunity];
+    return [self.entity.ancestor isCommitted] || [self.state.baseOrigo isCommunity];
 }
 
 
@@ -1028,7 +1026,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                     }
                 } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
                     if (![_membership isHidden]) {
-                        if ([_origo isOfType:kOrigoTypeResidence]) {
+                        if ([_origo isResidence]) {
                             [_membership expire];
                         } else {
                             _membership.status = kMembershipStatusListed;

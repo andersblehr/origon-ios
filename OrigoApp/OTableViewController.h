@@ -22,10 +22,9 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)didSetEntity:(id)entity;
 
-- (id)defaultTarget;
 - (NSString *)reuseIdentifierForInputSection;
-
 - (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey;
+
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (CGFloat)headerHeightForSectionWithKey:(NSInteger)sectionKey;
@@ -56,8 +55,6 @@
 
 - (BOOL)shouldFinishEditingViewTitleField:(UITextField *)viewTitleField;
 - (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField;
-
-- (BOOL)isInlineCellAtIndexPath:(NSIndexPath *)indexPath;
 - (void)didFinishEditingInlineField:(OInputField *)inlineField;
 
 - (BOOL)supportsPullToRefresh;

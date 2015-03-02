@@ -27,6 +27,18 @@
 }
 
 
+- (BOOL)memberIsPrivateListingOnly:(id<OMember>)member
+{
+    BOOL isPrivateListingOnly = YES;
+    
+    for (OOrigo *origo in [member origos]) {
+        isPrivateListingOnly = isPrivateListingOnly && [origo isPrivate];
+    }
+    
+    return isPrivateListingOnly;
+}
+
+
 - (NSArray *)associationMembershipsForMember:(id<OMember>)member
 {
     NSMutableArray *associationMemberships = [NSMutableArray array];
@@ -86,9 +98,9 @@
                     if (!associationsByWard[ward.entityId]) {
                         isParentByWard[ward.entityId] = @([ward hasParent:member]);
                         
-                        if ([ward isListedOnly]) {
+                        if ([self memberIsPrivateListingOnly:ward]) {
                             associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [[origo owner] givenName]];
-                        } else if (![origo isOfType:kOrigoTypePrivate]) {
+                        } else if (![origo isPrivate]) {
                             if ([ward isWardOfUser]) {
                                 associationsByWard[ward.entityId] = [ward givenName];
                             } else {
@@ -98,7 +110,7 @@
                     }
                 }
             } else {
-                if ([member isJuvenile] && [member isListedOnly]) {
+                if ([member isJuvenile] && [self memberIsPrivateListingOnly:member]) {
                     association = [[NSString stringWithFormat:NSLocalizedString(@"%@ [friend of] %@", @""), [self friendTermForMember:member], [[origo owner] givenName]] stringByCapitalisingFirstLetter];
                 } else if ([[membership organiserRoles] count]) {
                     association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
@@ -139,11 +151,11 @@
 
 - (void)loadImageForOrigo:(id<OOrigo>)origo
 {
-    if ([origo isOfType:kOrigoTypeResidence]) {
+    if ([origo isResidence]) {
         self.imageView.image = [UIImage imageNamed:kIconFileResidence];
-    } else if ([origo isOfType:kOrigoTypeStash]) {
+    } else if ([origo isStash]) {
         self.imageView.image = [UIImage imageNamed:kIconFileFavouriteYes];
-    } else if ([origo isOfType:kOrigoTypePrivate]) {
+    } else if ([origo isPrivate]) {
         self.imageView.image = [UIImage imageNamed:kIconFileList];
     } else {
         self.imageView.image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
@@ -206,7 +218,7 @@
 
 - (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo
 {
-    if ([origo isOfType:kOrigoTypeResidence]) {
+    if ([origo isResidence]) {
         [self loadMember:member inOrigo:origo excludeRoles:YES excludeRelations:YES];
     } else {
         [self loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:NO];

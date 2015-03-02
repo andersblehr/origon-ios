@@ -78,7 +78,12 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)userIsOrganiser;
 - (BOOL)userIsParentContact;
 
+- (BOOL)isStash;
+- (BOOL)isResidence;
+- (BOOL)isPrivate;
+- (BOOL)isCommunity;
 - (BOOL)isOfType:(id)type;
+
 - (BOOL)isOrganised;
 - (BOOL)isJuvenile;
 - (BOOL)hasAddress;
@@ -102,8 +107,6 @@ extern NSString * const kOrigoTypeTeam;
 - (NSString *)shortAddress;
 - (NSString *)recipientLabel;
 - (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType;
-
-- (void)convertToType:(NSString *)type;
 
 @end
 

@@ -49,7 +49,7 @@
 
 - (id<OOrigo>)stash;
 - (id<OOrigo>)primaryResidence;
-- (id<OOrigo>)defaultFriendList;
+- (id<OOrigo>)pinnedFriendList;
 - (NSArray *)residences;
 - (NSArray *)addresses;
 - (NSArray *)origos;
@@ -82,7 +82,6 @@
 - (BOOL)isManaged;
 - (BOOL)isFavourite;
 - (BOOL)isMale;
-- (BOOL)isListedOnly;
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;

@@ -177,7 +177,7 @@ static NSInteger const kButtonIndexContinue = 1;
     }
     
     if (inputMatches && _mobilePhoneField.value) {
-        inputMatches = [[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value].flattenedNumber isEqualToString:[OPhoneNumberFormatter formatterForNumber:mobilePhone].flattenedNumber];
+        inputMatches = [[[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value] completelyFormattedNumberCanonicalised:YES] isEqualToString:[[OPhoneNumberFormatter formatterForNumber:mobilePhone] completelyFormattedNumberCanonicalised:YES]];
     }
     
     if (inputMatches && _emailField.value) {
@@ -364,7 +364,7 @@ static NSInteger const kButtonIndexContinue = 1;
                 if ([_member isUser] && ![_member isActive]) {
                     [_member makeActive];
                 } else if ([_member isWardOfUser]) {
-                    [_member defaultFriendList];
+                    [_member pinnedFriendList];
                 }
                 
                 [self.dismisser dismissModalViewController:self];
@@ -978,7 +978,7 @@ static NSInteger const kButtonIndexContinue = 1;
             self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
         } else if ([self targetIs:kTargetOrganiser]) {
             [self setEditableTitle:nil placeholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
-        } else if ([_origo isOfType:kOrigoTypePrivate]) {
+        } else if ([_origo isPrivate]) {
             if ([_member isJuvenile]) {
                 self.title = NSLocalizedString(@"Register friend", @"");
             } else {
@@ -1082,6 +1082,18 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
+{
+    UITableViewCellStyle cellStyle = UITableViewCellStyleSubtitle;
+    
+    if (sectionKey == kSectionKeyRoles && ([_origo userIsAdmin] || _origo.membersCanEdit)) {
+        cellStyle = kTableViewCellStyleInline;
+    }
+    
+    return cellStyle;
+}
+
+
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
     BOOL hasFooter = NO;
@@ -1149,7 +1161,7 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if (![_member isUser]) {
         if ([self actionIs:kActionRegister]) {
-            footerContent = NSLocalizedString(@"A notification will be sent to the email address you provide.", @"");
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"New %@ members will receive an invitation by email.", @""), [OMeta m].appName];
             
             if ([_member isJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register additional guardians.", @"");
@@ -1157,11 +1169,11 @@ static NSInteger const kButtonIndexContinue = 1;
                 id ancestor = [self.entity ancestor];
                 
                 if ([ancestor conformsToProtocol:@protocol(OMember)] && ![[ancestor guardians] count]) {
-                    footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:kSeparatorSpace];
+                    footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
                 }
             }
-        } else {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Active on %@ since %@.", @""), [OMeta m].appName, [[_member activeSince] localisedDateTimeString]];
+        } else if ([_member isActive] && ![_member isOutOfBounds]) {
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is active on %@.", @""), [_member givenName], [OMeta m].appName];
         }
     }
     
@@ -1352,12 +1364,6 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (BOOL)isInlineCellAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles && ([_origo userIsAdmin] || _origo.membersCanEdit);
-}
-
-
 - (void)didFinishEditingInlineField:(OInputField *)inlineField
 {
     NSString *editedRole = inlineField.value;
@@ -1452,7 +1458,7 @@ static NSInteger const kButtonIndexContinue = 1;
                 [self examineMember];
             }
         } else if ([_member instance]) {
-            if ([_origo isOfType:kOrigoTypeResidence]) {
+            if ([_origo isResidence]) {
                 [self examineMember];
             } else {
                 [self examinerDidFinishExamination];
@@ -1531,7 +1537,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)examinerDidFinishExamination
 {
-    if ([_origo isOfType:kOrigoTypeCommunity] && ![_member hasAddress]) {
+    if ([_origo isCommunity] && ![_member hasAddress]) {
         [self toggleEditMode];
         [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
     } else {

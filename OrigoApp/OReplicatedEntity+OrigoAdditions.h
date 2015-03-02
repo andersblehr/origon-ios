@@ -52,10 +52,9 @@
 - (NSString *)SHA1HashCode;
 - (void)internaliseRelationships;
 
-- (void)markForDeletion;
-- (BOOL)isMarkedForDeletion;
 - (BOOL)isTransient;
 - (BOOL)isDirty;
+- (BOOL)isSane;
 
 + (Class)proxyClass;
 + (NSArray *)propertyKeys;

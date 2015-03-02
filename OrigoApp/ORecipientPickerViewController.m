@@ -220,11 +220,11 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     
     if ([self aspectIs:kAspectGlobal]) {
         _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"All", @""), NSLocalizedString(@"Favourites", @"")]];
-    } else if ([_origo isOfType:kOrigoTypeCommunity] || [_origo isJuvenile]) {
+    } else if ([_origo isCommunity] || [_origo isJuvenile]) {
         NSString *allLabel = @"";
         NSString *groupedLabel = @"";
         
-        if ([_origo isOfType:kOrigoTypeCommunity]) {
+        if ([_origo isCommunity]) {
             allLabel = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
             groupedLabel = NSLocalizedString(@"Households", @"");
         } else if ([_origo isJuvenile]) {
@@ -255,7 +255,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         if (_selectedTitleSubsegment == kTitleSubsegmentAll) {
             [self setData:[_origo recipientCandidates] sectionIndexLabelKey:kPropertyKeyName];
         } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
-            if ([_origo isOfType:kOrigoTypeCommunity]) {
+            if ([_origo isCommunity]) {
                 [self setData:[OUtil singleMemberPerPrimaryAddressFromMembers:[_origo members] includeUser:NO] sectionIndexLabelKey:kPropertyKeyName];
             } else {
                 [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
@@ -299,13 +299,11 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             cell.selectable = [recipientCandidate.email hasValue];
         }
     } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
-        BOOL isCommunity = [_origo isOfType:kOrigoTypeCommunity];
-        
         id<OMember> member = [self dataAtIndexPath:indexPath];
-        id<OOrigo> residence = isCommunity ? [member primaryResidence] : nil;
+        id<OOrigo> residence = [_origo isCommunity] ? [member primaryResidence] : nil;
         
         NSMutableArray *recipientCandidates = [NSMutableArray array];
-        id elders = isCommunity ? [residence elders] : [member parentsOrGuardians];
+        id elders = [_origo isCommunity] ? [residence elders] : [member parentsOrGuardians];
         
         if ([elders containsObject:[OMeta m].user]) {
             elders = [elders mutableCopy];
@@ -373,7 +371,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         
         cell.textLabel.text = [OUtil labelForElders:elders conjoin:YES];
         
-        if (isCommunity) {
+        if ([_origo isCommunity]) {
             cell.detailTextLabel.text = [residence shortAddress];
         } else {
             cell.detailTextLabel.text = [member displayNameInOrigo:_origo];

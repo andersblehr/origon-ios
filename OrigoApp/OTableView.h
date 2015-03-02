@@ -13,7 +13,6 @@ extern NSInteger const kSectionIndexMinimumDisplayRowCount;
 @interface OTableView : UITableView
 
 - (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data delegate:(id)delegate;
-- (id)inlineCellWithData:(id)data delegate:(id)delegate;
 - (id)inputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate;
 - (id)inputCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 

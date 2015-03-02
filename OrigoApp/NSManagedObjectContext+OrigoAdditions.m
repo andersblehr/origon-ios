@@ -68,7 +68,7 @@
 }
 
 
-#pragma mark - Preparing for entity replication
+#pragma mark - Entity cross-referencing
 
 - (NSSet *)entityRefsForPendingEntity:(OReplicatedEntity *)entity
 {
@@ -87,25 +87,6 @@
     }
     
     return pendingEntityRefs ? [NSSet setWithArray:pendingEntityRefs] : [NSSet set];
-}
-
-
-- (NSSet *)pendingEntities
-{
-    NSMutableSet *pendingEntities = [NSMutableSet set];
-    NSMutableSet *unsavedEntities = [NSMutableSet set];
-    
-    [unsavedEntities unionSet:[self insertedObjects]];
-    [unsavedEntities unionSet:[self updatedObjects]];
-    
-    for (OReplicatedEntity *entity in unsavedEntities) {
-        if ([entity isDirty] || [entity isMarkedForDeletion]) {
-            [pendingEntities addObject:entity];
-            [pendingEntities unionSet:[self entityRefsForPendingEntity:entity]];
-        }
-    }
-    
-    return pendingEntities;
 }
 
 
@@ -160,7 +141,7 @@
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership
 {
-    if (![membership.origo isOfType:kOrigoTypeStash]) {
+    if (![membership.origo isStash]) {
         OMember *member = membership.member;
         OOrigo *origo = membership.origo;
         
@@ -210,7 +191,7 @@
             for (OMember *elder in [origo elders]) {
                 if (elder != member && [elder primaryResidence] == origo) {
                     for (OOrigo *origo in [elder origos]) {
-                        if ([origo isOfType:kOrigoTypeCommunity]) {
+                        if ([origo isCommunity]) {
                             [origo addMember:member];
                         }
                     }
@@ -245,7 +226,7 @@
 
 - (void)expireCrossReferencesForMembership:(OMembership *)membership
 {
-    if (![membership.origo isOfType:kOrigoTypeStash]) {
+    if (![membership.origo isStash]) {
         OMember *member = membership.member;
         OOrigo *origo = membership.origo;
         
@@ -293,7 +274,7 @@
         for (OMember *elder in [origo elders]) {
             if (elder != member && [elder primaryResidence] == origo) {
                 for (OOrigo *origo in [elder origos]) {
-                    if ([origo isOfType:kOrigoTypeCommunity]) {
+                    if ([origo isCommunity]) {
                         [[origo membershipForMember:member] expire];
                     }
                 }
@@ -333,26 +314,14 @@
 
 - (void)save
 {
-    static BOOL hasDataError = NO;
+    NSError *error;
     
-    if (!hasDataError) {
-        for (OReplicatedEntity *entity in [self pendingEntities]) {
-            if ([entity isMarkedForDeletion]) {
-                [self deleteObject:entity];
-            }
-        }
+    if ([self save:&error]) {
+        OLogDebug(@"Entities successfully saved to device.");
+    } else {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Data error", @"") text:[NSString stringWithFormat:NSLocalizedString(@"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.", @""), [OMeta m].appName]];
         
-        NSError *error;
-        
-        if ([self save:&error]) {
-            OLogDebug(@"Entities successfully saved to device.");
-        } else {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Data error", @"") text:[NSString stringWithFormat:NSLocalizedString(@"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.", @""), [OMeta m].appName]];
-            
-            hasDataError = YES;
-            
-            OLogError(@"Error saving to device: %@ [%@]", [error localizedDescription], [error userInfo]);
-        }
+        OLogError(@"Error saving to device: %@ [%@]", [error localizedDescription], [error userInfo]);
     }
 }
 
@@ -384,6 +353,20 @@
         [expiredEntity expire];
     }
     
+    BOOL isSanitised = NO;
+    
+    while (!isSanitised) {
+        isSanitised = YES;
+        
+        for (OReplicatedEntity *entity in entities) {
+            if (![entity isSane]) {
+                [self deleteObject:entity];
+                
+                isSanitised = NO;
+            }
+        }
+    }
+    
     [self save];
     
     if ([[ODevice device] hasExpired]) {
@@ -397,10 +380,15 @@
 - (NSSet *)dirtyEntities
 {
     NSMutableSet *dirtyEntities = [NSMutableSet set];
+    NSMutableSet *unsavedEntities = [NSMutableSet set];
     
-    for (OReplicatedEntity *entity in [self pendingEntities]) {
-        if (![entity isMarkedForDeletion]) {
+    [unsavedEntities unionSet:[self insertedObjects]];
+    [unsavedEntities unionSet:[self updatedObjects]];
+    
+    for (OReplicatedEntity *entity in unsavedEntities) {
+        if ([entity isDirty]) {
             [dirtyEntities addObject:entity];
+            [dirtyEntities unionSet:[self entityRefsForPendingEntity:entity]];
         }
     }
     

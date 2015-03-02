@@ -134,6 +134,7 @@ static NSDictionary *_keyMappings = nil;
 {
     if (!_keyMappings) {
         _keyMappings = @{
+            kMappedKeyArena : kPropertyKeyAddress,
             kMappedKeyClub : kPropertyKeyDescriptionText,
             kMappedKeyFullName : kPropertyKeyName,
             kMappedKeyInstitution : kPropertyKeyDescriptionText,
@@ -144,7 +145,6 @@ static NSDictionary *_keyMappings = nil;
             kMappedKeySchool : kPropertyKeyDescriptionText,
             kMappedKeySchoolClass : kPropertyKeyName,
             kMappedKeyStudyGroup : kPropertyKeyName,
-            kMappedKeyTeam : kPropertyKeyName,
         };
     }
     
