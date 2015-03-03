@@ -1106,8 +1106,8 @@ static NSInteger const kButtonIndexContinue = 1;
             } else {
                 hasFooter = isBottomSection;
             }
-        } else {
-            hasFooter = isBottomSection && [_member isActive];
+        } else if (![_member isJuvenile]) {
+            hasFooter = isBottomSection;
         }
     }
     
@@ -1172,8 +1172,14 @@ static NSInteger const kButtonIndexContinue = 1;
                     footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
                 }
             }
-        } else if ([_member isActive] && ![_member isOutOfBounds]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is active on %@.", @""), [_member givenName], [OMeta m].appName];
+        } else if (![_member isJuvenile]) {
+            if ([_member isActive]) {
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is active on %@.", @""), [_member givenName], [OMeta m].appName];
+            } else if ([_member isManaged]) {
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is represented on %@.", @""), [_member givenName], [OMeta m].appName];
+            } else {
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is not active on %@.", @""), [_member givenName], [OMeta m].appName];
+            }
         }
     }
     

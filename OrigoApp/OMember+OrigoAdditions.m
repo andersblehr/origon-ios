@@ -443,7 +443,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 {
     OOrigo *list = nil;
     
-    if ([self isJuvenile]) {
+    if ([self isJuvenile] && ([self isUser] || [self isWardOfUser])) {
         for (OMembership *membership in [self allMemberships]) {
             if ([membership.origo isPrivate] && [membership isOwnership]) {
                 if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {

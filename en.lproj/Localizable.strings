@@ -386,6 +386,8 @@
 "Tap + to register contacts." = "Tap + to register contacts.";
 "Tap + to register friends." = "Tap + to register friends.";
 "Tap + to register additional guardians in the household." = "Tap + to register additional guardians in the household.";
+"This household is represented on %@." = "This household is represented on %@.";
+"No one in this household is active on %@." = "No one in this household is active on %@.";
 
 // Buttons
 "Keep" = "Keep";
@@ -427,6 +429,8 @@
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
 "Tap + to register additional guardians." = "Tap + to register additional guardians.";
 "%@ is active on %@." = "%@ is active on %@.";
+"%@ is represented on %@." = "%@ is represented on %@.";
+"%@ is not active on %@." = "%@ is not active on %@.";
 
 // Buttons
 "To some of them" = "To some of them";

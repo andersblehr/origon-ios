@@ -601,8 +601,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
     if ([self isBottomSectionKey:sectionKey]) {
         if ([self actionIs:kActionRegister]) {
             hasFooter = [_origo isPrivate];
-        } else if (self.isModal || ![[_origo members] count]) {
+        } else if (self.isModal || ([_origo isPrivate] && ![[_origo members] count])) {
             hasFooter = YES;
+        } else if ([_origo isResidence]) {
+            hasFooter = ![_origo userIsMember];
         }
     }
     
@@ -670,8 +672,16 @@ static NSInteger const kActionSheetTagRecipients = 4;
     NSString *footerContent = NSLocalizedString(_origo.type, kStringPrefixFooter);
     
     if ([_origo isResidence]) {
-        if ([self aspectIs:kAspectJuvenile]) {
-            footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
+        if ([self actionIs:kActionRegister]) {
+            if ([self aspectIs:kAspectJuvenile]) {
+                footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
+            }
+        } else if (![_origo userIsMember]) {
+            if ([_origo hasAdmin]) {
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"This household is represented on %@.", @""), [OMeta m].appName];
+            } else {
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"No one in this household is active on %@.", @""), [OMeta m].appName];
+            }
         }
     } else if ([_origo isPrivate]) {
         if ([self actionIs:kActionRegister]) {

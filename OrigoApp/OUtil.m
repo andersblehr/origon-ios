@@ -253,24 +253,6 @@
 }
 
 
-+ (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo
-{
-    NSArray *eligibleOrigoTypes = nil;
-    
-    if ([origo isOfType:kOrigoTypeAlumni]) {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard];
-    } else if ([origo isOfType:kOrigoTypePrivate]) {
-        eligibleOrigoTypes = @[kOrigoTypePrivate, kOrigoTypeStandard];
-    } else if ([origo isJuvenile]) {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
-    } else {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard, kOrigoTypeStudyGroup, kOrigoTypeTeam];
-    }
-    
-    return eligibleOrigoTypes;
-}
-
-
 + (NSArray *)singleMemberPerPrimaryAddressFromMembers:(NSArray *)members includeUser:(BOOL)includeUser
 {
     NSMutableArray *singleMemberPerPrimaryAddress = [NSMutableArray array];
