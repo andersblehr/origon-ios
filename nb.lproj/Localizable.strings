@@ -384,6 +384,8 @@
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
 "Tap + to register friends." = "Trykk + for å registrere venn(inn)er.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
+"This household is represented on %@." = "Denne husstanden er representert på %@.";
+"No one in this household is active on %@." = "Ingen i denne husstanden er aktive på %@.";
 
 // Buttons
 "Keep" = "Behold";
@@ -425,6 +427,8 @@
 "Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
 "Tap + to register additional guardians." = "Trykk + for å registrere flere foresatte.";
 "%@ is active on %@." = "%@ er aktiv på %@.";
+"%@ is represented on %@." = "%@ er representert på %@.";
+"%@ is not active on %@." = "%@ er ikke aktiv på %@.";
 
 // Buttons
 "To some of them" = "Til noen av dem";

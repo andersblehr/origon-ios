@@ -43,14 +43,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     _origoTypes = [NSMutableArray array];
     [_origoTypes addObject:kOrigoTypeStandard];
     
-    if ([_member isJuvenile]) {
-        if (![_member isOlderThan:kAgeThresholdInSchool]) {
-            [_origoTypes addObject:kOrigoTypePreschoolClass];
+    if (![[OMeta m].user isJuvenile]) {
+        if ([_member isJuvenile]) {
+            if (![_member isOlderThan:kAgeThresholdInSchool]) {
+                [_origoTypes addObject:kOrigoTypePreschoolClass];
+            }
+            
+            [_origoTypes addObjectsFromArray:@[kOrigoTypeSchoolClass, kOrigoTypeTeam]];
+        } else {
+            [_origoTypes addObjectsFromArray:@[kOrigoTypeCommunity, kOrigoTypeTeam, kOrigoTypeStudyGroup, kOrigoTypeAlumni]];
         }
-        
-        [_origoTypes addObjectsFromArray:@[kOrigoTypeSchoolClass, kOrigoTypeTeam]];
-    } else {
-        [_origoTypes addObjectsFromArray:@[kOrigoTypeCommunity, kOrigoTypeTeam, kOrigoTypeStudyGroup, kOrigoTypeAlumni]];
     }
     
     [_origoTypes addObject:kOrigoTypePrivate];
@@ -394,7 +396,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
                 canDelete = [[[OMeta m].user residences] count] > 1;
             }
         } else if (sectionKey == kSectionKeyOrigos) {
-            canDelete = ![_member isJuvenile] || [origo userIsCreator] || [origo isCommunity];
+            canDelete = ![[OMeta m].user isJuvenile] || [origo userIsCreator] || [origo isCommunity];
         } else if (sectionKey == kSectionKeyWardOrigos) {
             if ([origo isPrivate]) {
                 canDelete = [self canDeleteOrigoAtIndexPath:indexPath];

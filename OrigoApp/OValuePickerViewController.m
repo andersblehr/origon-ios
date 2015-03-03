@@ -50,6 +50,32 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
+- (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo
+{
+    NSArray *eligibleOrigoTypes = nil;
+    
+    if ([[OMeta m].user isJuvenile]) {
+        if ([origo isOfType:kOrigoTypePrivate]) {
+            eligibleOrigoTypes = @[kOrigoTypePrivate, kOrigoTypeStandard];
+        } else {
+            eligibleOrigoTypes = @[origo.type];
+        }
+    } else {
+        if ([origo isOfType:kOrigoTypeAlumni]) {
+            eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard];
+        } else if ([origo isOfType:kOrigoTypePrivate]) {
+            eligibleOrigoTypes = @[kOrigoTypePrivate, kOrigoTypeStandard];
+        } else if ([origo isJuvenile]) {
+            eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
+        } else {
+            eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeStandard, kOrigoTypeStudyGroup, kOrigoTypeTeam];
+        }
+    }
+    
+    return eligibleOrigoTypes;
+}
+
+
 #pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
@@ -161,7 +187,7 @@ static NSInteger const kSectionKeyValues = 0;
             [self setData:_parentCandidates forSectionWithKey:kSectionKeyValues];
         }
     } else if ([self targetIs:kTargetOrigoType]) {
-        for (NSString *origoType in [OUtil eligibleOrigoTypesForOrigo:_origo]) {
+        for (NSString *origoType in [self eligibleOrigoTypesForOrigo:_origo]) {
             _valuesByKey[origoType] = NSLocalizedString(origoType, kStringPrefixOrigoTitle);
         }
         

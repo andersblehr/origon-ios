@@ -195,14 +195,24 @@ static NSInteger const kSectionKeyMembership = 2;
         } else if ([displayKey isEqualToString:kPropertyKeyModifiedBy]) {
             [self listCell:cell loadDetailsForInstigatorWithEmail:[_entity modifiedBy]];
         } else if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-            id<OOrigo> origo = _entity;
+            id<OOrigo> origo = [_entity instance];
             
             if ([displayKey isEqualToString:kPropertyKeyName]) {
                 cell.detailTextLabel.text = [origo displayName];
             } else if ([displayKey isEqualToString:kPropertyKeyType]) {
                 cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
                 
-                if (_userIsAdmin && ![origo isResidence] && ![origo isCommunity]) {
+                BOOL canEditType = _userIsAdmin && ![origo isResidence] && ![origo isCommunity];
+                
+                if (canEditType && [origo isPrivate]) {
+                    canEditType = origo != [[origo owner] pinnedFriendList];
+                }
+                
+                if (canEditType && [[OMeta m].user isJuvenile]) {
+                    canEditType = [origo isPrivate];
+                }
+                
+                if (canEditType) {
                     cell.destinationId = kIdentifierValuePicker;
                     cell.destinationTarget = kTargetOrigoType;
                 }

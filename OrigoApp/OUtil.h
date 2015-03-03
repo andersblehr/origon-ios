@@ -22,7 +22,6 @@
 + (NSString *)commaSeparatedListOfMembers:(id)members withRolesInOrigo:(id<OOrigo>)origo;
 
 + (NSDictionary *)isUniqueByGivenNameFromMembers:(id)members;
-+ (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo;
 + (NSArray *)singleMemberPerPrimaryAddressFromMembers:(NSArray *)members includeUser:(BOOL)includeUser;
 + (NSArray *)sortedGroupsOfResidents:(id)residents excluding:(id<OMember>)excludedResident;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;

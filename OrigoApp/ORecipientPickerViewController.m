@@ -219,7 +219,9 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     self.navigationItem.rightBarButtonItem.enabled = NO;
     
     if ([self aspectIs:kAspectGlobal]) {
-        _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"All", @""), NSLocalizedString(@"Favourites", @"")]];
+        if ([[[OMeta m].user favourites] count]) {
+            _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"All", @""), NSLocalizedString(@"Favourites", @"")]];
+        }
     } else if ([_origo isCommunity] || [_origo isJuvenile]) {
         NSString *allLabel = @"";
         NSString *groupedLabel = @"";
