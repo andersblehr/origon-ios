@@ -212,7 +212,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 
 + (instancetype)tonedDownIconColour
 {
-    return [self headerTextColour];
+    return [self darkGrayColor];
 }
 
 

@@ -28,7 +28,7 @@ static NSInteger const kButtonTagAddOrganiser = 2;
 static NSInteger const kButtonTagAddParentContact = 3;
 
 static NSInteger const kActionSheetTagEdit = 2;
-static NSInteger const kButtonTagEditGroup = 0;
+static NSInteger const kButtonTagEdit = 0;
 static NSInteger const kButtonTagEditRoles = 1;
 
 static NSInteger const kActionSheetTagCoHabitants = 3;
@@ -54,6 +54,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
     
     BOOL _userIsAdmin;
     BOOL _needsReloadSections;
+    BOOL _needsEditDetails;
 }
 
 @end
@@ -67,7 +68,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     self.navigationItem.rightBarButtonItems = nil;
 
-    if ([_membership needsAccepting]) {
+    if ([_membership needsAccepting] || [_membership isHidden]) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptDeclineButtonWithTarget:self]];
     } else  {
         if (![_origo isResidence] && _userIsAdmin) {
@@ -278,7 +279,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         }
         
         if ([_origo isCommunity]) {
-            _eligibleCandidates = [OUtil singleMemberPerPrimaryAddressFromMembers:[self.state eligibleCandidates] includeUser:NO];
+            _eligibleCandidates = [OUtil singleMemberPerPrimaryResidenceFromMembers:[self.state eligibleCandidates] includeUser:NO];
         } else {
             _eligibleCandidates = [self.state eligibleCandidates];
         }
@@ -310,7 +311,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
         [self scrollToTopAndToggleEditMode];
     } else {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditGroup];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
         
         [actionSheet show];
@@ -398,8 +399,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
     [super viewDidAppear:animated];
     
     if ([self actionIs:kActionDisplay]) {
-        if ([_origo isResidence] && ![_origo hasAddress]) {
+        if (_needsEditDetails || ([_origo isResidence] && ![_origo hasAddress])) {
             [self toggleEditMode];
+            
+            _needsEditDetails = NO;
         }
     }
 }
@@ -495,7 +498,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
                 [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
             } else if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
-                [self setData:[OUtil singleMemberPerPrimaryAddressFromMembers:[_origo members] includeUser:YES] forSectionWithKey:kSectionKeyMembers];
+                [self setData:[OUtil singleMemberPerPrimaryResidenceFromMembers:[_origo members] includeUser:YES] forSectionWithKey:kSectionKeyMembers];
             }
         } else {
             [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
@@ -676,7 +679,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             if ([self aspectIs:kAspectJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
             }
-        } else if (![_origo userIsMember]) {
+        } else if (!self.isModal && ![_origo userIsMember]) {
             if ([_origo hasAdmin]) {
                 footerContent = [NSString stringWithFormat:NSLocalizedString(@"This household is represented on %@.", @""), [OMeta m].appName];
             } else {
@@ -696,13 +699,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
             } else {
                 footerContent = NSLocalizedString(@"This list is only visible to you.", @"");
             }
-        } else if (![[_origo members] count]) {
+        } else if (self.isModal || ![[_origo members] count]) {
             if ([_member isJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register friends.", @"");
             } else {
                 footerContent = NSLocalizedString(@"Tap + to register contacts.", @"");
             }
-            
         }
     }
     
@@ -784,7 +786,13 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return NSLocalizedString(@"Remove", @"");
+    NSString *buttonTitle = nil;
+    
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
+        buttonTitle = NSLocalizedString(@"Remove", @"");
+    }
+    
+    return buttonTitle;
 }
 
 
@@ -882,6 +890,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
             if (![_origoType isEqualToString:_origo.type]) {
                 self.selectedHeaderSegment = 0;
                 _origoType = _origo.type;
+                _needsEditDetails = YES;
+                
+                [self reloadSectionWithKey:kSectionKeyOrigo];
             }
             
             if (_userIsAdmin && ![_origo userIsAdmin]) {
@@ -964,7 +975,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
     BOOL isValid = NO;
     
     if ([self targetIs:kOrigoTypeResidence]) {
-        isValid = [self.inputCell hasValidValueForKey:kPropertyKeyAddress];
+        isValid = isValid || [self.inputCell hasValidValueForKey:kPropertyKeyAddress];
+        isValid = isValid || [self.inputCell hasValidValueForKey:kPropertyKeyTelephone];
     } else {
         isValid = [self.inputCell hasValidValueForKey:[self nameKey]];
     }
@@ -1065,7 +1077,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 break;
                 
             case kActionSheetTagEdit:
-                if (buttonTag == kButtonTagEditGroup) {
+                if (buttonTag == kButtonTagEdit) {
                     [self scrollToTopAndToggleEditMode];
                 }
                 

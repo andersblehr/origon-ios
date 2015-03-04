@@ -107,7 +107,6 @@
 "[add member] alumni" = "Registrer alumn";
 "[add member] community" = "Registrer husstand";
 "[add member] preschoolClass" = "Registrer barn";
-"[add member] residence" = "Nytt medlem";
 "[add member] schoolClass" = "Registrer elev";
 "[add member] standard" = "Registrer medlem";
 "[add member] studyGroup" = "Registrer student";
@@ -117,7 +116,6 @@
 "[member] alumni" = "Alumn";
 "[member] community" = "Medlem";
 "[member] preschoolClass" = "Barn";
-"[member] private" = "Venn(inne)";
 "[member] residence" = "Beboer";
 "[member] schoolClass" = "Elev";
 "[member] standard" = "Medlem";
@@ -136,14 +134,14 @@
 "[members] team" = "Deltakere";
 
 // New member titles
-"[new member] alumni" = "Registrer alumn";
+"[new member] alumni" = "Alumn";
 "[new member] community" = "I husstanden";
 "[new member] preschoolClass" = "I avdelingen";
 "[new member] residence" = "I husstanden";
-"[new member] schoolClass" = "Registrer elev";
-"[new member] standard" = "Registrer medlem";
-"[new member] studyGroup" = "Registrer student";
-"[new member] team" = "Registrer deltaker";
+"[new member] schoolClass" = "Elev";
+"[new member] standard" = "Medlem";
+"[new member] studyGroup" = "Student";
+"[new member] team" = "Deltaker";
 
 // Origo collective titles
 "[all members] alumni" = "Alle alumni";
@@ -244,7 +242,7 @@
 
 // Prompts
 "Register contact" = "Registrer kontakt";
-"Register friend" = "Registrer venn(inne)";
+"Register friend" = "Registrer venn/venninne";
 "Register address" = "Registrer adresse";
 "Who do you want to text?" = "Hvem vil du sende melding til?";
 "Who do you want to call?" = "Hvem vil du ringe?";
@@ -275,8 +273,9 @@
 "girl" = "jente";
 "friend [male]" = "venn";
 "friend [female]" = "venninne";
+"Friend" = "Venn/venninne";
 "Friends" = "Venner";
-"Contacts" = "Kontakter";
+"Contact" = "Kontakt";
 "Households" = "Husstander";
 "Home number" = "Hjemmenummer";
 "Neither" = "Ingen av dem";
@@ -291,6 +290,7 @@
 "add" = "legge til";
 "delete" = "slette";
 "edit" = "redigere";
+"inactive" = "inaktiv";
 
 // Formats
 "%@ at %@" = "%@ kl %@";
@@ -358,7 +358,7 @@
 "Incomplete registration" = "Ufullstendig registrering";
 "You must complete your registration before you can start using Origo." = "Du må fullføre registreringen før du kan begynne å bruke Origo.";
 "You are administrator" = "Du er administrator";
-"You are the only administrator of this group ..." = "Du er eneste administrator av denne lista. Om du vil skjule den, må du først utpeke en annen administrator.";
+"You are an administrator of this list. If you want to hide it, you must appoint another administrator and remove yourself as administrator." = "Du er administrator av denne lista. Om du ønsker å skjule den, må du utpeke en annen administrator og fjerne deg selv som administrator.";
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Husstanden din omfatter mindreårige. Vil du angi foreldrerelasjoner?";
@@ -382,7 +382,7 @@
 "This list is only visible to %@." = "Denne lista er bare synlig for %@.";
 "This list is only visible to %@ and %@." = "Denne lista er bare synlig for %@ og %@.";
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
-"Tap + to register friends." = "Trykk + for å registrere venn(inn)er.";
+"Tap + to register friends." = "Trykk + for å registrere venner og venninner.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
 "This household is represented on %@." = "Denne husstanden er representert på %@.";
 "No one in this household is active on %@." = "Ingen i denne husstanden er aktive på %@.";

@@ -28,6 +28,18 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 #pragma mark - Auxiliary methods
 
+- (NSString *)permissionsFromDictionary:(NSDictionary *)permissionsDictionary
+{
+    NSString *permissions = nil;
+    
+    for (NSString *key in [permissionsDictionary allKeys]) {
+        permissions = [OUtil keyValueString:permissions setValue:permissionsDictionary[key] forKey:key];
+    }
+    
+    return permissions;
+}
+
+
 - (NSSet *)allMembershipsIncludeExpired:(BOOL)includeExpired
 {
     NSMutableSet *memberships = [NSMutableSet set];
@@ -552,17 +564,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (BOOL)userIsAdmin
 {
-    BOOL userIsAdmin = [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
-    
-    if (!userIsAdmin) {
-        if ([self isResidence]) {
-            userIsAdmin = ![self hasAdmin];
-        } else if ([self isPrivate]) {
-            userIsAdmin = [[self owner] isUser] || [[self owner] isWardOfUser];
-        }
-    }
-    
-    return userIsAdmin;
+    return [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
 }
 
 
@@ -882,13 +884,21 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (NSString *)singleLineAddress
 {
-    return [self.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];
+    NSString *singleLineAddress = nil;
+    
+    if ([self hasAddress]) {
+        singleLineAddress = [self.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];
+    } else {
+        singleLineAddress = NSLocalizedString(@"-no address-", @"");
+    }
+    
+    return singleLineAddress;
 }
 
 
 - (NSString *)shortAddress
 {
-    return [self hasAddress] ? [self.address lines][0] : nil;
+    return [self hasAddress] ? [self.address lines][0] : NSLocalizedString(@"-no address-", @"");
 }
 
 
@@ -964,7 +974,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSArray *permissionKeys = nil;
     
-    if (![self isOfType:@[kOrigoTypeStash, kOrigoTypePrivate, kOrigoTypeResidence]]) {
+    if (![self isOfType:@[kOrigoTypeStash, kOrigoTypePrivate]]) {
         permissionKeys = @[kPermissionKeyEdit, kPermissionKeyAdd, kPermissionKeyDelete];
     }
     
@@ -976,17 +986,33 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSString *defaultPermissions = nil;
     
-    for (NSString *permissionKey in [self permissionKeys]) {
-        if ([permissionKey isEqualToString:kPermissionKeyEdit]) {
-            defaultPermissions = [OUtil keyValueString:defaultPermissions setValue:@(YES) forKey:kPermissionKeyEdit];
-        } else if ([permissionKey isEqualToString:kPermissionKeyAdd]) {
-            defaultPermissions = [OUtil keyValueString:defaultPermissions setValue:@(YES) forKey:kPermissionKeyAdd];
-        } else if ([permissionKey isEqualToString:kPermissionKeyDelete]) {
-            defaultPermissions = [OUtil keyValueString:defaultPermissions setValue:@(NO) forKey:kPermissionKeyDelete];
+    if ([self isResidence]) {
+        if (![self hasAdmin]) {
+            defaultPermissions = [self permissionsFromDictionary:@{kPermissionKeyEdit: @YES, kPermissionKeyAdd: @YES, kPermissionKeyDelete: @YES}];
         }
+    } else if (![self isPrivate]) {
+        defaultPermissions = [self permissionsFromDictionary:@{kPermissionKeyEdit: @YES, kPermissionKeyAdd: @YES, kPermissionKeyDelete: @NO}];
     }
     
     return defaultPermissions;
+}
+
+
+#pragma mark - Type conversion
+
+- (void)convertToType:(NSString *)type
+{
+    if (![type isEqualToString:self.type]) {
+        self.type = type;
+        
+        for (OMembership *membership in [self allMemberships]) {
+            [membership alignWithOrigoIsAssociate:[membership isAssociate]];
+        }
+        
+        if (!self.permissions) {
+            self.permissions = [self defaultPermissions];
+        }
+    }
 }
 
 
