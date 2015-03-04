@@ -980,9 +980,9 @@ static NSInteger const kButtonIndexContinue = 1;
             [self setEditableTitle:nil placeholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
         } else if ([_origo isPrivate]) {
             if ([_member isJuvenile]) {
-                self.title = NSLocalizedString(@"Register friend", @"");
+                self.title = NSLocalizedString(@"Friend", @"");
             } else {
-                self.title = NSLocalizedString(@"Register contact", @"");
+                self.title = NSLocalizedString(@"Contact", @"");
             }
         } else {
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
@@ -1059,6 +1059,10 @@ static NSInteger const kButtonIndexContinue = 1;
         [cell loadImageForOrigo:residence];
         cell.textLabel.text = [residence shortAddress];
         
+        if (![residence hasAddress]) {
+            cell.textLabel.textColor = [UIColor tonedDownTextColour];
+        }
+        
         if ([_member isJuvenile] && [[_member residences] count] > 1) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] conjoin:NO];
             cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
@@ -1106,7 +1110,7 @@ static NSInteger const kButtonIndexContinue = 1;
             } else {
                 hasFooter = isBottomSection;
             }
-        } else if (![_member isJuvenile]) {
+        } else if (![_member isJuvenile] || [_member isHousemateOfUser]) {
             hasFooter = isBottomSection;
         }
     }
@@ -1172,7 +1176,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
                 }
             }
-        } else if (![_member isJuvenile]) {
+        } else if (![_member isJuvenile] || [_member isHousemateOfUser]) {
             if ([_member isActive]) {
                 footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is active on %@.", @""), [_member givenName], [OMeta m].appName];
             } else if ([_member isManaged]) {

@@ -112,6 +112,8 @@ extern NSString * const kOrigoTypeTeam;
 - (NSString *)recipientLabel;
 - (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType;
 
+- (void)convertToType:(NSString *)type;
+
 @end
 
 

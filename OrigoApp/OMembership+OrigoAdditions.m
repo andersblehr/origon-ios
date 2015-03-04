@@ -26,7 +26,7 @@ NSString * const kAffiliationTypeOrganiserRole = @"O";
 NSString * const kAffiliationTypeParentRole = @"P";
 NSString * const kAffiliationTypeGroup = @"G";
 
-static NSString * const kPlaceholderRole = @"placeholder";
+static NSString * const kPlaceholderAffiliation = @"placeholder";
 
 
 @implementation OMembership (OrigoAdditions)
@@ -238,15 +238,11 @@ static NSString * const kPlaceholderRole = @"placeholder";
             affiliationsByType[type] = [NSMutableArray array];
         }
         
-        if ([self isAssociate]) {
-            [self promote];
-        }
-        
         [affiliationsByType[type] addObject:affiliation];
         
         if ([type isEqualToString:kAffiliationTypeOrganiserRole]) {
-            if ([affiliationsByType[type] containsObject:kPlaceholderRole]) {
-                [affiliationsByType[type] removeObject:kPlaceholderRole];
+            if ([affiliationsByType[type] containsObject:kPlaceholderAffiliation]) {
+                [affiliationsByType[type] removeObject:kPlaceholderAffiliation];
             }
         }
         
@@ -263,20 +259,11 @@ static NSString * const kPlaceholderRole = @"placeholder";
     
     if ([type isEqualToString:kAffiliationTypeOrganiserRole]) {
         if (![affiliationsByType[type] count]) {
-            [affiliationsByType[type] addObject:kPlaceholderRole];
+            [affiliationsByType[type] addObject:kPlaceholderAffiliation];
         }
     }
     
     [self marshalAffiliations:affiliationsByType];
-    
-    BOOL shouldExpire = ![self.affiliations hasValue];
-    
-    shouldExpire = shouldExpire && ![type isEqualToString:kAffiliationTypeMemberRole];
-    shouldExpire = shouldExpire && ![type isEqualToString:kAffiliationTypeGroup];
-    
-    if (shouldExpire) {
-        [self expire];
-    }
 }
 
 
@@ -318,8 +305,8 @@ static NSString * const kPlaceholderRole = @"placeholder";
 {
     NSMutableArray *organiserRoles = [[self affiliationsOfType:kAffiliationTypeOrganiserRole] mutableCopy];
     
-    if ([organiserRoles containsObject:kPlaceholderRole]) {
-        [organiserRoles removeObject:kPlaceholderRole];
+    if ([organiserRoles containsObject:kPlaceholderAffiliation]) {
+        [organiserRoles removeObject:kPlaceholderAffiliation];
     }
 
     return organiserRoles;

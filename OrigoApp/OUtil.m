@@ -253,18 +253,16 @@
 }
 
 
-+ (NSArray *)singleMemberPerPrimaryAddressFromMembers:(NSArray *)members includeUser:(BOOL)includeUser
++ (NSArray *)singleMemberPerPrimaryResidenceFromMembers:(NSArray *)members includeUser:(BOOL)includeUser
 {
     NSMutableArray *singleMemberPerPrimaryAddress = [NSMutableArray array];
     NSMutableSet *processedCandidates = [NSMutableSet set];
     
     for (id<OMember> member in members) {
         if (![member isUser] || includeUser) {
-            id<OOrigo> primaryResidence = [member primaryResidence];
-            
-            if ([primaryResidence hasAddress] && ![processedCandidates containsObject:member]) {
+            if (![processedCandidates containsObject:member]) {
                 [singleMemberPerPrimaryAddress addObject:member];
-                [processedCandidates addObjectsFromArray:[primaryResidence elders]];
+                [processedCandidates addObjectsFromArray:[[member primaryResidence] elders]];
             }
         }
     }

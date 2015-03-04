@@ -11,7 +11,7 @@
 NSInteger const kBarButtonTagAcceptDecline = 10;
 NSInteger const kBarButtonTagAction = 11;
 NSInteger const kBarButtonTagDirections = 12;
-NSInteger const kbarButtonTagEdit = 13;
+NSInteger const kBarButtonTagEdit = 13;
 NSInteger const kBarButtonTagFavourite = 14;
 NSInteger const kBarButtonTagGroups = 15;
 NSInteger const kBarButtonTagInfo = 16;
@@ -78,13 +78,13 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)editButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileEdit] target:target action:@selector(performEditAction) tag:kbarButtonTagEdit];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileEdit] target:target action:@selector(performEditAction) tag:kBarButtonTagEdit];
 }
 
 
 + (instancetype)systemEditButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:@(UIBarButtonSystemItemEdit) target:target action:@selector(performEditAction) tag:kbarButtonTagEdit];
+    return [self barButtonWithVisuals:@(UIBarButtonSystemItemEdit) target:target action:@selector(performEditAction) tag:kBarButtonTagEdit];
 }
 
 

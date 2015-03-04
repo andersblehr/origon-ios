@@ -258,7 +258,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             [self setData:[_origo recipientCandidates] sectionIndexLabelKey:kPropertyKeyName];
         } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
             if ([_origo isCommunity]) {
-                [self setData:[OUtil singleMemberPerPrimaryAddressFromMembers:[_origo members] includeUser:NO] sectionIndexLabelKey:kPropertyKeyName];
+                [self setData:[OUtil singleMemberPerPrimaryResidenceFromMembers:[_origo members] includeUser:NO] sectionIndexLabelKey:kPropertyKeyName];
             } else {
                 [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
             }

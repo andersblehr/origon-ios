@@ -775,6 +775,10 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         residency.isAdmin = [self isJuvenile] ? @(![residency.origo hasAdmin]) : @YES;
     }
     
+    for (OOrigo *residence in [self residences]) {
+        residence.permissions = [residence defaultPermissions];
+    }
+    
     for (OMember *ward in [self wards]) {
         [ward pinnedFriendList];
     }
@@ -822,7 +826,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (BOOL)isEditableByUser
 {
-    return [self isUser] || ([self isWardOfUser] && ![self isActive]) || (![self isManaged] && ![[OMeta m].user isJuvenile]);
+    return [self isUser] || [self isWardOfUser] || (![self isManaged] && ![[OMeta m].user isJuvenile]);
 }
 
 

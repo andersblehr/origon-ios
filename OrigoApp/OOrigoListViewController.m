@@ -396,7 +396,11 @@ static NSInteger const kSectionKeyWardOrigos = 2;
                 canDelete = [[[OMeta m].user residences] count] > 1;
             }
         } else if (sectionKey == kSectionKeyOrigos) {
-            canDelete = ![[OMeta m].user isJuvenile] || [origo userIsCreator] || [origo isCommunity];
+            if ([[OMeta m].user isJuvenile]) {
+                canDelete = [origo userIsCreator] || [origo isCommunity];
+            } else {
+                canDelete = YES;
+            }
         } else if (sectionKey == kSectionKeyWardOrigos) {
             if ([origo isPrivate]) {
                 canDelete = [self canDeleteOrigoAtIndexPath:indexPath];
@@ -435,8 +439,8 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
-    if ([[origo members] count] > 1 && [origo userIsAdmin] && [[origo admins] count] == 1) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are the only administrator of this group ...", @"")];
+    if ([[origo members] count] > 1 && [origo userIsAdmin]) {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must appoint another administrator and remove yourself as administrator.", @"")];
         
         shouldDeleteCell = NO;
     }
