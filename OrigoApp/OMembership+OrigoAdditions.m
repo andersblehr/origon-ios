@@ -26,7 +26,7 @@ NSString * const kAffiliationTypeOrganiserRole = @"O";
 NSString * const kAffiliationTypeParentRole = @"P";
 NSString * const kAffiliationTypeGroup = @"G";
 
-static NSString * const kPlaceholderAffiliation = @"placeholder";
+static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
 
 
 @implementation OMembership (OrigoAdditions)
@@ -109,6 +109,13 @@ static NSString * const kPlaceholderAffiliation = @"placeholder";
             self.type = kMembershipTypeResidency;
         } else {
             self.type = kMembershipTypeParticipancy;
+            
+            if ([self organiserRoles] && ![self.origo isOrganised]) {
+                for (NSString *role in [self organiserRoles]) {
+                    [self removeAffiliation:role ofType:kAffiliationTypeOrganiserRole];
+                    [self addAffiliation:role ofType:kAffiliationTypeMemberRole];
+                }
+            }
         }
         
         if ([self.member isUser]) {
@@ -221,7 +228,7 @@ static NSString * const kPlaceholderAffiliation = @"placeholder";
 }
 
 
-#pragma mark - Role handling
+#pragma mark - Affiliation handling
 
 - (BOOL)hasAffiliationOfType:(NSString *)type
 {
@@ -243,7 +250,10 @@ static NSString * const kPlaceholderAffiliation = @"placeholder";
         if ([type isEqualToString:kAffiliationTypeOrganiserRole]) {
             if ([affiliationsByType[type] containsObject:kPlaceholderAffiliation]) {
                 [affiliationsByType[type] removeObject:kPlaceholderAffiliation];
+                [self promote];
             }
+            
+            [affiliationsByType removeObjectForKey:kAffiliationTypeMemberRole];
         }
         
         [self marshalAffiliations:affiliationsByType];
@@ -257,9 +267,10 @@ static NSString * const kPlaceholderAffiliation = @"placeholder";
     
     [affiliationsByType[type] removeObject:affiliation];
     
-    if ([type isEqualToString:kAffiliationTypeOrganiserRole]) {
+    if ([type isEqualToString:kAffiliationTypeOrganiserRole] && [self.origo isOrganised]) {
         if (![affiliationsByType[type] count]) {
             [affiliationsByType[type] addObject:kPlaceholderAffiliation];
+            [self demote];
         }
     }
     
@@ -285,31 +296,34 @@ static NSString * const kPlaceholderAffiliation = @"placeholder";
 
 - (NSArray *)affiliationsOfType:(NSString *)type
 {
-    NSArray *affiliations = [self unmarshalAffiliations][type];
+    return [self affiliationsOfType:type includeCandidacy:NO];
+}
+
+
+- (NSArray *)affiliationsOfType:(NSString *)type includeCandidacy:(BOOL)includeCandidacy
+{
+    id affiliations = [self unmarshalAffiliations][type];
     
-    if (!affiliations) {
-        affiliations = @[];
+    if (affiliations && [type isEqualToString:kAffiliationTypeOrganiserRole]) {
+        if ([affiliations containsObject:kPlaceholderAffiliation] && !includeCandidacy) {
+            affiliations = [affiliations mutableCopy];
+            [affiliations removeObject:kPlaceholderAffiliation];
+        }
     }
-    
+        
     return [affiliations sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 }
 
 
 - (NSArray *)memberRoles
 {
-    return [self affiliationsOfType:kAffiliationTypeMemberRole];
+    return ![self isAssociate] ? [self affiliationsOfType:kAffiliationTypeMemberRole] : nil;
 }
 
 
 - (NSArray *)organiserRoles
 {
-    NSMutableArray *organiserRoles = [[self affiliationsOfType:kAffiliationTypeOrganiserRole] mutableCopy];
-    
-    if ([organiserRoles containsObject:kPlaceholderAffiliation]) {
-        [organiserRoles removeObject:kPlaceholderAffiliation];
-    }
-
-    return organiserRoles;
+    return ![self isAssociate] ? [self affiliationsOfType:kAffiliationTypeOrganiserRole] : nil;
 }
 
 
@@ -322,11 +336,10 @@ static NSString * const kPlaceholderAffiliation = @"placeholder";
 - (NSArray *)roles
 {
     NSMutableSet *roles = [NSMutableSet set];
-    NSDictionary *affiliationsByType = [self unmarshalAffiliations];
     NSArray *roleTypes = @[kAffiliationTypeMemberRole, kAffiliationTypeOrganiserRole, kAffiliationTypeParentRole];
     
     for (NSString *type in roleTypes) {
-        NSArray *rolesOfType = affiliationsByType[type];
+        NSArray *rolesOfType = [self affiliationsOfType:type];
         
         if (rolesOfType) {
             [roles addObjectsFromArray:rolesOfType];

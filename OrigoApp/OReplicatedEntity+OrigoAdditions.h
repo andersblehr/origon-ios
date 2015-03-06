@@ -22,6 +22,7 @@
 - (id)valueForKey:(NSString *)key;
 - (id)defaultValueForKey:(NSString *)key;
 
+- (NSString *)inputCellReuseIdentifier;
 - (NSDictionary *)toDictionary;
 
 @optional

@@ -1166,6 +1166,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSections
 {
+    UITableViewRowAnimation rowAnimation = [self rowAnimation];
+    
+    if (_needsReloadInputSection) {
+        [_tableView reloadSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:_inputSectionKey]] withRowAnimation:rowAnimation];
+        
+        _needsReloadInputSection = NO;
+    }
+    
     [_tableView beginUpdates];
     [_instance loadData];
     
@@ -1173,7 +1181,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToDelete = [NSMutableIndexSet indexSet];
-    UITableViewRowAnimation rowAnimation = [self rowAnimation];
     
     for (NSNumber *sectionKey in sectionKeys) {
         if ([self isEntityViewController] && [sectionKey integerValue] == _inputSectionKey) {
@@ -1256,41 +1263,45 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSectionWithKey:(NSInteger)sectionKey rowAnimation:(UITableViewRowAnimation)rowAnimation
 {
-    [_instance loadData];
-    
-    BOOL sectionExists = [_sectionCounts[@(sectionKey)] integerValue] > 0;
-    BOOL sectionIsEmpty = ![_sectionData[@(sectionKey)] count];
-    
-    [_tableView beginUpdates];
-    
-    if (sectionExists || !sectionIsEmpty) {
-        _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
+    if ([self isEntityViewController] && sectionKey == _inputSectionKey) {
+        _needsReloadInputSection = YES;
+    } else {
+        [_instance loadData];
         
-        NSInteger section = [self sectionNumberForSectionKey:sectionKey];
-        NSInteger bottomSection = [self sectionNumberForSectionKey:[[_sectionKeys lastObject] integerValue]];
+        BOOL sectionExists = [_sectionCounts[@(sectionKey)] integerValue] > 0;
+        BOOL sectionIsEmpty = ![_sectionData[@(sectionKey)] count];
         
-        if (section == 0 && section < bottomSection) {
-            [self reloadHeaderForSection:section + 1];
-        } else if (section < bottomSection) {
-            [self reloadFooterForSection:section - 1];
-            [self reloadHeaderForSection:section + 1];
-        } else if (section > 0) {
-            [self reloadFooterForSection:section - 1];
+        [_tableView beginUpdates];
+        
+        if (sectionExists || !sectionIsEmpty) {
+            _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
+            
+            NSInteger section = [self sectionNumberForSectionKey:sectionKey];
+            NSInteger bottomSection = [self sectionNumberForSectionKey:[[_sectionKeys lastObject] integerValue]];
+            
+            if (section == 0 && section < bottomSection) {
+                [self reloadHeaderForSection:section + 1];
+            } else if (section < bottomSection) {
+                [self reloadFooterForSection:section - 1];
+                [self reloadHeaderForSection:section + 1];
+            } else if (section > 0) {
+                [self reloadFooterForSection:section - 1];
+            }
+            
+            if (sectionExists && !sectionIsEmpty) {
+                [_tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
+            } else if (!sectionExists && !sectionIsEmpty) {
+                [_tableView insertSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
+            } else if (sectionExists && sectionIsEmpty) {
+                [_sectionKeys removeObject:@(sectionKey)];
+                [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
+            }
         }
         
-        if (sectionExists && !sectionIsEmpty) {
-            [_tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
-        } else if (!sectionExists && !sectionIsEmpty) {
-            [_tableView insertSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
-        } else if (sectionExists && sectionIsEmpty) {
-            [_sectionKeys removeObject:@(sectionKey)];
-            [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
-        }
+        [self setTableViewFooterViewIfNeeded];
+        
+        [_tableView endUpdates];
     }
-    
-    [self setTableViewFooterViewIfNeeded];
-    
-    [_tableView endUpdates];
 }
 
 
@@ -1444,9 +1455,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if ([[OMeta m] userIsAllSet]) {
-        if (_titleSubsegments) {
-            [self.navigationController.navigationBar setHairlinesHidden:YES];
-        }
+        [self.navigationController.navigationBar setHairlinesHidden:_titleSubsegments != nil];
         
         if (_isUsingSectionIndexTitles) {
             _tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
@@ -1509,10 +1518,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-    
-    if (_titleSubsegments) {
-        [[OState s].viewController.navigationController.navigationBar setHairlinesHidden:NO];
-    }
     
     if (_needsReinstantiateRootViewController) {
         self.navigationController.viewControllers = @[_reinstantiatedRootViewController];

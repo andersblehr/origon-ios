@@ -284,7 +284,6 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSMutableSet *regulars = [NSMutableSet setWithArray:[self members]];
     [regulars minusSet:[NSSet setWithArray:[self organisers]]];
-    [regulars minusSet:[NSSet setWithArray:[self parentContacts]]];
     
     return [[regulars allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
@@ -336,13 +335,31 @@ static NSString * const kPermissionKeyDelete = @"delete";
 }
 
 
+- (NSArray *)parentContacts
+{
+    NSMutableSet *parentContacts = [NSMutableSet set];
+    
+    if ([self isJuvenile]) {
+        for (OMembership *membership in [self allMemberships]) {
+            if ([membership hasAffiliationOfType:kAffiliationTypeParentRole]) {
+                [parentContacts addObject:membership.member];
+            }
+        }
+    }
+    
+    return [[parentContacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
 - (NSArray *)organisers
 {
     NSMutableSet *organisers = [NSMutableSet set];
     
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
-            [organisers addObject:membership.member];
+    if ([self isOrganised] && [[self organiserRoles] count]) {
+        for (OMembership *membership in [self allMemberships]) {
+            if ([membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
+                [organisers addObject:membership.member];
+            }
         }
     }
     
@@ -350,17 +367,19 @@ static NSString * const kPermissionKeyDelete = @"delete";
 }
 
 
-- (NSArray *)parentContacts
+- (NSArray *)organiserCandidates
 {
-    NSMutableSet *parentContacts = [NSMutableSet set];
+    NSMutableSet *organiserCandidates = [NSMutableSet set];
     
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership hasAffiliationOfType:kAffiliationTypeParentRole]) {
-            [parentContacts addObject:membership.member];
+    if ([self isOrganised]) {
+        for (OMembership *membership in [self allMemberships]) {
+            if ([membership affiliationsOfType:kAffiliationTypeOrganiserRole includeCandidacy:YES]) {
+                [organiserCandidates addObject:membership.member];
+            }
         }
     }
     
-    return [[parentContacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    return [[organiserCandidates allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -388,7 +407,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
                 [adminCandidates addObjectsFromArray:[member guardians]];
             }
             
-            if ([member isActive]) {
+            if ([member isActive] && [self isJuvenile] && [self isStandard]) {
                 [adminCandidates addObject:member];
             }
         } else {
@@ -623,6 +642,18 @@ static NSString * const kPermissionKeyDelete = @"delete";
 - (BOOL)isPrivate
 {
     return [self isOfType:kOrigoTypePrivate];
+}
+
+
+- (BOOL)isPinned
+{
+    return [self isPrivate] && self == [[self owner] pinnedFriendList];
+}
+
+
+- (BOOL)isStandard
+{
+    return [self isOfType:kOrigoTypeStandard];
 }
 
 
@@ -1008,7 +1039,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
         for (OMembership *membership in [self allMemberships]) {
             [membership alignWithOrigoIsAssociate:[membership isAssociate]];
         }
-        
+
         if (!self.permissions) {
             self.permissions = [self defaultPermissions];
         }
@@ -1041,6 +1072,12 @@ static NSString * const kPermissionKeyDelete = @"delete";
     }
     
     return defaultValue;
+}
+
+
+- (NSString *)inputCellReuseIdentifier
+{
+    return [[self proxy] inputCellReuseIdentifier];
 }
 
 

@@ -283,6 +283,7 @@
 "Both" = "Begge";
 "All" = "Alle";
 "Favourites" = "Favoritter";
+"Others" = "Andre";
 "None of them" = "Ingen av dem";
 "None of you" = "Ingen av dere";
 "All of them" = "Alle";
@@ -344,7 +345,7 @@
 "No hidden lists." = "Ingen skjulte lister.";
 
 // Labels
-"Favourites and others" = "Favoritter og andre";
+"All contacts" = "Alle kontakter";
 "New!" = "Ny!";
 
 // Buttons
@@ -435,10 +436,8 @@
 "Register an address" = "Registrer en adresse";
 "Register guardian" = "Registrer foresatt";
 "Other address" = "Annen adresse";
-"All guardians" = "Alle foresatte";
-"All contacts" = "Alle kontaktpersoner";
 "Retrieve from Contacts"   = "Hent fra Kontakter";
-"Retrieve from other list" = "Hent fra annen liste";
+"Retrieve from lists" = "Hent fra lister";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
 "Edit responsibility" = "Rediger ansvarsområde";
@@ -498,7 +497,6 @@
 
 // View titles
 "Settings" = "Innstillinger";
-"Others" = "Andre";
 "Responsibilities" = "Ansvarsområder";
 "Groups" = "Grupper";
 "Edit groups" = "Rediger grupper";
@@ -544,11 +542,9 @@
  * ORecipientPickerViewController strings
  ***/
 
-// View titles
-"Pick recipients" = "Velg mottakere";
-
 // Prompts
-"Pick recipient group" = "Velg mottakergruppe";
+"Pick recipients" = "Velg mottakere";
+"Select recipients" = "Velg mottakere";
 
 // Buttons
 "Parents and %@" = "Foreldre og %@";
@@ -557,7 +553,6 @@
 "Grouped" = "Gruppert";
 "Everybody" = "Alle";
 "Select all" = "Velg alle";
-"All %@" = "Alle %@";
 "All parents" = "Alle foreldre";
 "Parents of boys" = "Gutteforeldre";
 "Parents of girls" = "Jenteforeldre";

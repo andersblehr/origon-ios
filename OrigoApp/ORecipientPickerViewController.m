@@ -8,8 +8,9 @@
 
 #import "ORecipientPickerViewController.h"
 
+static NSInteger const kTitleSubsegmentFavourites = 0;
+static NSInteger const kTitleSubsegmentOthers = 1;
 static NSInteger const kTitleSubsegmentAll = 0;
-static NSInteger const kTitleSubsegmentFavourites = 1;
 static NSInteger const kTitleSubsegmentGrouped = 1;
 
 static NSInteger const kCellCheckedStateNone = 0;
@@ -30,7 +31,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     id<OOrigo> _origo;
     
     UISegmentedControl *_titleSubsegments;
-    NSInteger _selectedTitleSubsegment;
+    NSInteger _titleSubsegment;
     
     NSMutableDictionary *_recipientCandidatesByMemberId;
     NSMutableArray *_toRecipients;
@@ -81,7 +82,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
 
 - (void)didSelectTitleSubsegment
 {
-    _selectedTitleSubsegment = _titleSubsegments.selectedSegmentIndex;
+    _titleSubsegment = _titleSubsegments.selectedSegmentIndex;
     
     [self reloadSections];
 }
@@ -92,16 +93,18 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
     
     if ([_origo isOrganised]) {
-        if (_selectedTitleSubsegment == kTitleSubsegmentAll) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) tag:kButtonTagGroupOrganisers];
-            [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Parents and %@", @""), [NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
+        if (_titleSubsegment == kTitleSubsegmentAll) {
+            if ([[_origo organisers] count]) {
+                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Everybody", @""), [NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
+                [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) tag:kButtonTagGroupOrganisers];
+            }
             
             if ([_origo isJuvenile]) {
                 [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents", @"") tag:kButtonTagGroupParents];
             } else {
-                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"All %@", @""), [NSLocalizedString(_origo.type, kStringPrefixMembersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupMembers];
+                [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixMembersTitle) tag:kButtonTagGroupMembers];
             }
-        } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
+        } else if (_titleSubsegment == kTitleSubsegmentGrouped) {
             [actionSheet addButtonWithTitle:NSLocalizedString(@"All parents", @"") tag:kButtonTagGroupParents];
         }
         
@@ -139,7 +142,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     if (!actionSheet.numberOfButtons) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
     } else {
-        actionSheet.title = NSLocalizedString(@"Pick recipient group", @"");
+        actionSheet.title = NSLocalizedString(@"Select recipients", @"");
     }
     
     [actionSheet show];
@@ -205,22 +208,30 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     if ([self targetIs:kTargetText]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendTextButtonWithTarget:self];
         
-        if (![self aspectIs:kAspectGlobal] && [[_origo textRecipients] count] > 1) {
+        if (![self targetIs:kTargetAllContacts] && [[_origo textRecipients] count] > 1) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
         }
     } else if ([self targetIs:kTargetEmail]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendEmailButtonWithTarget:self];
         
-        if (![self aspectIs:kAspectGlobal] && [[_origo emailRecipients] count] > 1) {
+        if (![self targetIs:kTargetAllContacts] && [[_origo emailRecipients] count] > 1) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
         }
     }
     
     self.navigationItem.rightBarButtonItem.enabled = NO;
     
-    if ([self aspectIs:kAspectGlobal]) {
+    if ([self targetIs:kTargetAllContacts]) {
         if ([[[OMeta m].user favourites] count]) {
-            _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"All", @""), NSLocalizedString(@"Favourites", @"")]];
+            _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"Favourites", @""), NSLocalizedString(@"Others", @"")]];
+            
+            if ([self aspectIs:kAspectFavourites]) {
+                _titleSubsegments.selectedSegmentIndex = kTitleSubsegmentFavourites;
+            } else if ([self aspectIs:kAspectNonFavourites]) {
+                _titleSubsegments.selectedSegmentIndex = kTitleSubsegmentOthers;
+            }
+            
+            _titleSubsegment = _titleSubsegments.selectedSegmentIndex;
         }
     } else if ([_origo isCommunity] || [_origo isJuvenile]) {
         NSString *allLabel = @"";
@@ -247,16 +258,16 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
 
 - (void)loadData
 {
-    if ([self aspectIs:kAspectGlobal]) {
-        if (_selectedTitleSubsegment == kTitleSubsegmentAll) {
-            [self setData:[self.state eligibleCandidates] sectionIndexLabelKey:kPropertyKeyName];
-        } else if (_selectedTitleSubsegment == kTitleSubsegmentFavourites) {
+    if ([self targetIs:kTargetAllContacts]) {
+        if (_titleSubsegment == kTitleSubsegmentFavourites) {
             [self setData:[[OMeta m].user favourites] sectionIndexLabelKey:kPropertyKeyName];
+        } else if (_titleSubsegment == kTitleSubsegmentOthers) {
+            [self setData:[[OMeta m].user nonFavourites] sectionIndexLabelKey:kPropertyKeyName];
         }
     } else {
-        if (_selectedTitleSubsegment == kTitleSubsegmentAll) {
+        if (_titleSubsegment == kTitleSubsegmentAll) {
             [self setData:[_origo recipientCandidates] sectionIndexLabelKey:kPropertyKeyName];
-        } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
+        } else if (_titleSubsegment == kTitleSubsegmentGrouped) {
             if ([_origo isCommunity]) {
                 [self setData:[OUtil singleMemberPerPrimaryResidenceFromMembers:[_origo members] includeUser:NO] sectionIndexLabelKey:kPropertyKeyName];
             } else {
@@ -276,7 +287,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         cell.checkedStateAccessoryViews = @[[NSNull null], toLabel, ccLabel];
     }
     
-    if (_selectedTitleSubsegment == kTitleSubsegmentAll || [self aspectIs:kAspectGlobal]) {
+    if (_titleSubsegment == kTitleSubsegmentAll || [self targetIs:kTargetAllContacts]) {
         id<OMember> recipientCandidate = [self dataAtIndexPath:indexPath];
         
         if ([self targetIs:kTargetText]) {
@@ -289,7 +300,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             }
         }
         
-        if (_selectedTitleSubsegment == kTitleSubsegmentAll && [self aspectIs:kAspectGlobal]) {
+        if ([self targetIs:kTargetAllContacts] && _titleSubsegment == kTitleSubsegmentOthers) {
             [cell loadMember:recipientCandidate inOrigo:nil excludeRoles:YES excludeRelations:YES];
         } else {
             [cell loadMember:recipientCandidate inOrigo:_origo];
@@ -300,7 +311,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
         } else if ([self targetIs:kTargetEmail]) {
             cell.selectable = [recipientCandidate.email hasValue];
         }
-    } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
+    } else if (_titleSubsegment == kTitleSubsegmentGrouped) {
         id<OMember> member = [self dataAtIndexPath:indexPath];
         id<OOrigo> residence = [_origo isCommunity] ? [member primaryResidence] : nil;
         
@@ -404,7 +415,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     cell.selected = NO;
     
     if ([self targetIs:kTargetText]) {
-        if (_selectedTitleSubsegment == kTitleSubsegmentAll || [self aspectIs:kAspectGlobal]) {
+        if (_titleSubsegment == kTitleSubsegmentAll || [self targetIs:kTargetAllContacts]) {
             cell.checked = !cell.checked;
             
             id<OMember> candidateInCell = [self dataAtIndexPath:indexPath];
@@ -414,7 +425,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             } else {
                 [_toRecipients removeObject:candidateInCell];
             }
-        } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
+        } else if (_titleSubsegment == kTitleSubsegmentGrouped) {
             cell.checked = cell.partiallyChecked ? YES : !cell.checked;
             
             id<OEntity> member = [self dataAtIndexPath:indexPath];
@@ -428,7 +439,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
     } else if ([self targetIs:kTargetEmail]) {
         [cell bumpCheckedState];
 
-        if (_selectedTitleSubsegment == kTitleSubsegmentAll || [self aspectIs:kAspectGlobal]) {
+        if (_titleSubsegment == kTitleSubsegmentAll || [self targetIs:kTargetAllContacts]) {
             id<OMember> recipientCandidate = [self dataAtIndexPath:indexPath];
             
             if (cell.checkedState == kCellCheckedStateTo) {
@@ -439,7 +450,7 @@ static NSInteger const kButtonTagGroupCoGroup = 5;
             } else if (cell.checkedState == kCellCheckedStateNone) {
                 [_ccRecipients removeObject:recipientCandidate];
             }
-        } else if (_selectedTitleSubsegment == kTitleSubsegmentGrouped) {
+        } else if (_titleSubsegment == kTitleSubsegmentGrouped) {
             id<OEntity> member = [self dataAtIndexPath:indexPath];
             NSArray *recipientCandidates = _recipientCandidatesByMemberId[member.entityId];
             

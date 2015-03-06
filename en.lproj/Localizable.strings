@@ -283,6 +283,7 @@
 "Both" = "Both";
 "All" = "All";
 "Favourites" = "Favourites";
+"Others" = "Others";
 "None of them" = "None of them";
 "None of you" = "None of you";
 "All of them" = "All of them";
@@ -346,7 +347,7 @@
 "No hidden lists." = "No hidden lists.";
 
 // Labels
-"Favourites and others" = "Favourites and others";
+"All contacts" = "All contacts";
 "New!" = "New!";
 
 // Buttons
@@ -437,10 +438,8 @@
 "Register an address" = "Register an address";
 "Register guardian" = "Register guardian";
 "Other address" = "Other address";
-"All contacts" = "All contacts";
-"All guardians" = "All guardians";
 "Retrieve from Contacts"   = "Retrieve from Contacts";
-"Retrieve from other list" = "Retrieve from other list";
+"Retrieve from lists" = "Retrieve from lists";
 "A different number" = "A different number";
 "A different address" = "A different address";
 "Edit responsibility" = "Edit responsibility";
@@ -500,7 +499,6 @@
 
 // View titles
 "Settings" = "Settings";
-"Others" = "Others";
 "Responsibilities" = "Responsibilities";
 "Groups" = "Groups";
 "Edit groups" = "Edit groups";
@@ -546,11 +544,9 @@
  * ORecipientPickerViewController strings
  ***/
 
-// View titles
-"Pick recipients" = "Pick recipients";
-
 // Prompts
-"Pick recipient group" = "Pick recipient group";
+"Pick recipients" = "Pick recipients";
+"Select recipients" = "Select recipients";
 
 // Buttons
 "Parents and %@" = "Parents and %@";
@@ -559,7 +555,6 @@
 "Grouped" = "Grouped";
 "Everybody" = "Everybody";
 "Select all" = "Select all";
-"All %@" = "All %@";
 "All parents" = "All parents";
 "Parents of boys" = "Parents of boys";
 "Parents of girls" = "Parents of girls";

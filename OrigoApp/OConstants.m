@@ -146,6 +146,7 @@ NSString * const kIconFileDirections = @"852-map-toolbar.png";
 NSString * const kIconFileNavigation = @"113-navigation.png";
 NSString * const kIconFileInfo = @"724-info-toolbar.png";
 NSString * const kIconFileLookup = @"779-users-toolbar.png";
+NSString * const kIconFileAllContacts = @"729-top-list-toolbar.png";
 NSString * const kIconFileFavouriteNo = @"726-star-toolbar.png";
 NSString * const kIconFileFavouriteYes = @"726-star-toolbar-selected.png";
 NSString * const kIconFileAcceptDecline = @"739-question-selected.png";

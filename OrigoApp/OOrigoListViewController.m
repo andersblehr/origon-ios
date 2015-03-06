@@ -139,18 +139,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
-- (void)performTextAction
-{
-    [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetText: kAspectGlobal}];
-}
-
-
-- (void)performEmailAction
-{
-    [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetEmail: kAspectGlobal}];
-}
-
-
 #pragma mark - View lifecycle
 
 - (void)viewDidAppear:(BOOL)animated
@@ -249,9 +237,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
     if ([origo isStash]) {
-        cell.textLabel.text = NSLocalizedString(@"Favourites and others", @"");
+        cell.textLabel.text = NSLocalizedString(@"All contacts", @"");
         cell.destinationId = kIdentifierValueList;
-        cell.destinationTarget = kTargetFavourites;
+        cell.destinationTarget = kTargetAllContacts;
     } else {
         id<OMember> member = sectionKey == kSectionKeyWardOrigos ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
         id<OMembership> membership = [origo membershipForMember:member];
@@ -332,38 +320,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (NSString *)emptyTableViewFooterText
 {
     return [self targetIs:kTargetHiddenOrigos] ? NSLocalizedString(@"No hidden lists.", @"") : nil;
-}
-
-
-- (BOOL)toolbarHasSendTextButton
-{
-    BOOL hasSendTextButton = NO;
-    
-    for (id<OMember> recipientCandidate in [self.state eligibleCandidates]) {
-        if ([recipientCandidate.mobilePhone hasValue]) {
-            hasSendTextButton = YES;
-            
-            break;
-        }
-    }
-    
-    return hasSendTextButton;
-}
-
-
-- (BOOL)toolbarHasSendEmailButton
-{
-    BOOL hasSendEmailButton = NO;
-    
-    for (id<OMember> recipientCandidate in [self.state eligibleCandidates]) {
-        if ([recipientCandidate.email hasValue]) {
-            hasSendEmailButton = YES;
-            
-            break;
-        }
-    }
-    
-    return hasSendEmailButton;
 }
 
 

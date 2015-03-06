@@ -82,9 +82,11 @@
 @property (nonatomic, assign) BOOL usesTableView;
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
 @property (nonatomic, assign) BOOL usesSectionIndexTitles;
-@property (nonatomic, assign) BOOL presentStealthilyOnce;
-@property (nonatomic, assign) BOOL didCancel;
 @property (nonatomic, assign) BOOL cancelImpliesSkip;
+
+@property (nonatomic, assign) BOOL didCancel;
+@property (nonatomic, assign) BOOL presentStealthilyOnce;
+@property (nonatomic, assign) BOOL needsReloadInputSection;
 
 @property (nonatomic, assign) NSInteger selectedHeaderSegment;
 @property (nonatomic, assign) UITableViewRowAnimation rowAnimation;

@@ -171,72 +171,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
-#pragma mark - Object comparison
-
-- (NSComparisonResult)compare:(id<OMember>)other
-{
-    return [self.name localizedCaseInsensitiveCompare:other.name];
-}
-
-
-- (NSComparisonResult)ageCompare:(id<OMember>)other
-{
-    NSComparisonResult result = NSOrderedSame;
-    
-    if (self.dateOfBirth && other.dateOfBirth) {
-        result = [self.dateOfBirth compare:other.dateOfBirth];
-    }
-    
-    return result;
-}
-
-
-- (NSComparisonResult)subjectiveCompare:(id<OMember>)other
-{
-    NSComparisonResult result = NSOrderedSame;
-    
-    if ([other instance]) {
-        other = [other instance];
-        
-        if ([self isUser]) {
-            result = NSOrderedAscending;
-        } else if ([other isUser]) {
-            result = NSOrderedDescending;
-        } else {
-            result = [self.name localizedCaseInsensitiveCompare:other.name];
-        }
-    }
-    
-    return result;
-}
-
-
-#pragma mark - Favourites
-
-- (NSArray *)favourites
-{
-    return [self isUser] ? [[self stash] members] : nil;
-}
-
-
-#pragma mark - Devices
-
-- (NSArray *)registeredDevices
-{
-    NSMutableArray *registeredDevices = [NSMutableArray array];
-    
-    for (ODevice *device in self.devices) {
-        if (![device hasExpired]) {
-            [registeredDevices addObject:device];
-        }
-    }
-    
-    return [registeredDevices sortedArrayUsingSelector:@selector(compare:)];
-}
-
-
-#pragma mark - Communication recipients
-
 - (NSArray *)recipientsForCommunicationsKey:(NSString *)key groupable:(BOOL)groupable
 {
     NSMutableArray *recipients = [NSMutableArray array];
@@ -286,6 +220,100 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     return recipients;
 }
 
+
+#pragma mark - Object comparison
+
+- (NSComparisonResult)compare:(id<OMember>)other
+{
+    return [self.name localizedCaseInsensitiveCompare:other.name];
+}
+
+
+- (NSComparisonResult)ageCompare:(id<OMember>)other
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    if (self.dateOfBirth && other.dateOfBirth) {
+        result = [self.dateOfBirth compare:other.dateOfBirth];
+    }
+    
+    return result;
+}
+
+
+- (NSComparisonResult)subjectiveCompare:(id<OMember>)other
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    if ([other instance]) {
+        other = [other instance];
+        
+        if ([self isUser]) {
+            result = NSOrderedAscending;
+        } else if ([other isUser]) {
+            result = NSOrderedDescending;
+        } else {
+            result = [self.name localizedCaseInsensitiveCompare:other.name];
+        }
+    }
+    
+    return result;
+}
+
+
+#pragma mark - Favourites & non-favourites
+
+- (NSArray *)favourites
+{
+    return [self isUser] ? [[self stash] members] : nil;
+}
+
+
+- (NSArray *)nonFavourites
+{
+    NSMutableArray *nonFavourites = nil;
+    
+    if ([self isUser]) {
+        NSArray *favourites = [self favourites];
+        nonFavourites = [[self peersNotInSet:favourites] mutableCopy];
+        [nonFavourites removeObject:self];
+        
+        if ([self isJuvenile]) {
+            NSMutableSet *guardians = [NSMutableSet set];
+            
+            for (OMember *nonFavourite in nonFavourites) {
+                [guardians addObjectsFromArray:[nonFavourite guardians]];
+            }
+            
+            for (OMember *guardian in guardians) {
+                if (![favourites containsObject:guardian]) {
+                    [nonFavourites addObject:guardian];
+                }
+            }
+        }
+    }
+
+    return nonFavourites;
+}
+
+
+#pragma mark - Devices
+
+- (NSArray *)registeredDevices
+{
+    NSMutableArray *registeredDevices = [NSMutableArray array];
+    
+    for (ODevice *device in self.devices) {
+        if (![device hasExpired]) {
+            [registeredDevices addObject:device];
+        }
+    }
+    
+    return [registeredDevices sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+#pragma mark - Communication recipients
 
 - (NSArray *)textRecipients
 {
@@ -410,6 +438,31 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
+- (id<OOrigo>)pinnedFriendList
+{
+    OOrigo *list = nil;
+    
+    if ([self isJuvenile] && ([self isUser] || [self isWardOfUser])) {
+        for (OMembership *membership in [self allMemberships]) {
+            if ([membership.origo isPrivate] && [membership isOwnership]) {
+                if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {
+                    list = membership.origo;
+                }
+            }
+        }
+        
+        if (!list) {
+            list = [OOrigo instanceWithType:kOrigoTypePrivate];
+            list.name = kPlaceholderDefaultValue;
+            
+            [list addMember:self];
+        }
+    }
+    
+    return list;
+}
+
+
 - (id<OOrigo>)primaryResidence
 {
     OOrigo *primaryResidence = nil;
@@ -436,31 +489,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     return primaryResidence;
-}
-
-
-- (id<OOrigo>)pinnedFriendList
-{
-    OOrigo *list = nil;
-    
-    if ([self isJuvenile] && ([self isUser] || [self isWardOfUser])) {
-        for (OMembership *membership in [self allMemberships]) {
-            if ([membership.origo isPrivate] && [membership isOwnership]) {
-                if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {
-                    list = membership.origo;
-                }
-            }
-        }
-        
-        if (!list) {
-            list = [OOrigo instanceWithType:kOrigoTypePrivate];
-            list.name = kPlaceholderDefaultValue;
-            
-            [list addMember:self];
-        }
-    }
-    
-    return list;
 }
 
 

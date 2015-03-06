@@ -295,6 +295,12 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 }
 
 
+- (NSString *)inputCellReuseIdentifier
+{
+    return NSStringFromClass([self entityClass]);
+}
+
+
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];

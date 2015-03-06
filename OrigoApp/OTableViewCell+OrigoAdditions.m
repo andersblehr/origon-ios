@@ -151,10 +151,10 @@
 
 - (void)loadImageForOrigo:(id<OOrigo>)origo
 {
-    if ([origo isResidence]) {
+    if ([origo isStash]) {
+        self.imageView.image = [UIImage imageNamed:kIconFileAllContacts];
+    } else if ([origo isResidence]) {
         self.imageView.image = [UIImage imageNamed:kIconFileResidence];
-    } else if ([origo isStash]) {
-        self.imageView.image = [UIImage imageNamed:kIconFileFavouriteYes];
     } else if ([origo isPrivate]) {
         self.imageView.image = [UIImage imageNamed:kIconFileList];
     } else {

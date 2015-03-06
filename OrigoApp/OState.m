@@ -20,12 +20,11 @@ NSString * const kActionRegister = @"register";
 NSString * const kActionSignIn = @"signin";
 
 NSString * const kTargetAdmins = @"admins";
-NSString * const kTargetCall = @"call";
 NSString * const kTargetAffiliation = @"affiliation";
+NSString * const kTargetAllContacts = @"contacts";
 NSString * const kTargetDevices = @"devices";
 NSString * const kTargetElder = @"elder";
 NSString * const kTargetEmail = @"email";
-NSString * const kTargetFavourites = @"favourites";
 NSString * const kTargetGender = @"gender";
 NSString * const kTargetGroup = @"group";
 NSString * const kTargetGroups = @"groups";
@@ -51,11 +50,12 @@ NSString * const kTargetWard = @"ward";
 
 NSString * const kAspectDefault = @"default";
 NSString * const kAspectEditable = @"editable";
-NSString * const kAspectGlobal = @"global";
+NSString * const kAspectFavourites = @"favourites";
 NSString * const kAspectGroup = @"group";
 NSString * const kAspectHousehold = @"household";
 NSString * const kAspectJuvenile = @"juvenile";
 NSString * const kAspectMemberRole = @"members";
+NSString * const kAspectNonFavourites = @"others";
 NSString * const kAspectOrganiserRole = @"organisers";
 NSString * const kAspectParentRole = @"parents";
 NSString * const kAspectParent = @"parent";
@@ -166,6 +166,9 @@ static OState *_activeState = nil;
             } else if ([target isEqualToString:kTargetElder]) {
                 isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
                 isMatch = isMatch || [_target isEqualToString:kTargetOrganiser];
+            } else if ([target isEqualToString:kTargetAllContacts]) {
+                isMatch = isMatch || [self aspectIs:kAspectFavourites];
+                isMatch = isMatch || [self aspectIs:kAspectNonFavourites];
             } else if ([target isEqualToString:kTargetParent]) {
                 isMatch = isMatch || [self aspectIs:kAspectParent];
             } else if ([target isEqualToString:kTargetRole]) {
@@ -279,7 +282,7 @@ static OState *_activeState = nil;
             } else if ([self targetIs:kTargetOrganiser]) {
                 candidates = [peerPivot peersNotInSet:[_currentOrigo organisers]];
             } else {
-                candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
+                candidates = [peerPivot peersNotInSet:[_currentOrigo members]];
             }
             
             if ([_currentOrigo isPrivate]) {
