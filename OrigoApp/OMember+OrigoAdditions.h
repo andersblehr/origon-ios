@@ -35,6 +35,7 @@
 - (NSComparisonResult)subjectiveCompare:(id<OMember>)other;
 
 - (NSArray *)favourites;
+- (NSArray *)nonFavourites;
 - (NSArray *)registeredDevices;
 
 - (NSArray *)textRecipients;
@@ -48,8 +49,8 @@
 - (NSSet *)associateMemberships;
 
 - (id<OOrigo>)stash;
-- (id<OOrigo>)primaryResidence;
 - (id<OOrigo>)pinnedFriendList;
+- (id<OOrigo>)primaryResidence;
 - (NSArray *)residences;
 - (NSArray *)addresses;
 - (NSArray *)origos;

@@ -664,22 +664,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)prepareForReuse
-{
-    [super prepareForReuse];
-    
-    if (!_isInputCell && !_isInlineCell) {
-        self.textLabel.textColor = [UIColor textColour];
-        
-        if ([self styleIsSubtitle]) {
-            self.detailTextLabel.textColor = [UIColor textColour];
-        } else {
-            self.detailTextLabel.textColor = [UIColor valueTextColour];
-        }
-    }
-}
-
-
 #pragma mark - UITableViewCell custom accessors
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated

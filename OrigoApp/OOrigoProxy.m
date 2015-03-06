@@ -103,6 +103,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - OEntityProxy overrides
 
+- (NSString *)inputCellReuseIdentifier
+{
+    return [[super inputCellReuseIdentifier] stringByAppendingString:self.type separator:kSeparatorHash];
+}
+
+
 - (id)defaultValueForKey:(NSString *)key
 {
     return [self instance] ? [[self instance] defaultValueForKey:key] : kPlaceholderDefaultValue;

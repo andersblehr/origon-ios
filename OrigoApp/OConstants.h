@@ -146,6 +146,7 @@ extern NSString * const kIconFileDirections;
 extern NSString * const kIconFileNavigation;
 extern NSString * const kIconFileInfo;
 extern NSString * const kIconFileLookup;
+extern NSString * const kIconFileAllContacts;
 extern NSString * const kIconFileFavouriteNo;
 extern NSString * const kIconFileFavouriteYes;
 extern NSString * const kIconFileAcceptDecline;

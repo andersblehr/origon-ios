@@ -71,13 +71,15 @@ static NSInteger const kActionSheetTagRecipients = 4;
     if ([_membership needsAccepting] || [_membership isHidden]) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptDeclineButtonWithTarget:self]];
     } else  {
-        if (![_origo isResidence] && _userIsAdmin) {
+        if (_userIsAdmin && ![_origo isResidence] && ![_origo isPinned]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem settingsButtonWithTarget:self]];
         } else {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
         }
         
-        if ([_origo hasAddress]) {
+        BOOL canHaveAddress = [_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam]];
+        
+        if (canHaveAddress && [_origo hasAddress]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self]];
         }
 
@@ -847,9 +849,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            if ([viewController targetIs:kTargetOrganiser]) {
-                [self reloadSectionWithKey:kSectionKeyOrganisers];
-            } else {
+            if (![viewController targetIs:kTargetOrganiser]) {
                 if ([_origo isResidence]) {
                     [self.inputCell readData];
                 } else if ([_origo isCommunity]) {
@@ -859,8 +859,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
                         [_origo addMember:elder];
                     }
                 }
-                
-                [self reloadSectionWithKey:kSectionKeyMembers];
             }
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {
@@ -879,10 +877,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
                         [_origo addMember:member];
                     }
                 }
-                
-                [self reloadSectionWithKey:kSectionKeyMembers];
-            } else if ([viewController aspectIs:kAspectParentRole]) {
-                [self reloadSectionWithKey:kSectionKeyParentContacts];
             }
             
             [[OMeta m].replicator replicateIfNeeded];
@@ -892,7 +886,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 _origoType = _origo.type;
                 _needsEditDetails = YES;
                 
-                [self reloadSectionWithKey:kSectionKeyOrigo];
+                [self loadNavigationBarItems];
+                self.needsReloadInputSection = YES;
             }
             
             if (_userIsAdmin && ![_origo userIsAdmin]) {

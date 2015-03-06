@@ -111,10 +111,10 @@ static NSInteger const kSectionKeyValues = 0;
         self.usesSectionIndexTitles = YES;
         
         _origo = self.state.currentOrigo;
-        _isMultiValuePicker = YES;
+        _isMultiValuePicker = ![self targetIs:kTargetMember];
         _isNoValuePicker = YES;
         
-        if ([self targetIs:kTargetMembers]) {
+        if ([self targetIs:@[kTargetMember, kTargetMembers]]) {
             if ([_origo isCommunity]) {
                 self.title = NSLocalizedString(@"Households", @"");
             } else {
@@ -204,7 +204,7 @@ static NSInteger const kSectionKeyValues = 0;
         if ([self aspectIs:kAspectMemberRole]) {
             [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
         } else if ([self aspectIs:kAspectOrganiserRole]) {
-            [self setData:[_origo organisers] sectionIndexLabelKey:kPropertyKeyName];
+            [self setData:[_origo organiserCandidates] sectionIndexLabelKey:kPropertyKeyName];
         } else if ([self aspectIs:kAspectParentRole]) {
             [self setData:[_origo guardians] sectionIndexLabelKey:kPropertyKeyName];
         } else if ([self aspectIs:kAspectGroup]) {
@@ -270,6 +270,7 @@ static NSInteger const kSectionKeyValues = 0;
             }
         } else {
             cell.textLabel.textColor = [UIColor tonedDownTextColour];
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
             cell.selectable = NO;
         }
     } else if ([self targetIs:kTargetMembers]) {

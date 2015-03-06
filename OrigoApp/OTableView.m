@@ -33,8 +33,9 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
     if (cell) {
         if (cell.isInputCell) {
             cell.inputCellDelegate = delegate;
-        } else if (!cell.editable) {
+        } else if (!cell.isInlineCell) {
             cell.textLabel.text = nil;
+            cell.textLabel.textColor = [UIColor textColour];
             cell.detailTextLabel.text = nil;
             cell.imageView.image = nil;
             cell.tintColor = [UIColor globalTintColour];
@@ -50,6 +51,12 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
             cell.destinationTarget = nil;
             cell.destinationMeta = nil;
             cell.notificationText = nil;
+            
+            if ([cell styleIsSubtitle]) {
+                cell.detailTextLabel.textColor = [UIColor textColour];
+            } else {
+                cell.detailTextLabel.textColor = [UIColor valueTextColour];
+            }
             
             for (UIView *subview in cell.imageView.subviews) {
                 [subview removeFromSuperview];
@@ -79,7 +86,7 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
 
 - (id)inputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate
 {
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass([entity entityClass])];
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:[entity inputCellReuseIdentifier]];
     
     if (cell) {
         cell.inputCellDelegate = delegate;

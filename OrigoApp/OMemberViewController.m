@@ -27,7 +27,7 @@ static NSInteger const kButtonTagCoHabitantsNone = 2;
 
 static NSInteger const kActionSheetTagSource = 3;
 static NSInteger const kButtonTagSourceAddressBook = 0;
-static NSInteger const kButtonTagSourceGroups = 1;
+static NSInteger const kButtonTagSourceLists = 1;
 
 static NSInteger const kActionSheetTagAddressBookEntry = 4;
 static NSInteger const kButtonTagAddressBookEntryAllValues = 10;
@@ -127,7 +127,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (BOOL)reflectIfEligibleMember:(id<OMember>)member
 {
-    BOOL isEligible = ![_origo hasMember:member] || ([_origo isJuvenile] && ![_member isJuvenile]);
+    BOOL isEligible = ![_origo hasMember:member] || ([self targetIs:kTargetOrganiser] && ![[_origo organisers] containsObject:member]);
     
     if (isEligible) {
         [self reflectMember:member];
@@ -873,7 +873,7 @@ static NSInteger const kButtonIndexContinue = 1;
     if (_cachedCandidates && [_cachedCandidates count]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other list", @"") tag:kButtonTagSourceGroups];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from lists", @"") tag:kButtonTagSourceLists];
         
         [actionSheet show];
     } else {
@@ -1343,8 +1343,6 @@ static NSInteger const kButtonIndexContinue = 1;
                         precedingViewController.target = _role;
                         precedingViewController.title = _role;
                     }
-                    
-                    [self reloadSectionWithKey:kSectionKeyRoles];
                 }
             }
         }
@@ -1810,7 +1808,7 @@ static NSInteger const kButtonIndexContinue = 1;
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 if (buttonTag == kButtonTagSourceAddressBook) {
                     [self pickFromAddressBook];
-                } else if (buttonTag == kButtonTagSourceGroups) {
+                } else if (buttonTag == kButtonTagSourceLists) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMember meta:_cachedCandidates];
                 }
             } else {

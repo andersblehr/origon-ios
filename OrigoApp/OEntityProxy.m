@@ -358,6 +358,12 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
+- (NSString *)inputCellReuseIdentifier
+{
+    return NSStringFromClass(_entityClass);
+}
+
+
 - (void)reflectEntity:(id<OEntity>)entity
 {
     if (_entityClass == entity.entityClass) {

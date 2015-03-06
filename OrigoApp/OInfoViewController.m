@@ -16,9 +16,6 @@ static NSInteger const kSectionKeyMembership = 2;
 @interface OInfoViewController () <OTableViewController> {
 @private
     id _entity;
-    id<OOrigo> _createdIn;
-    
-    BOOL _userIsAdmin;
 }
 
 @end
@@ -35,7 +32,7 @@ static NSInteger const kSectionKeyMembership = 2;
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (![origo isResidence] || _userIsAdmin || ![origo hasAdmin]) {
+        if (![origo isResidence] || [origo userIsAdmin] || ![origo hasAdmin]) {
             if (![origo isResidence] || [self aspectIs:kAspectHousehold]) {
                 [displayableKeys addObject:kPropertyKeyName];
             }
@@ -54,7 +51,7 @@ static NSInteger const kSectionKeyMembership = 2;
         if (![origo isOfType:@[kOrigoTypeStash, kOrigoTypePrivate, kOrigoTypeResidence]]) {
             [displayableKeys addObject:kLabelKeyAdmins];
             
-            if (_userIsAdmin) {
+            if ([origo userIsAdmin]) {
                 [displayableKeys addObject:kPropertyKeyPermissions];
             }
         }
@@ -103,24 +100,6 @@ static NSInteger const kSectionKeyMembership = 2;
 }
 
 
-#pragma mark - View lifecycle
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-        id<OOrigo> origo = _entity;
-        
-        if (_userIsAdmin != [origo userIsAdmin]) {
-            _userIsAdmin = [origo userIsAdmin];
-            
-            [self reloadSectionWithKey:kSectionKeyGeneral];
-        }
-    }
-}
-
-
 #pragma mark - OTableViewController conformance
 
 - (void)loadState
@@ -129,7 +108,6 @@ static NSInteger const kSectionKeyMembership = 2;
     
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
-        _userIsAdmin = [origo userIsAdmin];
         
         if ([origo isResidence]) {
             self.title = NSLocalizedString(@"About this household", @"");
@@ -202,17 +180,17 @@ static NSInteger const kSectionKeyMembership = 2;
             } else if ([displayKey isEqualToString:kPropertyKeyType]) {
                 cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
                 
-                BOOL canEditType = _userIsAdmin && ![origo isResidence] && ![origo isCommunity];
+                BOOL canEdit = [origo userIsAdmin] && ![origo isResidence] && ![origo isCommunity];
                 
-                if (canEditType && [origo isPrivate]) {
-                    canEditType = origo != [[origo owner] pinnedFriendList];
+                if (canEdit && [origo isPrivate]) {
+                    canEdit = ![origo isPinned];
                 }
                 
-                if (canEditType && [[OMeta m].user isJuvenile]) {
-                    canEditType = [origo isPrivate];
+                if (canEdit && [[OMeta m].user isJuvenile]) {
+                    canEdit = [origo isPrivate];
                 }
                 
-                if (canEditType) {
+                if (canEdit) {
                     cell.destinationId = kIdentifierValuePicker;
                     cell.destinationTarget = kTargetOrigoType;
                 }
@@ -227,7 +205,7 @@ static NSInteger const kSectionKeyMembership = 2;
                 
                 cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo subjective:NO];
                 
-                if (_userIsAdmin) {
+                if ([origo userIsAdmin]) {
                     cell.destinationId = kIdentifierValuePicker;
                 } else if (adminCount > 1) {
                     cell.destinationId = kIdentifierValueList;
@@ -262,12 +240,12 @@ static NSInteger const kSectionKeyMembership = 2;
                         cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), components[1]];
                     }
                 } else {
-                    _createdIn = [[OMeta m].context entityWithId:components[0]];
+                    id<OOrigo> createdIn = [[OMeta m].context entityWithId:components[0]];
                     
-                    if (_createdIn) {
-                        cell.detailTextLabel.text = [_createdIn displayName];
+                    if (createdIn) {
+                        cell.detailTextLabel.text = [createdIn displayName];
                         cell.destinationId = kIdentifierOrigo;
-                        cell.destinationTarget = _createdIn;
+                        cell.destinationTarget = createdIn;
                     } else {
                         cell.detailTextLabel.text = components[1];
                     }
