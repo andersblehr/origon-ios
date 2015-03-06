@@ -284,6 +284,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSMutableSet *regulars = [NSMutableSet setWithArray:[self members]];
     [regulars minusSet:[NSSet setWithArray:[self organisers]]];
+    [regulars minusSet:[NSSet setWithArray:[self parentContacts]]];
     
     return [[regulars allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
