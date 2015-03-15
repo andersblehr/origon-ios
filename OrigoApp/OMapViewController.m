@@ -8,9 +8,9 @@
 
 #import "OMapViewController.h"
 
-static NSInteger const kTitleSubsegmentStandard = 0;
-static NSInteger const kTitleSubsegmentHybrid = 1;
-static NSInteger const kTitleSubsegmentSatellite = 2;
+static NSInteger const kTitleSegmentStandard = 0;
+static NSInteger const kTitleSegmentHybrid = 1;
+static NSInteger const kTitleSegmentSatellite = 2;
 
 static NSInteger const kActionSheetTagStartingPoint = 0;
 static NSInteger const kButtonTagStartingPointCurrentLocation = 10;
@@ -23,7 +23,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 
 @interface OMapViewController () <OTableViewController, CLLocationManagerDelegate, MKMapViewDelegate, UIActionSheetDelegate> {
 @private
-    UISegmentedControl *_titleSubsegments;
+    UISegmentedControl *_titleSegments;
     MKMapView *_mapView;
     MKPlacemark *_placemark;
     CLLocationManager *_locationManager;
@@ -117,13 +117,13 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 
 #pragma mark - Selector implementations
 
-- (void)didSelectTitleSubsegment
+- (void)didSelectTitleSegment
 {
-    if (_titleSubsegments.selectedSegmentIndex == kTitleSubsegmentStandard) {
+    if (_titleSegments.selectedSegmentIndex == kTitleSegmentStandard) {
         _mapView.mapType = MKMapTypeStandard;
-    } else if (_titleSubsegments.selectedSegmentIndex == kTitleSubsegmentHybrid) {
+    } else if (_titleSegments.selectedSegmentIndex == kTitleSegmentHybrid) {
         _mapView.mapType = MKMapTypeHybrid;
-    } else if  (_titleSubsegments.selectedSegmentIndex == kTitleSubsegmentSatellite) {
+    } else if  (_titleSegments.selectedSegmentIndex == kTitleSegmentSatellite) {
         _mapView.mapType = MKMapTypeSatellite;
     }
 }
@@ -172,8 +172,8 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
     
     [self.view addSubview:_mapView];
     
-    _titleSubsegments = [self titleSubsegmentsWithTitles:@[NSLocalizedString(@"Standard", @""), NSLocalizedString(@"Hybrid", @""), NSLocalizedString(@"Satellite", @"")]];
-    _titleSubsegments.selectedSegmentIndex = kTitleSubsegmentStandard;
+    _titleSegments = [self titleSegmentsWithTitles:@[NSLocalizedString(@"Standard", @""), NSLocalizedString(@"Hybrid", @""), NSLocalizedString(@"Satellite", @"")]];
+    _titleSegments.selectedSegmentIndex = kTitleSegmentStandard;
 
     id<OOrigo> origo = self.target;
     

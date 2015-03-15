@@ -13,7 +13,7 @@
 @implementation OOrigo
 
 @dynamic address;
-@dynamic countryCode;
+@dynamic location;
 @dynamic descriptionText;
 @dynamic isForMinors;
 @dynamic name;

@@ -49,9 +49,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
                 [_origoTypes addObject:kOrigoTypePreschoolClass];
             }
             
-            [_origoTypes addObjectsFromArray:@[kOrigoTypeSchoolClass, kOrigoTypeTeam]];
+            [_origoTypes addObjectsFromArray:@[kOrigoTypeSchoolClass, kOrigoTypeSports]];
         } else {
-            [_origoTypes addObjectsFromArray:@[kOrigoTypeCommunity, kOrigoTypeTeam, kOrigoTypeStudyGroup, kOrigoTypeAlumni]];
+            [_origoTypes addObjectsFromArray:@[kOrigoTypeCommunity, kOrigoTypeSports]];
         }
     }
     
@@ -151,14 +151,14 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"")];
         
         [actionSheet show];
-    } else if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
+    } else if ([[OMeta m] userIsLoggedIn] && ![[OMeta m] userIsRegistered]) {
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].userEmail]) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:NSLocalizedString(@"Please verify your details and provide any missing information.", @"")];
             
             for (id<OMember> ward in [[OMeta m].user wards]) {
                 _needsEditParents = _needsEditParents || ![ward mother] || ![ward father];
             }
-        } else if (![OMeta m].userDidJustSignUp) {
+        } else if (![OMeta m].userDidJustRegister) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }
         
@@ -235,44 +235,63 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
-    
-    if ([origo isStash]) {
-        cell.textLabel.text = NSLocalizedString(@"All contacts", @"");
-        cell.destinationId = kIdentifierValueList;
-        cell.destinationTarget = kTargetAllContacts;
-    } else {
-        id<OMember> member = sectionKey == kSectionKeyWardOrigos ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
-        id<OMembership> membership = [origo membershipForMember:member];
-        
-        if ([origo isPrivate] && ![member isUser] && [member isJuvenile]) {
-            if ([[origo displayName] isEqualToString:NSLocalizedString(@"Friends", @"")]) {
-                cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), [member givenName]];
-            } else {
-                cell.textLabel.text = [origo displayName];
-            }
-        } else {
-            cell.textLabel.text = [origo displayName];
-        }
-        
-        cell.destinationId = kIdentifierOrigo;
-        
-        BOOL userIsOrigoElder = [origo userIsOrganiser] || [origo userIsParentContact];
-        
-        if (userIsOrigoElder && sectionKey == kSectionKeyOrigos) {
-            cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
-        } else {
-            if (![membership isHidden] && [membership needsAccepting]) {
-                cell.notificationText = NSLocalizedString(@"New!", @"");
-            } else {
-                cell.notificationText = nil;
+    id<OMembership> membership = nil;
+
+    if (sectionKey == kSectionKeyUser) {
+        if ([origo isStash]) {
+            cell.textLabel.text = NSLocalizedString(@"All contacts", @"");
+            cell.destinationId = kIdentifierValueList;
+            cell.destinationTarget = kTargetAllContacts;
+        } else if ([origo isResidence]) {
+            membership = [origo membershipForMember:[OMeta m].user];
+            
+            BOOL shouldUseAddressForDefaultName = NO;
+            
+            if ([origo.name isEqualToString:kPlaceholderDefault]) {
+                for (id<OOrigo> residence in [[OMeta m].user residences]) {
+                    if (residence != origo && [residence.name isEqualToString:kPlaceholderDefault]) {
+                        shouldUseAddressForDefaultName = YES;
+                    }
+                }
             }
             
-            if ([origo isResidence]) {
-                cell.detailTextLabel.text = [origo singleLineAddress];
+            if (shouldUseAddressForDefaultName) {
+                cell.textLabel.text = [origo shortAddress];
             } else {
-                cell.detailTextLabel.text = origo.descriptionText;
+                cell.textLabel.text = [origo displayName];
+                cell.detailTextLabel.text = [origo singleLineAddress];
             }
         }
+    } else if (sectionKey == kSectionKeyOrigos) {
+        membership = [origo membershipForMember:[OMeta m].user];
+        
+        cell.textLabel.text = [origo displayName];
+        
+        if ([origo userIsOrganiser]) {
+            cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
+        } else {
+            cell.detailTextLabel.text = origo.descriptionText;
+        }
+    } else if (sectionKey == kSectionKeyWardOrigos) {
+        id<OMember> ward = _wards[self.selectedHeaderSegment];
+        membership = [origo membershipForMember:ward];
+        
+        if ([origo isPinned] && [origo.name isEqualToString:kPlaceholderDefault]) {
+            cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), [ward givenName]];
+        } else {
+            cell.textLabel.text = origo.name;
+            cell.detailTextLabel.text = origo.descriptionText;
+        }
+    }
+    
+    if (![origo isStash]) {
+        cell.destinationId = kIdentifierOrigo;
+    }
+    
+    if (membership && [membership needsAccepting] && ![membership isHidden]) {
+        cell.notificationText = NSLocalizedString(@"New!", @"");
+    } else {
+        cell.notificationText = nil;
     }
     
     [cell loadImageForOrigo:origo];
@@ -373,16 +392,11 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *buttonTitle = nil;
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeyUser) {
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyUser) {
         buttonTitle = NSLocalizedString(@"Move out", @"");
-    } else {
-        id<OOrigo> origo = [self dataAtIndexPath:indexPath];
-        
-        if (![origo isPrivate] && ![self canDeleteOrigoAtIndexPath:indexPath]) {
-            buttonTitle = NSLocalizedString(@"Hide", @"");
-        }
+    } else if (![self canDeleteOrigoAtIndexPath:indexPath]) {
+        buttonTitle = NSLocalizedString(@"Hide", @"");
     }
     
     return buttonTitle;
@@ -395,7 +409,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
-    if ([[origo members] count] > 1 && [origo userIsAdmin]) {
+    if (![origo isPrivate] && [[origo members] count] > 1 && [origo userIsAdmin]) {
         [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must appoint another administrator and remove yourself as administrator.", @"")];
         
         shouldDeleteCell = NO;
@@ -428,6 +442,8 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         [[origo membershipForMember:keyMember] expire];
     } else {
         [origo membershipForMember:keyMember].status = kMembershipStatusListed;
+        
+        [OMember clearCachedPeers];
     }
     
     [[OMeta m].replicator replicate];

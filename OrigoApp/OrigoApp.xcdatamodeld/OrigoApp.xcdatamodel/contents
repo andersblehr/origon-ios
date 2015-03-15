@@ -32,9 +32,9 @@
     </entity>
     <entity name="OOrigo" representedClassName="OOrigo" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="countryCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="isForMinors" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="permissions" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
@@ -57,11 +57,11 @@
         <attribute name="referencedEntityOrigoId" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ODevice" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="270"/>
-        <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="195"/>
-        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="163"/>
-        <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
+        <element name="ODevice" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMember" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMembership" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OReplicatedEntity" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

@@ -29,19 +29,19 @@
 
 @property (nonatomic, assign, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, assign, readonly) BOOL internetConnectionIsWWAN;
-@property (nonatomic, assign, readonly) BOOL userDidJustSignUp;
+@property (nonatomic, assign, readonly) BOOL userDidJustRegister;
 
 @property (nonatomic, weak, readonly) OAppDelegate *appDelegate;
 @property (nonatomic, weak, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;
 
-- (void)userDidSignUp;
-- (void)userDidSignIn;
-- (void)signOut;
+- (void)userDidRegister;
+- (void)userDidLogin;
+- (void)logout;
 
 - (BOOL)userIsAllSet;
-- (BOOL)userIsSignedIn;
+- (BOOL)userIsLoggedIn;
 - (BOOL)userIsRegistered;
 
 - (BOOL)internetConnectionIsAvailable;

@@ -134,17 +134,16 @@ static NSDictionary *_keyMappings = nil;
 {
     if (!_keyMappings) {
         _keyMappings = @{
-            kMappedKeyArena : kPropertyKeyAddress,
+            kMappedKeyArena : kPropertyKeyLocation,
             kMappedKeyClub : kPropertyKeyDescriptionText,
             kMappedKeyFullName : kPropertyKeyName,
-            kMappedKeyInstitution : kPropertyKeyDescriptionText,
+            kMappedKeyListName : kPropertyKeyName,
             kMappedKeyPreschoolClass : kPropertyKeyName,
             kMappedKeyPreschool : kPropertyKeyDescriptionText,
             kMappedKeyPrivateListName : kPropertyKeyName,
             kMappedKeyResidenceName : kPropertyKeyName,
             kMappedKeySchool : kPropertyKeyDescriptionText,
             kMappedKeySchoolClass : kPropertyKeyName,
-            kMappedKeyStudyGroup : kPropertyKeyName,
         };
     }
     

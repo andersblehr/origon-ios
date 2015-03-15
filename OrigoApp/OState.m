@@ -15,9 +15,9 @@ NSString * const kActionEdit = @"edit";
 NSString * const kActionInput = @"input";
 NSString * const kActionList = @"list";
 NSString * const kActionLoad = @"load";
+NSString * const kActionLogin = @"login";
 NSString * const kActionPick = @"pick";
 NSString * const kActionRegister = @"register";
-NSString * const kActionSignIn = @"signin";
 
 NSString * const kTargetAdmins = @"admins";
 NSString * const kTargetAffiliation = @"affiliation";
@@ -139,8 +139,8 @@ static OState *_activeState = nil;
                 isMatch = isMatch || [_action isEqualToString:kActionActivate];
                 isMatch = isMatch || [_action isEqualToString:kActionChange];
                 isMatch = isMatch || [_action isEqualToString:kActionEdit];
+                isMatch = isMatch || [_action isEqualToString:kActionLogin];
                 isMatch = isMatch || [_action isEqualToString:kActionRegister];
-                isMatch = isMatch || [_action isEqualToString:kActionSignIn];
             }
         }
     } else if ([action isKindOfClass:[NSArray class]]) {

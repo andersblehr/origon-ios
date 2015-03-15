@@ -104,12 +104,6 @@
 }
 
 
-- (id<OOrigo>)pinnedFriendList
-{
-    return [self instance] ? [[self instance] pinnedFriendList] : nil;
-}
-
-
 - (NSArray *)residences
 {
     id residences = nil;
@@ -218,12 +212,6 @@
 }
 
 
-- (BOOL)isUser
-{
-    return [self instance] ? [[self instance] isUser] : NO;
-}
-
-
 - (BOOL)isWardOfUser
 {
     return [self instance] ? [[self instance] isWardOfUser] : [self.dateOfBirth isBirthDateOfMinor];
@@ -233,12 +221,6 @@
 - (BOOL)isEditableByUser
 {
     return [self instance] ? [[self instance] isEditableByUser] : ![self isReplicated];
-}
-
-
-- (BOOL)isFavourite
-{
-    return [self instance] ? [[self instance] isFavourite] : NO;
 }
 
 

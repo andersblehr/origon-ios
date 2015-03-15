@@ -20,7 +20,7 @@ NSString * const kIdentifierValueList = @"values";
 NSString * const kIdentifierValuePicker = @"value";
 
 // Reuse identifiers
-NSString * const kReuseIdentifierUserSignIn = @"signIn";
+NSString * const kReuseIdentifierUserLogin = @"login";
 NSString * const kReuseIdentifierUserActivation = @"activate";
 NSString * const kReuseIdentifierPasswordChange = @"passwordChange";
 
@@ -34,7 +34,6 @@ NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
 // Entity property keys
 NSString * const kPropertyKeyActiveSince = @"activeSince";
 NSString * const kPropertyKeyAddress = @"address";
-NSString * const kPropertyKeyCountryCode = @"countryCode";
 NSString * const kPropertyKeyCreatedBy = @"createdBy";
 NSString * const kPropertyKeyCreatedIn = @"createdIn";
 NSString * const kPropertyKeyDateCreated = @"dateCreated";
@@ -49,6 +48,7 @@ NSString * const kPropertyKeyGender = @"gender";
 NSString * const kPropertyKeyHashCode = @"hashCode";
 NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyIsMinor = @"isMinor";
+NSString * const kPropertyKeyLocation = @"location";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
 NSString * const kPropertyKeyModifiedBy = @"modifiedBy";
 NSString * const kPropertyKeyMotherId = @"motherId";
@@ -68,14 +68,13 @@ NSString * const kRelationshipKeyOrigo = @"origo";
 NSString * const kMappedKeyArena = @"arena";
 NSString * const kMappedKeyClub = @"club";
 NSString * const kMappedKeyFullName = @"fullName";
-NSString * const kMappedKeyInstitution = @"institution";
+NSString * const kMappedKeyListName = @"listName";
 NSString * const kMappedKeyPreschool = @"preschool";
 NSString * const kMappedKeyPreschoolClass = @"preschoolClass";
 NSString * const kMappedKeyPrivateListName = @"privateListName";
 NSString * const kMappedKeyResidenceName = @"residenceName";
 NSString * const kMappedKeySchool = @"school";
 NSString * const kMappedKeySchoolClass = @"schoolClass";
-NSString * const kMappedKeyStudyGroup = @"studyGroup";
 
 // Internal keys
 NSString * const kInternalKeyDeviceId = @"deviceId";
@@ -85,7 +84,7 @@ NSString * const kInternalKeyEntityClass = @"entityClass";
 // Label keys
 NSString * const kLabelKeyActivate = @"activate";
 NSString * const kLabelKeyAdmins = @"admins";
-NSString * const kLabelKeyRegisterOrSignIn = @"registerOrSignIn";
+NSString * const kLabelKeyRegisterOrLogIn = @"registerOrLogIn";
 
 // Input keys
 NSString * const kInputKeyActivationCode = @"activationCode";
@@ -100,12 +99,12 @@ NSString * const kInputKeyRepeatPassword = @"repeatPassword";
 NSString * const kActionKeyActivate = @"activate";
 NSString * const kActionKeyCancel = @"cancel";
 NSString * const kActionKeyChangePassword = @"changePassword";
-NSString * const kActionKeySignIn = @"signIn";
-NSString * const kActionKeySignOut = @"signOut";
-NSString * const kActionKeySignUp = @"signUp";
+NSString * const kActionKeyLogin = @"login";
+NSString * const kActionKeyLogout = @"logout";
+NSString * const kActionKeyRegister = @"register";
 
 // Placeholders
-NSString * const kPlaceholderDefaultValue = @"defaultValue";
+NSString * const kPlaceholderDefault = @"defaultValue";
 
 // String prefixes
 NSString * const kStringPrefixLabel = @"[label]";

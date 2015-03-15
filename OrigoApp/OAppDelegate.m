@@ -47,7 +47,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)saveApplicationState
 {
-    if ([[OMeta m] userIsSignedIn]) {
+    if ([[OMeta m] userIsLoggedIn]) {
         [[OMeta m].replicator saveUserReplicationState];
     }
     

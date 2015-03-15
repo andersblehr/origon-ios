@@ -20,7 +20,7 @@
 + (NSString *)regionIdentifier
 {
     NSArray *multiLingualCountryCodes = @[@"CA"];
-    NSString *regionIdentifier = [NSLocale countryCode];
+    NSString *regionIdentifier = [self countryCode];
     
     if ([multiLingualCountryCodes containsObject:regionIdentifier]) {
         regionIdentifier = [[NSLocale currentLocale] objectForKey:NSLocaleIdentifier];

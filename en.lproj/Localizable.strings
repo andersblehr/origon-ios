@@ -25,15 +25,14 @@
 "[label] email" = "Email";
 "[label] fatherId" = "Father";
 "[label] gender" = "Gender";
-"[label] institution" = "Institution";
 "[label] mobilePhone" = "Mobile";
 "[label] modifiedBy" = "Last modified by";
 "[label] motherId" = "Mother";
 "[label] name" = "Name";
 "[label] preschool" = "Preschool";
-"[label] registerOrSignIn" = "Register user or sign in";
+"[label] registerOrLogIn" = "Register user or log in";
 "[label] school" = "School";
-"[label] signOut" = "Sign out";
+"[label] logout" = "Log out";
 "[label] telephone" = "Telephone";
 "[label] type" = "Type";
 
@@ -44,7 +43,7 @@
 // Placeholders
 "[placeholder] activationCode" = "Activation code from email";
 "[placeholder] address" = "Street address\nPostal code and city/town";
-"[placeholder] arena" = "Home arena\nOptional address";
+"[placeholder] arena" = "Home arena";
 "[placeholder] authEmail" = "Your email address";
 "[placeholder] club" = "Name of club";
 "[placeholder] dateOfBirth" = "Date of birth";
@@ -52,7 +51,7 @@
 "[placeholder] email" = "A valid email address";
 "[placeholder] fullName" = "Full name";
 "[placeholder] givenName" = "Name";
-"[placeholder] institution" = "Name of university or school";
+"[placeholder] listName" = "List name";
 "[placeholder] mobilePhone" = "Mobile phone number";
 "[placeholder] name"  = "Name";
 "[placeholder] newPassword" = "New password";
@@ -67,12 +66,11 @@
 "[placeholder] residenceName" = "Moniker for this address";
 "[placeholder] school" = "Name of school";
 "[placeholder] schoolClass" = "Class";
-"[placeholder] studyGroup" = "Group moniker";
 "[placeholder] telephone" = "Telephone number";
 
 // Titles
-"[title] signUp" = "Register user";
-"[title] signIn" = "Sign in";
+"[title] register" = "Register user";
+"[title] login" = "Log in";
 "[title] activate" = "Activate";
 "[title] changePassword" = "Change password";
 "[title] cancel" = "Cancel";
@@ -83,110 +81,91 @@
  ***/
 
 // Origo titles
-"[title] alumni" = "Alumni group";
 "[title] community" = "Local community";
 "[title] preschoolClass" = "Preschool class";
 "[title] private" = "Private list";
 "[title] residence" = "Household";
 "[title] schoolClass" = "School class";
+"[title] sports" = "Sports";
 "[title] standard" = "Standard list";
-"[title] studyGroup" = "Study group";
-"[title] team" = "Sports group";
 
 // Registration footers
-"[registration footer] alumni" = "Tap + to register alums.";
 "[registration footer] community" = "Tap + to register households.";
 "[registration footer] preschoolClass" = "Tap + to register children and teachers.";
 "[registration footer] residence" = "Tap + to register members of the household.";
 "[registration footer] schoolClass" = "Tap + to register students and teachers.";
+"[registration footer] sports" = "Tap + to register participants and coaches.";
 "[registration footer] standard" = "Tap + to register members.";
-"[registration footer] studyGroup" = "Tap + to register students and lecturers.";
-"[registration footer] team" = "Tap + to register participants and coaches.";
 
 // Member registration button titles
-"[add member] alumni" = "Register alum";
 "[add member] community" = "Register household";
 "[add member] preschoolClass" = "Register child";
+"[add member] residence" = "New household member";
 "[add member] schoolClass" = "Register student";
+"[add member] sports" = "Register participant";
 "[add member] standard" = "Register member";
-"[add member] studyGroup" = "Register student";
-"[add member] team" = "Register participant";
 
 // Member titles
-"[member] alumni" = "Alum";
 "[member] community" = "Member";
 "[member] preschoolClass" = "Child";
 "[member] residence" = "Resident";
 "[member] schoolClass" = "Student";
+"[member] sports" = "Participant";
 "[member] standard" = "Member";
-"[member] studyGroup" = "Student";
-"[member] team" = "Participant";
 
 // Member list titles
-"[members] alumni" = "Alumni";
 "[members] community" = "Members";
 "[members] preschoolClass" = "Children";
 "[members] private" = "Friends";
 "[members] residence" = "In the household";
 "[members] schoolClass" = "Students";
+"[members] sports" = "Participants";
 "[members] standard" = "Members";
-"[members] studyGroup" = "Students";
-"[members] team" = "Participants";
 
 // New member titles
-"[new member] alumni" = "Alum";
 "[new member] community" = "In the household";
 "[new member] preschoolClass" = "Child";
 "[new member] residence" = "In the household";
 "[new member] schoolClass" = "Student";
+"[new member] sports" = "Participant";
 "[new member] standard" = "Member";
-"[new member] studyGroup" = "Student";
-"[new member] team" = "Participant";
 
 // Origo collective titles
-"[all members] alumni" = "All alumni";
 "[all members] community" = "All members";
 "[all members] private" = "Everybody";
 "[all members] residence" = "The whole household";
+"[all members] sports" = "The whole group";
 "[all members] standard" = "All members";
-"[all members] studyGroup" = "The whole group";
-"[all members] team" = "The whole group";
 
 // Organiser registration button titles
 "[add organiser] preschoolClass" = "Register teacher";
 "[add organiser] schoolClass" = "Register teacher";
-"[add organiser] studyGroup" = "Register lecturer";
-"[add organiser] team" = "Register coach";
+"[add organiser] sports" = "Register coach";
 
 // Organiser titles
 "[organiser] preschoolClass" = "Teacher";
 "[organiser] schoolClass" = "Teacher";
-"[organiser] studyGroup" = "Lecturer";
-"[organiser] team" = "Coach";
+"[organiser] sports" = "Coach";
 
 // Organiser list titles
 "[organisers] preschoolClass" = "Teachers";
 "[organisers] schoolClass" = "Teachers";
-"[organisers] studyGroup" = "Lecturers";
-"[organisers] team" = "Coaches";
+"[organisers] sports" = "Coaches";
 
 // Organiser roles
 "[organiser role] preschoolClass" = "Responsibility";
 "[organiser role] schoolClass" = "Responsibility";
-"[organiser role] studyGroup" = "Topic";
-"[organiser role] team" = "Coach role";
+"[organiser role] sports" = "Coach role";
 
 // Register organiser role button titles
 "[add organiser role] preschoolClass" = "Register responsibility";
 "[add organiser role] schoolClass" = "Register responsibility";
-"[add organiser role] studyGroup" = "Register responsibility";
-"[add organiser role] team" = "Register coach role";
+"[add organiser role] sports" = "Register coach role";
 
 // Edit organiser role button titles
 "[edit organiser role] preschoolClass" = "Edit responsibility";
 "[edit organiser role] schoolClass" = "Edit responsibility";
-"[edit organiser role] studyGroup" = "Edit responsibility";
-"[edit organiser role] team" = "Edit coach role";
+"[edit organiser role] sports" = "Edit coach role";
 
 
 /***
@@ -205,7 +184,6 @@
 "coach" = "coach;-;coaches;-;-;-";
 "father" = "father;the father;-;-;your father;%@'s father";
 "guardian" = "guardian;-;guardians;-;-;-";
-"lecturer" = "lecturer;-;lecturers;-;-;-";
 "mother" = "mother;the mother;-;-;your mother;%@'s mother";
 "parent" = "parent;-;parents;the parents;your parents;%@'s parents";
 "parentContact" = "parent contact;-;parent contacts;-;-;-";
@@ -259,7 +237,7 @@
 "Cannot place call" = "Cannot place call";
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
 "Authentication required" = "Authentication required";
-"You have been signed out. Please sign in again to continue using Origo on this device." = "You have been remotely signed out. Please sign in again to continue using Origo on this device.";
+"You have been logged out. Please log in again to continue using Origo on this device." = "You have been logged out. Please log in again to continue using Origo on this device.";
 "Data error" = "Data error";
 "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.";
 
@@ -293,7 +271,6 @@
 "edit" = "edit";
 "inactive" = "inactive";
 
-
 // Formats
 "%@ at %@" = "%@ at %@";
 "%d years" = "%d";
@@ -304,6 +281,7 @@
 "%@ [guardian of] %@" = "%@ of %@";
 "%@ in %@" = "%@ in %@";
 "%@'s friends" = "%@'s friends";
+"Lives with %@" = "Lives with %@";
 
 // Separators
 " and " = " and ";
@@ -317,7 +295,7 @@
  ***/
 
 // Footers
-"If you are signing up, you will receive an email ..." = "If you are signing up, you will receive an email with an activation code to use in the next step.";
+"When you register, you will receive an email with an activation code to use in the next step." = "When you register, you will receive an email with an activation code to use in the next step.";
 "The activation code has been sent to %@ ..." = "The activation code has been sent to %@. You can enter the code later if you don't have access to your email at this time.";
 "The activation code has been sent to %@." = "The activation code has been sent to %@.";
 
@@ -418,8 +396,9 @@
  * OMemberViewController strings
  ***/
 
-// View title
+// View titles
 "About you" = "About you";
+"Complete registration" = "Complete registration";
 
 // Headers
 "Responsibility in %@" = "Responsibility in %@";
@@ -428,6 +407,7 @@
 // Footers
 "New %@ members will receive an invitation by email." = "New %@ members will receive an invitation by email.";
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
+"Before you can register a friend, you must register his or her guardians." = "Before you can register a friend, you must register his or her guardians.";
 "Tap + to register additional guardians." = "Tap + to register additional guardians.";
 "%@ is active on %@." = "%@ is active on %@.";
 "%@ is represented on %@." = "%@ is represented on %@.";
@@ -549,9 +529,7 @@
 "Select recipients" = "Select recipients";
 
 // Buttons
-"Parents and %@" = "Parents and %@";
 "Parents" = "Parents";
-"Parents, grouped" = "Parents, grouped";
 "Grouped" = "Grouped";
 "Everybody" = "Everybody";
 "Select all" = "Select all";
@@ -583,7 +561,7 @@
 "About" = "About";
 
 // Labels
-"Active on %@" = "Active on %@";
+"Represented on %@" = "Represented on %@";
 "Through household" = "Through household";
 "My membership" = "My membership";
 "Regular member" = "Regular member";

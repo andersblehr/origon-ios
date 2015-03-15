@@ -332,6 +332,8 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 - (void)expire
 {
     self.isExpired = @YES;
+    
+    [OMember clearCachedPeers];
 }
 
 

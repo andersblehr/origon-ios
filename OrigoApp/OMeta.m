@@ -20,7 +20,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     OReplicator *_replicator;
     OActivityIndicator *_activityIndicator;
     
-    NSNumber *_isSignedIn;
+    NSNumber *_isLoggedIn;
     NSString *_authToken;
     NSDate *_authTokenExpiryDate;
     
@@ -86,8 +86,8 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     _authToken = nil;
     _authTokenExpiryDate = nil;
     _lastReplicationDate = nil;
-    _userDidJustSignUp = NO;
-    _isSignedIn = @NO;
+    _userDidJustRegister = NO;
+    _isLoggedIn = @NO;
     
     [self.appDelegate releasePersistentStore];
     [OEntityProxy clearCachedProxies];
@@ -154,25 +154,25 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-#pragma mark - User sign in & registration status
+#pragma mark - User login & registration status
 
-- (void)userDidSignUp
+- (void)userDidRegister
 {
-    _userDidJustSignUp = YES;
+    _userDidJustRegister = YES;
 }
 
 
-- (void)userDidSignIn
+- (void)userDidLogin
 {
     [ODefaults setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
     
     [self loadUser];
     
-    _isSignedIn = @YES;
+    _isLoggedIn = @YES;
 }
 
 
-- (void)signOut
+- (void)logout
 {
     [self.replicator saveUserReplicationState];
     [self.replicator resetUserReplicationState];
@@ -181,21 +181,21 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     
     [self reset];
     
-    if ([[OState s].viewController respondsToSelector:@selector(didSignOut)]) {
-        [[OState s].viewController didSignOut];
+    if ([[OState s].viewController respondsToSelector:@selector(didLogout)]) {
+        [[OState s].viewController didLogout];
     }
 }
 
 
 - (BOOL)userIsAllSet
 {
-    return [self userIsSignedIn] && [self userIsRegistered];
+    return [self userIsLoggedIn] && [self userIsRegistered];
 }
 
 
-- (BOOL)userIsSignedIn
+- (BOOL)userIsLoggedIn
 {
-    if (!_isSignedIn) {
+    if (!_isLoggedIn) {
         if (!_authTokenExpiryDate) {
             _authTokenExpiryDate = [ODefaults userDefaultForKey:kDefaultsKeyAuthExpiryDate];
             
@@ -210,13 +210,13 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
         }
 
         if (_user) {
-            _isSignedIn = @YES;
+            _isLoggedIn = @YES;
         } else {
             [self reset];
         }
     }
     
-    return [_isSignedIn boolValue];
+    return [_isLoggedIn boolValue];
 }
 
 

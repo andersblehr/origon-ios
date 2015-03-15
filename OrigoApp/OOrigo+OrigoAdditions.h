@@ -8,16 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const kOrigoTypeAlumni;
 extern NSString * const kOrigoTypeCommunity;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypePrivate;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeSchoolClass;
+extern NSString * const kOrigoTypeSports;
 extern NSString * const kOrigoTypeStandard;
 extern NSString * const kOrigoTypeStash;
-extern NSString * const kOrigoTypeStudyGroup;
-extern NSString * const kOrigoTypeTeam;
 
 
 @protocol OOrigo <OEntity>
@@ -27,7 +25,7 @@ extern NSString * const kOrigoTypeTeam;
 @property (nonatomic) NSString *descriptionText;
 @property (nonatomic) NSString *address;
 @property (nonatomic) NSString *telephone;
-@property (nonatomic) NSString *countryCode;
+@property (nonatomic) NSString *location;
 @property (nonatomic) NSString *type;
 @property (nonatomic) NSString *permissions;
 
@@ -37,6 +35,8 @@ extern NSString * const kOrigoTypeTeam;
 
 - (NSArray *)permissionKeys;
 - (NSString *)defaultPermissions;
+- (BOOL)hasPermissionWithKey:(NSString *)key;
+- (void)setPermission:(BOOL)permission forKey:(NSString *)key;
 
 - (NSComparisonResult)compare:(id<OOrigo>)other;
 
@@ -96,6 +96,8 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)hasAddress;
 - (BOOL)hasTelephone;
 - (BOOL)hasAdmin;
+- (BOOL)hasRegulars;
+- (BOOL)hasTeenRegulars;
 - (BOOL)hasOrganisers;
 - (BOOL)hasParentContacts;
 - (BOOL)hasMember:(id<OMember>)member;
@@ -104,9 +106,11 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)hasMembersInCommonWithOrigo:(id<OOrigo>)residence;
 
 - (NSArray *)recipientCandidates;
-- (NSArray *)textRecipients;
 - (NSArray *)callRecipients;
+- (NSArray *)textRecipients;
+- (NSArray *)textRecipientsInSet:(id)set;
 - (NSArray *)emailRecipients;
+- (NSArray *)emailRecipientsInSet:(id)set;
 
 - (NSString *)displayName;
 - (NSString *)displayPermissions;

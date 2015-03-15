@@ -346,9 +346,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 - (id)defaultValueForKey:(NSString *)key
 {
-    [NSException raise:NSInternalInconsistencyException format:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
-    
-    return nil;
+    return [self instance] ? [[self instance] defaultValueForKey:key] : kPlaceholderDefault;
 }
 
 

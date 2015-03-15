@@ -25,8 +25,8 @@ NSInteger const kBarButtonTagSettings = 22;
 NSInteger const kBarButtonTagBack = 30;
 NSInteger const kBarButtonTagCancel = 31;
 NSInteger const kBarButtonTagDone = 32;
-NSInteger const kBarButtonTagNext = 33;
-NSInteger const kBarButtonTagSignOut = 34;
+NSInteger const kBarButtonTagLogout = 33;
+NSInteger const kBarButtonTagNext = 34;
 
 NSInteger const kBarButtonTagPhoneCall = 40;
 NSInteger const kBarButtonTagSendEmail = 41;
@@ -207,9 +207,9 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)signOutButtonWithTarget:(id)target
++ (instancetype)logoutButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(kActionKeySignOut, kStringPrefixLabel) target:target action:@selector(signOut) tag:kBarButtonTagSignOut];
+    return [self barButtonWithVisuals:NSLocalizedString(kActionKeyLogout, kStringPrefixLabel) target:target action:@selector(logout) tag:kBarButtonTagLogout];
 }
 
 

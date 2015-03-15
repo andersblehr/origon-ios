@@ -15,7 +15,6 @@ NSString * const _administrator_ = @"administrator";
 NSString * const _coach_ = @"coach";
 NSString * const _father_ = @"father";
 NSString * const _guardian_ = @"guardian";
-NSString * const _lecturer_ = @"lecturer";
 NSString * const _mother_ = @"mother";
 NSString * const _parent_ = @"parent";
 NSString * const _parentContact_ = @"parentContact";
@@ -28,7 +27,7 @@ NSString * const _she_ = @"she";
 NSString * const _you_ = @"you";
 
 static NSString * const kPartOfSpeechVerbs = @"be";
-static NSString * const kPartOfSpeechNouns = @"address;administrator;coach;father;guardian;lecturer;mother;parent;parentContact;preschoolTeacher;teacher";
+static NSString * const kPartOfSpeechNouns = @"address;administrator;coach;father;guardian;mother;parent;parentContact;preschoolTeacher;teacher";
 static NSString * const kPartOfSpeechPronouns = @"he;I;she;you";
 
 static NSString * const kPlaceholderSubject = @"{subject}";

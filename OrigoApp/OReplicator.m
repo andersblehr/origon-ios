@@ -29,7 +29,7 @@
     if (self) {
         _dirtyEntities = [NSMutableSet set];
         
-        if ([[OMeta m] userIsSignedIn]) {
+        if ([[OMeta m] userIsLoggedIn]) {
             [self loadUserReplicationState];
         }
     }
@@ -157,7 +157,7 @@
         _refreshHandler = nil;
     }
     
-    if ([[OMeta m] userIsSignedIn]) {
+    if ([[OMeta m] userIsLoggedIn]) {
         NSInteger HTTPStatus = response.statusCode;
         
         if (HTTPStatus < kHTTPStatusErrorRangeStart) {
@@ -186,10 +186,10 @@
             
             [self replicateIfNeeded];
         } else if (HTTPStatus == kHTTPStatusUnauthorized) {
-            [[OMeta m] signOut];
+            [[OMeta m] logout];
         }
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Authentication required", @"") text:NSLocalizedString(@"You have been signed out. Please sign in again to continue using Origo on this device.", @"")];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Authentication required", @"") text:NSLocalizedString(@"You have been logged out. Please log in again to continue using Origo on this device.", @"")];
         
     }
 }

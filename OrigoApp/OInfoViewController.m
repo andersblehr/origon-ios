@@ -146,7 +146,7 @@ static NSInteger const kSectionKeyMembership = 2;
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
         id<OMember> member = _entity;
         
-        if ([member isJuvenile] && [member isWardOfUser]) {
+        if ([member isJuvenile] && ([member isUser] || [member isWardOfUser])) {
             [self setData:@[kPropertyKeyMotherId, kPropertyKeyFatherId] forSectionWithKey:kSectionKeyParents];
         }
         
@@ -251,11 +251,9 @@ static NSInteger const kSectionKeyMembership = 2;
                     }
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyActiveSince]) {
-                cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Active on %@", @""), [OMeta m].appName];
+                cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Represented on %@", @""), [OMeta m].appName];
                 
-                if ([member isActive]) {
-                    cell.detailTextLabel.text = NSLocalizedString(@"Yes", @"");
-                } else if ([member isManaged]) {
+                if ([member isManaged]) {
                     cell.detailTextLabel.text = NSLocalizedString(@"Through household", @"");
                 } else {
                     cell.detailTextLabel.text = NSLocalizedString(@"No", @"");
@@ -340,7 +338,7 @@ static NSInteger const kSectionKeyMembership = 2;
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
             footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered %@.", @""), [[_entity dateCreated] localisedDateString]];
             
-            if ([_entity isActive] && ![_entity isOutOfBounds]) {
+            if ([_entity isActive] && ([_entity isHousemateOfUser] || [_entity isTeenOrOlder])) {
                 footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active on %@ since %@.", @""), [OMeta m].appName, [[_entity activeSince] localisedDateString]] separator:kSeparatorNewline];
             }
         }
