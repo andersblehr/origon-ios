@@ -25,7 +25,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)visibleMembersFromMembers:(NSArray *)members
 {
-    id visibleMembers = [NSMutableArray array];
+    NSMutableArray *visibleMembers = [NSMutableArray array];
     
     NSArray *userWards = nil;
     
@@ -35,15 +35,31 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         userWards = [[OMeta m].user allWards];
     }
     
-    NSMutableSet *userWardPeers = [NSMutableSet setWithArray:userWards];
-    
-    for (OMember *userWard in userWards) {
-        [userWardPeers unionSet:[NSSet setWithArray:[userWard allPeers]]];
-    }
+    NSMutableSet *userWardPeers = nil;
     
     for (OMember *member in members) {
-        if (![member isJuvenile] || [userWardPeers containsObject:member]) {
+        if (![member isJuvenile] || [[OMeta m].user isJuvenile]) {
             [visibleMembers addObject:member];
+        } else {
+            for (OOrigo *origo in [member origos]) {
+                if ([origo isOrganised] && [[origo organisers] containsObject:[OMeta m].user]) {
+                    [visibleMembers addObject:member];
+                }
+            }
+            
+            if (![visibleMembers containsObject:member]) {
+                if (!userWardPeers && [userWards count]) {
+                    userWardPeers = [NSMutableSet setWithArray:userWards];
+                    
+                    for (OMember *userWard in userWards) {
+                        [userWardPeers unionSet:[NSSet setWithArray:[userWard allPeers]]];
+                    }
+                }
+                
+                if ([userWardPeers containsObject:member]) {
+                    [visibleMembers addObject:member];
+                }
+            }
         }
     }
     
@@ -77,15 +93,23 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         NSMutableSet *allPeers = [NSMutableSet set];
         
         for (OOrigo *origo in [self origosIncludeResidences:YES]) {
-            for (OMember *member in [origo members]) {
-                if ([member isJuvenile] == [self isJuvenile]) {
-                    [allPeers addObject:member];
-                    
-                    for (OOrigo *residence in [member residences]) {
-                        for (OMembership *membership in [residence allMemberships]) {
-                            if ([membership isResidency] && membership.member != member) {
-                                if ([membership.member isJuvenile] == [self isJuvenile]) {
-                                    [allPeers addObject:membership.member];
+            NSArray *organisers = [origo isJuvenile] ? [origo organisers] : nil;
+            
+            if (organisers && [organisers count] && [organisers containsObject:self]) {
+                for (OMember *regular in [origo regulars]) {
+                    [allPeers addObjectsFromArray:[regular guardians]];
+                }
+            } else {
+                for (OMember *member in [origo members]) {
+                    if ([member isJuvenile] == [self isJuvenile]) {
+                        [allPeers addObject:member];
+                        
+                        for (OOrigo *residence in [member residences]) {
+                            for (OMembership *membership in [residence allMemberships]) {
+                                if ([membership isResidency] && membership.member != member) {
+                                    if ([membership.member isJuvenile] == [self isJuvenile]) {
+                                        [allPeers addObject:membership.member];
+                                    }
                                 }
                             }
                         }
@@ -119,6 +143,10 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
                 for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
                     for (OMember *member in [origo members]) {
                         if ([member isJuvenile]) {
+                            if ([member isTeenOrOlder] || [member isHousemateOfUser]) {
+                                [allPeers addObject:member];
+                            }
+                            
                             for (OMember *guardian in [member guardians]) {
                                 for (OOrigo *residence in [guardian residences]) {
                                     [allPeers unionSet:[NSSet setWithArray:[residence elders]]];
@@ -290,10 +318,20 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
                     [nonFavourites addObject:guardian];
                 }
             }
+            
+            for (OMembership *membership in [self allMemberships]) {
+                if ([membership isCommunityMembership]) {
+                    for (OMember *member in [membership.origo members]) {
+                        if (![nonFavourites containsObject:member]) {
+                            [nonFavourites addObject:member];
+                        }
+                    }
+                }
+            }
         }
     }
 
-    return nonFavourites;
+    return [nonFavourites sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -453,7 +491,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         
         if (!list) {
             list = [OOrigo instanceWithType:kOrigoTypePrivate];
-            list.name = kPlaceholderDefaultValue;
+            list.name = kPlaceholderDefault;
             
             [list addMember:self];
         }
@@ -625,8 +663,20 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)wardsInOrigo:(id<OOrigo>)origo
 {
-    NSMutableArray *wardsInOrigo = [NSMutableArray array];
-    NSArray *origoMembers = [origo members];
+    id wardsInOrigo = [NSMutableArray array];
+    id origoMembers = nil;
+    
+    if ([origo instance]) {
+        origoMembers = [origo members];
+    } else {
+        origoMembers = [NSMutableArray array];
+        
+        for (id<OMember> member in [origo members]) {
+            if ([member instance]) {
+                [origoMembers addObject:[member instance]];
+            }
+        }
+    }
     
     for (OMember *ward in [self wards]) {
         if ([origoMembers containsObject:ward]) {
@@ -854,7 +904,17 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (BOOL)isEditableByUser
 {
-    return [self isUser] || [self isWardOfUser] || (![self isManaged] && ![[OMeta m].user isJuvenile]);
+    BOOL isEditable = [self isUser] || [self isWardOfUser];
+    
+    if (!isEditable && ![self isActive]) {
+        if ([self isManaged]) {
+            isEditable = [self isHousemateOfUser];
+        } else {
+            isEditable = [[OMeta m].user isJuvenile] ? [self isJuvenile] : YES;
+        }
+    }
+    
+    return isEditable;
 }
 
 
@@ -898,12 +958,18 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (BOOL)isOlderThan:(NSInteger)age
 {
-    BOOL isOlder = YES;
+    BOOL isOlder = NO;
     
     if (self.dateOfBirth) {
         isOlder = [self.dateOfBirth yearsBeforeNow] >= age;
-    } else if ([self isJuvenile] && age == kAgeOfMajority) {
-        isOlder = NO;
+    } else {
+        BOOL isJuvenile = [self isJuvenile];
+        
+        if (isJuvenile && age == kAgeOfMajority) {
+            isOlder = NO;
+        } else if (!isJuvenile) {
+            isOlder = YES;
+        }
     }
     
     return isOlder;

@@ -25,8 +25,8 @@ extern NSInteger const kBarButtonTagSettings;
 extern NSInteger const kBarButtonTagBack;
 extern NSInteger const kBarButtonTagCancel;
 extern NSInteger const kBarButtonTagDone;
+extern NSInteger const kBarButtonTagLogout;
 extern NSInteger const kBarButtonTagNext;
-extern NSInteger const kBarButtonTagSignOut;
 
 extern NSInteger const kBarButtonTagPhoneCall;
 extern NSInteger const kBarButtonTagSendEmail;
@@ -57,7 +57,7 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target;
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action;
 + (instancetype)nextButtonWithTarget:(id)target;
-+ (instancetype)signOutButtonWithTarget:(id)target;
++ (instancetype)logoutButtonWithTarget:(id)target;
 + (instancetype)skipButtonWithTarget:(id)target;
 
 + (instancetype)sendTextButtonWithTarget:(id)target;

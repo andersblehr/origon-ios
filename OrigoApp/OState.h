@@ -15,9 +15,9 @@ extern NSString * const kActionEdit;
 extern NSString * const kActionInput;
 extern NSString * const kActionList;
 extern NSString * const kActionLoad;
+extern NSString * const kActionLogin;
 extern NSString * const kActionPick;
 extern NSString * const kActionRegister;
-extern NSString * const kActionSignIn;
 
 extern NSString * const kTargetAdmins;
 extern NSString * const kTargetAffiliation;

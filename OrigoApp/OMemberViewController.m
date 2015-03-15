@@ -26,8 +26,8 @@ static NSInteger const kButtonTagCoHabitantsMinors = 1;
 static NSInteger const kButtonTagCoHabitantsNone = 2;
 
 static NSInteger const kActionSheetTagSource = 3;
-static NSInteger const kButtonTagSourceAddressBook = 0;
-static NSInteger const kButtonTagSourceLists = 1;
+static NSInteger const kButtonTagSourceLists = 0;
+static NSInteger const kButtonTagSourceAddressBook = 1;
 
 static NSInteger const kActionSheetTagAddressBookEntry = 4;
 static NSInteger const kButtonTagAddressBookEntryAllValues = 10;
@@ -872,8 +872,8 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if (_cachedCandidates && [_cachedCandidates count]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from lists", @"") tag:kButtonTagSourceLists];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
         
         [actionSheet show];
     } else {
@@ -957,6 +957,13 @@ static NSInteger const kButtonIndexContinue = 1;
     }
     
     [super viewDidAppear:animated];
+    
+    if ([self actionIs:kActionDisplay]) {
+        if ([_member isHousemateOfUser] && ![_member hasValueForKey:kPropertyKeyDateOfBirth]) {
+            [self toggleEditMode];
+            [[self.inputCell nextInvalidInputField] becomeFirstResponder];
+        }
+    }
 }
 
 
@@ -1110,7 +1117,7 @@ static NSInteger const kButtonIndexContinue = 1;
             } else {
                 hasFooter = isBottomSection;
             }
-        } else if (![_member isJuvenile] || [_member isHousemateOfUser]) {
+        } else if (![_member isJuvenile] || ([_member isActive] && [_member isTeenOrOlder])) {
             hasFooter = isBottomSection;
         }
     }
@@ -1170,13 +1177,21 @@ static NSInteger const kButtonIndexContinue = 1;
             if ([_member isJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register additional guardians.", @"");
             } else {
-                id ancestor = [self.entity ancestor];
+                id<OMember> minor = nil;
                 
-                if ([ancestor conformsToProtocol:@protocol(OMember)] && ![[ancestor guardians] count]) {
-                    footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
+                if ([[self.entity ancestor] conformsToProtocol:@protocol(OMember)]) {
+                    minor = [self.entity ancestor];
+                }
+                
+                if (minor && ![[minor guardians] count]) {
+                    if ([[OMeta m].user isJuvenile]) {
+                        footerContent = [NSLocalizedString(@"Before you can register a friend, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
+                    } else {
+                        footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
+                    }
                 }
             }
-        } else if (![_member isJuvenile] || [_member isHousemateOfUser]) {
+        } else if (![_member isJuvenile] || [_member isHousemateOfUser] || [_member isTeenOrOlder]) {
             if ([_member isActive]) {
                 footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is active on %@.", @""), [_member givenName], [OMeta m].appName];
             } else if ([_member isManaged]) {
@@ -1389,6 +1404,22 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)didToggleEditMode
+{
+    if ([_member isHousemateOfUser] && !self.isModal) {
+        self.title = nil;
+        
+        if (!_member.dateOfBirth) {
+            if ([self actionIs:kActionEdit]) {
+                self.title = NSLocalizedString(@"Complete registration", @"");
+            } else if ([self actionIs:kActionDisplay]) {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+        }
+    }
+}
+
+
 #pragma mark - OInputCellDelegate conformance
 
 - (OInputCellBlueprint *)inputCellBlueprint
@@ -1493,8 +1524,18 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     BOOL isDisplayable = [key isEqualToString:[self nameKey]] || [self aspectIs:kAspectHousehold];
     
-    if (!isDisplayable && [@[kPropertyKeyMobilePhone, kPropertyKeyEmail] containsObject:key]) {
-        isDisplayable = ![self targetIs:kTargetJuvenile];
+    if (!isDisplayable) {
+        if ([key isEqualToString:kPropertyKeyDateOfBirth]) {
+            if ([_member hasValueForKey:kPropertyKeyDateOfBirth]) {
+                isDisplayable = [_member isJuvenile] || [_member isHousemateOfUser];
+            }
+        } else if ([[OMeta m].user isJuvenile]) {
+            isDisplayable = YES;
+        } else if ([self actionIs:kActionRegister]) {
+            isDisplayable = ![self targetIs:kTargetJuvenile];
+        } else {
+            isDisplayable = [_member isTeenOrOlder];
+        }
     }
     
     return isDisplayable;
@@ -1806,10 +1847,10 @@ static NSInteger const kButtonIndexContinue = 1;
             
         case kActionSheetTagSource:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagSourceAddressBook) {
-                    [self pickFromAddressBook];
-                } else if (buttonTag == kButtonTagSourceLists) {
+                if (buttonTag == kButtonTagSourceLists) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMember meta:_cachedCandidates];
+                } else if (buttonTag == kButtonTagSourceAddressBook) {
+                    [self pickFromAddressBook];
                 }
             } else {
                 [self.inputCell resumeFirstResponder];

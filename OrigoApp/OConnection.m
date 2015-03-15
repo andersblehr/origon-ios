@@ -43,8 +43,8 @@ static NSString * const kMediaTypeJSON = @"application/json";
 static NSString * const kRootAuth = @"auth";
 static NSString * const kRootModel = @"model";
 
-static NSString * const kPathSignUp = @"signup";
-static NSString * const kPathSignIn = @"signin";
+static NSString * const kPathRegister = @"register";
+static NSString * const kPathLogin = @"login";
 static NSString * const kPathActivate = @"activate";
 static NSString * const kPathChange = @"change";
 static NSString * const kPathReset = @"reset";
@@ -127,7 +127,7 @@ static NSString * const kURLParameterIdentifier = @"id";
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OCrypto basicAuthHeaderWithUserId:email password:password] forHTTPHeaderField:kHTTPHeaderAuthorization];
     
-    if ([path isEqualToString:kPathSignIn] && [[OMeta m].appDelegate hasPersistentStore]) {
+    if ([path isEqualToString:kPathLogin] && [[OMeta m].appDelegate hasPersistentStore]) {
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     }
     
@@ -199,15 +199,15 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 #pragma mark - Authentication
 
-- (void)signUpWithEmail:(NSString *)email password:(NSString *)password
+- (void)registerWithEmail:(NSString *)email password:(NSString *)password
 {
-    [self authenticateWithPath:kPathSignUp email:email password:password];
+    [self authenticateWithPath:kPathRegister email:email password:password];
 }
 
 
-- (void)signInWithEmail:(NSString *)email password:(NSString *)password
+- (void)loginWithEmail:(NSString *)email password:(NSString *)password
 {
-    [self authenticateWithPath:kPathSignIn email:email password:password];
+    [self authenticateWithPath:kPathLogin email:email password:password];
 }
 
 

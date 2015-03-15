@@ -60,7 +60,7 @@
 - (BOOL)supportsPullToRefresh;
 - (void)didToggleEditMode;
 - (void)didResumeFromBackground;
-- (void)didSignOut;
+- (void)didLogout;
 
 @end
 
@@ -133,7 +133,7 @@
 - (void)cancelInlineEditingIfOngoing;
 
 - (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
-- (UISegmentedControl *)titleSubsegmentsWithTitles:(NSArray *)subsegmentTitles;
+- (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

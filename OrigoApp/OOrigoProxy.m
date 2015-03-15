@@ -52,7 +52,7 @@ static NSString * const kAddressTemplatesByCountryCode =
     formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressZIPKey)];
     
     self.address = [formattedAddress stringByRemovingRedundantWhitespaceKeepNewlines:YES];
-    self.countryCode = countryCode;
+    self.location = countryCode;
 }
 
 
@@ -85,7 +85,7 @@ static NSString * const kAddressTemplatesByCountryCode =
     OOrigoProxy *proxy = [self proxyForEntityOfClass:[OOrigo class] meta:type];
     
     if ([proxy isResidence]) {
-        proxy.name = kPlaceholderDefaultValue;
+        proxy.name = kPlaceholderDefault;
     }
     
     return proxy;
@@ -95,7 +95,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 + (instancetype)proxyFromAddressBookAddress:(CFDictionaryRef)address
 {
     OOrigoProxy *proxy = [[self alloc] initWithAddressBookAddress:address];
-    proxy.name = kPlaceholderDefaultValue;
+    proxy.name = kPlaceholderDefault;
     
     return proxy;
 }
@@ -106,12 +106,6 @@ static NSString * const kAddressTemplatesByCountryCode =
 - (NSString *)inputCellReuseIdentifier
 {
     return [[super inputCellReuseIdentifier] stringByAppendingString:self.type separator:kSeparatorHash];
-}
-
-
-- (id)defaultValueForKey:(NSString *)key
-{
-    return [self instance] ? [[self instance] defaultValueForKey:key] : kPlaceholderDefaultValue;
 }
 
 
@@ -171,11 +165,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (NSArray *)members
 {
-    id members = [NSMutableArray array];
+    id members = nil;
     
     if ([self instance]) {
         members = [[self instance] members];
     } else {
+        members = [NSMutableArray array];
         NSSet *memberships = [self allMemberships];
         
         if ([memberships count]) {
@@ -198,6 +193,26 @@ static NSString * const kAddressTemplatesByCountryCode =
 - (NSArray *)regulars
 {
     return [self instance] ? [[self instance] regulars] : [self members];
+}
+
+
+- (NSArray *)guardians
+{
+    id guardians = nil;
+    
+    if ([self instance]) {
+        guardians = [[self instance] guardians];
+    } else if ([self isJuvenile]) {
+        guardians = [NSMutableSet set];
+        
+        for (id<OMember> member in [self members]) {
+            [guardians addObjectsFromArray:[member guardians]];
+        }
+        
+        guardians = [[guardians allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    }
+    
+    return guardians;
 }
 
 

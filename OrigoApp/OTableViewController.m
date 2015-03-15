@@ -45,8 +45,8 @@ static UIViewController * _reinstantiatedRootViewController;
     NSMutableArray *_sectionIndexTitles;
     UITextField *_titleField;
     
-    NSMutableArray *_titleSubsegmentTitles;
-    UISegmentedControl *_titleSubsegments;
+    NSMutableArray *_titleSegmentTitles;
+    UISegmentedControl *_titleSegments;
     UISegmentedControl *_segmentedHeader;
     NSInteger _segmentedHeaderSectionKey;
     
@@ -943,7 +943,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_instance willDismissModalViewController:viewController];
         }
         
-        if ([[OMeta m] userIsSignedIn]) {
+        if ([[OMeta m] userIsLoggedIn]) {
             _shouldReloadOnModalDismissal = !viewController.didCancel;
         }
         
@@ -1093,49 +1093,49 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (UISegmentedControl *)titleSubsegmentsWithTitles:(NSArray *)subsegmentTitles
+- (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles
 {
-    if ([subsegmentTitles count]) {
-        if (_titleSubsegments) {
-            NSString *selectedTitle = [_titleSubsegments titleForSegmentAtIndex:_titleSubsegments.selectedSegmentIndex];
+    if ([segmentTitles count]) {
+        if (_titleSegments) {
+            NSString *selectedTitle = [_titleSegments titleForSegmentAtIndex:_titleSegments.selectedSegmentIndex];
             
-            if (![subsegmentTitles containsObject:selectedTitle]) {
+            if (![segmentTitles containsObject:selectedTitle]) {
                 selectedTitle = nil;
             }
             
-            _titleSubsegments.selectedSegmentIndex = UISegmentedControlNoSegment;
+            _titleSegments.selectedSegmentIndex = UISegmentedControlNoSegment;
             
-            for (NSInteger i = 0; i < [_titleSubsegmentTitles count]; i++) {
-                NSString *segmentTitle = _titleSubsegmentTitles[i];
+            for (NSInteger i = 0; i < [_titleSegmentTitles count]; i++) {
+                NSString *segmentTitle = _titleSegmentTitles[i];
                 
-                if (![subsegmentTitles containsObject:segmentTitle]) {
-                    [_titleSubsegments removeSegmentAtIndex:i animated:YES];
-                    [_titleSubsegmentTitles removeObjectAtIndex:i];
+                if (![segmentTitles containsObject:segmentTitle]) {
+                    [_titleSegments removeSegmentAtIndex:i animated:YES];
+                    [_titleSegmentTitles removeObjectAtIndex:i];
                 }
             }
             
-            for (NSInteger i = 0; i < [subsegmentTitles count]; i++) {
-                NSString *segmentTitle = subsegmentTitles[i];
+            for (NSInteger i = 0; i < [segmentTitles count]; i++) {
+                NSString *segmentTitle = segmentTitles[i];
                 
-                if (![_titleSubsegmentTitles containsObject:segmentTitle]) {
-                    [_titleSubsegments insertSegmentWithTitle:segmentTitle atIndex:i animated:YES];
-                    [_titleSubsegmentTitles insertObject:segmentTitle atIndex:i];
+                if (![_titleSegmentTitles containsObject:segmentTitle]) {
+                    [_titleSegments insertSegmentWithTitle:segmentTitle atIndex:i animated:YES];
+                    [_titleSegmentTitles insertObject:segmentTitle atIndex:i];
                 }
                 
                 if (selectedTitle && [segmentTitle isEqualToString:selectedTitle]) {
-                    _titleSubsegments.selectedSegmentIndex = i;
+                    _titleSegments.selectedSegmentIndex = i;
                 }
             }
             
-            if (_titleSubsegments.selectedSegmentIndex < 0) {
-                _titleSubsegments.selectedSegmentIndex = 0;
+            if (_titleSegments.selectedSegmentIndex < 0) {
+                _titleSegments.selectedSegmentIndex = 0;
             }
         } else {
-            _titleSubsegmentTitles = [subsegmentTitles mutableCopy];
-            _titleSubsegments = [[UISegmentedControl alloc] initWithItems:subsegmentTitles];
-            _titleSubsegments.selectedSegmentIndex = 0;
-            _titleSubsegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenWidth] - 2 * kContentInset, _titleSubsegments.frame.size.height);
-            [_titleSubsegments addTarget:_instance action:@selector(didSelectTitleSubsegment) forControlEvents:UIControlEventValueChanged];
+            _titleSegmentTitles = [segmentTitles mutableCopy];
+            _titleSegments = [[UISegmentedControl alloc] initWithItems:segmentTitles];
+            _titleSegments.selectedSegmentIndex = 0;
+            _titleSegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenWidth] - 2 * kContentInset, _titleSegments.frame.size.height);
+            [_titleSegments addTarget:_instance action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
             
             UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenWidth], kBorderWidth)];
             segmentsHairline.backgroundColor = [UIColor toolbarHairlineColour];
@@ -1143,7 +1143,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             UIView *segmentsView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], kToolbarBarHeight)];
             segmentsView.backgroundColor = [UIColor toolbarColour];
             
-            [segmentsView addSubview:_titleSubsegments];
+            [segmentsView addSubview:_titleSegments];
             [segmentsView addSubview:segmentsHairline];
             [self.view addSubview:segmentsView];
             
@@ -1151,14 +1151,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [_tableView setTopContentInset:_tableView.contentInset.top + kToolbarBarHeight];
             }
         }
-    } else if (_titleSubsegments) {
-        [_titleSubsegments.superview removeFromSuperview];
-        _titleSubsegments = nil;
+    } else if (_titleSegments) {
+        [_titleSegments.superview removeFromSuperview];
+        _titleSegments = nil;
         
         [_tableView setTopContentInset:_tableView.contentInset.top - kToolbarBarHeight];
     }
     
-    return _titleSubsegments;
+    return _titleSegments;
 }
 
 
@@ -1389,8 +1389,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _tableView.dataSource = self;
         _tableView.delegate = self;
         
-        if (_titleSubsegments) {
-            [self.view insertSubview:_tableView belowSubview:_titleSubsegments.superview];
+        if (_titleSegments) {
+            [self.view insertSubview:_tableView belowSubview:_titleSegments.superview];
             
             [_tableView setTopContentInset:_tableView.contentInset.top + kToolbarBarHeight];
         } else {
@@ -1409,7 +1409,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
                     }
                 } else {
-                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:[OMeta m]];
+                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem logoutButtonWithTarget:[OMeta m]];
                 }
             }
             
@@ -1455,7 +1455,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if ([[OMeta m] userIsAllSet]) {
-        [self.navigationController.navigationBar setHairlinesHidden:_titleSubsegments != nil];
+        [self.navigationController.navigationBar setHairlinesHidden:_titleSegments != nil];
         
         if (_isUsingSectionIndexTitles) {
             _tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
@@ -1480,7 +1480,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     OLogState;
     
-    if ([[OMeta m] userIsSignedIn]) {
+    if ([[OMeta m] userIsLoggedIn]) {
         if (_inputCell && !_didResurface && !_isHidden) {
             [_inputCell prepareForInput];
             
@@ -1565,7 +1565,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (id)target
 {
-    if (!_target && [[OMeta m] userIsSignedIn]) {
+    if (!_target && [[OMeta m] userIsLoggedIn]) {
         self.target = [OMeta m].user;
     }
     
@@ -1635,7 +1635,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)didSignOut
+- (void)didLogout
 {
     _needsReinstantiateRootViewController = YES;
     _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];

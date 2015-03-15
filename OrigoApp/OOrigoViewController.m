@@ -77,7 +77,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
         }
         
-        BOOL canHaveAddress = [_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam]];
+        BOOL canHaveAddress = [_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeSports]];
         
         if (canHaveAddress && [_origo hasAddress]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self]];
@@ -112,10 +112,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
         nameKey = kMappedKeyPreschoolClass;
     } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
         nameKey = kMappedKeySchoolClass;
-    } else if ([_origo isOfType:kOrigoTypeStudyGroup]) {
-        nameKey = kMappedKeyStudyGroup;
     } else {
-        nameKey = kPropertyKeyName;
+        nameKey = kMappedKeyListName;
     }
     
     return nameKey;
@@ -483,8 +481,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
     
     if ([_origo isResidence]) {
         [self setData:[_origo residents] forSectionWithKey:kSectionKeyMembers];
-    } else if ([self actionIs:kActionRegister]) {
-        [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
     } else {
         [self setData:[_origo organiserRoles] forSectionWithKey:kSectionKeyOrganisers];
         
@@ -583,7 +579,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
         }
     }
     
-    cell.selectable = ![_membership isHidden];
+    if ([_membership isHidden]) {
+        cell.selectable = NO;
+    }
 }
 
 
@@ -629,10 +627,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
             contactTitle = _preschoolTeacher_;
         } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
             contactTitle = _teacher_;
-        } else if ([_origo isOfType:kOrigoTypeTeam]) {
+        } else if ([_origo isOfType:kOrigoTypeSports]) {
             contactTitle = _coach_;
-        } else if ([_origo isOfType:kOrigoTypeStudyGroup]) {
-            contactTitle = _lecturer_;
         }
         
         number = [[_origo organisers] count] > 1 ? pluralIndefinite : singularIndefinite;
@@ -644,17 +640,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
         NSString *membersTitle = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
         
         if ([_origo isJuvenile]) {
-            if ([self actionIs:kActionRegister]) {
-                headerContent = membersTitle;
-            } else {
-                headerContent = @[membersTitle, [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
-            }
+            headerContent = @[membersTitle, [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
         } else if ([_origo isCommunity]) {
-            if ([self actionIs:kActionRegister]) {
-                headerContent = membersTitle;
-            } else {
-                headerContent = @[membersTitle, NSLocalizedString(@"Households", @"")];
-            }
+            headerContent = @[membersTitle, NSLocalizedString(@"Households", @"")];
         } else {
             if (![_origo isCommitted] && [_origo isResidence]) {
                 if (![_member isCommitted] && [self aspectIs:kAspectJuvenile]) {
@@ -716,19 +704,19 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (BOOL)toolbarHasSendTextButton
 {
-    return [[_origo textRecipients] count] > 0;
+    return [_origo hasRegulars] && [[_origo textRecipients] count] > 0;
 }
 
 
 - (BOOL)toolbarHasCallButton
 {
-    return [[_origo callRecipients] count] > 0;
+    return [_origo hasRegulars] && [[_origo callRecipients] count] > 0;
 }
 
 
 - (BOOL)toolbarHasSendEmailButton
 {
-    return [[_origo emailRecipients] count] > 0;
+    return [_origo hasRegulars] && [[_origo emailRecipients] count] > 0;
 }
 
 
@@ -766,8 +754,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     BOOL canDeleteCell = NO;
     
-    if (!self.isModal && [_origo isCommitted] && [_origo userCanDelete]) {
-        if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
+    if (!self.isModal && [_origo isCommitted]) {
+        NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+        
+        if (sectionKey == kSectionKeyMembers && [_origo userCanDelete]) {
             id<OMember> member = [self dataAtIndexPath:indexPath];
             
             if ([_origo isCommunity]) {
@@ -777,7 +767,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             } else if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
                 canDeleteCell = ![member isUser];
             }
-        } else {
+        } else if ([_origo userCanEdit]) {
             canDeleteCell = [[self roleHoldersForRoleAtIndexPath:indexPath] count] == 1;
         }
     }
@@ -945,11 +935,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
     } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
         blueprint.detailKeys = @[kMappedKeySchool, kPropertyKeyAddress];
         blueprint.multiLineKeys = @[kPropertyKeyAddress];
-    } else if ([_origo isOfType:kOrigoTypeTeam]) {
-        blueprint.detailKeys = @[kMappedKeyClub, kMappedKeyArena];
-        blueprint.multiLineKeys = @[kMappedKeyArena];
-    } else if ([_origo isOfType:kOrigoTypeStudyGroup]) {
-        blueprint.detailKeys = @[kMappedKeyInstitution];
+    } else if ([_origo isOfType:kOrigoTypeSports]) {
+        blueprint.detailKeys = @[kMappedKeyClub, kMappedKeyArena, kPropertyKeyAddress];
+        blueprint.multiLineKeys = @[kPropertyKeyAddress];
     } else if (![_origo isOfType:kOrigoTypePrivate]) {
         blueprint.detailKeys = @[kPropertyKeyDescriptionText];
         blueprint.multiLineKeys = @[kPropertyKeyDescriptionText];
@@ -1068,6 +1056,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
                         [self.navigationController popViewControllerAnimated:YES];
                     }
                 }
+                
+                [OMember clearCachedPeers];
                 
                 break;
                 

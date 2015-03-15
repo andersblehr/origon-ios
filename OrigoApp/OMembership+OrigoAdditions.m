@@ -89,7 +89,7 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
         self.status = nil;
         self.affiliations = nil;
         
-        if (![self.origo isResidence]) {
+        if (![self.origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]]) {
             self.isAdmin = @([self.member isUser] && [self.origo userIsCreator]);
         }
     } else {

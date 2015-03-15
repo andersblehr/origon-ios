@@ -20,7 +20,7 @@ extern NSString * const kIdentifierValueList;
 extern NSString * const kIdentifierValuePicker;
 
 // Reuse identifiers
-extern NSString * const kReuseIdentifierUserSignIn;
+extern NSString * const kReuseIdentifierUserLogin;
 extern NSString * const kReuseIdentifierUserActivation;
 extern NSString * const kReuseIdentifierPasswordChange;
 
@@ -34,7 +34,6 @@ extern NSString * const kDefaultsKeyDirtyEntities;
 // Entity property keys
 extern NSString * const kPropertyKeyActiveSince;
 extern NSString * const kPropertyKeyAddress;
-extern NSString * const kPropertyKeyCountryCode;
 extern NSString * const kPropertyKeyCreatedBy;
 extern NSString * const kPropertyKeyCreatedIn;
 extern NSString * const kPropertyKeyDateCreated;
@@ -49,6 +48,7 @@ extern NSString * const kPropertyKeyGender;
 extern NSString * const kPropertyKeyHashCode;
 extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyIsMinor;
+extern NSString * const kPropertyKeyLocation;
 extern NSString * const kPropertyKeyMobilePhone;
 extern NSString * const kPropertyKeyModifiedBy;
 extern NSString * const kPropertyKeyMotherId;
@@ -68,14 +68,13 @@ extern NSString * const kRelationshipKeyOrigo;
 extern NSString * const kMappedKeyArena;
 extern NSString * const kMappedKeyClub;
 extern NSString * const kMappedKeyFullName;
-extern NSString * const kMappedKeyInstitution;
+extern NSString * const kMappedKeyListName;
 extern NSString * const kMappedKeyPreschool;
 extern NSString * const kMappedKeyPreschoolClass;
 extern NSString * const kMappedKeyPrivateListName;
 extern NSString * const kMappedKeyResidenceName;
 extern NSString * const kMappedKeySchool;
 extern NSString * const kMappedKeySchoolClass;
-extern NSString * const kMappedKeyStudyGroup;
 
 // Internal keys
 extern NSString * const kInternalKeyDeviceId;
@@ -85,7 +84,7 @@ extern NSString * const kInternalKeyEntityClass;
 // Label keys
 extern NSString * const kLabelKeyActivate;
 extern NSString * const kLabelKeyAdmins;
-extern NSString * const kLabelKeyRegisterOrSignIn;
+extern NSString * const kLabelKeyRegisterOrLogIn;
 
 // Input keys
 extern NSString * const kInputKeyActivationCode;
@@ -100,12 +99,12 @@ extern NSString * const kInputKeyRepeatPassword;
 extern NSString * const kActionKeyActivate;
 extern NSString * const kActionKeyCancel;
 extern NSString * const kActionKeyChangePassword;
-extern NSString * const kActionKeySignIn;
-extern NSString * const kActionKeySignOut;
-extern NSString * const kActionKeySignUp;
+extern NSString * const kActionKeyLogin;
+extern NSString * const kActionKeyLogout;
+extern NSString * const kActionKeyRegister;
 
 // Placeholders
-extern NSString * const kPlaceholderDefaultValue;
+extern NSString * const kPlaceholderDefault;
 
 // String prefixes
 extern NSString * const kStringPrefixLabel;

@@ -15,7 +15,7 @@
 @interface OOrigo : OReplicatedEntity
 
 @property (nonatomic, retain) NSString * address;
-@property (nonatomic, retain) NSString * countryCode;
+@property (nonatomic, retain) NSString * location;
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSNumber * isForMinors;
 @property (nonatomic, retain) NSString * name;

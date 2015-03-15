@@ -62,14 +62,12 @@ static NSInteger const kSectionKeyValues = 0;
     } else {
         if ([origo isOfType:kOrigoTypeStandard]) {
             if ([origo isJuvenile]) {
-                eligibleOrigoTypes = @[kOrigoTypeStandard, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam, kOrigoTypeAlumni];
+                eligibleOrigoTypes = @[kOrigoTypeStandard, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeSports];
             } else {
-                eligibleOrigoTypes = @[kOrigoTypeStandard, kOrigoTypeStudyGroup, kOrigoTypeTeam, kOrigoTypeAlumni];
+                eligibleOrigoTypes = @[kOrigoTypeStandard, kOrigoTypeSports];
             }
-        } else if ([origo isOfType:kOrigoTypeAlumni]) {
-            eligibleOrigoTypes = @[kOrigoTypeStandard, kOrigoTypeAlumni];
         } else {
-            eligibleOrigoTypes = @[origo.type, kOrigoTypeStandard, kOrigoTypeAlumni];
+            eligibleOrigoTypes = @[origo.type, kOrigoTypeStandard];
         }
     }
     

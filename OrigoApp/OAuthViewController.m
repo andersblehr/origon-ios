@@ -14,17 +14,17 @@ static CGFloat const kLogoFontSize = 26.f;
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..origo..";
 
-static NSInteger const kSignInActionNone = 0;
-static NSInteger const kSignInActionSignUp = 1;
-static NSInteger const kSignInActionSignIn = 2;
+static NSInteger const kAuthActionNone = 0;
+static NSInteger const kAuthActionRegister = 1;
+static NSInteger const kAuthActionLogin = 2;
 
 static NSInteger const kSectionKeyAuth = 0;
 
 static NSInteger const kMaxAttempts = 2;
 
-static NSInteger const kActionSheetTagSignInAction = 0;
-static NSInteger const kButtonTagSignInActionSignUp = 0;
-static NSInteger const kButtonTagSignInActionSignIn = 1;
+static NSInteger const kActionSheetTagAuthAction = 0;
+static NSInteger const kButtonTagAuthActionRegister = 0;
+static NSInteger const kButtonTagAuthActionLogin = 1;
 
 static NSInteger const kAlertTagWelcomeBack = 0;
 static NSInteger const kAlertTagActivationFailed = 1;
@@ -44,7 +44,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     OInputField *_newPasswordField;
     OInputField *_repeatNewPasswordField;
     
-    NSInteger _signInAction;
+    NSInteger _authAction;
     NSInteger _numberOfFailedAttempts;
     NSDictionary *_authInfo;
 }
@@ -82,7 +82,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)initialiseFields
 {
-    if ([self actionIs:kActionSignIn]) {
+    if ([self actionIs:kActionLogin]) {
         _passwordField.value = @"";
         
         if ([OMeta m].userEmail) {
@@ -103,27 +103,27 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (void)performSignInAction:(NSInteger)signInAction
+- (void)performAuthAction:(NSInteger)authAction
 {
-    _signInAction = signInAction;
+    _authAction = authAction;
     
     [OMeta m].userEmail = _emailField.value;
     
-    if (_signInAction == kSignInActionSignUp) {
-        [[OConnection connectionWithDelegate:self] signUpWithEmail:[OMeta m].userEmail password:_passwordField.value];
-    } else if (_signInAction == kSignInActionSignIn) {
-        [[OConnection connectionWithDelegate:self] signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
+    if (_authAction == kAuthActionRegister) {
+        [[OConnection connectionWithDelegate:self] registerWithEmail:[OMeta m].userEmail password:_passwordField.value];
+    } else if (_authAction == kAuthActionLogin) {
+        [[OConnection connectionWithDelegate:self] loginWithEmail:[OMeta m].userEmail password:_passwordField.value];
     }
 }
 
 
 - (void)toggleAuthState
 {
-    [self.state toggleAction:@[kActionSignIn, kActionActivate]];
+    [self.state toggleAction:@[kActionLogin, kActionActivate]];
     
     if ([self actionIs:kActionActivate]) {
         [self reloadSectionWithKey:kSectionKeyAuth rowAnimation:UITableViewRowAnimationLeft];
-    } else if ([self actionIs:kActionSignIn]) {
+    } else if ([self actionIs:kActionLogin]) {
         [self reloadSectionWithKey:kSectionKeyAuth rowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
@@ -171,7 +171,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)userDidAuthenticateWithData:(NSArray *)data
 {
-    [[OMeta m] userDidSignIn];
+    [[OMeta m] userDidLogin];
     
     if (data) {
         [[OMeta m].context saveEntityDictionaries:data];
@@ -183,12 +183,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [device unexpire];
     }
     
-    if ([self actionIs:kActionSignIn]) {
+    if ([self actionIs:kActionLogin]) {
         [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_passwordField.value];
     } else if ([self actionIs:kActionActivate]) {
         [OMeta m].user.passwordHash = _authInfo[kPropertyKeyPasswordHash];
         
-        [[OMeta m] userDidSignUp];
+        [[OMeta m] userDidRegister];
         [[OMeta m].user primaryResidence];
         
         [ODefaults removeGlobalDefaultForKey:kDefaultsKeyAuthInfo];
@@ -200,17 +200,17 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 #pragma mark - Selector implementations
 
-- (void)performSignUpAction
+- (void)performRegisterAction
 {
-    _signInAction = kSignInActionSignUp;
+    _authAction = kAuthActionRegister;
     
     [self.inputCell processInputShouldValidate:YES];
 }
 
 
-- (void)performSignInAction
+- (void)performLoginAction
 {
-    _signInAction = kSignInActionSignIn;
+    _authAction = kAuthActionLogin;
     
     [self.inputCell processInputShouldValidate:YES];
 }
@@ -293,7 +293,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
             self.state.action = kActionActivate;
         } else {
-            self.state.action = kActionSignIn;
+            self.state.action = kActionLogin;
         }
         
         _numberOfFailedAttempts = 0;
@@ -315,8 +315,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     NSString *reuseIdentifier = nil;
     
-    if ([self actionIs:kActionSignIn]) {
-        reuseIdentifier = kReuseIdentifierUserSignIn;
+    if ([self actionIs:kActionLogin]) {
+        reuseIdentifier = kReuseIdentifierUserLogin;
     } else if ([self actionIs:kActionActivate]) {
         reuseIdentifier = kReuseIdentifierUserActivation;
     } else if ([self actionIs:kActionChange] && [self targetIs:kTargetPassword]) {
@@ -337,8 +337,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     NSString *footerContent = nil;
     
-    if ([self actionIs:kActionSignIn]) {
-        footerContent = NSLocalizedString(@"If you are signing up, you will receive an email ...", @"");
+    if ([self actionIs:kActionLogin]) {
+        footerContent = NSLocalizedString(@"When you register, you will receive an email with an activation code to use in the next step.", @"");
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
             footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
@@ -353,7 +353,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)willDisplayInputCell:(OTableViewCell *)inputCell
 {
-    if ([self actionIs:kActionSignIn]) {
+    if ([self actionIs:kActionLogin]) {
         _emailField = [inputCell inputFieldForKey:kInputKeyAuthEmail];
         _passwordField = [inputCell inputFieldForKey:kInputKeyPassword];
     } else if ([self actionIs:kActionActivate]) {
@@ -375,10 +375,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     blueprint.fieldsAreLabeled = NO;
     blueprint.fieldsShouldDeemphasiseOnEndEdit = NO;
     
-    if ([self actionIs:kActionSignIn]) {
-        blueprint.titleKey = kLabelKeyRegisterOrSignIn;
+    if ([self actionIs:kActionLogin]) {
+        blueprint.titleKey = kLabelKeyRegisterOrLogIn;
         blueprint.detailKeys = @[kInputKeyAuthEmail, kInputKeyPassword];
-        blueprint.buttonKeys = @[kActionKeySignUp, kActionKeySignIn];
+        blueprint.buttonKeys = @[kActionKeyRegister, kActionKeyLogin];
     } else if ([self actionIs:kActionActivate]) {
         blueprint.titleKey = kLabelKeyActivate;
         blueprint.detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
@@ -403,7 +403,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     BOOL inputIsValid = NO;
     
-    if ([self actionIs:kActionSignIn]) {
+    if ([self actionIs:kActionLogin]) {
         inputIsValid = [_emailField hasValidValue] && [_passwordField hasValidValue];
     } else if ([self actionIs:kActionActivate]) {
         inputIsValid = [_activationCodeField hasValidValue] && [_repeatPasswordField hasValidValue];
@@ -419,8 +419,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [_oldPasswordField becomeFirstResponder];
         }
         
-        if (_signInAction) {
-            _signInAction = kSignInActionNone;
+        if (_authAction) {
+            _authAction = kAuthActionNone;
         }
     }
     
@@ -430,17 +430,17 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)processInput
 {
-    if ([self actionIs:kActionSignIn]) {
-        if (!_signInAction && [_emailField.value isEqualToString:[OMeta m].userEmail]) {
-            _signInAction = kSignInActionSignIn;
+    if ([self actionIs:kActionLogin]) {
+        if (!_authAction && [_emailField.value isEqualToString:[OMeta m].userEmail]) {
+            _authAction = kAuthActionLogin;
         }
         
-        if (_signInAction) {
-            [self performSignInAction:_signInAction];
+        if (_authAction) {
+            [self performAuthAction:_authAction];
         } else {
-            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSignInAction];
-            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeySignUp, kStringPrefixTitle) tag:kButtonTagSignInActionSignUp];
-            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeySignIn, kStringPrefixTitle) tag:kButtonTagSignInActionSignIn];
+            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAuthAction];
+            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeyRegister, kStringPrefixTitle) tag:kButtonTagAuthActionRegister];
+            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeyLogin, kStringPrefixTitle) tag:kButtonTagAuthActionLogin];
             
             [actionSheet show];
         }
@@ -509,14 +509,14 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (actionSheet.tag) {
-        case kActionSheetTagSignInAction:
+        case kActionSheetTagAuthAction:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
                 
-                if (buttonTag == kButtonTagSignInActionSignUp) {
-                    [self performSignInAction:kSignInActionSignUp];
-                } else if (buttonTag == kButtonTagSignInActionSignIn) {
-                    [self performSignInAction:kSignInActionSignIn];
+                if (buttonTag == kButtonTagAuthActionRegister) {
+                    [self performAuthAction:kAuthActionRegister];
+                } else if (buttonTag == kButtonTagAuthActionLogin) {
+                    [self performAuthAction:kAuthActionLogin];
                 }
             }
             
@@ -568,10 +568,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         if (response.statusCode == kHTTPStatusCreated) {
-            if ([self actionIs:kActionSignIn]) {
-                if (_signInAction == kSignInActionSignUp) {
+            if ([self actionIs:kActionLogin]) {
+                if (_authAction == kAuthActionRegister) {
                     [self didReceiveAuthInfo:data];
-                } else if (_signInAction == kSignInActionSignIn) {
+                } else if (_authAction == kAuthActionLogin) {
                     [OAlert showAlertWithTitle:NSLocalizedString(@"New password", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Your password has been reset and a new password has been generated and sent to %@.", @""), _emailField.value]];
                     
                     [_passwordField becomeFirstResponder];
@@ -597,7 +597,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     } else if (response.statusCode == kHTTPStatusUnauthorized) {
         [self.inputCell shakeCellVibrate:YES];
         
-        if ([self actionIs:kActionSignIn]) {
+        if ([self actionIs:kActionLogin]) {
             _numberOfFailedAttempts++;
             
             if (_numberOfFailedAttempts == kMaxAttempts) {

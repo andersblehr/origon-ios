@@ -8,37 +8,26 @@
 
 #import "OOrigo+OrigoAdditions.h"
 
-NSString * const kOrigoTypeAlumni = @"alumni";
 NSString * const kOrigoTypeCommunity = @"community";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypePrivate = @"private";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
+NSString * const kOrigoTypeSports = @"sports";
 NSString * const kOrigoTypeStandard = @"standard";
 NSString * const kOrigoTypeStash = @"~";
-NSString * const kOrigoTypeStudyGroup = @"studyGroup";
-NSString * const kOrigoTypeTeam = @"team";
 
 static NSString * const kPermissionKeyEdit = @"edit";
 static NSString * const kPermissionKeyAdd = @"add";
 static NSString * const kPermissionKeyDelete = @"delete";
 
+static NSString * const kDefaultResidencePermissions = @"add:1;delete:1;edit:1";
+static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
+
 
 @implementation OOrigo (OrigoAdditions)
 
 #pragma mark - Auxiliary methods
-
-- (NSString *)permissionsFromDictionary:(NSDictionary *)permissionsDictionary
-{
-    NSString *permissions = nil;
-    
-    for (NSString *key in [permissionsDictionary allKeys]) {
-        permissions = [OUtil keyValueString:permissions setValue:permissionsDictionary[key] forKey:key];
-    }
-    
-    return permissions;
-}
-
 
 - (NSSet *)allMembershipsIncludeExpired:(BOOL)includeExpired
 {
@@ -173,7 +162,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     instance.permissions = [instance defaultPermissions];
     
     if ([instance isResidence]) {
-        instance.name = kPlaceholderDefaultValue;
+        instance.name = kPlaceholderDefault;
     }
     
     return instance;
@@ -546,7 +535,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
         if ([self isResidence]) {
             membership = [self addResident:member];
         } else {
-            if (![self.memberships count] && [member isJuvenile]) {
+            if (![self isPrivate] && ![self.memberships count] && [member isJuvenile]) {
                 self.isForMinors = @YES;
             }
             
@@ -584,7 +573,15 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (BOOL)userIsAdmin
 {
-    return [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
+    BOOL isAdmin = NO;
+    
+    if ([self isPrivate]) {
+        isAdmin = [self userIsCreator] || [self isPinned];
+    } else {
+        isAdmin = [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
+    }
+    
+    return isAdmin;
 }
 
 
@@ -686,8 +683,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
     
     isOrganised = isOrganised || [self isOfType:kOrigoTypePreschoolClass];
     isOrganised = isOrganised || [self isOfType:kOrigoTypeSchoolClass];
-    isOrganised = isOrganised || [self isOfType:kOrigoTypeTeam];
-    isOrganised = isOrganised || [self isOfType:kOrigoTypeStudyGroup];
+    isOrganised = isOrganised || [self isOfType:kOrigoTypeSports];
     
     return isOrganised;
 }
@@ -695,7 +691,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 - (BOOL)isJuvenile
 {
-    return [self.isForMinors boolValue];
+    return [self isPrivate] ? [[self owner] isJuvenile] : [self.isForMinors boolValue];
 }
 
 
@@ -720,6 +716,26 @@ static NSString * const kPermissionKeyDelete = @"delete";
     }
     
     return hasAdmin;
+}
+
+
+- (BOOL)hasRegulars
+{
+    return [[self regulars] count] > ([self isPrivate] ? 0 : 1);
+}
+
+
+- (BOOL)hasTeenRegulars
+{
+    BOOL hasTeenMembers = NO;
+    
+    if ([self isJuvenile] && ![self isOfType:kOrigoTypePreschoolClass]) {
+        for (OMember *regular in [self regulars]) {
+            hasTeenMembers = hasTeenMembers || [regular isTeenOrOlder];
+        }
+    }
+    
+    return hasTeenMembers;
 }
 
 
@@ -811,12 +827,18 @@ static NSString * const kPermissionKeyDelete = @"delete";
             }
         }
     } else {
-        NSMutableSet *candidates = [NSMutableSet setWithArray:[self organisers]];
+        NSMutableSet *candidates = [NSMutableSet set];
+        
+        if ([[OMeta m].user isJuvenile] || ![self isJuvenile] || [self hasTeenRegulars]) {
+            [candidates unionSet:[NSSet setWithArray:[self regulars]]];
+        }
+        
+        if ([self isOrganised]) {
+            [candidates unionSet:[NSSet setWithArray:[self organisers]]];
+        }
         
         if ([self isJuvenile]) {
             [candidates unionSet:[NSSet setWithArray:[self guardians]]];
-        } else {
-            [candidates unionSet:[NSSet setWithArray:[self regulars]]];
         }
         
         if ([candidates containsObject:[OMeta m].user]) {
@@ -827,20 +849,6 @@ static NSString * const kPermissionKeyDelete = @"delete";
     }
     
     return recipientCandidates;
-}
-
-
-- (NSArray *)textRecipients
-{
-    NSMutableArray *textRecipients = [NSMutableArray array];
-    
-    for (OMember *recipientCandidate in [self recipientCandidates]) {
-        if ([recipientCandidate.mobilePhone hasValue]) {
-            [textRecipients addObject:recipientCandidate];
-        }
-    }
-    
-    return textRecipients;
 }
 
 
@@ -860,13 +868,39 @@ static NSString * const kPermissionKeyDelete = @"delete";
 }
 
 
+- (NSArray *)textRecipients
+{
+    return [self textRecipientsInSet:nil];
+}
+
+
+- (NSArray *)textRecipientsInSet:(id)set
+{
+    NSMutableArray *textRecipients = [NSMutableArray array];
+    
+    for (OMember *candidate in [self recipientCandidates]) {
+        if ([candidate.mobilePhone hasValue] && (!set || [set containsObject:candidate])) {
+            [textRecipients addObject:candidate];
+        }
+    }
+    
+    return textRecipients;
+}
+
+
 - (NSArray *)emailRecipients
+{
+    return [self emailRecipientsInSet:nil];
+}
+
+
+- (NSArray *)emailRecipientsInSet:(id)set
 {
     NSMutableArray *emailRecipients = [NSMutableArray array];
     
-    for (OMember *recipientCandidate in [self recipientCandidates]) {
-        if ([recipientCandidate.email hasValue]) {
-            [emailRecipients addObject:recipientCandidate];
+    for (OMember *candidate in [self recipientCandidates]) {
+        if ([candidate.email hasValue] && (!set || [set containsObject:candidate])) {
+            [emailRecipients addObject:candidate];
         }
     }
     
@@ -880,7 +914,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
 {
     NSString *displayName = nil;
     
-    if ([self.name isEqualToString:kPlaceholderDefaultValue]) {
+    if ([self.name isEqualToString:kPlaceholderDefault]) {
         displayName = [self defaultValueForKey:kPropertyKeyName];
     } else {
         displayName = self.name;
@@ -902,7 +936,7 @@ static NSString * const kPermissionKeyDelete = @"delete";
         displayPermissions = NSLocalizedString(@"All", @"");
     } else if (membersCanAdd || membersCanDelete || membersCanEdit) {
         for (NSString *permissionKey in [self permissionKeys]) {
-            if ([[OUtil keyValueString:self.permissions valueForKey:permissionKey] boolValue]) {
+            if ([self hasPermissionWithKey:permissionKey]) {
                 displayPermissions = [displayPermissions stringByAppendingString:NSLocalizedString(permissionKey, @"") separator:kSeparatorComma];
             }
         }
@@ -966,42 +1000,6 @@ static NSString * const kPermissionKeyDelete = @"delete";
 
 #pragma mark - Permissions
 
-- (void)setMembersCanEdit:(BOOL)membersCanEdit
-{
-    self.permissions = [OUtil keyValueString:self.permissions setValue:@(membersCanEdit) forKey:kPermissionKeyEdit];
-}
-
-
-- (BOOL)membersCanEdit
-{
-    return [[OUtil keyValueString:self.permissions valueForKey:kPermissionKeyEdit] boolValue];
-}
-
-
-- (void)setMembersCanAdd:(BOOL)membersCanAdd
-{
-    self.permissions = [OUtil keyValueString:self.permissions setValue:@(membersCanAdd) forKey:kPermissionKeyAdd];
-}
-
-
-- (BOOL)membersCanAdd
-{
-    return [[OUtil keyValueString:self.permissions valueForKey:kPermissionKeyAdd] boolValue];
-}
-
-
-- (void)setMembersCanDelete:(BOOL)membersCanDelete
-{
-    self.permissions = [OUtil keyValueString:self.permissions setValue:@(membersCanDelete) forKey:kPermissionKeyDelete];
-}
-
-
-- (BOOL)membersCanDelete
-{
-    return [[OUtil keyValueString:self.permissions valueForKey:kPermissionKeyDelete] boolValue];
-}
-
-
 - (NSArray *)permissionKeys
 {
     NSArray *permissionKeys = nil;
@@ -1020,13 +1018,70 @@ static NSString * const kPermissionKeyDelete = @"delete";
     
     if ([self isResidence]) {
         if (![self hasAdmin]) {
-            defaultPermissions = [self permissionsFromDictionary:@{kPermissionKeyEdit: @YES, kPermissionKeyAdd: @YES, kPermissionKeyDelete: @YES}];
+            defaultPermissions = kDefaultResidencePermissions;
         }
     } else if (![self isPrivate]) {
-        defaultPermissions = [self permissionsFromDictionary:@{kPermissionKeyEdit: @YES, kPermissionKeyAdd: @YES, kPermissionKeyDelete: @NO}];
+        defaultPermissions = kDefaultOrigoPermissions;
     }
     
     return defaultPermissions;
+}
+
+
+- (BOOL)hasPermissionWithKey:(NSString *)key
+{
+    NSString *permissions = self.permissions ? self.permissions : [self defaultPermissions];
+    
+    return [[OUtil keyValueString:permissions valueForKey:key] boolValue];
+}
+
+
+- (void)setPermission:(BOOL)permission forKey:(NSString *)key
+{
+    NSString *permissions = self.permissions ? self.permissions : [self defaultPermissions];
+    NSString *updatedPermissions = [OUtil keyValueString:permissions setValue:@(permission) forKey:key];
+    
+    if (![updatedPermissions isEqualToString:[self defaultPermissions]]) {
+        self.permissions = updatedPermissions;
+    } else {
+        self.permissions = nil;
+    }
+}
+
+
+- (void)setMembersCanEdit:(BOOL)membersCanEdit
+{
+    [self setPermission:membersCanEdit forKey:kPermissionKeyEdit];
+}
+
+
+- (BOOL)membersCanEdit
+{
+    return [self hasPermissionWithKey:kPermissionKeyEdit];
+}
+
+
+- (void)setMembersCanAdd:(BOOL)membersCanAdd
+{
+    [self setPermission:membersCanAdd forKey:kPermissionKeyAdd];
+}
+
+
+- (BOOL)membersCanAdd
+{
+    return [self hasPermissionWithKey:kPermissionKeyAdd];
+}
+
+
+- (void)setMembersCanDelete:(BOOL)membersCanDelete
+{
+    [self setPermission:membersCanDelete forKey:kPermissionKeyDelete];
+}
+
+
+- (BOOL)membersCanDelete
+{
+    return [self hasPermissionWithKey:kPermissionKeyDelete];
 }
 
 
