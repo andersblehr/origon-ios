@@ -27,13 +27,13 @@ static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
 
 
-@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
+@interface OTableViewController () <OTitleViewDelegate, UITextFieldDelegate, UITextViewDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _isUsingSectionIndexTitles;
     BOOL _shouldReloadOnModalDismissal;
-    BOOL _titleFieldShouldBeginEditing;
+    BOOL _shouldBeginEditingTitleView;
     
     Class _entityClass;
     NSInteger _inputSectionKey;
@@ -43,7 +43,6 @@ static UIViewController * _reinstantiatedRootViewController;
     NSMutableDictionary *_sectionHeaderLabels;
     NSMutableDictionary *_sectionFooterLabels;
     NSMutableArray *_sectionIndexTitles;
-    UITextField *_titleField;
     
     NSMutableArray *_titleSegmentTitles;
     UISegmentedControl *_titleSegments;
@@ -355,7 +354,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         leftBarButtonItem = self.navigationItem.leftBarButtonItem;
         rightBarButtonItems = self.navigationItem.rightBarButtonItems;
         
-        if (!self.isModal || [_titleField.text hasValue]) {
+        if (!self.isModal || [_titleView.title hasValue]) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self action:@selector(didCancelEditingTitle)];
         }
         
@@ -367,10 +366,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.navigationItem.rightBarButtonItems = rightBarButtonItems;
         
         [_tableView undim];
-        
-        if ([_titleField isFirstResponder]) {
-            [_titleField resignFirstResponder];
-        }
         
         if ([self actionIs:kActionRegister]) {
             [_inputCell resumeFirstResponder];
@@ -532,8 +527,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [self.entity expire];
             }
             
-            if ([_titleField isFirstResponder]) {
-                [_titleField resignFirstResponder];
+            if (_titleView.editing) {
+                _titleView.editing = NO;
             }
             
             [_dismisser dismissModalViewController:self];
@@ -567,36 +562,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didCancelEditingTitle
 {
-    if ([self.title hasValue]) {
-        _titleField.text = self.title;
-        
-        [self setEditingTitle:NO];
-    }
+    _titleView.didCancel = YES;
 }
 
 
 - (void)didFinishEditingTitle
 {
-    if ([_titleField.text hasValue]) {
-        BOOL shouldFinishEditing = YES;
-        
-        if ([_instance respondsToSelector:@selector(shouldFinishEditingViewTitleField:)]) {
-            shouldFinishEditing = [_instance shouldFinishEditingViewTitleField:_titleField];
-        }
-        
-        if (shouldFinishEditing) {
-            [self setEditingTitle:NO];
-            
-            if (![_titleField.text isEqualToString:self.title]) {
-                self.title = _titleField.text;
-                self.navigationItem.title = _titleField.text;
-                
-                if ([_instance respondsToSelector:@selector(didFinishEditingViewTitleField:)]) {
-                    [_instance didFinishEditingViewTitleField:_titleField];
-                }
-            }
-        }
-    }
+    _titleView.editing = NO;
 }
 
 
@@ -1078,20 +1050,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Custom title & footer elements
-
-- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder
-{
-    _titleField = [self.navigationItem setTitle:title editable:YES withSubtitle:nil];
-    _titleField.placeholder = placeholder;
-    _titleField.delegate = self;
-    _titleFieldShouldBeginEditing = ![title hasValue];
-    
-    self.title = title;
-    
-    return _titleField;
-}
-
+#pragma mark - Custom titles
 
 - (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles
 {
@@ -1491,8 +1450,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
         }
         
-        if (_titleField && _isModal && !_wasHidden) {
-            [_titleField becomeFirstResponder];
+        if (_titleView && _shouldBeginEditingTitleView) {
+            _titleView.editing = YES;
+            _shouldBeginEditingTitleView = NO;
         }
         
         if (_didResurface) {
@@ -1596,27 +1556,25 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)setSubtitle:(NSString *)subtitle
+- (void)setTitleView:(OTitleView *)titleView
 {
-    _subtitle = subtitle;
-    _titleField = [self.navigationItem setTitle:self.title editable:_titleField.userInteractionEnabled withSubtitle:subtitle];
+    _titleView = titleView;
+    _titleView.delegate = self;
+    _shouldBeginEditingTitleView = ![titleView.title hasValue];
+    
+    self.navigationItem.titleView = _titleView;
+    self.title = _titleView.title;
 }
 
 
-- (void)setSubtitleColour:(UIColor *)subtitleColour
-{
-    [self.navigationItem subtitleLabel].textColor = subtitleColour;
-}
-
-
-#pragma mark - UIViewController conformance
+#pragma mark - UIViewController overrides
 
 - (void)setTitle:(NSString *)title
 {
     [super setTitle:title];
     
-    if (_titleField) {
-        _titleField = [self.navigationItem setTitle:self.title editable:_titleField.userInteractionEnabled withSubtitle:self.subtitle];
+    if (_titleView) {
+        _titleView.title = title;
     }
 }
 
@@ -1669,6 +1627,57 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     // TODO: Handle errors (-1001: Timeout, and others)
+}
+
+
+#pragma mark - OTitleViewDelegate conformance
+
+- (BOOL)shouldBeginEditingTitleView:(OTitleView *)titleView
+{
+    BOOL shouldBeginEditing = _shouldBeginEditingTitleView;
+    
+    if (shouldBeginEditing) {
+        _shouldBeginEditingTitleView = NO;
+    } else {
+        NSString *buttonTitle = [NSLocalizedString(@"Edit", @"") stringByAppendingString:[_titleView.placeholder stringByConditionallyLowercasingFirstLetter] separator:kSeparatorSpace];
+        
+        [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
+            _shouldBeginEditingTitleView = YES;
+            _titleView.editing = YES;
+        }];
+    }
+    
+    return shouldBeginEditing;
+}
+
+
+- (void)didBeginEditingTitleView:(OTitleView *)titleView
+{
+    [self setEditingTitle:YES];
+}
+
+
+- (BOOL)shouldFinishEditingTitleView:(OTitleView *)titleView
+{
+    BOOL shouldFinishEditing = [titleView.titleField.text hasValue];
+    
+    if (shouldFinishEditing) {
+        if ([_instance respondsToSelector:@selector(shouldFinishEditingTitleField:)]) {
+            shouldFinishEditing = [_instance shouldFinishEditingTitleField:titleView.titleField];
+        }
+    }
+    
+    return shouldFinishEditing;
+}
+
+
+- (void)didFinishEditingTitleView:(OTitleView *)titleView
+{
+    [self setEditingTitle:NO];
+    
+    if ([_instance respondsToSelector:@selector(didFinishEditingTitleField:)]) {
+        [_instance didFinishEditingTitleField:titleView.titleField];
+    }
 }
 
 
@@ -1988,36 +1997,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - UITextFieldDelegate conformance
 
-- (BOOL)textFieldShouldBeginEditing:(OTextField *)textField
-{
-    BOOL shouldBeginEditing = YES;
-    
-    if (textField == _titleField) {
-        shouldBeginEditing = _titleFieldShouldBeginEditing;
-        
-        if (shouldBeginEditing) {
-            _titleFieldShouldBeginEditing = NO;
-        } else {
-            NSString *buttonTitle = [NSLocalizedString(@"Edit", @"") stringByAppendingString:[_titleField.placeholder stringByConditionallyLowercasingFirstLetter] separator:kSeparatorSpace];
-            
-            [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
-                _titleFieldShouldBeginEditing = YES;
-                
-                [_titleField becomeFirstResponder];
-            }];
-        }
-    }
-    
-    return shouldBeginEditing;
-}
-
-
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
     if ([_inputCell hasInputField:textField]) {
         [self inputFieldDidBecomeFirstResponder:textField];
-    } else if (textField == _titleField) {
-        [self setEditingTitle:YES];
     }
 }
 
@@ -2029,10 +2012,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self moveToNextInputField];
         } else {
             [self didFinishEditing];
-        }
-    } else if (textField == _titleField) {
-        if ([_titleField.text hasValue]) {
-            [_titleField resignFirstResponder];
         }
     } else if (textField.isInlineField) {
         if ([textField hasValidValue]) {
@@ -2048,12 +2027,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([_inputCell hasInputField:textField]) {
         _inputCell.inputField = nil;
-    } else if (textField == _titleField) {
-        if (_didCancel) {
-            _didCancel = NO;
-        } else {
-            [self didFinishEditingTitle];
-        }
     }
 }
 

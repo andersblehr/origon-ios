@@ -149,6 +149,7 @@ extern NSString * const kIconFileAllContacts;
 extern NSString * const kIconFileFavouriteNo;
 extern NSString * const kIconFileFavouriteYes;
 extern NSString * const kIconFileAcceptDecline;
+extern NSString * const kIconFileMembershipRequest;
 extern NSString * const kIconFileCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
@@ -172,6 +173,7 @@ extern NSInteger const kAgeOfMajority;
 
 // Geometry constants
 extern CGFloat const kNavigationBarHeight;
+extern CGFloat const kNavigationBarTitleHeight;
 extern CGFloat const kToolbarBarHeight;
 extern CGFloat const kBorderWidth;
 extern CGFloat const kContentInset;

@@ -10,13 +10,10 @@
 
 @interface UINavigationItem (OrigoAdditions)
 
-- (id)setTitle:(NSString *)title editable:(BOOL)editable withSubtitle:(NSString *)subtitle;
-
 - (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
 - (void)insertRightBarButtonItem:(UIBarButtonItem *)barButtonItem atIndex:(NSInteger)index;
 - (void)removeRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
 
 - (UIBarButtonItem *)rightBarButtonItemWithTag:(NSInteger)tag;
-- (UILabel *)subtitleLabel;
 
 @end

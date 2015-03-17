@@ -149,6 +149,7 @@ NSString * const kIconFileAllContacts = @"729-top-list-toolbar.png";
 NSString * const kIconFileFavouriteNo = @"726-star-toolbar.png";
 NSString * const kIconFileFavouriteYes = @"726-star-toolbar-selected.png";
 NSString * const kIconFileAcceptDecline = @"739-question-selected.png";
+NSString * const kIconFileMembershipRequest = @"746-plus-circle-toolbar.png";
 NSString * const kIconFileCall = @"735-phone.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
@@ -172,6 +173,7 @@ NSInteger const kAgeOfMajority = 18;
 
 // Geometry constant
 CGFloat const kNavigationBarHeight = 64.f;
+CGFloat const kNavigationBarTitleHeight = 44.f;
 CGFloat const kToolbarBarHeight = 44.f;
 CGFloat const kBorderWidth = 0.5f;
 CGFloat const kContentInset = 14.f;

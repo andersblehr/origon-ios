@@ -144,15 +144,15 @@ static NSInteger const kSectionKeyValues = 0;
                 _pickedValues = _affiliation ? [[_origo membersOfGroup:_affiliation] mutableCopy] : nil;
                 placeholder = NSLocalizedString(@"Group name", @"");
             } else if ([self targetIs:kTargetAdmins]) {
-                self.title = NSLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
+                _affiliation = NSLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
                 _pickedValues = [[_origo admins] mutableCopy];
             }
             
-            if (!self.title) {
-                [self setEditableTitle:_affiliation placeholder:placeholder];
-            }
+            self.titleView = [OTitleView titleViewWithTitle:_affiliation subtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:[self aspectIs:kAspectGroup]]];
             
-            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:[self aspectIs:kAspectGroup]]];
+            if (placeholder) {
+                self.titleView.placeholder = placeholder;
+            }
         }
     }
     
@@ -383,9 +383,9 @@ static NSInteger const kSectionKeyValues = 0;
                 [pickedAddresses addObject:[[pickedMember primaryResidence] shortAddress]];
             }
             
-            self.subtitle = [OUtil commaSeparatedListOfStrings:pickedAddresses conjoin:NO];
+            self.titleView.subtitle = [OUtil commaSeparatedListOfStrings:pickedAddresses conjoin:NO];
         } else {
-            self.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO];
+            self.titleView.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO];
         }
         
         if (self.isModal) {
@@ -393,7 +393,7 @@ static NSInteger const kSectionKeyValues = 0;
         }
     } else if ([self targetIs:kTargetAdmins]) {
         [_origo membershipForMember:pickedValue].isAdmin = @(cell.checked);
-        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:NO]];
+        self.titleView.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:NO];
     } else if ([self targetIs:kTargetAffiliation]) {
         if (cell.checked) {
             [[_origo membershipForMember:pickedValue] addAffiliation:_affiliation ofType:_affiliationType];
@@ -407,9 +407,9 @@ static NSInteger const kSectionKeyValues = 0;
         
         if ([self targetIs:kTargetGroup]) {
             [self cell:cell loadGroupDetailsForMember:pickedValue];
-            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:YES]];
+            self.titleView.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:YES];
         } else {
-            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO]];
+            self.titleView.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO];
             
         }
     }
@@ -441,22 +441,22 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
-- (BOOL)shouldFinishEditingViewTitleField:(UITextField *)viewTitleField
+- (BOOL)shouldFinishEditingTitleField:(UITextField *)titleField
 {
     BOOL shouldFinishEditing = YES;
     
-    if ([self targetIs:kTargetGroup] && ![viewTitleField.text isEqualToString:_affiliation]) {
-        shouldFinishEditing = ![[_origo groups] containsObject:viewTitleField.text];
+    if ([self targetIs:kTargetGroup] && ![titleField.text isEqualToString:_affiliation]) {
+        shouldFinishEditing = ![[_origo groups] containsObject:titleField.text];
     }
     
     return shouldFinishEditing;
 }
 
 
-- (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField
+- (void)didFinishEditingTitleField:(UITextField *)titleField
 {
     NSString *oldAffiliation = _affiliation;
-    _affiliation = viewTitleField.text;
+    _affiliation = titleField.text;
     
     if (oldAffiliation && ![_affiliation isEqualToString:oldAffiliation]) {
         NSArray *holders = [_origo holdersOfAffiliation:oldAffiliation ofType:_affiliationType];

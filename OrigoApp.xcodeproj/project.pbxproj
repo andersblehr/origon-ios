@@ -81,6 +81,7 @@
 		5CA94D9F15836BD9008CD9EC /* NSDate+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+OrigoAdditions.m */; };
 		5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAAD27E1751EBA7002AF8CF /* OUtil.m */; };
 		5CAD4F071A39B1910075DF00 /* ORecipientPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAD4F061A39B1910075DF00 /* ORecipientPickerViewController.m */; };
+		5CAFEFDA1AB6F6C4005374CA /* OTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAFEFD91AB6F6C4005374CA /* OTitleView.m */; };
 		5CB74EF117BB60BF003FAC28 /* ODevice+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB74EF017BB60BF003FAC28 /* ODevice+OrigoAdditions.m */; };
 		5CB7E94015F38C1200FD53DF /* OValueListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */; };
 		5CBB63C5146080DF00A9133A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C4146080DF00A9133A /* main.m */; };
@@ -182,7 +183,6 @@
 		5C198B7216D76343002D3976 /* OInputCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OInputCellBlueprint.m; sourceTree = "<group>"; };
 		5C1A81BB1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+OrigoAdditions.m"; sourceTree = "<group>"; };
-		5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OLocatorDelegate.h; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* OConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConstants.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* OConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OConstants.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* OAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthViewController.h; sourceTree = "<group>"; };
@@ -291,10 +291,13 @@
 		5CAAD27E1751EBA7002AF8CF /* OUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUtil.m; sourceTree = "<group>"; };
 		5CAD4F051A39B1910075DF00 /* ORecipientPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORecipientPickerViewController.h; sourceTree = "<group>"; };
 		5CAD4F061A39B1910075DF00 /* ORecipientPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORecipientPickerViewController.m; sourceTree = "<group>"; };
+		5CAFEFD81AB6F6C4005374CA /* OTitleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTitleView.h; sourceTree = "<group>"; };
+		5CAFEFD91AB6F6C4005374CA /* OTitleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTitleView.m; sourceTree = "<group>"; };
 		5CB74EEF17BB60BF003FAC28 /* ODevice+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ODevice+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CB74EF017BB60BF003FAC28 /* ODevice+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ODevice+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CB7E93E15F38C1200FD53DF /* OValueListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValueListViewController.h; sourceTree = "<group>"; };
 		5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValueListViewController.m; sourceTree = "<group>"; };
+		5CB897C61AB7913900CA05B5 /* OTitleViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTitleViewDelegate.h; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* OrigoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrigoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63C0146080DF00A9133A /* OrigoApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OrigoApp-Info.plist"; sourceTree = "<group>"; };
 		5CBB63C4146080DF00A9133A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -610,9 +613,9 @@
 			children = (
 				5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */,
 				5CDE879C176F185E00272909 /* OInputCellDelegate.h */,
-				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5C3F9999178AC91100E31A44 /* OMemberExaminerDelegate.h */,
 				5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */,
+				5CB897C61AB7913900CA05B5 /* OTitleViewDelegate.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -783,6 +786,8 @@
 				5C7379FC1593111B0065AB4F /* OTextField.m */,
 				5C78FAB81654E77E009A4BCF /* OTextView.h */,
 				5C78FAB91654E77E009A4BCF /* OTextView.m */,
+				5CAFEFD81AB6F6C4005374CA /* OTitleView.h */,
+				5CAFEFD91AB6F6C4005374CA /* OTitleView.m */,
 			);
 			name = "Cocoa Subclasses";
 			sourceTree = "<group>";
@@ -1013,6 +1018,7 @@
 				5C53A1FB18F895510023BF8A /* OMemberProxy.m in Sources */,
 				5C5ED5CE14F2E9FE006BBDFB /* OReplicatedEntity+OrigoAdditions.m in Sources */,
 				5C3C665C14F56D6800514C57 /* OCrypto.m in Sources */,
+				5CAFEFDA1AB6F6C4005374CA /* OTitleView.m in Sources */,
 				5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OrigoAdditions.m in Sources */,
 				5C83DF81153F59B800BB0B29 /* OOrigo+OrigoAdditions.m in Sources */,
 				5C3374831563FBE200DEF67D /* OMember+OrigoAdditions.m in Sources */,

@@ -53,8 +53,8 @@
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 - (void)viewWillBeDismissed;
 
-- (BOOL)shouldFinishEditingViewTitleField:(UITextField *)viewTitleField;
-- (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField;
+- (BOOL)shouldFinishEditingTitleField:(UITextField *)titleField;
+- (void)didFinishEditingTitleField:(UITextField *)titleField;
 - (void)didFinishEditingInlineField:(OInputField *)inlineField;
 
 - (BOOL)supportsPullToRefresh;
@@ -93,8 +93,7 @@
 
 @property (nonatomic) id meta;
 @property (nonatomic) id returnData;
-@property (nonatomic) NSString *subtitle;
-@property (nonatomic) UIColor *subtitleColour;
+@property (nonatomic) OTitleView *titleView;
 @property (nonatomic) OTableViewCell *inputCell;
 @property (nonatomic) OInputField *nextInputField;
 
@@ -132,7 +131,7 @@
 - (void)editInlineInCell:(OTableViewCell *)inlineCell;
 - (void)cancelInlineEditingIfOngoing;
 
-- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
+//- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
 - (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles;
 
 - (void)reloadSections;

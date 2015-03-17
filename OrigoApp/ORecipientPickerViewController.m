@@ -74,7 +74,12 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         }
     }
     
-    [self.navigationItem setTitle:title editable:NO withSubtitle:subtitle];
+    if (self.titleView) {
+        self.titleView.title = title;
+        self.titleView.subtitle = subtitle;
+    } else {
+        self.titleView = [OTitleView titleViewWithTitle:title subtitle:subtitle];
+    }
 }
 
 
