@@ -8,96 +8,8 @@
 
 #import "UINavigationItem+OrigoAdditions.h"
 
-static CGFloat const kNavigationBarReservedWidth = 160.f;
-
-static CGFloat const kTitleHeight = 24.f;
-static CGFloat const kTitleHeadroom = 10.5f;
-static CGFloat const kTitleHeadroomWithSubtitle = 2.f;
-
-static NSInteger const kViewTagTitleField = 10;
-static NSInteger const kViewTagSubtitleLabel = 11;
-
 
 @implementation UINavigationItem (OrigoAdditions)
-
-#pragma mark - Editable title with subtitle
-
-- (id)setTitle:(NSString *)title editable:(BOOL)editable withSubtitle:(NSString *)subtitle
-{
-    CGFloat titleViewWidth = [OMeta screenWidth] - kNavigationBarReservedWidth;
-    UITextField *titleField = nil;
-    UILabel *subtitleLabel = nil;
-    
-    BOOL needsAddTitleField = NO;
-    BOOL needsAddSubtitleLabel = NO;
-    
-    if (self.titleView) {
-        titleField = (UITextField *)[self.titleView viewWithTag:kViewTagTitleField];
-        subtitleLabel = (UILabel *)[self.titleView viewWithTag:kViewTagSubtitleLabel];
-    }
-    
-    if (titleField) {
-        titleField.text = title;
-    } else {
-        titleField = [[UITextField alloc] initWithFrame:CGRectZero];
-        titleField.adjustsFontSizeToFitWidth = YES;
-        titleField.backgroundColor = [UIColor clearColor];
-        titleField.font = [UIFont navigationBarTitleFont];
-        titleField.returnKeyType = UIReturnKeyDone;
-        titleField.tag = kViewTagTitleField;
-        titleField.text = title;
-        titleField.textAlignment = NSTextAlignmentCenter;
-        titleField.textColor = [UIColor blackColor];
-        
-        needsAddTitleField = YES;
-    }
-    
-    if (subtitle && subtitleLabel) {
-        subtitleLabel.text = subtitle;
-    } else if (subtitle) {
-        CGFloat subtitleHeight = kToolbarBarHeight - kTitleHeight;
-        CGRect subtitleFrame = CGRectMake(0.f, kTitleHeight, titleViewWidth, subtitleHeight);
-        subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
-        subtitleLabel.backgroundColor = [UIColor clearColor];
-        subtitleLabel.font = [UIFont navigationBarSubtitleFont];
-        subtitleLabel.tag = kViewTagSubtitleLabel;
-        subtitleLabel.text = subtitle;
-        subtitleLabel.textAlignment = NSTextAlignmentCenter;
-        subtitleLabel.textColor = [UIColor blackColor];
-        
-        needsAddSubtitleLabel = YES;
-    } else if (subtitleLabel) {
-        [subtitleLabel removeFromSuperview];
-        subtitleLabel = nil;
-    }
-
-    if (subtitleLabel || editable) {
-        CGFloat headroom = subtitle ? kTitleHeadroomWithSubtitle : kTitleHeadroom;
-        titleField.frame = CGRectMake(0.f, headroom, titleViewWidth, kTitleHeight);
-        titleField.userInteractionEnabled = editable;
-        
-        if (!self.titleView) {
-            CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kToolbarBarHeight);
-            self.titleView = [[UIView alloc] initWithFrame:titleViewFrame];
-            self.titleView.backgroundColor = [UIColor clearColor];
-        }
-        
-        if (needsAddTitleField) {
-            [self.titleView addSubview:titleField];
-        }
-        
-        if (needsAddSubtitleLabel) {
-            [self.titleView addSubview:subtitleLabel];
-        }
-    } else {
-        self.titleView = nil;
-    }
-    
-    self.title = title;
-    
-    return titleField;
-}
-
 
 #pragma mark - Manipulating right bar button items
 
@@ -146,12 +58,6 @@ static NSInteger const kViewTagSubtitleLabel = 11;
     }
     
     return barButtonItemWithTag;
-}
-
-
-- (UILabel *)subtitleLabel
-{
-    return (UILabel *)[self.titleView viewWithTag:kViewTagSubtitleLabel];
 }
 
 @end

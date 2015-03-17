@@ -140,6 +140,12 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (instancetype)membershipRequestButtonWithTarget:(id)target
+{
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileMembershipRequest] target:target action:@selector(performMembershipRequestAction) tag:kBarButtonTagSettings];
+}
+
+
 + (instancetype)settingsButtonWithTarget:(id)target
 {
     return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSettings] target:target action:@selector(performSettingsAction) tag:kBarButtonTagSettings];

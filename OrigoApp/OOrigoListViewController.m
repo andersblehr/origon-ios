@@ -139,6 +139,12 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
+- (void)performMembershipRequestAction
+{
+    
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidAppear:(BOOL)animated
@@ -176,13 +182,12 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     if ([self targetIs:kTargetHiddenOrigos]) {
         self.title = NSLocalizedString(self.target, kStringPrefixSettingLabel);
     } else {
-        self.title = [OMeta m].appName;
-        [self setSubtitle:[OMeta m].user.name];
+        self.titleView = [OTitleView titleViewWithTitle:[OMeta m].appName subtitle:[OMeta m].user.name];
         
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
         
         if ([[OMeta m].user isTeenOrOlder]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+            self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self], [UIBarButtonItem membershipRequestButtonWithTarget:self]];
         }
     }
 }

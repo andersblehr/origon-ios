@@ -984,7 +984,8 @@ static NSInteger const kButtonIndexContinue = 1;
         } else if ([self targetIs:kTargetGuardian]) {
             self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
         } else if ([self targetIs:kTargetOrganiser]) {
-            [self setEditableTitle:nil placeholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
+            self.titleView = [OTitleView titleViewWithTitle:nil];
+            self.titleView.placeholder = NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle);
         } else if ([_origo isPrivate]) {
             if ([_member isJuvenile]) {
                 self.title = NSLocalizedString(@"Friend", @"");
@@ -1381,9 +1382,9 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField
+- (void)didFinishEditingTitleField:(UITextField *)titleField
 {
-    _role = viewTitleField.text;
+    _role = titleField.text;
 }
 
 
