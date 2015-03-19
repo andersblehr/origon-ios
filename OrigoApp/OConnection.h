@@ -33,6 +33,7 @@ extern NSString * const kHTTPHeaderLocation;
 
 - (void)replicateEntities:(NSArray *)entities;
 - (void)lookupMemberWithEmail:(NSString *)email;
+- (void)lookupOrigoWithJoinCode:(NSString *)joinCode;
 
 + (BOOL)isUsingDevServer;
 

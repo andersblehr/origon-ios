@@ -27,12 +27,11 @@ static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
 
 
-@interface OTableViewController () <OTitleViewDelegate, UITextFieldDelegate, UITextViewDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
+@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _isUsingSectionIndexTitles;
-    BOOL _shouldReloadOnModalDismissal;
     BOOL _shouldBeginEditingTitleView;
     
     Class _entityClass;
@@ -915,10 +914,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_instance willDismissModalViewController:viewController];
         }
         
-        if ([[OMeta m] userIsLoggedIn]) {
-            _shouldReloadOnModalDismissal = !viewController.didCancel;
-        }
-        
         if ([OMeta iOSVersionIs:@"8"] && viewController.presentedViewController) {
             // Dismissal of stacked modal view controllers does not work as documented in iOS 8.
             // Instead of animating the dismissal of the topmost view controller while simply
@@ -937,7 +932,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         [self dismissViewControllerAnimated:YES completion:^{
-            _shouldReloadOnModalDismissal = NO;
+            if ([[OMeta m] userIsLoggedIn] && !viewController.didCancel) {
+                [self reloadSections];
+            }
             
             if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
                 [_instance didDismissModalViewController:viewController];
@@ -1334,6 +1331,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     [self initialiseInstance];
     
+    if (self.title && !self.navigationItem.backBarButtonItem) {
+        CGFloat titleWidth = [self.title sizeWithFont:[UIFont navigationBarTitleFont] maxWidth:CGFLOAT_MAX].width;
+        
+        if (titleWidth / [OMeta screenWidth] > 0.3f) {
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Back", @"")];
+        }
+    }
+    
     if (_usesTableView) {
         CGRect tableViewFrame = self.view.frame;
         tableViewFrame.size.height -= self.navigationController ? kNavigationBarHeight : 0.f;
@@ -1422,7 +1427,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [self setTableViewFooterViewIfNeeded];
         
-        if (_didResurface || _shouldReloadOnModalDismissal) {
+        if (_didResurface) {
             [self reloadSections];
         }
         
@@ -1642,7 +1647,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         NSString *buttonTitle = [NSLocalizedString(@"Edit", @"") stringByAppendingString:[_titleView.placeholder stringByConditionallyLowercasingFirstLetter] separator:kSeparatorSpace];
         
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
-            _shouldBeginEditingTitleView = YES;
             _titleView.editing = YES;
         }];
     }
@@ -1659,25 +1663,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)shouldFinishEditingTitleView:(OTitleView *)titleView
 {
-    BOOL shouldFinishEditing = [titleView.titleField.text hasValue];
-    
-    if (shouldFinishEditing) {
-        if ([_instance respondsToSelector:@selector(shouldFinishEditingTitleField:)]) {
-            shouldFinishEditing = [_instance shouldFinishEditingTitleField:titleView.titleField];
-        }
-    }
-    
-    return shouldFinishEditing;
+    return [titleView.titleField.text hasValue];
 }
 
 
 - (void)didFinishEditingTitleView:(OTitleView *)titleView
 {
     [self setEditingTitle:NO];
-    
-    if ([_instance respondsToSelector:@selector(didFinishEditingTitleField:)]) {
-        [_instance didFinishEditingTitleField:titleView.titleField];
-    }
 }
 
 
@@ -1730,7 +1722,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         _inputCell = cell;
     } else {
-        UITableViewCellStyle style = UITableViewCellStyleSubtitle;
+        UITableViewCellStyle style = kTableViewCellStyleDefault;
         
         if ([_instance respondsToSelector:@selector(listCellStyleForSectionWithKey:)]) {
             style = [_instance listCellStyleForSectionWithKey:[self sectionKeyForIndexPath:indexPath]];

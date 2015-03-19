@@ -15,6 +15,7 @@ extern NSString * const kSeparatorComma;
 extern NSString * const kSeparatorHash;
 extern NSString * const kSeparatorHat;
 extern NSString * const kSeparatorNewline;
+extern NSString * const kSeparatorParagraph;
 extern NSString * const kSeparatorSpace;
 extern NSString * const kSeparatorTilde;
 
@@ -42,6 +43,7 @@ extern NSString * const kSeparatorAlternates;
 - (NSString *)stringByCapitalisingFirstLetter;
 - (NSString *)stringByLowercasingFirstLetter;
 - (NSString *)stringByConditionallyLowercasingFirstLetter;
+- (NSString *)stringByLowercasingAndRemovingWhitespace;
 
 - (NSString *)givenName;
 - (NSString *)localisedCountryName;

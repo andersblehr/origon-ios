@@ -902,22 +902,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
-- (BOOL)isEditableByUser
-{
-    BOOL isEditable = [self isUser] || [self isWardOfUser];
-    
-    if (!isEditable && ![self isActive]) {
-        if ([self isManaged]) {
-            isEditable = [self isHousemateOfUser];
-        } else {
-            isEditable = [[OMeta m].user isJuvenile] ? [self isJuvenile] : YES;
-        }
-    }
-    
-    return isEditable;
-}
-
-
 - (BOOL)isManaged
 {
     BOOL isManaged = [self isActive];
@@ -1047,6 +1031,42 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     return guardiansAreParents;
+}
+
+
+- (BOOL)userCanEdit
+{
+    OMember *user = [OMeta m].user;
+    BOOL userCanEdit = [self isUser] || [self isWardOfUser];
+    
+    if (!userCanEdit && ![self isActive]) {
+        if ([self isManaged]) {
+            userCanEdit = [self isHousemateOfUser] && [user isTeenOrOlder];
+        } else {
+            OOrigo *baseOrigo = [OState s].baseOrigo;
+            OMembership *baseMembership = [baseOrigo userMembership];
+            
+            if ([baseMembership isAssociate]) {
+                for (OMember *ward in [user wards]) {
+                    OMembership *wardMembership = [baseOrigo membershipForMember:ward];
+                    
+                    if (![wardMembership isAssociate]) {
+                        baseMembership = wardMembership;
+                    }
+                }
+            }
+            
+            if ([baseMembership isActive]) {
+                if ([user isJuvenile]) {
+                    userCanEdit = [self isJuvenile] && [user isTeenOrOlder];
+                } else {
+                    userCanEdit = YES;
+                }
+            }
+        }
+    }
+    
+    return userCanEdit;
 }
 
 

@@ -140,9 +140,9 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)membershipRequestButtonWithTarget:(id)target
++ (instancetype)addToOrigoButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileMembershipRequest] target:target action:@selector(performMembershipRequestAction) tag:kBarButtonTagSettings];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAddToOrigo] target:target action:@selector(performAddToOrigoAction) tag:kBarButtonTagSettings];
 }
 
 

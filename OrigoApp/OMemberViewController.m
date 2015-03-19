@@ -45,7 +45,7 @@ static NSInteger const kAlertTagEmailChange = 0;
 static NSInteger const kButtonIndexContinue = 1;
 
 
-@interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, OConnectionDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate> {
+@interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate> {
 @private
     id<OMember> _member;
     id<OOrigo> _origo;
@@ -340,7 +340,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     [[ward primaryResidence] addMember:_member];
                     [self.dismisser dismissModalViewController:self];
                 }
-            } else if (![_member hasAddress] && [_member isEditableByUser]) {
+            } else if (![_member hasAddress] && [_member userCanEdit]) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
             } else {
                 [self.dismisser dismissModalViewController:self];
@@ -1016,7 +1016,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
         
-        if ([_member isEditableByUser]) {
+        if ([_member userCanEdit]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
         }
     }
@@ -1084,8 +1084,6 @@ static NSInteger const kButtonIndexContinue = 1;
             OInputField *roleField = [cell inlineField];
             roleField.placeholder = NSLocalizedString(@"Responsibility", @"");
             roleField.value = [self dataAtIndexPath:indexPath];
-            
-            cell.selectable = YES;
         } else {
             cell.textLabel.text = [self dataAtIndexPath:indexPath];
             cell.selectable = NO;
@@ -1096,7 +1094,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
 {
-    UITableViewCellStyle cellStyle = UITableViewCellStyleSubtitle;
+    UITableViewCellStyle cellStyle = kTableViewCellStyleDefault;
     
     if (sectionKey == kSectionKeyRoles && ([_origo userCanEdit])) {
         cellStyle = kTableViewCellStyleInline;
@@ -1186,9 +1184,9 @@ static NSInteger const kButtonIndexContinue = 1;
                 
                 if (minor && ![[minor guardians] count]) {
                     if ([[OMeta m].user isJuvenile]) {
-                        footerContent = [NSLocalizedString(@"Before you can register a friend, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
+                        footerContent = [NSLocalizedString(@"Before you can register a friend, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:kSeparatorParagraph];
                     } else {
-                        footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:@"\n\n"];
+                        footerContent = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:footerContent separator:kSeparatorParagraph];
                     }
                 }
             }
@@ -1382,12 +1380,6 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)didFinishEditingTitleField:(UITextField *)titleField
-{
-    _role = titleField.text;
-}
-
-
 - (void)didFinishEditingInlineField:(OInputField *)inlineField
 {
     NSString *editedRole = inlineField.value;
@@ -1421,6 +1413,16 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+#pragma mark - OTitleViewDelegate conformance
+
+- (void)didFinishEditingTitleView:(OTitleView *)titleView
+{
+    [super didFinishEditingTitleView:titleView];
+    
+    _role = titleView.title;
+}
+
+
 #pragma mark - OInputCellDelegate conformance
 
 - (OInputCellBlueprint *)inputCellBlueprint
@@ -1430,7 +1432,7 @@ static NSInteger const kButtonIndexContinue = 1;
     blueprint.detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
 
     // LATER: Introduce photos
-    // blueprint.hasPhoto = _member.photo || ([self aspectIs:kAspectHousehold] && [_member isEditableByUser]);
+    // blueprint.hasPhoto = _member.photo || ([self aspectIs:kAspectHousehold] && [_member userCanEdit]);
     
     return blueprint;
 }

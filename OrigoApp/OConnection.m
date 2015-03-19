@@ -51,12 +51,14 @@ static NSString * const kPathReset = @"reset";
 static NSString * const kPathSendCode = @"sendcode";
 static NSString * const kPathReplicate = @"replicate";
 static NSString * const kPathFetch = @"fetch";
-static NSString * const kPathLookup = @"lookup";
+static NSString * const kPathLookupMember = @"member";
+static NSString * const kPathLookupOrigo = @"origo";
 
 static NSString * const kURLParameterAuthToken = @"token";
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
+static NSString * const kURLParameterLanguage = @"lang";
 static NSString * const kURLParameterIdentifier = @"id";
 
 
@@ -257,7 +259,16 @@ static NSString * const kURLParameterIdentifier = @"id";
     [self setValue:email forURLParameter:kURLParameterIdentifier];
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     
-    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookup entities:nil];
+    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookupMember entities:nil];
+}
+
+
+- (void)lookupOrigoWithJoinCode:(NSString *)joinCode
+{
+    [self setValue:[joinCode stringByLowercasingAndRemovingWhitespace] forURLParameter:kURLParameterIdentifier];
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookupOrigo entities:nil];
 }
 
 

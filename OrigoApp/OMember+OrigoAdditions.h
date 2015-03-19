@@ -79,7 +79,6 @@
 - (BOOL)isUser;
 - (BOOL)isWardOfUser;
 - (BOOL)isHousemateOfUser;
-- (BOOL)isEditableByUser;
 - (BOOL)isManaged;
 - (BOOL)isFavourite;
 - (BOOL)isMale;
@@ -93,6 +92,7 @@
 - (BOOL)hasParentWithGender:(NSString *)gender;
 - (BOOL)hasGuardian:(id<OMember>)member;
 - (BOOL)guardiansAreParents;
+- (BOOL)userCanEdit;
 
 - (NSArray *)pronoun;
 - (NSArray *)parentNoun;

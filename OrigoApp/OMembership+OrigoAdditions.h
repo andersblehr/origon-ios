@@ -17,6 +17,7 @@ extern NSString * const kMembershipTypeAssociate;
 
 extern NSString * const kMembershipStatusListed;
 extern NSString * const kMembershipStatusInvited;
+extern NSString * const kMembershipStatusRequested;
 extern NSString * const kMembershipStatusWaiting;
 extern NSString * const kMembershipStatusActive;
 extern NSString * const kMembershipStatusExpired;
