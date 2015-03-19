@@ -8,6 +8,8 @@
 
 #import "OTableViewCell.h"
 
+UITableViewCellStyle const kTableViewCellStyleDefault = UITableViewCellStyleSubtitle;
+UITableViewCellStyle const kTableViewCellStyleValueList = UITableViewCellStyleValue1;
 UITableViewCellStyle const kTableViewCellStyleInline = UITableViewCellStyleDefault;
 
 NSString * const kReuseIdentifierList = @"list";
@@ -24,7 +26,7 @@ static NSString * const kViewKeyPhotoPrompt = @"photoPrompt";
 
 static NSString * const kButtonActionFormat = @"perform%@Action";
 
-static CGFloat const kAccessoryWidth = 20.f;
+static CGFloat const kAccessoryWidth = 25.f;
 
 static CGFloat const kShakeDuration = 0.05f;
 static CGFloat const kShakeDelay = 0.f;
@@ -177,7 +179,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     OState *state = ((OTableViewController *)delegate).state;
     
-    self = [self initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:NSStringFromClass([entity entityClass]) state:state];
+    self = [self initWithStyle:kTableViewCellStyleDefault reuseIdentifier:NSStringFromClass([entity entityClass]) state:state];
     
     if (self) {
         _entity = entity;
@@ -274,9 +276,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Meta & validation
 
-- (BOOL)styleIsSubtitle
+- (BOOL)styleIsDefault
 {
-    return _style == UITableViewCellStyleSubtitle;
+    return _style == kTableViewCellStyleDefault;
 }
 
 
@@ -611,20 +613,25 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)setNotificationText:(NSString *)notificationText
+- (void)setNotificationView:(UIView *)notificationView
 {
-    _notificationText = notificationText;
+    if (_notificationView && !notificationView) {
+        [_notificationView removeFromSuperview];
+    }
     
-    if (!_notificationText && _notificationLabel) {
-        [_notificationLabel removeFromSuperview];
-        _notificationLabel = nil;
-    } else if (!_notificationLabel || ![_notificationLabel.text isEqualToString:_notificationText]) {
-        _notificationLabel = [OLabel genericLabelWithText:_notificationText];
-        _notificationLabel.font = [UIFont notificationFont];
-        _notificationLabel.textColor = [UIColor notificationColour];
+    _notificationView = notificationView;
+    
+    if (_notificationView) {
+        if ([_notificationView isKindOfClass:[UILabel class]]) {
+            UILabel *notificationLabel = (UILabel *)_notificationView;
+            notificationLabel.font = [UIFont notificationFont];
+            notificationLabel.textColor = [UIColor notificationColour];
+        } else {
+            _notificationView.tintColor = [UIColor notificationColour];
+        }
         
         CGRect contentFrame = self.contentView.frame;
-        CGRect notificationFrame = _notificationLabel.frame;
+        CGRect notificationFrame = _notificationView.frame;
         notificationFrame.origin.x = contentFrame.size.width - notificationFrame.size.width - kDefaultCellPadding;
         notificationFrame.origin.y = (contentFrame.size.height - notificationFrame.size.height) / 2.f;
         
@@ -634,9 +641,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
             notificationFrame.origin.x -= kAccessoryWidth;
         }
         
-        _notificationLabel.frame = notificationFrame;
+        _notificationView.frame = notificationFrame;
         
-        [self.contentView addSubview:_notificationLabel];
+        [self.contentView addSubview:_notificationView];
     }
 }
 

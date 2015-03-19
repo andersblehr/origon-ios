@@ -267,7 +267,7 @@
             needsRelations = needsRelations || [origo isJuvenile] != [[OMeta m].user isJuvenile];
             
             if (needsRelations) {
-                if ([self styleIsSubtitle]) {
+                if ([self styleIsDefault]) {
                     self.detailTextLabel.textColor = [UIColor tonedDownTextColour];
                 }
                 

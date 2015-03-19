@@ -50,9 +50,9 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
             cell.destinationId = nil;
             cell.destinationTarget = nil;
             cell.destinationMeta = nil;
-            cell.notificationText = nil;
+            cell.notificationView = nil;
             
-            if ([cell styleIsSubtitle]) {
+            if ([cell styleIsDefault]) {
                 cell.detailTextLabel.textColor = [UIColor textColour];
             } else {
                 cell.detailTextLabel.textColor = [UIColor valueTextColour];
@@ -100,7 +100,7 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
 
 - (id)inputCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
-    return [self cellWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier delegate:delegate];
+    return [self cellWithStyle:kTableViewCellStyleDefault reuseIdentifier:reuseIdentifier delegate:delegate];
 }
 
 

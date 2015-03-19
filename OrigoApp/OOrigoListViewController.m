@@ -11,10 +11,11 @@
 static NSInteger const kActionSheetTagEditParents = 0;
 static NSInteger const kButtonTagEditParentsYes = 0;
 
-static NSInteger const kActionSheetTagNewOrigoParticipant = 1;
-static NSInteger const kButtonTagNewOrigoParticipantUser = 0;
+static NSInteger const kActionSheetTagJoinOrigoTarget = 1;
+static NSInteger const kActionSheetTagNewOrigoTarget = 2;
+static NSInteger const kButtonTagOrigoTargetUser = 0;
 
-static NSInteger const kActionSheetTagOrigoType = 2;
+static NSInteger const kActionSheetTagOrigoType = 3;
 
 static NSInteger const kSectionKeyUser = 0;
 static NSInteger const kSectionKeyOrigos = 1;
@@ -125,8 +126,8 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (void)performAddAction
 {
     if ([_wards count]) {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to create a list for?", @"") delegate:self tag:kActionSheetTagNewOrigoParticipant];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Yourself", @"") tag:kButtonTagNewOrigoParticipantUser];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to create a list for?", @"") delegate:self tag:kActionSheetTagNewOrigoTarget];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Yourself", @"") tag:kButtonTagOrigoTargetUser];
         
         for (id<OMember> ward in _wards) {
             [actionSheet addButtonWithTitle:[ward givenName]];
@@ -139,9 +140,20 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
-- (void)performMembershipRequestAction
+- (void)performAddToOrigoAction
 {
-    
+    if ([_wards count]) {
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to join to an existing list?\n(You will need the join code to proceed.)", @"") delegate:self tag:kActionSheetTagJoinOrigoTarget];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Yourself", @"") tag:kButtonTagOrigoTargetUser];
+        
+        for (id<OMember> ward in _wards) {
+            [actionSheet addButtonWithTitle:[ward givenName]];
+        }
+        
+        [actionSheet show];
+    } else {
+        
+    }
 }
 
 
@@ -187,7 +199,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
         
         if ([[OMeta m].user isTeenOrOlder]) {
-            self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self], [UIBarButtonItem membershipRequestButtonWithTarget:self]];
+            self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self], [UIBarButtonItem addToOrigoButtonWithTarget:self]];
         }
     }
 }
@@ -248,7 +260,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             cell.destinationId = kIdentifierValueList;
             cell.destinationTarget = kTargetAllContacts;
         } else if ([origo isResidence]) {
-            membership = [origo membershipForMember:[OMeta m].user];
+            membership = [origo userMembership];
             
             BOOL shouldUseAddressForDefaultName = NO;
             
@@ -268,11 +280,11 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             }
         }
     } else if (sectionKey == kSectionKeyOrigos) {
-        membership = [origo membershipForMember:[OMeta m].user];
+        membership = [origo userMembership];
         
         cell.textLabel.text = [origo displayName];
         
-        if ([origo userIsOrganiser]) {
+        if ([[membership roles] count]) {
             cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
         } else {
             cell.detailTextLabel.text = origo.descriptionText;
@@ -294,9 +306,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     }
     
     if (membership && [membership needsAccepting] && ![membership isHidden]) {
-        cell.notificationText = NSLocalizedString(@"New!", @"");
-    } else {
-        cell.notificationText = nil;
+        cell.notificationView = [OLabel genericLabelWithText:NSLocalizedString(@"New!", @"")];
     }
     
     [cell loadImageForOrigo:origo];
@@ -469,8 +479,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
         
         switch (actionSheet.tag) {
-            case kActionSheetTagNewOrigoParticipant:
-                if (buttonTag == kButtonTagNewOrigoParticipantUser) {
+            case kActionSheetTagJoinOrigoTarget:
+            case kActionSheetTagNewOrigoTarget:
+                if (buttonTag == kButtonTagOrigoTargetUser) {
                     self.target = [OMeta m].user;
                 } else {
                     NSInteger selectedWardIndex = buttonIndex - 1;
@@ -507,7 +518,11 @@ static NSInteger const kSectionKeyWardOrigos = 2;
                 
                 break;
                 
-            case kActionSheetTagNewOrigoParticipant:
+            case kActionSheetTagJoinOrigoTarget:
+                
+                break;
+                
+            case kActionSheetTagNewOrigoTarget:
                 [self presentAddOrigoSheet];
                 
                 break;

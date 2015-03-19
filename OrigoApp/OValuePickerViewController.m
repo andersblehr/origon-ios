@@ -10,8 +10,12 @@
 
 static NSInteger const kSectionKeyValues = 0;
 
+static NSInteger const kActionSheetTagJoinCode = 0;
+static NSInteger const kButtonTagJoinCodeEdit = 0;
+static NSInteger const kButtonTagJoinCodeDelete = 1;
 
-@interface OValuePickerViewController () <OTableViewController> {
+
+@interface OValuePickerViewController () <OTableViewController, UIActionSheetDelegate> {
 @private
     OTableViewCell *_checkedCell;
     NSMutableArray *_pickedValues;
@@ -28,6 +32,10 @@ static NSInteger const kSectionKeyValues = 0;
     id<OMember> _ward;
     NSString *_parentGender;
     NSArray *_parentCandidates;
+    
+    OTableViewCell *_joinCodeCell;
+    NSString *_joinCode;
+    NSString *_internalJoinCode;
 }
 
 @end
@@ -75,6 +83,28 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
+- (NSString *)joinCodeFooterText
+{
+    NSString *footerText = nil;
+    
+    if ([_origo isJuvenile]) {
+        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
+    } else {
+        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
+    }
+    
+    return footerText;
+}
+
+
+- (void)showJoinCodeSetAlertAndReplicate
+{
+    [OAlert showAlertWithTitle:NSLocalizedString(@"The code has been set", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list.", @""), _origo.name, _origo.joinCode, [OMeta m].appName]];
+    
+    [[OMeta m].replicator replicateIfNeeded];
+}
+
+
 #pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
@@ -105,6 +135,12 @@ static NSInteger const kSectionKeyValues = 0;
         _valuesByKey = [NSMutableDictionary dictionary];
         
         self.title = NSLocalizedString(kPropertyKeyGender, kStringPrefixLabel);
+    } else if ([self targetIs:kPropertyKeyJoinCode]) {
+        _origo = self.state.currentOrigo;
+        
+        self.title = NSLocalizedString(kPropertyKeyJoinCode, kStringPrefixLabel);
+        self.usesPlainTableViewStyle = NO;
+        self.requiresSynchronousServerCalls = YES;
     } else {
         self.usesSectionIndexTitles = YES;
         
@@ -198,6 +234,10 @@ static NSInteger const kSectionKeyValues = 0;
         }
         
         [self setData:@[_valuesByKey[kGenderMale], _valuesByKey[kGenderFemale]] forSectionWithKey:kSectionKeyValues];
+    } else if ([self targetIs:kPropertyKeyJoinCode]) {
+        if ([_origo.joinCode hasValue] || [_origo userIsAdmin]) {
+            [self setData:@[kPropertyKeyJoinCode] forSectionWithKey:kSectionKeyValues];
+        }
     } else if ([self targetIs:kTargetAffiliation]) {
         if ([self aspectIs:kAspectMemberRole]) {
             [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
@@ -243,6 +283,22 @@ static NSInteger const kSectionKeyValues = 0;
         
         cell.textLabel.text = [gender stringByCapitalisingFirstLetter];
         cell.checked = [gender isEqualToString:[OLanguage genderTermForGender:self.state.currentMember.gender isJuvenile:[self.state.currentMember isJuvenile]]];
+    } else if ([self targetIs:kPropertyKeyJoinCode]) {
+        if ([_origo userIsAdmin]) {
+            _joinCodeCell = cell;
+            
+            OInputField *joinCodeField = [_joinCodeCell inlineField];
+            joinCodeField.placeholder = NSLocalizedString(kPropertyKeyJoinCode, kStringPrefixLabel);
+            
+            if ([_origo.joinCode hasValue]) {
+                joinCodeField.value = _origo.joinCode;
+            } else {
+                [self editInlineInCell:_joinCodeCell];
+            }
+        } else if ([_origo.joinCode hasValue]) {
+            cell.textLabel.text = _origo.joinCode;
+            cell.selectable = NO;
+        }
     } else if ([self targetIs:kTargetAdmins]) {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         id<OMembership> membership = [_origo membershipForMember:candidate];
@@ -320,6 +376,30 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
+- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
+{
+    UITableViewCellStyle style = kTableViewCellStyleDefault;
+    
+    if ([self targetIs:kPropertyKeyJoinCode] && [_origo userIsAdmin]) {
+        style = kTableViewCellStyleInline;
+    }
+    
+    return style;
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return [self targetIs:kPropertyKeyJoinCode];
+}
+
+
+- (id)footerContentForSectionWithKey:(NSInteger)sectionKey
+{
+    return [self targetIs:kPropertyKeyJoinCode] ? [self joinCodeFooterText] : nil;
+}
+
+
 - (NSString *)emptyTableViewFooterText
 {
     NSString *footerText = nil;
@@ -328,6 +408,8 @@ static NSInteger const kSectionKeyValues = 0;
         NSString *hisHerParent = [OLanguage labelForParentWithGender:_parentGender relativeToOffspringWithGender:_ward.gender];
         
         footerText = [NSString stringWithFormat:NSLocalizedString(@"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.", @""), [_ward givenName], hisHerParent, hisHerParent];
+    } else if ([self targetIs:kPropertyKeyJoinCode]) {
+        footerText = [[self joinCodeFooterText] stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"You may ask an administrator to create a join code for %@.", @""), _origo.name] separator:kSeparatorParagraph];
     }
     
     return footerText;
@@ -336,29 +418,31 @@ static NSInteger const kSectionKeyValues = 0;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.selected = NO;
-    cell.checked = cell.checked && [_pickedValues count] == 1 ? _isNoValuePicker : !cell.checked;
-    
     id oldValue = nil;
     id pickedValue = [self dataAtIndexPath:indexPath];
     
-    if (cell.checked) {
-        if (!_isMultiValuePicker && cell != _checkedCell) {
-            if (_checkedCell) {
-                oldValue = [self dataAtIndexPath:[self.tableView indexPathForCell:_checkedCell]];
+    if (![self targetIs:kPropertyKeyJoinCode]) {
+        cell.selected = NO;
+        cell.checked = cell.checked && [_pickedValues count] == 1 ? _isNoValuePicker : !cell.checked;
+        
+        if (cell.checked) {
+            if (!_isMultiValuePicker && cell != _checkedCell) {
+                if (_checkedCell) {
+                    oldValue = [self dataAtIndexPath:[self.tableView indexPathForCell:_checkedCell]];
+                    
+                    _checkedCell.checked = NO;
+                    [_pickedValues removeObject:oldValue];
+                }
                 
-                _checkedCell.checked = NO;
-                [_pickedValues removeObject:oldValue];
+                _checkedCell = cell;
             }
             
-            _checkedCell = cell;
+            if (![_pickedValues containsObject:pickedValue]) {
+                [_pickedValues insertObject:pickedValue atIndex:0];
+            }
+        } else {
+            [_pickedValues removeObject:pickedValue];
         }
-        
-        if (![_pickedValues containsObject:pickedValue]) {
-            [_pickedValues insertObject:pickedValue atIndex:0];
-        }
-    } else {
-        [_pickedValues removeObject:pickedValue];
     }
     
     if ([self targetIs:kTargetSetting]) {
@@ -373,6 +457,14 @@ static NSInteger const kSectionKeyValues = 0;
         [_origo convertToType:[_valuesByKey allKeysForObject:pickedValue][0]];
     } else if ([self targetIs:kTargetGender]) {
         self.state.currentMember.gender = [_valuesByKey allKeysForObject:pickedValue][0];
+    } else if ([self targetIs:kPropertyKeyJoinCode]) {
+        if ([_origo userIsAdmin]) {
+            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagJoinCode];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit join code", @"") tag:kButtonTagJoinCodeEdit];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Delete join code", @"") tag:kButtonTagJoinCodeDelete];
+            
+            [actionSheet show];
+        }
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
     } else if ([self targetIs:kTargetMembers]) {
@@ -420,8 +512,10 @@ static NSInteger const kSectionKeyValues = 0;
         } else {
             [self.dismisser dismissModalViewController:self];
         }
-    } else if (!_isMultiValuePicker && (![self targetIs:kTargetParent] || cell.checked)) {
-        [self.navigationController popViewControllerAnimated:YES];
+    } else if (!_isMultiValuePicker) {
+        if (![self targetIs:@[kTargetParent, kPropertyKeyJoinCode]] || cell.checked) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
     }
 }
 
@@ -441,22 +535,53 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
-- (BOOL)shouldFinishEditingTitleField:(UITextField *)titleField
+- (void)didFinishEditingInlineField:(OInputField *)inlineField
 {
-    BOOL shouldFinishEditing = YES;
+    if (self.didCancel) {
+        inlineField.value = _origo.joinCode;
+        
+        if (![_origo.joinCode hasValue]) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    } else {
+        _joinCode = inlineField.value;
+        _internalJoinCode = [_joinCode stringByLowercasingAndRemovingWhitespace];
+        
+        if ([_internalJoinCode isEqualToString:_origo.internalJoinCode]) {
+            _origo.joinCode = _joinCode;
+            
+            [self showJoinCodeSetAlertAndReplicate];
+        } else {
+            [[OConnection connectionWithDelegate:self] lookupOrigoWithJoinCode:_joinCode];
+        }
+    }
+}
+
+
+#pragma mark - OTitleViewDelegate conformance
+
+- (BOOL)shouldFinishEditingTitleView:(OTitleView *)titleView
+{
+    BOOL shouldFinishEditing = [super shouldFinishEditingTitleView:titleView];
     
-    if ([self targetIs:kTargetGroup] && ![titleField.text isEqualToString:_affiliation]) {
-        shouldFinishEditing = ![[_origo groups] containsObject:titleField.text];
+    if (shouldFinishEditing) {
+        NSString *editedAffiliation = titleView.titleField.text;
+        
+        if ([self targetIs:kTargetGroup] && ![editedAffiliation isEqualToString:_affiliation]) {
+            shouldFinishEditing = ![[_origo groups] containsObject:titleView.title];
+        }
     }
     
     return shouldFinishEditing;
 }
 
 
-- (void)didFinishEditingTitleField:(UITextField *)titleField
+- (void)didFinishEditingTitleView:(OTitleView *)titleView
 {
+    [super didFinishEditingTitleView:titleView];
+    
     NSString *oldAffiliation = _affiliation;
-    _affiliation = titleField.text;
+    _affiliation = titleView.title;
     
     if (oldAffiliation && ![_affiliation isEqualToString:oldAffiliation]) {
         NSArray *holders = [_origo holdersOfAffiliation:oldAffiliation ofType:_affiliationType];
@@ -471,6 +596,54 @@ static NSInteger const kSectionKeyValues = 0;
         if ([self targetIs:kTargetGroup]) {
             [self reloadSections];
         }
+    }
+}
+
+
+#pragma mark - OConnectionDelegate conformance
+
+- (void)connection:(OConnection *)connection didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+{
+    [super connection:connection didCompleteWithResponse:response data:data];
+    
+    if ([self targetIs:kPropertyKeyJoinCode]) {
+        if (response.statusCode == kHTTPStatusNotFound) {
+            _origo.joinCode = _joinCode;
+            _origo.internalJoinCode = _internalJoinCode;
+            
+            [self showJoinCodeSetAlertAndReplicate];
+        } else {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"The code is in use", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.", @""), _joinCode]];
+            
+            [self editInlineInCell:_joinCodeCell];
+        }
+    }
+}
+
+
+#pragma mark - UIActionSheetDelegate conformance
+
+- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+    
+    switch (actionSheet.tag) {
+        case kActionSheetTagJoinCode:
+            _joinCodeCell.selected = NO;
+            
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (buttonTag == kButtonTagJoinCodeDelete) {
+                    _origo.joinCode = nil;
+                    [_joinCodeCell inlineField].value = nil;
+                }
+                
+                [self editInlineInCell:_joinCodeCell];
+            }
+            
+            break;
+            
+        default:
+            break;
     }
 }
 

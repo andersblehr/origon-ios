@@ -461,10 +461,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 - (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
 {
-    UITableViewCellStyle style = UITableViewCellStyleValue1;
+    UITableViewCellStyle style = kTableViewCellStyleValueList;
     
     if ([self targetIs:@[kTargetAdmins, kTargetAllContacts, kTargetDevices, kTargetRole]]) {
-        style = UITableViewCellStyleSubtitle;
+        style = kTableViewCellStyleDefault;
     }
     
     return style;

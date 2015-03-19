@@ -20,6 +20,8 @@
 @dynamic photo;
 @dynamic telephone;
 @dynamic type;
+@dynamic joinCode;
+@dynamic internalJoinCode;
 @dynamic permissions;
 @dynamic memberships;
 

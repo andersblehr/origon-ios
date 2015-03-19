@@ -17,6 +17,7 @@ NSString * const kMembershipTypeAssociate = @"A";
 
 NSString * const kMembershipStatusListed = @"L";
 NSString * const kMembershipStatusInvited = @"I";
+NSString * const kMembershipStatusRequested = @"R";
 NSString * const kMembershipStatusWaiting = @"W";
 NSString * const kMembershipStatusActive = @"A";
 NSString * const kMembershipStatusExpired = @"-";

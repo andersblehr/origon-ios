@@ -569,6 +569,12 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 }
 
 
+- (id<OMembership>)userMembership
+{
+    return [self membershipForMember:[OMeta m].user];
+}
+
+
 #pragma mark - User role information
 
 - (BOOL)userIsAdmin
@@ -578,7 +584,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
     if ([self isPrivate]) {
         isAdmin = [self userIsCreator] || [self isPinned];
     } else {
-        isAdmin = [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
+        isAdmin = [[self userMembership].isAdmin boolValue];
     }
     
     return isAdmin;
@@ -593,13 +599,13 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 - (BOOL)userIsOrganiser
 {
-    return [[self membershipForMember:[OMeta m].user] hasAffiliationOfType:kAffiliationTypeOrganiserRole];
+    return [[self userMembership] hasAffiliationOfType:kAffiliationTypeOrganiserRole];
 }
 
 
 - (BOOL)userIsParentContact
 {
-    return [[self membershipForMember:[OMeta m].user] hasAffiliationOfType:kAffiliationTypeParentRole];
+    return [[self userMembership] hasAffiliationOfType:kAffiliationTypeParentRole];
 }
 
 
@@ -826,7 +832,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
                 recipientCandidates = [recipientCandidates arrayByAddingObject:resident];
             }
         }
-    } else {
+    } else if (![[self userMembership] isHidden] && [self hasRegulars]) {
         NSMutableSet *candidates = [NSMutableSet set];
         
         if ([[OMeta m].user isJuvenile] || ![self isJuvenile] || [self hasTeenRegulars]) {

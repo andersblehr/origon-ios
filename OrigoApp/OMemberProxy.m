@@ -218,9 +218,9 @@
 }
 
 
-- (BOOL)isEditableByUser
+- (BOOL)userCanEdit
 {
-    return [self instance] ? [[self instance] isEditableByUser] : ![self isReplicated];
+    return [self instance] ? [[self instance] userCanEdit] : ![self isReplicated];
 }
 
 

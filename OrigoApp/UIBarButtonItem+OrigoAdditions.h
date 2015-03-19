@@ -47,7 +47,7 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)directionsButtonWithTarget:(id)target;
 + (instancetype)navigationButtonWithTarget:(id)target;
 + (instancetype)plusButtonWithTarget:(id)target;
-+ (instancetype)membershipRequestButtonWithTarget:(id)target;
++ (instancetype)addToOrigoButtonWithTarget:(id)target;
 + (instancetype)settingsButtonWithTarget:(id)target;
 
 + (instancetype)backButtonWithTitle:(NSString *)title;

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol OTableViewController<UITableViewDataSource, UITableViewDelegate>
+@protocol OTableViewController<UITableViewDataSource, UITableViewDelegate, OTitleViewDelegate,  OConnectionDelegate>
 
 @required
 @property (strong, nonatomic, readonly) NSString *identifier;
@@ -53,8 +53,6 @@
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 - (void)viewWillBeDismissed;
 
-- (BOOL)shouldFinishEditingTitleField:(UITextField *)titleField;
-- (void)didFinishEditingTitleField:(UITextField *)titleField;
 - (void)didFinishEditingInlineField:(OInputField *)inlineField;
 
 - (BOOL)supportsPullToRefresh;
@@ -65,7 +63,7 @@
 @end
 
 
-@interface OTableViewController : UIViewController<OTableViewController, OConnectionDelegate>
+@interface OTableViewController : UIViewController<OTableViewController>
 
 @property (nonatomic, readonly) OState *state;
 @property (nonatomic, readonly) OEntityProxy *entity;

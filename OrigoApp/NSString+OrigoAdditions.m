@@ -15,6 +15,7 @@ NSString * const kSeparatorComma = @", ";
 NSString * const kSeparatorHash = @"#";
 NSString * const kSeparatorHat = @"^";
 NSString * const kSeparatorNewline = @"\n";
+NSString * const kSeparatorParagraph = @"\n\n";
 NSString * const kSeparatorSpace = @" ";
 NSString * const kSeparatorTilde = @"~";
 
@@ -242,6 +243,22 @@ static CGFloat const kMatchingEditDistancePercentage = 0.4f;
     BOOL shouldLowercase = [[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:[self characterAtIndex:1]];
     
     return shouldLowercase ? [self stringByLowercasingFirstLetter] : self;
+}
+
+
+- (NSString *)stringByLowercasingAndRemovingWhitespace
+{
+    NSString *flattenedString = @"";
+    
+    for (NSInteger i = 0; i < [self length]; i++) {
+        NSString *character = [self substringWithRange:NSMakeRange(i, 1)];
+        
+        if (![character isEqualToString:kSeparatorSpace]) {
+            flattenedString = [flattenedString stringByAppendingString:[character lowercaseString]];
+        }
+    }
+    
+    return flattenedString;
 }
 
 

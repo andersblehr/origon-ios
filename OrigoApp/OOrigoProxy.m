@@ -273,6 +273,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+- (id<OMembership>)userMembership
+{
+    return [self membershipForMember:[OMeta m].user];
+}
+
+
 - (BOOL)userIsAdmin
 {
     return [self instance] ? [[self instance] userIsAdmin] : YES;

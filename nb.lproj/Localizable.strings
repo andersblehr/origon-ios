@@ -25,6 +25,7 @@
 "[label] email"  = "Epost";
 "[label] fatherId" = "Far";
 "[label] gender" = "Kjønn";
+"[label] joinCode" = "Innmeldingskode";
 "[label] mobilePhone" = "Mobil";
 "[label] modifiedBy" = "Sist endret av";
 "[label] motherId" = "Mor";
@@ -51,6 +52,7 @@
 "[placeholder] email" = "Epostadresse";
 "[placeholder] fullName" = "Fullt navn";
 "[placeholder] givenName" = "Navn";
+"[placeholder] joinCode" = "Innmeldingskode";
 "[placeholder] listName" = "Listenavn";
 "[placeholder] mobilePhone" = "Mobilnummer";
 "[placeholder] name" = "Navn";
@@ -210,6 +212,7 @@
 "Delete" = "Slett";
 "Continue" = "Fortsett";
 "Skip" = "Hopp over";
+"Back" = "Tilbake";
 "Cancel" = "Avbryt";
 "Home: %@" = "Hjem: %@";
 
@@ -342,6 +345,7 @@
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Husstanden din omfatter mindreårige. Vil du angi foreldrerelasjoner?";
+"Who do you want to join to an existing list?\n(You will need the join code to proceed.)" = "Hvem vil du melde inn i en eksisterende liste?\n(Du trenger innmeldingskoden for å fortsette.)";
 "Who do you want to create a list for?" = "Hvem vil du opprette en liste for?";
 "What sort of list do you want to create" = "Hva slags liste vil du opprette";
 
@@ -506,13 +510,26 @@
 "Listed elsewhere" = "Oppført i andre lister";
 "Type" = "Type";
 
+// Footers
+"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som skal føres opp i denne lista. Ved hjelp av koden kan de føre opp seg selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
+"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som har barn som skal føres opp i denne lista. Ved hjelp av koden kan de føre opp barna sine selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
+"You may ask an administrator to create a join code for %@." = "Du kan be en administrator om å opprette en innmeldingskode for %@.";
+"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ og %@ må være oppført på samme adresse. Du kan registrere en egen adresse for dem om du ikke bor sammen med %@.";
+
 // Buttons
 "Add" = "Legg til";
 
-// Footers
-"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ og %@ må være oppført på samme adresse. Du kan registrere en egen adresse for dem om du ikke bor sammen med %@.";
+// Alerts
+"The code has been set" = "Koden er satt";
+"The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list." = "Innmeldingskoden for %@ er \"%@\". Du kan nå dele den med andre %@-brukere som skal føres opp i lista.";
+"The code is in use" = "Koden er i bruk";
+"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "Innmeldingskoden \"%@\" er allerede i bruk. Prøv å gjøre koden mer spesifikk, for eksempel ved å inkludere en stedsangivelse og/eller et årstall.";
 
-// Miscellaneous strings
+// Prompts
+"Edit join code" = "Rediger innmeldingskode";
+"Delete join code" = "Slett innmeldingskode";
+
+// Terms
 "Responsibility" = "Ansvarsområde";
 "Group name" = "Gruppens navn";
 "This device" = "Denne enheten";

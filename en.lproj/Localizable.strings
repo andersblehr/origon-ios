@@ -25,6 +25,7 @@
 "[label] email" = "Email";
 "[label] fatherId" = "Father";
 "[label] gender" = "Gender";
+"[label] joinCode" = "Join code";
 "[label] mobilePhone" = "Mobile";
 "[label] modifiedBy" = "Last modified by";
 "[label] motherId" = "Mother";
@@ -51,6 +52,7 @@
 "[placeholder] email" = "A valid email address";
 "[placeholder] fullName" = "Full name";
 "[placeholder] givenName" = "Name";
+"[placeholder] joinCode" = "Join code";
 "[placeholder] listName" = "List name";
 "[placeholder] mobilePhone" = "Mobile phone number";
 "[placeholder] name"  = "Name";
@@ -211,6 +213,7 @@
 "Continue" = "Continue";
 "Cancel" = "Cancel";
 "Skip" = "Skip";
+"Back" = "Back";
 "Home: %@" = "Home: %@";
 
 // Labels
@@ -343,6 +346,7 @@
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Your household includes minors. Would you like to provide parent relations?";
+"Who do you want to join to an existing list?\n(You will need the join code to proceed.)" = "Who do you want to join to an existing list?\n(You will need the join code to proceed.)";
 "Who do you want to create a list for?" = "Who do you want to create a list for?";
 "What sort of list do you want to create" = "What sort of list do you want to create";
 
@@ -507,13 +511,26 @@
 "Listed elsewhere" = "Listed elsewhere";
 "Type" = "Type";
 
+// Footers
+"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.";
+"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.";
+"You may ask an administrator to create a join code for %@." = "You may ask an administrator to create a join code for %@.";
+"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.";
+
 // Buttons
 "Add" = "Add";
 
-// Footers
-"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.";
+// Alerts
+"The code has been set" = "The code has been set";
+"The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list." = "The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list.";
+"The code is in use" = "The code is in use";
+"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.";
 
-// Miscellaneous strings
+// Prompts
+"Edit join code" = "Edit join code";
+"Delete join code" = "Delete join code";
+
+// Terms
 "Responsibility" = "Responsibility";
 "Group name" = "Group name";
 "This device" = "This device";

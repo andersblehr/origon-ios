@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern UITableViewCellStyle const kTableViewCellStyleDefault;
+extern UITableViewCellStyle const kTableViewCellStyleValueList;
 extern UITableViewCellStyle const kTableViewCellStyleInline;
 
 extern NSString * const kReuseIdentifierList;
@@ -39,7 +41,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic, assign) BOOL partiallyChecked;
 @property (nonatomic, assign) NSInteger checkedState;
 @property (nonatomic) NSArray *checkedStateAccessoryViews;
-@property (nonatomic) NSString *notificationText;
+@property (nonatomic) UIView *notificationView;
 
 @property (nonatomic, weak) id<OInputCellDelegate> inputCellDelegate;
 
@@ -52,7 +54,7 @@ extern CGFloat const kCellAnimationDuration;
 - (OInputField *)nextInvalidInputField;
 - (OInputField *)inlineField;
 
-- (BOOL)styleIsSubtitle;
+- (BOOL)styleIsDefault;
 - (BOOL)hasInputField:(id)inputField;
 - (BOOL)hasValueForKey:(NSString *)key;
 - (BOOL)hasValidValueForKey:(NSString *)key;

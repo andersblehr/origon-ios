@@ -53,7 +53,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
     NSArray *_recipientCandidates;
     
     BOOL _userIsAdmin;
-    BOOL _needsReloadSections;
     BOOL _needsEditDetails;
 }
 
@@ -399,26 +398,16 @@ static NSInteger const kActionSheetTagRecipients = 4;
     [super viewDidAppear:animated];
     
     if ([self actionIs:kActionDisplay]) {
+        if ([_membership.status isEqualToString:kMembershipStatusInvited]) {
+            _membership.status = kMembershipStatusWaiting;
+        }
+        
         if (_needsEditDetails || ([_origo isResidence] && ![_origo hasAddress])) {
             [self toggleEditMode];
             
             _needsEditDetails = NO;
         }
     }
-}
-
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    if (![_membership isHidden] && [_membership needsAccepting]) {
-        if ([_membership.status isEqualToString:kMembershipStatusWaiting]) {
-            _membership.status = kMembershipStatusActive;
-        } else {
-            _membership.status = kMembershipStatusWaiting;
-        }
-    }
-
-    [super viewWillDisappear:animated];
 }
 
 
@@ -525,7 +514,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 [cell loadImageForMembers:elders];
             }
             
-            if ([_membership isActive]) {
+            if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierOrigo;
                 cell.destinationTarget = communityResidence;
             }
@@ -540,7 +529,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 [cell loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:YES];
             }
             
-            cell.destinationId = [_membership isActive] ? kIdentifierMember : nil;
+            if (![_membership isHidden]) {
+                cell.destinationId = kIdentifierMember;
+            }
         }
     } else {
         NSString *role = [self dataAtIndexPath:indexPath];
@@ -559,7 +550,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             
             [cell loadImageForMember:roleHolder];
             
-            if ([_membership isActive]) {
+            if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierMember;
                 cell.destinationTarget = roleHolder;
             }
@@ -567,7 +558,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];
             [cell loadImageForMembers:roleHolders];
             
-            if ([_membership isActive]) {
+            if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierValueList;
                 
                 if (sectionKey == kSectionKeyOrganisers) {
@@ -704,19 +695,19 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 - (BOOL)toolbarHasSendTextButton
 {
-    return [_origo hasRegulars] && [[_origo textRecipients] count] > 0;
+    return [[_origo textRecipients] count] > 0;
 }
 
 
 - (BOOL)toolbarHasCallButton
 {
-    return [_origo hasRegulars] && [[_origo callRecipients] count] > 0;
+    return [[_origo callRecipients] count] > 0;
 }
 
 
 - (BOOL)toolbarHasSendEmailButton
 {
-    return [_origo hasRegulars] && [[_origo emailRecipients] count] > 0;
+    return [[_origo emailRecipients] count] > 0;
 }
 
 
@@ -1042,8 +1033,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
                         [self.navigationController popViewControllerAnimated:YES];
                     } else {
                         [self loadNavigationBarItems];
-                        
-                        _needsReloadSections = YES;
                     }
                 } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
                     if (![_membership isHidden]) {
@@ -1140,13 +1129,6 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 }
                 
                 break;
-                
-            case kActionSheetTagAcceptDecline:
-                if (_needsReloadSections) {
-                    [self reloadSections];
-                    
-                    _needsReloadSections = NO;
-                }
                 
             default:
                 break;

@@ -27,6 +27,8 @@ extern NSString * const kOrigoTypeStash;
 @property (nonatomic) NSString *telephone;
 @property (nonatomic) NSString *location;
 @property (nonatomic) NSString *type;
+@property (nonatomic) NSString *joinCode;
+@property (nonatomic) NSString *internalJoinCode;
 @property (nonatomic) NSString *permissions;
 
 @property (nonatomic, assign) BOOL membersCanEdit;
@@ -73,6 +75,7 @@ extern NSString * const kOrigoTypeStash;
 - (id<OMembership>)addAssociateMember:(id<OMember>)member;
 - (id<OMembership>)membershipForMember:(id<OMember>)member;
 - (id<OMembership>)associateMembershipForMember:(id<OMember>)member;
+- (id<OMembership>)userMembership;
 
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
