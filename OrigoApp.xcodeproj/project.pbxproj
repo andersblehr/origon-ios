@@ -66,6 +66,7 @@
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
+		5C986A0C1ABB087A0045573B /* OOrigoJoinerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C986A0B1ABB087A0045573B /* OOrigoJoinerViewController.m */; };
 		5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903417F6B8AD00D957F9 /* 730-envelope.png */; };
 		5C98903717F6B8AD00D957F9 /* 730-envelope@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */; };
 		5C98903C17F6B8D500D957F9 /* 734-chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903817F6B8D500D957F9 /* 734-chat.png */; };
@@ -271,6 +272,8 @@
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "./Default-568h@2x.png"; sourceTree = "<group>"; };
+		5C986A0A1ABB087A0045573B /* OOrigoJoinerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoJoinerViewController.h; sourceTree = "<group>"; };
+		5C986A0B1ABB087A0045573B /* OOrigoJoinerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoJoinerViewController.m; sourceTree = "<group>"; };
 		5C98903417F6B8AD00D957F9 /* 730-envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope.png"; sourceTree = "<group>"; };
 		5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope@2x.png"; sourceTree = "<group>"; };
 		5C98903817F6B8D500D957F9 /* 734-chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "734-chat.png"; sourceTree = "<group>"; };
@@ -631,6 +634,8 @@
 				5C2B8AF21A6BF6A300596082 /* OMapViewController.m */,
 				5C8B3AB415813DBB000B19FA /* OMemberViewController.h */,
 				5C8B3AB515813DBB000B19FA /* OMemberViewController.m */,
+				5C986A0A1ABB087A0045573B /* OOrigoJoinerViewController.h */,
+				5C986A0B1ABB087A0045573B /* OOrigoJoinerViewController.m */,
 				5C3D42801485678E009A68E0 /* OOrigoListViewController.h */,
 				5C3D42811485678F009A68E0 /* OOrigoListViewController.m */,
 				5C629FEE14C62038001DA01F /* OOrigoViewController.h */,
@@ -1044,6 +1049,7 @@
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
 				5CBDF78C1659175000D4681C /* OInputCellConstrainer.m in Sources */,
 				5CFBC8D019124E1D00863F86 /* OMembershipProxy.m in Sources */,
+				5C986A0C1ABB087A0045573B /* OOrigoJoinerViewController.m in Sources */,
 				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
 				5C198B7316D76344002D3976 /* OInputCellBlueprint.m in Sources */,
 				5C7C4DD218E57E1F00903989 /* OEntityProxy.m in Sources */,

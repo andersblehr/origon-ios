@@ -36,7 +36,7 @@
 
 - (NSArray *)favourites;
 - (NSArray *)nonFavourites;
-- (NSArray *)registeredDevices;
+- (NSArray *)activeDevices;
 
 - (NSArray *)textRecipients;
 - (NSArray *)callRecipients;
@@ -55,6 +55,7 @@
 - (NSArray *)addresses;
 - (NSArray *)origos;
 - (NSArray *)hiddenOrigos;
+- (NSArray *)declinedOrigos;
 - (NSArray *)mirroringOrigos;
 
 - (id<OMember>)mother;

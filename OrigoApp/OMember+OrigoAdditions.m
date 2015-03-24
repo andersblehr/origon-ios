@@ -337,7 +337,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 #pragma mark - Devices
 
-- (NSArray *)registeredDevices
+- (NSArray *)activeDevices
 {
     NSMutableArray *registeredDevices = [NSMutableArray array];
     
@@ -572,7 +572,21 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         }
     }
     
-    return hiddenOrigos;
+    return [hiddenOrigos sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+- (NSArray *)declinedOrigos
+{
+    NSMutableArray *declinedOrigos = [NSMutableArray array];
+    
+    for (OMembership *membership in self.memberships) {
+        if ([membership isDeclined] && ![membership hasExpired]) {
+            [declinedOrigos addObject:membership.origo];
+        }
+    }
+    
+    return [declinedOrigos sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -1210,25 +1224,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)settingListKeys
 {
-    NSMutableArray *settingListKeys = [NSMutableArray array];
-    
-    BOOL hasHiddenOrigos = [[self hiddenOrigos] count] > 0;
-    
-    if (!hasHiddenOrigos) {
-        for (OMember *ward in [self wards]) {
-            hasHiddenOrigos = hasHiddenOrigos || [[ward hiddenOrigos] count] > 0;
-        }
-    }
-    
-    if (hasHiddenOrigos) {
-        [settingListKeys addObject:kTargetHiddenOrigos];
-    }
-    
-    if ([[self registeredDevices] count] > 1) {
-        [settingListKeys addObject:kTargetDevices];
-    }
-    
-    return settingListKeys;
+    return @[kTargetDevices, kTargetHiddenOrigos, kTargetDeclinedOrigos];
 }
 
 
@@ -1247,28 +1243,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
-
-+ (instancetype)instanceWithId:(NSString *)entityId proxy:(id)proxy
-{
-    OMember *instance = [super instanceWithId:entityId proxy:proxy];
-    [instance stash];
-    
-    OOrigo *baseOrigo = [OState s].baseOrigo;
-    OMember *baseMember = [OState s].baseMember;
-    
-    if ([baseOrigo isPrivate]) {
-        instance.createdIn = kOrigoTypePrivate;
-        
-        if ([baseMember isJuvenile] && [instance isJuvenile]) {
-            instance.createdIn = [instance.createdIn stringByAppendingString:baseMember.givenName separator:kSeparatorList];
-        }
-    } else {
-        instance.createdIn = [baseOrigo.entityId stringByAppendingString:[baseOrigo displayName] separator:kSeparatorList];
-    }
-    
-    return instance;
-}
-
 
 - (BOOL)isSane
 {

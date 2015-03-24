@@ -305,7 +305,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     } else if ([self targetIs:kTargetParents]) {
         [self setData:@[kPropertyKeyMotherId, kPropertyKeyFatherId] forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetDevices]) {
-        [self setData:[[OMeta m].user registeredDevices] forSectionWithKey:kSectionKeyValues];
+        [self setData:[[OMeta m].user activeDevices] forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetRole]) {
         if ([self aspectIs:kAspectOrganiserRole]) {
             [self setData:[_origo organisersWithRole:self.target] forSectionWithKey:kSectionKeyValues];
@@ -350,9 +350,23 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             
             cell.textLabel.text = NSLocalizedString(target, kStringPrefixSettingLabel);
             
+            NSInteger numberOfDevices = [[[OMeta m].user activeDevices] count];
+            NSInteger numberOfHiddenOrigos = [[[OMeta m].user hiddenOrigos] count];
+            NSInteger numberOfDeclinedOrigos = [[[OMeta m].user declinedOrigos] count];
+            
+            for (id<OMember> ward in [[OMeta m].user wards]) {
+                numberOfHiddenOrigos += [[ward hiddenOrigos] count];
+                numberOfDeclinedOrigos += [[ward declinedOrigos] count];
+            }
+            
             if ([target isEqualToString:kTargetDevices]) {
+                cell.detailTextLabel.text = [@(numberOfDevices) description];
                 cell.destinationId = kIdentifierValueList;
             } else if ([target isEqualToString:kTargetHiddenOrigos]) {
+                cell.detailTextLabel.text = numberOfHiddenOrigos ? [@(numberOfHiddenOrigos) description] : NSLocalizedString(@"None", @"");
+                cell.destinationId = kIdentifierOrigoList;
+            } else if ([target isEqualToString:kTargetDeclinedOrigos]) {
+                cell.detailTextLabel.text = numberOfDeclinedOrigos ? [@(numberOfDeclinedOrigos) description] : NSLocalizedString(@"None", @"");
                 cell.destinationId = kIdentifierOrigoList;
             }
         } else if (sectionKey == kSectionKeyActions) {

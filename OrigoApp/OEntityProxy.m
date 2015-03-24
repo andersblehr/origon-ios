@@ -388,6 +388,18 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
+- (id)instantiate
+{
+    if (!_instance) {
+        [self useInstance:[_entityClass instanceFromDictionary:[self toDictionary]]];
+    }
+    
+    _isCommitted = YES;
+    
+    return _instance;
+}
+
+
 - (void)useInstance:(id<OEntity>)instance
 {
     if ([[OMeta m].appDelegate hasPersistentStore]) {
@@ -415,15 +427,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     
     if (isCommitting) {
         if (!_instance && ![self isReplicated]) {
-            id instance = nil;
-            
-            if ([self respondsToSelector:@selector(instantiate)]) {
-                instance = [self instantiate];
-            } else {
-                instance = [_entityClass instanceWithId:self.entityId proxy:self];
-            }
-            
-            [self useInstance:instance];
+            [self instantiate];
         }
         
         _isCommitted = YES;

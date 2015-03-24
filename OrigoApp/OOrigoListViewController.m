@@ -17,6 +17,10 @@ static NSInteger const kButtonTagOrigoTargetUser = 0;
 
 static NSInteger const kActionSheetTagOrigoType = 3;
 
+static NSInteger const kActionSheetTagDeclinedJoinRequest = 4;
+static NSInteger const kButtonTagDeclinedJoinRequestDelete = 0;
+static NSInteger const kButtonTagDeclinedJoinRequestResend = 1;
+
 static NSInteger const kSectionKeyUser = 0;
 static NSInteger const kSectionKeyOrigos = 1;
 static NSInteger const kSectionKeyWardOrigos = 2;
@@ -25,9 +29,11 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 @interface OOrigoListViewController () <OTableViewController, UIActionSheetDelegate> {
 @private
     id<OMember> _member;
+    id<OOrigo> _origo;
     
     NSArray *_wards;
     NSMutableArray *_origoTypes;
+    OTableViewCell *_selectedCell;
     
     BOOL _needsEditParents;
 }
@@ -143,7 +149,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (void)performAddToOrigoAction
 {
     if ([_wards count]) {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to join to an existing list?\n(You will need the join code to proceed.)", @"") delegate:self tag:kActionSheetTagJoinOrigoTarget];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to join to a list?", @"") delegate:self tag:kActionSheetTagJoinOrigoTarget];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Yourself", @"") tag:kButtonTagOrigoTargetUser];
         
         for (id<OMember> ward in _wards) {
@@ -152,7 +158,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         [actionSheet show];
     } else {
-        
+        [self presentModalViewControllerWithIdentifier:kIdentifierJoiner target:kTargetOrigo];
     }
 }
 
@@ -191,7 +197,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (void)loadState
 {
-    if ([self targetIs:kTargetHiddenOrigos]) {
+    if ([self targetIs:@[kTargetHiddenOrigos, kTargetDeclinedOrigos]]) {
         self.title = NSLocalizedString(self.target, kStringPrefixSettingLabel);
     } else {
         self.titleView = [OTitleView titleViewWithTitle:[OMeta m].appName subtitle:[OMeta m].user.name];
@@ -207,18 +213,24 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (void)loadData
 {
-    if ([self targetIs:kTargetHiddenOrigos]) {
-        NSMutableArray *wardsWithHiddenOrigos = [NSMutableArray array];
+    if ([self targetIs:@[kTargetHiddenOrigos, kTargetDeclinedOrigos]]) {
+        NSMutableArray *wardsWithAffectedOrigos = [NSMutableArray array];
         
         for (id<OMember> ward in [[OMeta m].user wards]) {
-            if ([[ward hiddenOrigos] count]) {
-                [wardsWithHiddenOrigos addObject:ward];
+            if ([self targetIs:kTargetHiddenOrigos] && [[ward hiddenOrigos] count]) {
+                [wardsWithAffectedOrigos addObject:ward];
+            } else if ([self targetIs:kTargetDeclinedOrigos] && [[ward declinedOrigos] count]) {
+                [wardsWithAffectedOrigos addObject:ward];
             }
         }
         
-        _wards = wardsWithHiddenOrigos;
-        
-        [self setData:[[OMeta m].user hiddenOrigos] forSectionWithKey:kSectionKeyOrigos];
+        _wards = wardsWithAffectedOrigos;
+
+        if ([self targetIs:kTargetHiddenOrigos]) {
+            [self setData:[[OMeta m].user hiddenOrigos] forSectionWithKey:kSectionKeyOrigos];
+        } else if ([self targetIs:kTargetDeclinedOrigos]) {
+            [self setData:[[OMeta m].user declinedOrigos] forSectionWithKey:kSectionKeyOrigos];
+        }
     } else if (_member) {
         _wards = [[OMeta m].user wards];
         
@@ -236,6 +248,8 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         if ([self targetIs:kTargetHiddenOrigos]) {
             wardOrigos = [_wards[self.selectedHeaderSegment] hiddenOrigos];
+        } else if ([self targetIs:kTargetDeclinedOrigos]) {
+            wardOrigos = [_wards[self.selectedHeaderSegment] declinedOrigos];
         } else {
             wardOrigos = [_wards[self.selectedHeaderSegment] origos];
         }
@@ -301,11 +315,17 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         }
     }
     
-    if (![origo isStash]) {
+    if ([membership isRequested]) {
+        cell.selectable = NO;
+        cell.detailTextLabel.text = NSLocalizedString(@"Join request sent", @"");
+        cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+    } else if ([membership isDeclined]) {
+        cell.selectable = YES;
+    } else if (![origo isStash]) {
         cell.destinationId = kIdentifierOrigo;
     }
     
-    if (membership && [membership needsAccepting] && ![membership isHidden]) {
+    if (membership && [membership needsUserAcceptance] && ![membership isHidden]) {
         cell.notificationView = [OLabel genericLabelWithText:NSLocalizedString(@"New!", @"")];
     }
     
@@ -323,7 +343,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     BOOL hasHeader = sectionKey != kSectionKeyUser;
     
-    if ([self targetIs:kTargetHiddenOrigos]) {
+    if ([self targetIs:@[kTargetHiddenOrigos, kTargetDeclinedOrigos]]) {
         hasHeader = hasHeader && sectionKey != kSectionKeyOrigos;
     }
     
@@ -335,7 +355,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     id headerContent = nil;
     
-    if (sectionKey == kSectionKeyOrigos && ![self targetIs:kTargetHiddenOrigos]) {
+    if (sectionKey == kSectionKeyOrigos && [self hasHeaderForSectionWithKey:sectionKey]) {
         headerContent = NSLocalizedString(@"My lists", @"");
     } else if (sectionKey == kSectionKeyWardOrigos) {
         NSMutableArray *wardGivenNames = [NSMutableArray array];
@@ -353,13 +373,21 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (NSString *)emptyTableViewFooterText
 {
-    return [self targetIs:kTargetHiddenOrigos] ? NSLocalizedString(@"No hidden lists.", @"") : nil;
+    NSString *footerText = nil;
+    
+    if ([self targetIs:kTargetHiddenOrigos]) {
+        footerText = NSLocalizedString(@"No hidden lists.", @"");
+    } else if ([self targetIs:kTargetDeclinedOrigos]) {
+        footerText = NSLocalizedString(@"No declined memberships.", @"");
+    }
+    
+    return footerText;
 }
 
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if (![self targetIs:kTargetHiddenOrigos]) {
+    if (![self targetIs:@[kTargetHiddenOrigos, kTargetDeclinedOrigos]]) {
         if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWardOrigos) {
             id<OMember> ward = _wards[self.selectedHeaderSegment];
             
@@ -369,6 +397,24 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             self.target = [OMeta m].user;
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[OMeta m].appName];
         }
+    } else if ([self targetIs:kTargetDeclinedOrigos]) {
+        NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+        
+        _selectedCell = cell;
+        _origo = [self dataAtIndexPath:indexPath];
+        
+        if (sectionKey == kSectionKeyOrigos) {
+            _member = [OMeta m].user;
+        } else if (sectionKey == kSectionKeyWardOrigos) {
+            _member = _wards[self.selectedHeaderSegment];
+        }
+        
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagDeclinedJoinRequest];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Delete join request", @"") tag:kButtonTagDeclinedJoinRequestDelete];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Resend join request", @"") tag:kButtonTagDeclinedJoinRequestResend];
+        actionSheet.destructiveButtonIndex = 0;
+        
+        [actionSheet show];
     }
 }
 
@@ -377,7 +423,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     BOOL canDelete = NO;
     
-    if (![self targetIs:kTargetHiddenOrigos]) {
+    if (![self targetIs:@[kTargetHiddenOrigos, kTargetDeclinedOrigos]]) {
         NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         
@@ -475,30 +521,41 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != actionSheet.cancelButtonIndex) {
-        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-        
-        switch (actionSheet.tag) {
-            case kActionSheetTagJoinOrigoTarget:
-            case kActionSheetTagNewOrigoTarget:
-                if (buttonTag == kButtonTagOrigoTargetUser) {
-                    self.target = [OMeta m].user;
-                } else {
-                    NSInteger selectedWardIndex = buttonIndex - 1;
-                    
-                    if ([_wards count] > 1 && self.selectedHeaderSegment != selectedWardIndex) {
-                        self.selectedHeaderSegment = selectedWardIndex;
-                        [self reloadSectionWithKey:kSectionKeyWardOrigos];
-                    }
-                    
-                    self.target = _wards[selectedWardIndex];
+    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+    
+    switch (actionSheet.tag) {
+        case kActionSheetTagJoinOrigoTarget:
+        case kActionSheetTagNewOrigoTarget:
+            if (buttonTag == kButtonTagOrigoTargetUser) {
+                self.target = [OMeta m].user;
+            } else if (buttonIndex != actionSheet.cancelButtonIndex) {
+                NSInteger selectedWardIndex = buttonIndex - 1;
+                
+                if ([_wards count] > 1 && self.selectedHeaderSegment != selectedWardIndex) {
+                    self.selectedHeaderSegment = selectedWardIndex;
+                    [self reloadSectionWithKey:kSectionKeyWardOrigos];
                 }
                 
-                break;
-                
-            default:
-                break;
-        }
+                self.target = _wards[selectedWardIndex];
+            }
+            
+            break;
+            
+        case kActionSheetTagDeclinedJoinRequest:
+            _selectedCell.selected = NO;
+            
+            if (buttonTag == kButtonTagDeclinedJoinRequestDelete) {
+                [[_origo membershipForMember:_member] expire];
+            } else if (buttonTag == kButtonTagDeclinedJoinRequestResend) {
+                [_origo membershipForMember:_member].status = kMembershipStatusRequested;
+            }
+            
+            [self reloadSections];
+            
+            break;
+            
+        default:
+            break;
     }
 }
 
@@ -519,6 +576,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
                 break;
                 
             case kActionSheetTagJoinOrigoTarget:
+                [self presentModalViewControllerWithIdentifier:kIdentifierJoiner target:kTargetOrigo];
                 
                 break;
                 

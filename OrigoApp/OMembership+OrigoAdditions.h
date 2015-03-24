@@ -17,8 +17,9 @@ extern NSString * const kMembershipTypeAssociate;
 
 extern NSString * const kMembershipStatusListed;
 extern NSString * const kMembershipStatusInvited;
-extern NSString * const kMembershipStatusRequested;
 extern NSString * const kMembershipStatusWaiting;
+extern NSString * const kMembershipStatusRequested;
+extern NSString * const kMembershipStatusDeclined;
 extern NSString * const kMembershipStatusActive;
 extern NSString * const kMembershipStatusExpired;
 
@@ -38,11 +39,15 @@ extern NSString * const kAffiliationTypeGroup;
 @property (nonatomic) NSString *status;
 @property (nonatomic) NSString *affiliations;
 
-- (BOOL)needsAccepting;
+- (BOOL)needsUserAcceptance;
+- (BOOL)needsPeerAcceptance;
+
 - (BOOL)isActive;
 - (BOOL)isShared;
 - (BOOL)isMirrored;
 - (BOOL)isHidden;
+- (BOOL)isRequested;
+- (BOOL)isDeclined;
 
 - (BOOL)isOwnership;
 - (BOOL)isFavourite;

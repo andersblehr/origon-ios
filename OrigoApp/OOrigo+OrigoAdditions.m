@@ -82,6 +82,10 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
             if ([membership isAssociate] && !isAssociate) {
                 [membership promote];
             }
+            
+            if ([membership.origo isCommunity]) {
+                membership.dateCreated = [NSDate date];
+            }
         } else {
             membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self entityId:[OCrypto UUIDByOverlayingUUID:member.entityId withUUID:self.entityId]];
             membership.member = member;
@@ -145,9 +149,9 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 #pragma mark - Instantiation
 
-+ (instancetype)instanceWithId:(NSString *)entityId proxy:(id)proxy
++ (instancetype)instanceWithId:(NSString *)entityId
 {
-    OOrigo *instance = [super instanceWithId:entityId proxy:proxy];
+    OOrigo *instance = [super instanceWithId:entityId];
     instance.origoId = entityId;
     instance.permissions = [instance defaultPermissions];
     
@@ -157,9 +161,8 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 + (instancetype)instanceWithId:(NSString *)entityId type:(NSString *)type
 {
-    OOrigo *instance = [self instanceWithId:entityId proxy:nil];
+    OOrigo *instance = [self instanceWithId:entityId];
     instance.type = type;
-    instance.permissions = [instance defaultPermissions];
     
     if ([instance isResidence]) {
         instance.name = kPlaceholderDefault;
@@ -773,27 +776,25 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 {
     BOOL indirectlyKnows = NO;
     
-    if ([member instance]) {
+    if ([member instance] && ![self isCommunity]) {
         member = [member instance];
         OMembership *directMembership = [self membershipForMember:member];
         
         for (OMembership *membership in [self allMemberships]) {
-            if ([membership isMirrored]) {
-                if (membership != directMembership) {
-                    id residencies = [NSMutableSet set];
-                    
-                    if ([self isJuvenile]) {
-                        for (OMember *guardian in [membership.member guardians]) {
-                            [residencies unionSet:[guardian residencies]];
-                        }
-                    } else {
-                        residencies = [membership.member residencies];
+            if (membership != directMembership && [membership isMirrored]) {
+                id residencies = [NSMutableSet set];
+                
+                if ([self isJuvenile]) {
+                    for (OMember *guardian in [membership.member guardians]) {
+                        [residencies unionSet:[guardian residencies]];
                     }
-                    
-                    for (OMembership *residency in residencies) {
-                        if (residency.origo != self) {
-                            indirectlyKnows = indirectlyKnows || [residency.origo hasMember:member];
-                        }
+                } else {
+                    residencies = [membership.member residencies];
+                }
+                
+                for (OMembership *residency in residencies) {
+                    if (residency.origo != self) {
+                        indirectlyKnows = indirectlyKnows || [residency.origo hasMember:member];
                     }
                 }
             }
@@ -825,6 +826,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 - (NSArray *)recipientCandidates
 {
     NSArray *recipientCandidates = @[];
+    OMembership *userMembership = [self userMembership];
     
     if ([self isResidence]) {
         for (OMember *resident in [self residents]) {
@@ -832,7 +834,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
                 recipientCandidates = [recipientCandidates arrayByAddingObject:resident];
             }
         }
-    } else if (![[self userMembership] isHidden] && [self hasRegulars]) {
+    } else if (![userMembership isHidden] && ![userMembership isDeclined] && [self hasRegulars]) {
         NSMutableSet *candidates = [NSMutableSet set];
         
         if ([[OMeta m].user isJuvenile] || ![self isJuvenile] || [self hasTeenRegulars]) {

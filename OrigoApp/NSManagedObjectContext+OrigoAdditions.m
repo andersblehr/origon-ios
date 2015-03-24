@@ -34,6 +34,107 @@
 }
 
 
+- (void)insertCommunityMembershipsContingentOnMembership:(OMembership *)membership
+{
+    if (![membership.member isJuvenile]) {
+        OMember *member = membership.member;
+        OOrigo *origo = membership.origo;
+        
+        if ([membership isResidency]) {
+            NSMutableSet *candidateCommunities = [NSMutableSet set];
+            NSMutableSet *communities = [NSMutableSet set];
+            
+            for (OMember *elder in [origo elders]) {
+                for (OMembership *participancy in [elder participancies]) {
+                    if ([participancy.origo isCommunity]) {
+                        [candidateCommunities addObject:participancy.origo];
+                    }
+                }
+            }
+            
+            for (OOrigo *candidateCommunity in candidateCommunities) {
+                BOOL eldersAreMembers = YES;
+                
+                for (OMember *elder in [origo elders]) {
+                    if (elder != member) {
+                        eldersAreMembers = eldersAreMembers && [candidateCommunity hasMember:elder];
+                    }
+                }
+                
+                if (eldersAreMembers) {
+                    [communities addObject:candidateCommunity];
+                }
+            }
+            
+            for (OOrigo *community in communities) {
+                [community addMember:member];
+            }
+        } else if ([membership.origo isCommunity] && [membership isParticipancy]) {
+            NSMutableArray *primaryCoHabitants = [[[member primaryResidence] elders] mutableCopy];
+            [primaryCoHabitants removeObject:member];
+            
+            BOOL coHabitantIsMember = NO;
+            
+            for (OMember *coHabitant in primaryCoHabitants) {
+                coHabitantIsMember = coHabitantIsMember || [origo hasMember:coHabitant];
+            }
+            
+            if (!coHabitantIsMember) {
+                for (OMember *coHabitant in primaryCoHabitants) {
+                    [origo addMember:coHabitant];
+                }
+            }
+        }
+    }
+}
+
+
+- (void)expireCommunityMembershipsContingentOnMembership:(OMembership *)membership
+{
+    if (![membership.member isJuvenile]) {
+        OMember *member = membership.member;
+        OOrigo *origo = membership.origo;
+        
+        if ([membership isResidency]) {
+            NSMutableArray *communities = [NSMutableArray array];
+            
+            for (OMembership *participancy in [member participancies]) {
+                if ([participancy.origo isCommunity]) {
+                    [communities addObject:participancy.origo];
+                }
+            }
+            
+            for (OOrigo *community in communities) {
+                BOOL isCommunityResidence = YES;
+                
+                for (OMember *elder in [origo elders]) {
+                    isCommunityResidence = isCommunityResidence && [community hasMember:elder];
+                }
+                
+                if (isCommunityResidence) {
+                    [[community membershipForMember:member] expire];
+                }
+            }
+        } else if ([membership.origo isCommunity] && [membership isParticipancy]) {
+            NSMutableArray *primaryCoHabitants = [[[member primaryResidence] elders] mutableCopy];
+            [primaryCoHabitants removeObject:member];
+            
+            BOOL coHabitantsAreMembers = YES;
+            
+            for (OMember *coHabitant in primaryCoHabitants) {
+                coHabitantsAreMembers = coHabitantsAreMembers && [origo hasMember:coHabitant];
+            }
+            
+            if (coHabitantsAreMembers) {
+                for (OMember *coHabitant in primaryCoHabitants) {
+                    [[origo membershipForMember:coHabitant] expire];
+                }
+            }
+        }
+    }
+}
+
+
 #pragma mark - Entity cross-reference handling
 
 - (NSString *)entityRefIdForEntity:(OReplicatedEntity *)entity inOrigoWithId:(NSString *)origoId
@@ -95,7 +196,6 @@
 - (id)insertEntityOfClass:(Class)class entityId:(NSString *)entityId
 {
     OReplicatedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
-    
     entity.entityId = entityId;
     entity.dateCreated = [NSDate date];
     entity.createdBy = [OMeta m].userEmail;
@@ -187,17 +287,6 @@
             }
         }
         
-        if (![member isJuvenile]) {
-            for (OMember *elder in [origo elders]) {
-                if (elder != member && [elder primaryResidence] == origo) {
-                    for (OOrigo *origo in [elder origos]) {
-                        if ([origo isCommunity]) {
-                            [origo addMember:member];
-                        }
-                    }
-                }
-            }
-        }
     }
     
     for (OMember *housemate in [member allHousemates]) {
@@ -221,6 +310,8 @@
             }
         }
     }
+    
+    [self insertCommunityMembershipsContingentOnMembership:membership];
 }
 
 
@@ -270,16 +361,6 @@
                 }
             }
         }
-        
-        for (OMember *elder in [origo elders]) {
-            if (elder != member && [elder primaryResidence] == origo) {
-                for (OOrigo *origo in [elder origos]) {
-                    if ([origo isCommunity]) {
-                        [[origo membershipForMember:member] expire];
-                    }
-                }
-            }
-        }
     }
     
     for (OMember *housemate in housemates) {
@@ -307,6 +388,8 @@
             }
         }
     }
+    
+    [self expireCommunityMembershipsContingentOnMembership:membership];
 }
 
 

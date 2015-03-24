@@ -211,7 +211,7 @@
                 [self.imageView addSubview:underline];
             }
         } else {
-            [self loadTonedDownIconWithFileName:iconFileName];
+            [self loadImageWithName:iconFileName tintColour:[UIColor tonedDownIconColour]];
         }
     }
 }
@@ -228,15 +228,15 @@
     if (containsActiveMember) {
         self.imageView.image = [UIImage imageNamed:kIconFileTwoHeads];
     } else {
-        [self loadTonedDownIconWithFileName:kIconFileTwoHeads];
+        [self loadImageWithName:kIconFileTwoHeads tintColour:[UIColor tonedDownIconColour]];
     }
 }
 
 
-- (void)loadTonedDownIconWithFileName:(NSString *)fileName
+- (void)loadImageWithName:(NSString *)imageName tintColour:(UIColor *)tintColour
 {
-    self.imageView.tintColor = [UIColor tonedDownIconColour];
-    self.imageView.image = [[UIImage imageNamed:fileName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.imageView.tintColor = tintColour;
+    self.imageView.image = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 }
 
 

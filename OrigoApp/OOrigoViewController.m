@@ -67,7 +67,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     self.navigationItem.rightBarButtonItems = nil;
 
-    if ([_membership needsAccepting] || [_membership isHidden]) {
+    if ([_membership needsUserAcceptance] || [_membership isHidden]) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptDeclineButtonWithTarget:self]];
     } else  {
         if (_userIsAdmin && ![_origo isResidence] && ![_origo isPinned]) {
@@ -437,7 +437,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
             }
 
             if (![self.state.baseOrigo isCommunity]) {
-                self.cancelImpliesSkip = ![_member hasAddress] && ![_origo isReplicated] && ![[_member housemates] count];
+                self.cancelImpliesSkip = self.dismisser.isModal && ![_member hasAddress];
             }
         } else if ([_origo isPrivate]) {
             if ([_member isJuvenile]) {
@@ -531,6 +531,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
             
             if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierMember;
+                
+                if ([[_origo membershipForMember:member] needsPeerAcceptance]) {
+                    cell.notificationView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+                }
             }
         }
     } else {
@@ -808,9 +812,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 }
             }
         } else if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
-            for (OMember *elder in [[member primaryResidence] elders]) {
-                [[_origo membershipForMember:elder] expire];
-            }
+            [[_origo membershipForMember:member] expire];
         }
     } else {
         NSString *role = [self dataAtIndexPath:indexPath];
@@ -830,16 +832,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
 {
     if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            if (![viewController targetIs:kTargetOrganiser]) {
-                if ([_origo isResidence]) {
-                    [self.inputCell readData];
-                } else if ([_origo isCommunity]) {
-                    id<OMember> member = viewController.returnData;
-                    
-                    for (id<OMember> elder in [[member primaryResidence] elders]) {
-                        [_origo addMember:elder];
-                    }
-                }
+            if ([_origo isResidence]) {
+                [self.inputCell readData];
             }
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {
@@ -847,16 +841,8 @@ static NSInteger const kActionSheetTagRecipients = 4;
             }
         } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             if ([viewController targetIs:kTargetMembers]) {
-                if ([_origo isCommunity]) {
-                    for (id<OMember> member in viewController.returnData) {
-                        for (id<OMember> elder in [[member primaryResidence] elders]) {
-                            [_origo addMember:elder];
-                        }
-                    }
-                } else {
-                    for (id<OMember> member in viewController.returnData) {
-                        [_origo addMember:member];
-                    }
+                for (id<OMember> member in viewController.returnData) {
+                    [_origo addMember:member];
                 }
             }
             

@@ -48,23 +48,9 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 #pragma mark - Instantiation
 
-+ (instancetype)instanceWithId:(NSString *)entityId proxy:(id)proxy
++ (instancetype)instanceWithId:(NSString *)entityId
 {
-    id instance = [[OMeta m].context insertEntityOfClass:self entityId:entityId];
-    
-    if (proxy) {
-        for (NSString *key in [self propertyKeys]) {
-            if (![key isEqualToString:kPropertyKeyEntityId]) {
-                id value = [proxy valueForKey:key];
-                
-                if (value) {
-                    [instance setValue:value forKey:key];
-                }
-            }
-        }
-    }
-
-    return instance;
+    return [[OMeta m].context insertEntityOfClass:self entityId:entityId];
 }
 
 
@@ -75,12 +61,14 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     OReplicatedEntity *entity = [[OMeta m].context entityWithId:entityId];
     
     if (!entity) {
-        entity = [[OMeta m].context insertEntityOfClass:entityClass entityId:entityId];
+        entity = [entityClass instanceWithId:entityId];
         entity.origoId = dictionary[kPropertyKeyOrigoId];
     }
     
-    for (NSString *key in [entityClass propertyKeys]) {
-        [entity setValueFromSerialisedValue:dictionary[key] forKey:key];
+    for (NSString *propertyKey in [entityClass propertyKeys]) {
+        if (dictionary[propertyKey]) {
+            [entity setValueFromSerialisedValue:dictionary[propertyKey] forKey:propertyKey];
+        }
     }
     
     NSMutableDictionary *relationshipRefs = [NSMutableDictionary dictionary];
