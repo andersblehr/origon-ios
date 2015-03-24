@@ -66,7 +66,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     if (_user) {
         [self.replicator loadUserReplicationState];
     } else {
-        _user = [OMember instanceWithId:_userId proxy:nil];
+        _user = [OMember instanceWithId:_userId];
         _user.email = _userEmail;
     }
     

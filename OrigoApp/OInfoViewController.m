@@ -198,7 +198,8 @@ static NSInteger const kSectionKeyMembership = 2;
                     cell.destinationTarget = kTargetOrigoType;
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyJoinCode]) {
-                cell.destinationId = kIdentifierValuePicker;
+                cell.destinationId = kIdentifierJoiner;
+                cell.destinationTarget = kTargetJoinCode;
                 
                 if ([origo.joinCode hasValue]) {
                     cell.detailTextLabel.text = origo.joinCode;

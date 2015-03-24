@@ -26,7 +26,7 @@ static NSInteger const kButtonTagGroupParentsOfGirls = 6;
 static NSInteger const kButtonTagGroupOrganisers = 7;
 
 
-@interface ORecipientPickerViewController () <UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
+@interface ORecipientPickerViewController () <OTableViewController, UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
 @private
     id<OOrigo> _origo;
     

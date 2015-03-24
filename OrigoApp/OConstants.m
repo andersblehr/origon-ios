@@ -11,6 +11,7 @@
 // View controller identifiers
 NSString * const kIdentifierAuth = @"auth";
 NSString * const kIdentifierInfo = @"info";
+NSString * const kIdentifierJoiner = @"join";
 NSString * const kIdentifierMap = @"map";
 NSString * const kIdentifierMember = @"member";
 NSString * const kIdentifierOrigo = @"origo";
@@ -99,6 +100,7 @@ NSString * const kInputKeyRepeatPassword = @"repeatPassword";
 NSString * const kActionKeyActivate = @"activate";
 NSString * const kActionKeyCancel = @"cancel";
 NSString * const kActionKeyChangePassword = @"changePassword";
+NSString * const kActionKeyJoinOrigo = @"joinOrigo";
 NSString * const kActionKeyLogin = @"login";
 NSString * const kActionKeyLogout = @"logout";
 NSString * const kActionKeyRegister = @"register";

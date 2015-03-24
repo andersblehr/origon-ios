@@ -13,6 +13,7 @@
 - (void)loadImageForOrigo:(id<OOrigo>)origo;
 - (void)loadImageForMember:(id<OMember>)member;
 - (void)loadImageForMembers:(NSArray *)members;
+- (void)loadImageWithName:(NSString *)imageName tintColour:(UIColor *)tintColour;
 
 - (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo;
 - (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo excludeRoles:(BOOL)excludeRoles excludeRelations:(BOOL)excludeRelations;

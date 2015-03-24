@@ -47,7 +47,7 @@
 
 @interface OReplicatedEntity (OrigoAdditions) <OEntity>
 
-+ (instancetype)instanceWithId:(NSString *)entityId proxy:(id)proxy;
++ (instancetype)instanceWithId:(NSString *)entityId;
 + (instancetype)instanceFromDictionary:(NSDictionary *)dictionary;
 
 - (NSString *)SHA1HashCode;

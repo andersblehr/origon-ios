@@ -77,6 +77,14 @@
 "[title] changePassword" = "Change password";
 "[title] cancel" = "Cancel";
 
+// Setting lables
+"[setting label] devices" = "Active devices";
+"[setting label] hidden" = "Hidden lists";
+"[setting label] declined" = "Declined memberships";
+"[setting label] edit" = "Edit list details";
+"[setting label] add" = "Add members to list";
+"[setting label] delete" = "Delete members from list";
+
 
 /***
  * Origo type derived strings
@@ -326,15 +334,19 @@
 
 // Footers
 "No hidden lists." = "No hidden lists.";
+"No declined memberships." = "No declined memberships.";
 
 // Labels
 "All contacts" = "All contacts";
 "New!" = "New!";
+"Join request sent" = "Join request sent";
 
 // Buttons
 "Yourself" = "Yourself";
 "Move out" = "Move out";
 "Hide" = "Hide";
+"Delete join request" = "Delete join request";
+"Resend join request" = "Resend join request";
 
 // Alerts
 "Welcome to Origo" = "Welcome to Origo";
@@ -346,7 +358,7 @@
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Your household includes minors. Would you like to provide parent relations?";
-"Who do you want to join to an existing list?\n(You will need the join code to proceed.)" = "Who do you want to join to an existing list?\n(You will need the join code to proceed.)";
+"Who do you want to join to a list?" = "Who do you want to join to a list?";
 "Who do you want to create a list for?" = "Who do you want to create a list for?";
 "What sort of list do you want to create" = "What sort of list do you want to create";
 
@@ -427,6 +439,7 @@
 "A different number" = "A different number";
 "A different address" = "A different address";
 "Edit responsibility" = "Edit responsibility";
+"Accept" = "Accept";
 
 // Alerts
 "Incorrect details" = "Incorrect details";
@@ -467,6 +480,7 @@
 "Is %@ the phone number for %@?" = "Is %@ the phone number for %@?";
 "Does %@ live with %@?" = "Does %@ live with %@?";
 "Does %@ live with %@ or %@?" = "Does %@ live with %@ or %@?";
+"%@ has requested to join %@" = "%@ has requested to join %@";
 
 // Terms
 "his parents" = "his parents";
@@ -487,15 +501,6 @@
 "Groups" = "Groups";
 "Edit groups" = "Edit groups";
 
-// Setting lables
-"[setting label] devices" = "Active devices";
-"[setting label] hidden" = "Hidden lists";
-
-// Permission labels
-"[setting label] edit" = "Edit list details";
-"[setting label] add" = "Add members to list";
-"[setting label] delete" = "Delete members from list";
-
 // Footers
 "All persons marked as favourites will be listed here ..." = "All persons marked as favourites will be listed here. Tap ☆ in the person view to mark a person as favourite.";
 "All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
@@ -512,29 +517,51 @@
 "Type" = "Type";
 
 // Footers
-"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.";
-"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.";
-"You may ask an administrator to create a join code for %@." = "You may ask an administrator to create a join code for %@.";
 "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.";
 
 // Buttons
 "Add" = "Add";
-
-// Alerts
-"The code has been set" = "The code has been set";
-"The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list." = "The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list.";
-"The code is in use" = "The code is in use";
-"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.";
-
-// Prompts
-"Edit join code" = "Edit join code";
-"Delete join code" = "Delete join code";
 
 // Terms
 "Responsibility" = "Responsibility";
 "Group name" = "Group name";
 "This device" = "This device";
 "Last seen %@" = "Last seen %@";
+
+
+/***
+ * OOrigoJoinerViewController strings
+ ***/
+
+// View titles
+"Join list" = "Join list";
+
+// Headers
+"Send join request" = "Send join request";
+"Send join request for %@:" = "Send join request for %@:";
+
+// Footers
+"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.";
+"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.";
+"You may ask an administrator to create a join code for %@." = "You may ask an administrator to create a join code for %@.";
+"Please enter the join code for the list you want to join." = "Please enter the join code for the list you want to join.";
+"Please enter the join code for the list that %@ should be joined to." = "Please enter the join code for the list that %@ should be joined to.";
+"You will get access to %@ as soon as the request has been approved." = "You will get access to %@ as soon as the request has been approved.";
+
+// Buttons
+"Edit join code" = "Edit join code";
+"Delete join code" = "Delete join code";
+
+// Alerts
+"The code has been set" = "The code has been set";
+"The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list." = "The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list.";
+"The code is in use" = "The code is in use";
+"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.";
+"Unknown join code" = "Unknown join code";
+"The join code '%@' is unknown. Please check your spelling." = "The join code '%@' is unknown. Please check your spelling.";
+"Primarily for adults" = "Primarily for adults";
+"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
+"%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
 
 
 /***

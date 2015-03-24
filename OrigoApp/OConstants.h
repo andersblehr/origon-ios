@@ -11,6 +11,7 @@
 // View controller identifiers
 extern NSString * const kIdentifierAuth;
 extern NSString * const kIdentifierInfo;
+extern NSString * const kIdentifierJoiner;
 extern NSString * const kIdentifierMap;
 extern NSString * const kIdentifierMember;
 extern NSString * const kIdentifierOrigo;
@@ -99,6 +100,7 @@ extern NSString * const kInputKeyRepeatPassword;
 extern NSString * const kActionKeyActivate;
 extern NSString * const kActionKeyCancel;
 extern NSString * const kActionKeyChangePassword;
+extern NSString * const kActionKeyJoinOrigo;
 extern NSString * const kActionKeyLogin;
 extern NSString * const kActionKeyLogout;
 extern NSString * const kActionKeyRegister;

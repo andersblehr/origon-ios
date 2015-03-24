@@ -41,6 +41,10 @@ static NSInteger const kActionSheetTagEditRole = 7;
 
 static NSInteger const kActionSheetTagRecipients = 8;
 
+static NSInteger const kActionSheetTagJoinRequest = 9;
+static NSInteger const kButtonTagJoinRequestAccept = 0;
+static NSInteger const kButtonTagJoinRequestDecline = 1;
+
 static NSInteger const kAlertTagEmailChange = 0;
 static NSInteger const kButtonIndexContinue = 1;
 
@@ -962,6 +966,12 @@ static NSInteger const kButtonIndexContinue = 1;
         if ([_member isHousemateOfUser] && ![_member hasValueForKey:kPropertyKeyDateOfBirth]) {
             [self toggleEditMode];
             [[self.inputCell nextInvalidInputField] becomeFirstResponder];
+        } else if ([_membership needsPeerAcceptance]) {
+            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ has requested to join %@", @""), [_member givenName], _origo.name] delegate:self tag:kActionSheetTagJoinRequest];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Accept", @"") tag:kButtonTagJoinRequestAccept];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Decline", @"") tag:kButtonTagJoinRequestDecline];
+            
+            [actionSheet show];
         }
     }
 }
@@ -1911,6 +1921,22 @@ static NSInteger const kButtonIndexContinue = 1;
                 } else if (_recipientType == kRecipientTypeEmail) {
                     [self sendEmailToRecipients:_recipientCandidates[buttonIndex] cc:nil];
                 }
+            }
+            
+            break;
+            
+        case kActionSheetTagJoinRequest:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+                
+                if (buttonTag == kButtonTagJoinRequestAccept) {
+                    [_origo membershipForMember:_member].status = kMembershipStatusActive;
+                } else if (buttonTag == kButtonTagJoinRequestDecline) {
+                    [_origo membershipForMember:_member].status = kMembershipStatusDeclined;
+                    [self.navigationController popViewControllerAnimated:YES];
+                }
+            } else {
+                [self.navigationController popViewControllerAnimated:YES];
             }
             
             break;

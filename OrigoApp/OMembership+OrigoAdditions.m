@@ -17,8 +17,9 @@ NSString * const kMembershipTypeAssociate = @"A";
 
 NSString * const kMembershipStatusListed = @"L";
 NSString * const kMembershipStatusInvited = @"I";
-NSString * const kMembershipStatusRequested = @"R";
 NSString * const kMembershipStatusWaiting = @"W";
+NSString * const kMembershipStatusRequested = @"R";
+NSString * const kMembershipStatusDeclined = @"D";
 NSString * const kMembershipStatusActive = @"A";
 NSString * const kMembershipStatusExpired = @"-";
 
@@ -119,11 +120,13 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
             }
         }
         
-        if ([self.member isUser]) {
-            self.status = kMembershipStatusActive;
-            self.isAdmin = @YES;
-        } else if ([self.member isWardOfUser]) {
-            self.status = kMembershipStatusActive;
+        if ([self.member isUser] || [self.member isWardOfUser]) {
+            if ([self.origo isCommitted]) {
+                self.status = kMembershipStatusRequested;
+            } else if ([self.origo userIsCreator]) {
+                self.status = kMembershipStatusActive;
+                self.isAdmin = @([self.member isUser]);
+            }
         } else {
             if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
                 self.status = kMembershipStatusListed;
@@ -143,15 +146,28 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
 
 #pragma mark - Meta information
 
-- (BOOL)needsAccepting
+- (BOOL)needsUserAcceptance
 {
-    BOOL needsAccepting = NO;
+    BOOL needsAcceptance = NO;
     
     if ([self.member isUser] || [self.member isWardOfUser]) {
-        needsAccepting = ![self isActive] && ![self isOwnership];
+        needsAcceptance = needsAcceptance || [self.status isEqualToString:kMembershipStatusInvited];
+        needsAcceptance = needsAcceptance || [self.status isEqualToString:kMembershipStatusWaiting];
     }
     
-    return needsAccepting;
+    return needsAcceptance;
+}
+
+
+- (BOOL)needsPeerAcceptance
+{
+    BOOL needsAcceptance = NO;
+    
+    if (![self.member isUser] && ![self.member isWardOfUser]) {
+        needsAcceptance = [self.status isEqualToString:kMembershipStatusRequested];
+    }
+    
+    return needsAcceptance;
 }
 
 
@@ -176,6 +192,18 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
 - (BOOL)isHidden
 {
     return ([self isShared] || [self isCommunityMembership]) && [self.status isEqualToString:kMembershipStatusListed];
+}
+
+
+- (BOOL)isRequested
+{
+    return [self.status isEqualToString:kMembershipStatusRequested];
+}
+
+
+- (BOOL)isDeclined
+{
+    return [self.status isEqualToString:kMembershipStatusDeclined];
 }
 
 
@@ -207,7 +235,7 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
 
 - (BOOL)isParticipancy
 {
-    return [self.type isEqualToString:kMembershipTypeParticipancy];
+    return [self.type isEqualToString:kMembershipTypeParticipancy] && ![self isDeclined];
 }
 
 

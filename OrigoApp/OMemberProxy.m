@@ -25,6 +25,30 @@
 }
 
 
+- (id)instantiate
+{
+    OMember *instance = [super instantiate];
+    [instance stash];
+    
+    if (![instance isUser]) {
+        OOrigo *baseOrigo = [OState s].baseOrigo;
+        OMember *baseMember = [OState s].baseMember;
+        
+        if ([baseOrigo isPrivate]) {
+            instance.createdIn = kOrigoTypePrivate;
+            
+            if ([baseMember isJuvenile] && [instance isJuvenile]) {
+                instance.createdIn = [instance.createdIn stringByAppendingString:baseMember.givenName separator:kSeparatorList];
+            }
+        } else {
+            instance.createdIn = [baseOrigo.entityId stringByAppendingString:[baseOrigo displayName] separator:kSeparatorList];
+        }
+    }
+    
+    return instance;
+}
+
+
 - (void)expire
 {
     for (id<OMembership> membership in [self allMemberships]) {

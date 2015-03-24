@@ -109,6 +109,16 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+- (id)instantiate
+{
+    OOrigo *instance = [super instantiate];
+    instance.origoId = instance.entityId;
+    instance.permissions = [instance defaultPermissions];
+    
+    return instance;
+}
+
+
 - (void)expire
 {
     for (id<OMembership> membership in [self allMemberships]) {
