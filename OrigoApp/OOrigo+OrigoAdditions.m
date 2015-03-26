@@ -73,8 +73,8 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
         
         if (membership) {
             if ([membership hasExpired]) {
-                [membership unexpire];
                 [membership alignWithOrigoIsAssociate:isAssociate];
+                [membership unexpire];
                 
                 [[OMeta m].context insertCrossReferencesForMembership:membership];
             }
@@ -688,13 +688,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 - (BOOL)isOrganised
 {
-    BOOL isOrganised = NO;
-    
-    isOrganised = isOrganised || [self isOfType:kOrigoTypePreschoolClass];
-    isOrganised = isOrganised || [self isOfType:kOrigoTypeSchoolClass];
-    isOrganised = isOrganised || [self isOfType:kOrigoTypeSports];
-    
-    return isOrganised;
+    return [OUtil isOrganisedOrigowithType:self.type];
 }
 
 
@@ -818,6 +812,18 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
     }
     
     return hasMembersInCommon;
+}
+
+
+- (BOOL)hasPendingJoinRequests
+{
+    BOOL hasPendingJoinRequests = NO;
+    
+    for (OMembership *membership in [self allMemberships]) {
+        hasPendingJoinRequests = hasPendingJoinRequests || [membership isRequested];
+    }
+    
+    return hasPendingJoinRequests;
 }
 
 

@@ -80,7 +80,7 @@
 // Setting labels
 "[setting label] devices" = "Aktive enheter";
 "[setting label] hidden" = "Skjulte lister";
-"[setting label] declined" = "Avviste medlemskap";
+"[setting label] declined" = "Avviste innmeldingsforespørsler";
 "[setting label] edit" = "Redigere listedetaljer";
 "[setting label] add" = "Legge til medlemmer i lista";
 "[setting label] delete" = "Slette medlemmer fra lista";
@@ -333,7 +333,7 @@
 
 // Footers
 "No hidden lists." = "Ingen skjulte lister.";
-"No declined memberships." = "Ingen avviste medlemskap.";
+"No declined memberships." = "Ingen avviste innmeldingsforespørsler.";
 
 // Labels
 "All contacts" = "Alle kontakter";
@@ -382,6 +382,9 @@
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
 "This household is represented on %@." = "Denne husstanden er representert på %@.";
 "No one in this household is active on %@." = "Ingen i denne husstanden er aktive på %@.";
+
+// Labels
+"Awaiting approval..." = "Venter på godkjenning...";
 
 // Buttons
 "Keep" = "Behold";
@@ -506,6 +509,12 @@
 "Tap + to add a responsibility." = "Trykk + for å legge til et ansvarsområde.";
 "Tap + to create a group." = "Trykk + for å opprette en gruppe.";
 
+// Buttons
+"Send text to both" = "Send melding til begge";
+"Send text to all" = "Send melding til alle";
+"Send email to both" = "Send epost til begge";
+"Send email to all" = "Send epost til alle";
+
 
 /***
  * OValuePickerViewController strings
@@ -558,9 +567,18 @@
 "The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "Innmeldingskoden \"%@\" er allerede i bruk. Prøv å gjøre koden mer spesifikk, for eksempel ved å inkludere en stedsangivelse og/eller et årstall.";
 "Unknown join code" = "Ukjent innmeldingskode";
 "The join code '%@' is unknown. Please check your spelling." = "Innmeldingskoden \"%@\" er ukjent. Verifiser at du har skrevet inn koden riktig.";
+"Already a member" = "Allerede medlem";
+"%@ has the join code '%@'. You are already a member of %@." = "%@ har innmeldingskoden \"%@\". Du er allerede medlem av %@.";
+"%@ has the join code '%@'. %@ is already a member of %@." = "%@ har innmeldingskoden \"%@\". %@ er allerede medlem av %@.";
 "Primarily for adults" = "Primært for voksne";
-"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "Du er mindreårig. Lista med innmeldingskode \"%@\" er først og fremst for voksne. Er du sikker på at du vil fortsette?";
+"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du er mindreårig. Lista med innmeldingskode \"%@\" er først og fremst for voksne. Er du sikker på at du vil melde deg inn?";
 "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ er mindreårig. Lista med innmeldingskode \"%@\" er primært for voksne. Er du sikker på at du vil fortsette?";
+"For minors" = "For mindreårige";
+"The list with join code '%@' is for minors. You cannot join this list." = "Lista med innmeldingskode \"%@\" er for mindreårige. Du kan ikke melde deg inn i denne lista.";
+"Join as %@" = "Meld inn som %@";
+"The list with join code '%@' represents a %@. Do you want to join as %@?" = "Lista med innmeldingskode \"%@\" representerer en %@. Vil du melde deg inn som %@?";
+"Community list" = "Nærmiljøliste";
+"The list with join code '%@' consists of whole households. %@ will also be included in the join request." = "Lista med innmeldingskode \"%@\" består av hele husholdninger. %@ vil også bli tatt med i innmeldingsforespørselen.";
 
 
 /***

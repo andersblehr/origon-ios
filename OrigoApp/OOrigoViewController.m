@@ -514,7 +514,12 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 [cell loadImageForMembers:elders];
             }
             
-            if (![_membership isHidden]) {
+            if ([[_origo membershipForMember:member] needsPeerAcceptance]) {
+                cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                cell.detailTextLabel.text = NSLocalizedString(@"Awaiting approval...", @"");
+                cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+                cell.selectable = NO;
+            } else if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierOrigo;
                 cell.destinationTarget = communityResidence;
             }
@@ -557,6 +562,10 @@ static NSInteger const kActionSheetTagRecipients = 4;
             if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierMember;
                 cell.destinationTarget = roleHolder;
+                
+                if ([[_origo membershipForMember:roleHolder] needsPeerAcceptance]) {
+                    cell.notificationView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+                }
             }
         } else {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];

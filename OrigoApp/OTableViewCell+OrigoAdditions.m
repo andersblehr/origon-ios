@@ -27,18 +27,6 @@
 }
 
 
-- (BOOL)memberIsPrivateListingOnly:(id<OMember>)member
-{
-    BOOL isPrivateListingOnly = YES;
-    
-    for (OOrigo *origo in [member origos]) {
-        isPrivateListingOnly = isPrivateListingOnly && [origo isPrivate];
-    }
-    
-    return isPrivateListingOnly;
-}
-
-
 - (NSArray *)associationMembershipsForMember:(id<OMember>)member
 {
     NSMutableArray *associationMemberships = [NSMutableArray array];
@@ -52,7 +40,7 @@
     if (isGuardianOfUserWards) {
         [associationMemberships addObject:[[[OMeta m].user primaryResidence] membershipForMember:member]];
     } else {
-        NSArray *participancies = [[[member participancies] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+        NSArray *participancies = [[[member participanciesIncludeHidden:YES] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
         
         for (id<OMembership> participancy in participancies) {
             BOOL isPeerParticipancy = [participancy.origo isJuvenile] == [[OMeta m].user isJuvenile];
@@ -71,7 +59,9 @@
             NSArray *listings = [[[member listings] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
             
             for (id<OMembership> listing in listings) {
-                if ([[listing.origo owner] isUser]) {
+                id<OMember> owner = [listing.origo owner];
+                
+                if ([owner isUser] || [owner isWardOfUser]) {
                     [associationMemberships addObject:listing];
                     
                     break;
@@ -107,7 +97,7 @@
         id<OOrigo> origo = nil;
         
         if ([associationMemberships count]) {
-            for (id<OMembership> membership in [self associationMembershipsForMember:member]) {
+            for (id<OMembership> membership in associationMemberships) {
                 origo = membership.origo;
                 
                 BOOL hasParentRole = [[membership parentRoles] count] > 0;
@@ -117,7 +107,7 @@
                         if (!associationsByWard[ward.entityId]) {
                             isParentByWard[ward.entityId] = @([ward hasParent:member]);
                             
-                            if ([self memberIsPrivateListingOnly:ward]) {
+                            if (![[ward participanciesIncludeHidden:YES] count]) {
                                 associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [[origo owner] givenName]];
                             } else if (![origo isPrivate]) {
                                 if ([ward isWardOfUser]) {
@@ -129,7 +119,7 @@
                         }
                     }
                 } else {
-                    if ([member isJuvenile] && [self memberIsPrivateListingOnly:member]) {
+                    if ([member isJuvenile] && ![[member participanciesIncludeHidden:YES] count]) {
                         association = [[NSString stringWithFormat:NSLocalizedString(@"%@ [friend of] %@", @""), [self friendTermForMember:member], [[origo owner] givenName]] stringByCapitalisingFirstLetter];
                     } else if ([[membership organiserRoles] count]) {
                         association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];

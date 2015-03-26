@@ -120,12 +120,22 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
             }
         }
         
-        if ([self.member isUser] || [self.member isWardOfUser]) {
+        if ([self.member isUser]) {
             if ([self.origo isCommitted]) {
                 self.status = kMembershipStatusRequested;
-            } else if ([self.origo userIsCreator]) {
+            } else {
                 self.status = kMembershipStatusActive;
-                self.isAdmin = @([self.member isUser]);
+                self.isAdmin = @YES;
+            }
+        } else if ([self.member isHousemateOfUser]) {
+            if ([self.origo indirectlyKnowsAboutMember:[OMeta m].user]) {
+                if ([self.member isWardOfUser]) {
+                    self.status = kMembershipStatusActive;
+                } else {
+                    self.status = kMembershipStatusInvited;
+                }
+            } else {
+                self.status = kMembershipStatusRequested;
             }
         } else {
             if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
@@ -161,13 +171,7 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
 
 - (BOOL)needsPeerAcceptance
 {
-    BOOL needsAcceptance = NO;
-    
-    if (![self.member isUser] && ![self.member isWardOfUser]) {
-        needsAcceptance = [self.status isEqualToString:kMembershipStatusRequested];
-    }
-    
-    return needsAcceptance;
+    return [self isRequested] && ![self.member isUser] && ![self.member isWardOfUser];
 }
 
 
@@ -426,10 +430,22 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
     } else {
         [super expire];
         
-        id<OMember> owner = [self.origo isPrivate] ? [self.origo owner] : nil;
-        
-        if (owner && [owner isWardOfUser]) {
-            [[self.origo membershipForMember:owner] expire];
+        if ([self isAssociate] && ![self isDirty]) {
+            if ([self.origo isPrivate]) {
+                id<OMember> owner = [self.origo owner];
+                
+                if ([owner isWardOfUser]) {
+                    [[self.origo membershipForMember:owner] expire];
+                }
+            } else if ([self.member isUser]) {
+                for (OMember *housemate in [self.member housemates]) {
+                    OMembership *housemateMembership = [self.origo membershipForMember:housemate];
+                    
+                    if (housemateMembership && ![housemateMembership isAssociate]) {
+                        [housemateMembership expire];
+                    }
+                }
+            }
         }
         
         if ([self isReplicated]) {

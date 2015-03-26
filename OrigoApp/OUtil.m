@@ -324,4 +324,18 @@
     return [value localizedCaseInsensitiveCompare:otherValue];
 }
 
+
+#pragma mark - Determining if origo is organised
+
++ (BOOL)isOrganisedOrigowithType:(NSString *)type
+{
+    BOOL isOrganised = NO;
+    
+    isOrganised = isOrganised || [type isEqualToString:kOrigoTypePreschoolClass];
+    isOrganised = isOrganised || [type isEqualToString:kOrigoTypeSchoolClass];
+    isOrganised = isOrganised || [type isEqualToString:kOrigoTypeSports];
+    
+    return isOrganised;
+}
+
 @end

@@ -353,14 +353,24 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+- (BOOL)isOrganised
+{
+    return [OUtil isOrganisedOrigowithType:self.type];
+}
+
+
 - (BOOL)isJuvenile
 {
     BOOL isJuvenile = NO;
     
     if ([self instance]) {
         isJuvenile = [[self instance] isJuvenile];
-    } else if (![self isResidence]) {
-        isJuvenile = [[self ancestorConformingToProtocol:@protocol(OMember)] isJuvenile];
+    } else {
+        if (self.isForMinors) {
+            isJuvenile = [self.isForMinors boolValue];
+        } else if (![self isResidence]) {
+            isJuvenile = [[self ancestorConformingToProtocol:@protocol(OMember)] isJuvenile];
+        }
     }
     
     return isJuvenile;
