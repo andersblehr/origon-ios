@@ -43,8 +43,10 @@
 - (NSArray *)emailRecipients;
 
 - (NSSet *)allMemberships;
+- (NSSet *)allMembershipsIncludeHidden:(BOOL)includeHidden;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
+- (NSSet *)participanciesIncludeHidden:(BOOL)includeHidden;
 - (NSSet *)listings;
 - (NSSet *)associateMemberships;
 

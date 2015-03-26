@@ -43,7 +43,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     NSMutableDictionary *_views;
     OInputField *_lastInputField;
-    UILabel *_notificationLabel;
 }
 
 @end
@@ -649,6 +648,27 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 
 #pragma mark - UIView overrides
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (_notificationView && [self styleIsDefault]) {
+        for (UILabel *textLabel in @[self.textLabel, self.detailTextLabel]) {
+            CGRect textLabelFrame = textLabel.frame;
+            textLabelFrame.size.width += kDefaultCellPadding;
+            
+            CGRect intersection = CGRectIntersection(textLabelFrame, _notificationView.frame);
+            
+            if (!CGRectIsNull(intersection)) {
+                textLabelFrame = textLabel.frame;
+                textLabelFrame.size.width -= intersection.size.width;
+                textLabel.frame = textLabelFrame;
+            }
+        }
+    }
+}
+
 
 - (void)updateConstraints
 {

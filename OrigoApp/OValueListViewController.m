@@ -28,7 +28,7 @@ static NSInteger const kButtonTagAddOrganiser = 0;
 static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 
-@interface OValueListViewController () <OTableViewController, UIActionSheetDelegate> {
+@interface OValueListViewController () <OTableViewController, UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
     id<OOrigo> _origo;
 
     UISegmentedControl *_titleSegments;
@@ -36,6 +36,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSInteger _titleSegment;
     
     NSArray *_wards;
+    NSArray *_candidates;
 }
 
 @end
@@ -135,13 +136,66 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 - (void)performTextAction
 {
-    [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetText: [self aspectFromTitleSegment]}];
+    if ([self targetIs:kTargetAllContacts]) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetText: [self aspectFromTitleSegment]}];
+    } else if ([self targetIs:kTargetRole]) {
+        NSString *buttonTitle = nil;
+        
+        if ([_candidates count] == 2) {
+            buttonTitle = NSLocalizedString(@"Send text to both", @"");
+        } else if ([_candidates count] > 2) {
+            buttonTitle = NSLocalizedString(@"Send text to all", @"");
+        }
+        
+        [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
+            NSMutableArray *recipients = [NSMutableArray array];
+            
+            for (id<OMember> candidate in _candidates) {
+                if ([candidate.mobilePhone hasValue]) {
+                    [recipients addObject:candidate.mobilePhone];
+                }
+            }
+            
+            MFMessageComposeViewController *messageComposer = [[MFMessageComposeViewController alloc] init];
+            messageComposer.messageComposeDelegate = self;
+            messageComposer.recipients = recipients;
+            
+            [self presentViewController:messageComposer animated:YES completion:nil];
+        }];
+    }
 }
 
 
 - (void)performEmailAction
 {
-    [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetEmail: [self aspectFromTitleSegment]}];
+    if ([self targetIs:kTargetAllContacts]) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:@{kTargetEmail: [self aspectFromTitleSegment]}];
+    } else if ([self targetIs:kTargetRole]) {
+        NSString *buttonTitle = nil;
+        
+        if ([_candidates count] == 2) {
+            buttonTitle = NSLocalizedString(@"Send email to both", @"");
+        } else if ([_candidates count] > 2) {
+            buttonTitle = NSLocalizedString(@"Send email to all", @"");
+        }
+        
+        [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
+            NSMutableArray *recipients = [NSMutableArray array];
+            
+            for (id<OMember> candidate in _candidates) {
+                if ([candidate.email hasValue]) {
+                    [recipients addObject:candidate.email];
+                }
+            }
+            
+            MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+            mailComposer.mailComposeDelegate = self;
+            [mailComposer setToRecipients:recipients];
+            [mailComposer setMessageBody:NSLocalizedString(@"Sent from Origo - http://origoapp.com", @"") isHTML:NO];
+            
+            [self presentViewController:mailComposer animated:YES completion:nil];
+        }];
+    }
 }
 
 
@@ -297,6 +351,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     } else if ([self targetIs:kTargetAdmins]) {
         [self setData:[_origo admins] forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetAllContacts]) {
+        _candidates = [self.state eligibleCandidates];
+        
         if (_titleSegment == kTitleSegmentFavourites) {
             [self setData:[[OMeta m].user favourites] sectionIndexLabelKey:kPropertyKeyName];
         } else if (_titleSegment == kTitleSegmentOthers) {
@@ -308,10 +364,12 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [self setData:[[OMeta m].user activeDevices] forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetRole]) {
         if ([self aspectIs:kAspectOrganiserRole]) {
-            [self setData:[_origo organisersWithRole:self.target] forSectionWithKey:kSectionKeyValues];
+            _candidates = [_origo organisersWithRole:self.target];
         } else if ([self aspectIs:kAspectParentRole]) {
-            [self setData:[_origo parentsWithRole:self.target] forSectionWithKey:kSectionKeyValues];
+            _candidates = [_origo parentsWithRole:self.target];
         }
+        
+        [self setData:_candidates forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetRoles]) {
         if (_titleSegment == kTitleSegmentParents) {
             [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyValues];
@@ -363,10 +421,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                 cell.detailTextLabel.text = [@(numberOfDevices) description];
                 cell.destinationId = kIdentifierValueList;
             } else if ([target isEqualToString:kTargetHiddenOrigos]) {
-                cell.detailTextLabel.text = numberOfHiddenOrigos ? [@(numberOfHiddenOrigos) description] : NSLocalizedString(@"None", @"");
+                cell.detailTextLabel.text = [@(numberOfHiddenOrigos) description];
                 cell.destinationId = kIdentifierOrigoList;
             } else if ([target isEqualToString:kTargetDeclinedOrigos]) {
-                cell.detailTextLabel.text = numberOfDeclinedOrigos ? [@(numberOfDeclinedOrigos) description] : NSLocalizedString(@"None", @"");
+                cell.detailTextLabel.text = [@(numberOfDeclinedOrigos) description];
                 cell.destinationId = kIdentifierOrigoList;
             }
         } else if (sectionKey == kSectionKeyActions) {
@@ -521,8 +579,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     BOOL hasSendTextButton = NO;
     
-    if ([self targetIs:kTargetAllContacts]) {
-        for (id<OMember> recipientCandidate in [self.state eligibleCandidates]) {
+    if ([self targetIs:@[kTargetAllContacts, kTargetRole]]) {
+        for (id<OMember> recipientCandidate in _candidates) {
             if ([recipientCandidate.mobilePhone hasValue]) {
                 hasSendTextButton = YES;
                 
@@ -539,8 +597,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     BOOL hasSendEmailButton = NO;
     
-    if ([self targetIs:kTargetAllContacts]) {
-        for (id<OMember> recipientCandidate in [self.state eligibleCandidates]) {
+    if ([self targetIs:@[kTargetAllContacts, kTargetRole]]) {
+        for (id<OMember> recipientCandidate in _candidates) {
             if ([recipientCandidate.email hasValue]) {
                 hasSendEmailButton = YES;
                 
@@ -695,6 +753,22 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         default:
             break;
     }
+}
+
+
+#pragma mark - MFMessageComposeViewControllerDelegate conformance
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+#pragma mark - MFMailComposeViewControllerDelegate conformance
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

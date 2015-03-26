@@ -30,6 +30,7 @@ extern NSString * const kOrigoTypeStash;
 @property (nonatomic) NSString *joinCode;
 @property (nonatomic) NSString *internalJoinCode;
 @property (nonatomic) NSString *permissions;
+@property (nonatomic) NSNumber *isForMinors;
 
 @property (nonatomic, assign) BOOL membersCanEdit;
 @property (nonatomic, assign) BOOL membersCanAdd;
@@ -107,6 +108,7 @@ extern NSString * const kOrigoTypeStash;
 - (BOOL)knowsAboutMember:(id<OMember>)member;
 - (BOOL)indirectlyKnowsAboutMember:(id<OMember>)member;
 - (BOOL)hasMembersInCommonWithOrigo:(id<OOrigo>)residence;
+- (BOOL)hasPendingJoinRequests;
 
 - (NSArray *)recipientCandidates;
 - (NSArray *)callRecipients;

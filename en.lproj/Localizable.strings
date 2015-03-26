@@ -80,7 +80,7 @@
 // Setting lables
 "[setting label] devices" = "Active devices";
 "[setting label] hidden" = "Hidden lists";
-"[setting label] declined" = "Declined memberships";
+"[setting label] declined" = "Declined join requests";
 "[setting label] edit" = "Edit list details";
 "[setting label] add" = "Add members to list";
 "[setting label] delete" = "Delete members from list";
@@ -384,6 +384,9 @@
 "This household is represented on %@." = "This household is represented on %@.";
 "No one in this household is active on %@." = "No one in this household is active on %@.";
 
+// Labels
+"Awaiting approval..." = "Awaiting approval...";
+
 // Buttons
 "Keep" = "Keep";
 "Decline" = "Decline";
@@ -507,6 +510,12 @@
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
 
+// Buttons
+"Send text to both" = "Send text to both";
+"Send text to all" = "Send text to all";
+"Send email to both" = "Send email to both";
+"Send email to all" = "Send email to all";
+
 
 /***
  * OValuePickerViewController strings
@@ -559,10 +568,18 @@
 "The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.";
 "Unknown join code" = "Unknown join code";
 "The join code '%@' is unknown. Please check your spelling." = "The join code '%@' is unknown. Please check your spelling.";
+"Already a member" = "Already a member";
+"%@ has the join code '%@'. You are already a member of %@." = "%@ has the join code '%@'. You are already a member of %@.";
+"%@ has the join code '%@'. %@ is already a member of %@." = "%@ has the join code '%@'. %@ is already a member of %@.";
 "Primarily for adults" = "Primarily for adults";
-"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
+"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?";
 "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
-
+"For minors" = "For minors";
+"The list with join code '%@' is for minors. You cannot join this list." = "The list with join code '%@' is for minors. You cannot join this list.";
+"Join as %@" = "Join as %@";
+"The list with join code '%@' represents a %@. Do you want to join as %@?" = "The list with join code '%@' represents a %@. Do you want to join as %@?";
+"Community list" = "Community list";
+"The list with join code '%@' consists of whole households. %@ will also be included in the join request." = "The list with join code '%@' consists of whole households. %@ will also be included in the join request.";
 
 /***
  * ORecipientPickerViewController strings

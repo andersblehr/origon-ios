@@ -967,7 +967,15 @@ static NSInteger const kButtonIndexContinue = 1;
             [self toggleEditMode];
             [[self.inputCell nextInvalidInputField] becomeFirstResponder];
         } else if ([_membership needsPeerAcceptance]) {
-            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ has requested to join %@", @""), [_member givenName], _origo.name] delegate:self tag:kActionSheetTagJoinRequest];
+            NSString *memberLabel = nil;
+            
+            if ([_origo isCommunity]) {
+                memberLabel = [OUtil commaSeparatedListOfMembers:[[_member primaryResidence] elders] conjoin:YES];
+            } else {
+                memberLabel = [_member isJuvenile] ? [_member givenName] : [_member shortName];
+            }
+            
+            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ has requested to join %@", @""), memberLabel, _origo.name] delegate:self tag:kActionSheetTagJoinRequest];
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Accept", @"") tag:kButtonTagJoinRequestAccept];
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Decline", @"") tag:kButtonTagJoinRequestDecline];
             
@@ -1929,10 +1937,26 @@ static NSInteger const kButtonIndexContinue = 1;
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
                 
-                if (buttonTag == kButtonTagJoinRequestAccept) {
-                    [_origo membershipForMember:_member].status = kMembershipStatusActive;
-                } else if (buttonTag == kButtonTagJoinRequestDecline) {
-                    [_origo membershipForMember:_member].status = kMembershipStatusDeclined;
+                NSArray *joiningMembers = nil;
+                
+                if ([_origo isCommunity]) {
+                    joiningMembers = [[_member primaryResidence] elders];
+                } else {
+                    joiningMembers = @[_member];
+                }
+                
+                for (id<OMember> member in joiningMembers) {
+                    id<OMembership> membership = [_origo membershipForMember:member];
+                    
+                    if (buttonTag == kButtonTagJoinRequestAccept) {
+                        membership.status = kMembershipStatusActive;
+                    } else if (buttonTag == kButtonTagJoinRequestDecline) {
+                        membership.status = kMembershipStatusDeclined;
+                        membership.affiliations = nil;
+                    }
+                }
+                
+                if (buttonTag == kButtonTagJoinRequestDecline) {
                     [self.navigationController popViewControllerAnimated:YES];
                 }
             } else {

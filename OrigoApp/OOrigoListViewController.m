@@ -316,13 +316,18 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     }
     
     if ([membership isRequested]) {
-        cell.selectable = NO;
+        cell.textLabel.textColor = [UIColor tonedDownTextColour];
         cell.detailTextLabel.text = NSLocalizedString(@"Join request sent", @"");
         cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
-    } else if ([membership isDeclined]) {
+        cell.selectable = NO;
+    } else if ([self targetIs:kTargetDeclinedOrigos]) {
         cell.selectable = YES;
     } else if (![origo isStash]) {
         cell.destinationId = kIdentifierOrigo;
+        
+        if ([origo hasPendingJoinRequests]) {
+            cell.notificationView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+        }
     }
     
     if (membership && [membership needsUserAcceptance] && ![membership isHidden]) {
@@ -543,14 +548,26 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             
         case kActionSheetTagDeclinedJoinRequest:
             _selectedCell.selected = NO;
-            
-            if (buttonTag == kButtonTagDeclinedJoinRequestDelete) {
-                [[_origo membershipForMember:_member] expire];
-            } else if (buttonTag == kButtonTagDeclinedJoinRequestResend) {
-                [_origo membershipForMember:_member].status = kMembershipStatusRequested;
+
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                NSArray *requestingMembers = nil;
+                
+                if ([_origo isCommunity]) {
+                    requestingMembers = [[_member primaryResidence] elders];
+                } else {
+                    requestingMembers = @[_member];
+                }
+                
+                for (id<OMember> member in requestingMembers) {
+                    if (buttonTag == kButtonTagDeclinedJoinRequestDelete) {
+                        [[_origo membershipForMember:member] expire];
+                    } else if (buttonTag == kButtonTagDeclinedJoinRequestResend) {
+                        [_origo membershipForMember:member].status = kMembershipStatusRequested;
+                    }
+                }
+                
+                [self reloadSections];
             }
-            
-            [self reloadSections];
             
             break;
             

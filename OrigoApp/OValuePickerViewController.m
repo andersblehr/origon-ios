@@ -426,6 +426,24 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
+- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL canDeleteCell = NO;
+    
+    if ([self targetIs:kTargetRole] && [self aspectIs:kAspectOrganiserRole]) {
+        canDeleteCell = ![_pickedValues containsObject:[self dataAtIndexPath:indexPath]];
+    }
+    
+    return canDeleteCell;
+}
+
+
+- (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    [[_origo membershipForMember:[self dataAtIndexPath:indexPath]] expire];
+}
+
+
 - (void)viewWillBeDismissed
 {
     if (self.isModal && _isMultiValuePicker && self.didCancel) {

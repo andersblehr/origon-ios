@@ -383,11 +383,17 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSSet *)allMemberships
 {
+    return [self allMembershipsIncludeHidden:NO];
+}
+
+
+- (NSSet *)allMembershipsIncludeHidden:(BOOL)includeHidden
+{
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.origo isStash]) {
-            if (![membership isHidden] && ![membership hasExpired]) {
+        if (![membership.origo isStash] && ![membership hasExpired]) {
+            if (includeHidden || ![membership isHidden]) {
                 [memberships addObject:membership];
             }
         }
@@ -413,9 +419,15 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSSet *)participancies
 {
+    return [self participanciesIncludeHidden:NO];
+}
+
+
+- (NSSet *)participanciesIncludeHidden:(BOOL)includeHidden
+{
     NSMutableSet *participancies = [NSMutableSet set];
     
-    for (OMembership *membership in [self allMemberships]) {
+    for (OMembership *membership in [self allMembershipsIncludeHidden:includeHidden]) {
         if ([membership isParticipancy]) {
             [participancies addObject:membership];
         }
@@ -1224,7 +1236,31 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)settingListKeys
 {
-    return @[kTargetDevices, kTargetHiddenOrigos, kTargetDeclinedOrigos];
+    NSMutableArray *settingListKeys = [NSMutableArray array];
+    
+    if ([[self activeDevices] count] > 1) {
+        [settingListKeys addObject:kTargetDevices];
+    }
+    
+    BOOL hasHiddenOrigos = [[self hiddenOrigos] count] > 0;
+    BOOL hasDeclinedOrigos = [[self declinedOrigos] count] > 0;
+    
+    if (!hasHiddenOrigos || !hasDeclinedOrigos) {
+        for (OMember *ward in [self wards]) {
+            hasHiddenOrigos = hasHiddenOrigos || [[ward hiddenOrigos] count] > 0;
+            hasDeclinedOrigos = hasDeclinedOrigos || [[ward declinedOrigos] count] > 0;
+        }
+    }
+    
+    if (hasHiddenOrigos) {
+        [settingListKeys addObject:kTargetHiddenOrigos];
+    }
+    
+    if (hasDeclinedOrigos) {
+        [settingListKeys addObject:kTargetDeclinedOrigos];
+    }
+    
+    return settingListKeys;
 }
 
 

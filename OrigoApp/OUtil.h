@@ -28,4 +28,6 @@
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo;
 
++ (BOOL)isOrganisedOrigowithType:(NSString *)type;
+
 @end
