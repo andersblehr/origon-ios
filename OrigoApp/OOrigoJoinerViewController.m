@@ -92,15 +92,15 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                 }
             } else if ([existingMembership isRequested]) {
                 if ([_member isUser]) {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request sent", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, origo.name]];
+                    [OAlert showAlertWithTitle:NSLocalizedString(@"Awaiting approval", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, origo.name]];
                 } else {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request sent", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
+                    [OAlert showAlertWithTitle:NSLocalizedString(@"Awaiting approval", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
                 }
             } else if ([existingMembership isDeclined]) {
                 if ([_member isUser]) {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request denied", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. The request was denied. You can delete or resend the request under Settings.", @""), origo.name, _joinCode, origo.name]];
+                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request declined", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view.", @""), origo.name, _joinCode, origo.name]];
                 } else {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request denied", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was denied. You can delete or resend the request under Settings.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
+                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request denied", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
                 }
             }
             

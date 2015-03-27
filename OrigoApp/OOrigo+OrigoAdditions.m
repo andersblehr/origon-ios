@@ -72,7 +72,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
         membership = [self membershipForMember:member includeExpired:YES];
         
         if (membership) {
-            if ([membership hasExpired]) {
+            if ([membership hasExpired] || [membership isDeclined]) {
                 [membership alignWithOrigoIsAssociate:isAssociate];
                 [membership unexpire];
                 
@@ -262,7 +262,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
                 [members addObject:membership.member];
             } else if ([self isPrivate] && [membership isListing]) {
                 [members addObject:membership.member];
-            } else if ([membership isShared]) {
+            } else if ([membership isShared] && ![membership isDeclined]) {
                 [members addObject:membership.member];
             }
         }

@@ -22,7 +22,6 @@ extern NSString * const kActionRegister;
 extern NSString * const kTargetAdmins;
 extern NSString * const kTargetAffiliation;
 extern NSString * const kTargetAllContacts;
-extern NSString * const kTargetDeclinedOrigos;
 extern NSString * const kTargetDevices;
 extern NSString * const kTargetElder;
 extern NSString * const kTargetEmail;

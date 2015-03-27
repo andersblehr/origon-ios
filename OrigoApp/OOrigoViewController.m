@@ -39,12 +39,17 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 static NSInteger const kActionSheetTagRecipients = 4;
 
+static NSInteger const kActionSheetTagJoinRequest = 5;
+static NSInteger const kButtonTagJoinRequestAccept = 0;
+static NSInteger const kButtonTagJoinRequestDecline = 1;
+
 
 @interface OOrigoViewController () <OTableViewController, OInputCellDelegate, UIActionSheetDelegate> {
 @private
     id<OOrigo> _origo;
     id<OMember> _member;
     id<OMembership> _membership;
+    id<OMember> _joiningMember;
     
     NSString *_origoType;
     NSArray *_eligibleCandidates;
@@ -134,6 +139,18 @@ static NSInteger const kActionSheetTagRecipients = 4;
     }
     
     return roleHolders;
+}
+
+
+- (void)setAppearanceForPendingJoinRequestInCell:(OTableViewCell *)cell
+{
+    cell.textLabel.textColor = [UIColor valueTextColour];
+    cell.detailTextLabel.text = NSLocalizedString(@"Awaiting approval...", @"");
+    cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+    
+    if ([_origo userCanAdd]) {
+        cell.embeddedButton = [OButton joinRequestButton];
+    }
 }
 
 
@@ -235,6 +252,40 @@ static NSInteger const kActionSheetTagRecipients = 4;
 
 
 #pragma mark - Selector implementations
+
+- (void)didTapEmbeddedButton:(OButton *)embeddedButton
+{
+    _joiningMember = [self dataAtIndexPath:[self.tableView indexPathForCell:embeddedButton.embeddingCell]];
+    
+    NSArray *joiningMembers = nil;
+    NSString *memberLabel = nil;
+    
+    if ([_origo isCommunity]) {
+        joiningMembers = [[_joiningMember primaryResidence] elders];
+        memberLabel = [OUtil commaSeparatedListOfMembers:joiningMembers conjoin:YES];
+    } else {
+        if ([_joiningMember isJuvenile]) {
+            memberLabel = [_joiningMember givenName];
+        } else {
+            memberLabel = [_joiningMember shortName];
+        }
+    }
+    
+    NSString *prompt = nil;
+    
+    if (joiningMembers && [joiningMembers count] > 1) {
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ have requested to join %@", @""), memberLabel, _origo.name];
+    } else {
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has requested to join %@", @""), memberLabel, _origo.name];
+    }
+    
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagJoinRequest];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Accept", @"") tag:kButtonTagJoinRequestAccept];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Decline", @"") tag:kButtonTagJoinRequestDecline];
+    
+    [actionSheet show];
+}
+
 
 - (void)performAcceptDeclineAction
 {
@@ -514,14 +565,13 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 [cell loadImageForMembers:elders];
             }
             
-            if ([[_origo membershipForMember:member] needsPeerAcceptance]) {
-                cell.textLabel.textColor = [UIColor tonedDownTextColour];
-                cell.detailTextLabel.text = NSLocalizedString(@"Awaiting approval...", @"");
-                cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
-                cell.selectable = NO;
-            } else if (![_membership isHidden]) {
+            if (![_membership isHidden]) {
                 cell.destinationId = kIdentifierOrigo;
                 cell.destinationTarget = communityResidence;
+                
+                if ([[_origo membershipForMember:member] needsPeerAcceptance]) {
+                    [self setAppearanceForPendingJoinRequestInCell:cell];
+                }
             }
         } else {
             id<OOrigo> origo = self.state.baseOrigo ? self.state.baseOrigo : _origo;
@@ -538,9 +588,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 cell.destinationId = kIdentifierMember;
                 
                 if ([[_origo membershipForMember:member] needsPeerAcceptance]) {
-                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
-                    cell.detailTextLabel.text = nil;
-                    cell.notificationView = [UIView joinRequestNotificationView];
+                    [self setAppearanceForPendingJoinRequestInCell:cell];
                 }
             }
         }
@@ -566,9 +614,7 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 cell.destinationTarget = roleHolder;
                 
                 if ([[_origo membershipForMember:roleHolder] needsPeerAcceptance]) {
-                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
-                    cell.detailTextLabel.text = nil;
-                    cell.notificationView = [UIView joinRequestNotificationView];
+                    [self setAppearanceForPendingJoinRequestInCell:cell];
                 }
             }
         } else {
@@ -1125,6 +1171,35 @@ static NSInteger const kActionSheetTagRecipients = 4;
                     [self callRecipient:_recipientCandidates[buttonIndex]];
                 } else if (_recipientType == kRecipientTypeEmail) {
                     [self sendEmailToRecipients:_recipientCandidates[buttonIndex] cc:nil];
+                }
+                
+                break;
+                
+            case kActionSheetTagJoinRequest:
+                if (buttonIndex != actionSheet.cancelButtonIndex) {
+                    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+                    NSArray *joiningMembers = nil;
+                    
+                    if ([_origo isCommunity]) {
+                        joiningMembers = [[_joiningMember primaryResidence] elders];
+                    } else {
+                        joiningMembers = @[_joiningMember];
+                    }
+                    
+                    for (id<OMember> member in joiningMembers) {
+                        id<OMembership> membership = [_origo membershipForMember:member];
+                        
+                        if (buttonTag == kButtonTagJoinRequestAccept) {
+                            membership.status = kMembershipStatusActive;
+                        } else if (buttonTag == kButtonTagJoinRequestDecline) {
+                            membership.status = kMembershipStatusDeclined;
+                            membership.affiliations = nil;
+                        }
+                    }
+                    
+                    [self reloadSections];
+                    
+                    [[OMeta m].replicator replicate];
                 }
                 
                 break;
