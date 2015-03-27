@@ -28,6 +28,20 @@
 }
 
 
+#pragma mark - Factory methods
+
++ (instancetype)infoButton
+{
+    return [self buttonWithType:UIButtonTypeInfoDark];
+}
+
+
++ (instancetype)joinRequestButton
+{
+    return [self buttonWithType:UIButtonTypeContactAdd];
+}
+
+
 #pragma mark - UIControl overrides
 
 - (void)setHighlighted:(BOOL)highlighted

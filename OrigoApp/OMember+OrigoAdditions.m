@@ -1243,21 +1243,15 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     BOOL hasHiddenOrigos = [[self hiddenOrigos] count] > 0;
-    BOOL hasDeclinedOrigos = [[self declinedOrigos] count] > 0;
     
-    if (!hasHiddenOrigos || !hasDeclinedOrigos) {
+    if (!hasHiddenOrigos) {
         for (OMember *ward in [self wards]) {
             hasHiddenOrigos = hasHiddenOrigos || [[ward hiddenOrigos] count] > 0;
-            hasDeclinedOrigos = hasDeclinedOrigos || [[ward declinedOrigos] count] > 0;
         }
     }
     
     if (hasHiddenOrigos) {
         [settingListKeys addObject:kTargetHiddenOrigos];
-    }
-    
-    if (hasDeclinedOrigos) {
-        [settingListKeys addObject:kTargetDeclinedOrigos];
     }
     
     return settingListKeys;

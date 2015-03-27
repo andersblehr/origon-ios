@@ -66,7 +66,11 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     }
     
     for (NSString *propertyKey in [entityClass propertyKeys]) {
-        if (dictionary[propertyKey]) {
+        if ([@[kPropertyKeyCreatedBy, kPropertyKeyDateCreated] containsObject:propertyKey]) {
+            if (dictionary[propertyKey]) {
+                [entity setValueFromSerialisedValue:dictionary[propertyKey] forKey:propertyKey];
+            }
+        } else {
             [entity setValueFromSerialisedValue:dictionary[propertyKey] forKey:propertyKey];
         }
     }

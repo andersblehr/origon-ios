@@ -80,7 +80,6 @@
 // Setting labels
 "[setting label] devices" = "Aktive enheter";
 "[setting label] hidden" = "Skjulte lister";
-"[setting label] declined" = "Avviste innmeldingsforespørsler";
 "[setting label] edit" = "Redigere listedetaljer";
 "[setting label] add" = "Legge til medlemmer i lista";
 "[setting label] delete" = "Slette medlemmer fra lista";
@@ -333,7 +332,6 @@
 
 // Footers
 "No hidden lists." = "Ingen skjulte lister.";
-"No declined memberships." = "Ingen avviste innmeldingsforespørsler.";
 
 // Labels
 "All contacts" = "Alle kontakter";
@@ -353,6 +351,8 @@
 "You must complete your registration before you can start using Origo." = "Du må fullføre registreringen før du kan begynne å bruke Origo.";
 "You are administrator" = "Du er administrator";
 "You are an administrator of this list. If you want to hide it, you must appoint another administrator and remove yourself as administrator." = "Du er administrator av denne lista. Om du ønsker å skjule den, må du utpeke en annen administrator og fjerne deg selv som administrator.";
+"Join requests" = "Innmeldingsforespørsler";
+"%@ has pending join requests." = "%@ har ubehandlede innmeldingsforespørsler.";
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Husstanden din omfatter mindreårige. Vil du angi foreldrerelasjoner?";
@@ -403,6 +403,8 @@
 // Prompts
 "Do you want to keep this listing?" = "Vil du beholde denne oppføringen?";
 "Do you want to unhide this listing?" = "Vil du hente fram igjen denne oppføringen?";
+"%@ has requested to join %@" = "%@ har bedt om å bli med i %@";
+"%@ have requested to join %@" = "%@ har bedt om å bli med i %@";
 
 // Defaults
 "My place" = "Min husstand";
@@ -481,7 +483,6 @@
 "Is %@ the phone number for %@?" = "Er %@ telefonnummeret til %@?";
 "Does %@ live with %@?" = "Bor %@ med %@?";
 "Does %@ live with %@ or %@?" = "Bor %@ med %@ eller %@?";
-"%@ has requested to join %@" = "%@ har bedt om å bli med i %@";
 
 // Terms
 "his parents" = "foreldrene hans";
@@ -569,12 +570,12 @@
 "Already a member" = "Allerede medlem";
 "%@ has the join code '%@'. You are already a member of %@." = "%@ har innmeldingskoden \"%@\". Du er allerede medlem av %@.";
 "%@ has the join code '%@'. %@ is already a member of %@." = "%@ har innmeldingskoden \"%@\". %@ er allerede medlem av %@.";
-"Join request sent" = "Innmeldingsforespørsel sendt";
+"Awaiting approval" = "Venter på godkjenning";
 "%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å bli meldt inn i %@. Du vil få tilgang så snart forespørselen er godkjent.";
 "%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å melde %@ inn i %@. Du vil få tilgang så snart forespørselen er godkjent.";
-"Join request denied" = "Innmeldingsforespørsel avvist";
-"%@ has join code '%@'. You have already sent a request to join %@. The request was denied. You can delete or resend the request under Settings." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å bli meldt inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt under Innstillinger.";
-"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was denied. You can delete or resend the request under Settings." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om melde %@ inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt under Innstillinger.";
+"Join request declined" = "Innmeldingsforespørsel avvist";
+"%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å bli meldt inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt i startbildet.";
+"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om melde %@ inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt i startbildet.";
 "Primarily for adults" = "Primært for voksne";
 "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du er mindreårig. Lista med innmeldingskode \"%@\" er først og fremst for voksne. Er du sikker på at du vil melde deg inn?";
 "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ er mindreårig. Lista med innmeldingskode \"%@\" er primært for voksne. Er du sikker på at du vil fortsette?";
@@ -583,7 +584,7 @@
 "Join as %@" = "Meld inn som %@";
 "The list with join code '%@' represents a %@. Do you want to join as %@?" = "Lista med innmeldingskode \"%@\" representerer en %@. Vil du melde deg inn som %@?";
 "Community list" = "Nærmiljøliste";
-"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request." = "Lista med innmeldingskode \"%@\" er en nærmiljøliste som består av hele husholdninger. %@ vil også bli innlemmet i innmeldingsforespørselen.";
+"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request." = "Lista med innmeldingskode \"%@\" er en nærmiljøliste som består av hele husholdninger. %@ vil også bli tatt med i innmeldingsforespørselen.";
 
 
 /***

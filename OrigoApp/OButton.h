@@ -10,6 +10,11 @@
 
 @interface OButton : UIButton
 
+@property (nonatomic) OTableViewCell *embeddingCell;
+
 - (id)initWithTitle:(NSString *)title target:(id)target action:(SEL)action;
+
++ (instancetype)infoButton;
++ (instancetype)joinRequestButton;
 
 @end

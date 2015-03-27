@@ -423,9 +423,6 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             } else if ([target isEqualToString:kTargetHiddenOrigos]) {
                 cell.detailTextLabel.text = [@(numberOfHiddenOrigos) description];
                 cell.destinationId = kIdentifierOrigoList;
-            } else if ([target isEqualToString:kTargetDeclinedOrigos]) {
-                cell.detailTextLabel.text = [@(numberOfDeclinedOrigos) description];
-                cell.destinationId = kIdentifierOrigoList;
             }
         } else if (sectionKey == kSectionKeyActions) {
             NSString *accountKey = [self dataAtIndexPath:indexPath];

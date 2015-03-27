@@ -647,6 +647,19 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)setEmbeddedButton:(OButton *)actionButton
+{
+    _embeddedButton = actionButton;
+    _embeddedButton.embeddingCell = self;
+    
+    if (actionButton) {
+        [_embeddedButton addTarget:self.state.viewController action:@selector(didTapEmbeddedButton:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    self.notificationView = _embeddedButton;
+}
+
+
 #pragma mark - UIView overrides
 
 - (void)layoutSubviews

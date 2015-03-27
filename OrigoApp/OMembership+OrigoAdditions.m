@@ -239,7 +239,7 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
 
 - (BOOL)isParticipancy
 {
-    return [self.type isEqualToString:kMembershipTypeParticipancy] && ![self isDeclined];
+    return [self.type isEqualToString:kMembershipTypeParticipancy];
 }
 
 

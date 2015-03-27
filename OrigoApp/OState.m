@@ -22,7 +22,6 @@ NSString * const kActionRegister = @"register";
 NSString * const kTargetAdmins = @"admins";
 NSString * const kTargetAffiliation = @"affiliation";
 NSString * const kTargetAllContacts = @"contacts";
-NSString * const kTargetDeclinedOrigos = @"declined";
 NSString * const kTargetDevices = @"devices";
 NSString * const kTargetElder = @"elder";
 NSString * const kTargetEmail = @"email";
