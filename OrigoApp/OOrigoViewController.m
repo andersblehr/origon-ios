@@ -538,7 +538,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 cell.destinationId = kIdentifierMember;
                 
                 if ([[_origo membershipForMember:member] needsPeerAcceptance]) {
-                    cell.notificationView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                    cell.detailTextLabel.text = nil;
+                    cell.notificationView = [UIView joinRequestNotificationView];
                 }
             }
         }
@@ -564,7 +566,9 @@ static NSInteger const kActionSheetTagRecipients = 4;
                 cell.destinationTarget = roleHolder;
                 
                 if ([[_origo membershipForMember:roleHolder] needsPeerAcceptance]) {
-                    cell.notificationView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                    cell.detailTextLabel.text = nil;
+                    cell.notificationView = [UIView joinRequestNotificationView];
                 }
             }
         } else {

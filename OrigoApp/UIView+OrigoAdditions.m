@@ -54,6 +54,20 @@ static CGFloat const kImageShadowOffset = 1.5f;
 }
 
 
+#pragma mark - Factory methods
+
++ (UIView *)infoNotificationView
+{
+    return [UIButton buttonWithType:UIButtonTypeInfoDark];
+}
+
+
++ (UIView *)joinRequestNotificationView
+{
+    return [UIButton buttonWithType:UIButtonTypeContactAdd];
+}
+
+
 #pragma mark - Hiding hairline subviews
 
 - (void)setHairlinesHidden:(BOOL)hidden

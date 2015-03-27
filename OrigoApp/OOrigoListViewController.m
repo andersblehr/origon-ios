@@ -298,7 +298,10 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         cell.textLabel.text = [origo displayName];
         
-        if ([[membership roles] count]) {
+        if ([self targetIs:kTargetDeclinedOrigos]) {
+            cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
+            cell.selectable = YES;
+        } else if ([[membership roles] count]) {
             cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
         } else {
             cell.detailTextLabel.text = origo.descriptionText;
@@ -311,27 +314,29 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), [ward givenName]];
         } else {
             cell.textLabel.text = origo.name;
-            cell.detailTextLabel.text = origo.descriptionText;
+            
+            if ([self targetIs:kTargetDeclinedOrigos]) {
+                cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
+                cell.selectable = YES;
+            } else {
+                cell.detailTextLabel.text = origo.descriptionText;
+            }
         }
     }
     
-    if ([membership isRequested]) {
+    if ([membership needsUserAcceptance]) {
+        cell.notificationView = [OLabel genericLabelWithText:NSLocalizedString(@"New!", @"")];
+    } else if ([membership isRequested]) {
         cell.textLabel.textColor = [UIColor tonedDownTextColour];
         cell.detailTextLabel.text = NSLocalizedString(@"Join request sent", @"");
         cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         cell.selectable = NO;
-    } else if ([self targetIs:kTargetDeclinedOrigos]) {
-        cell.selectable = YES;
-    } else if (![origo isStash]) {
+    } else if (![origo isStash] && ![self targetIs:kTargetDeclinedOrigos]) {
         cell.destinationId = kIdentifierOrigo;
         
         if ([origo hasPendingJoinRequests]) {
-            cell.notificationView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+            cell.notificationView = [UIView joinRequestNotificationView];
         }
-    }
-    
-    if (membership && [membership needsUserAcceptance] && ![membership isHidden]) {
-        cell.notificationView = [OLabel genericLabelWithText:NSLocalizedString(@"New!", @"")];
     }
     
     [cell loadImageForOrigo:origo];

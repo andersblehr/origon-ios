@@ -121,11 +121,11 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
         }
         
         if ([self.member isUser]) {
-            if ([self.origo isCommitted]) {
-                self.status = kMembershipStatusRequested;
-            } else {
+            if ([self.origo userIsCreator]) {
                 self.status = kMembershipStatusActive;
                 self.isAdmin = @YES;
+            } else {
+                self.status = kMembershipStatusRequested;
             }
         } else if ([self.member isHousemateOfUser]) {
             if ([self.origo indirectlyKnowsAboutMember:[OMeta m].user]) {
