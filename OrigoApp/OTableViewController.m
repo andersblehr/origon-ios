@@ -33,6 +33,8 @@ static UIViewController * _reinstantiatedRootViewController;
     BOOL _didInitialise;
     BOOL _isUsingSectionIndexTitles;
     BOOL _shouldBeginEditingTitleView;
+    BOOL _needsReloadOnModalDismissal;
+    BOOL _needsInvokeViewWillAppearOnModalDismissal;
     
     Class _entityClass;
     NSInteger _inputSectionKey;
@@ -869,6 +871,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             self.navigationController.modalPresentationStyle = UIModalPresentationCurrentContext;
         } else {
             destinationViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
+            
+            _needsInvokeViewWillAppearOnModalDismissal = YES;
         }
         
         destinationViewController.view.alpha = 0.f;
@@ -931,10 +935,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [viewController.view addSubview:snapshot];
         }
         
+        _needsReloadOnModalDismissal = [[OMeta m] userIsLoggedIn] && !viewController.didCancel;
+        
+        if (_needsInvokeViewWillAppearOnModalDismissal) {
+            [self viewWillAppear:YES];
+        }
+        
         [self dismissViewControllerAnimated:YES completion:^{
-            if ([[OMeta m] userIsLoggedIn] && !viewController.didCancel) {
-                [self reloadSections];
-            }
+            _needsReloadOnModalDismissal = NO;
+            _needsInvokeViewWillAppearOnModalDismissal = NO;
             
             if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
                 [_instance didDismissModalViewController:viewController];
@@ -1427,7 +1436,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [self setTableViewFooterViewIfNeeded];
         
-        if (_didResurface) {
+        if (_didResurface || _needsReloadOnModalDismissal) {
             [self reloadSections];
         }
         

@@ -49,12 +49,12 @@
 "[placeholder] club" = "Name of club";
 "[placeholder] dateOfBirth" = "Date of birth";
 "[placeholder] descriptionText" = "An optional description";
-"[placeholder] email" = "A valid email address";
+"[placeholder] email" = "Email address";
 "[placeholder] fullName" = "Full name";
 "[placeholder] givenName" = "Name";
 "[placeholder] joinCode" = "Join code";
 "[placeholder] listName" = "List name";
-"[placeholder] mobilePhone" = "Mobile phone number";
+"[placeholder] mobilePhone" = "Mobile number";
 "[placeholder] name"  = "Name";
 "[placeholder] newPassword" = "New password";
 "[placeholder] oldPassword" = "Old password";
@@ -62,7 +62,7 @@
 "[placeholder] photo" = "Photo";
 "[placeholder] preschool" = "Name of preschool";
 "[placeholder] preschoolClass" = "Class";
-"[placeholder] privateListName" = "Name";
+"[placeholder] privateListName" = "List name";
 "[placeholder] repeatNewPassword" = "Repeat new password";
 "[placeholder] repeatPassword" = "Repeat your password";
 "[placeholder] residenceName" = "Moniker for this address";
@@ -339,7 +339,6 @@
 // Labels
 "All contacts" = "All contacts";
 "New!" = "New!";
-"Join request sent" = "Join request sent";
 
 // Buttons
 "Yourself" = "Yourself";
@@ -569,8 +568,14 @@
 "Unknown join code" = "Unknown join code";
 "The join code '%@' is unknown. Please check your spelling." = "The join code '%@' is unknown. Please check your spelling.";
 "Already a member" = "Already a member";
-"%@ has the join code '%@'. You are already a member of %@." = "%@ has the join code '%@'. You are already a member of %@.";
-"%@ has the join code '%@'. %@ is already a member of %@." = "%@ has the join code '%@'. %@ is already a member of %@.";
+"%@ has join code '%@'. You are already a member of %@." = "%@ has join code '%@'. You are already a member of %@.";
+"%@ has join code '%@'. %@ is already a member of %@." = "%@ has join code '%@'. %@ is already a member of %@.";
+"Join request sent" = "Join request sent";
+"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved." = "%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved.";
+"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved." = "%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved.";
+"Join request denied" = "Join request denied";
+"%@ has join code '%@'. You have already sent a request to join %@. The request was denied. You can delete or resend the request under Settings." = "%@ has join code '%@'. You have already sent a request to join %@. The request was denied. You can delete or resend the request under Settings.";
+"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was denied. You can delete or resend the request under Settings." = "%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was denied. You can delete or resend the request under Settings.";
 "Primarily for adults" = "Primarily for adults";
 "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?";
 "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
@@ -579,7 +584,7 @@
 "Join as %@" = "Join as %@";
 "The list with join code '%@' represents a %@. Do you want to join as %@?" = "The list with join code '%@' represents a %@. Do you want to join as %@?";
 "Community list" = "Community list";
-"The list with join code '%@' consists of whole households. %@ will also be included in the join request." = "The list with join code '%@' consists of whole households. %@ will also be included in the join request.";
+"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request." = "The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request.";
 
 /***
  * ORecipientPickerViewController strings

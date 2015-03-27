@@ -1068,14 +1068,8 @@ static NSInteger const kButtonIndexContinue = 1;
         [cell loadMember:guardian inOrigo:_origo excludeRoles:NO excludeRelations:YES];
         
         if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
-            NSString *parentLabel = [guardian parentNoun][singularIndefinite];
-            
-            if (cell.detailTextLabel.text) {
-                cell.textLabel.text = [NSString stringWithFormat:@"%@ (%@)", cell.textLabel.text, parentLabel];
-            } else {
-                cell.detailTextLabel.text = [parentLabel stringByCapitalisingFirstLetter];
-                cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
-            }
+            cell.detailTextLabel.text = [[guardian parentNoun][singularIndefinite] stringByCapitalisingFirstLetter];
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         }
         
         cell.destinationId = kIdentifierMember;

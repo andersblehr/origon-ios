@@ -12,6 +12,9 @@ extern CGFloat const kFadeAnimationDuration;
 
 @interface UIView (OrigoAdditions)
 
++ (UIView *)infoNotificationView;
++ (UIView *)joinRequestNotificationView;
+
 - (void)setHairlinesHidden:(BOOL)hide;
 - (void)addDropShadowForPhotoFrame;
 

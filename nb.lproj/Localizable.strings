@@ -62,7 +62,7 @@
 "[placeholder] photo" = "Bilde";
 "[placeholder] preschool" = "Barnehagens navn";
 "[placeholder] preschoolClass" = "Navn på avdelingen";
-"[placeholder] privateListName" = "Navn";
+"[placeholder] privateListName" = "Listenavn";
 "[placeholder] repeatNewPassword" = "Gjenta nytt passord";
 "[placeholder] repeatPassword" = "Gjenta passordet ditt";
 "[placeholder] residenceName" = "Kallenavn for denne adressen";
@@ -338,7 +338,6 @@
 // Labels
 "All contacts" = "Alle kontakter";
 "New!" = "Ny!";
-"Join request sent" = "Innmeldingsforespørsel sendt";
 
 // Buttons
 "Yourself" = "Deg selv";
@@ -570,6 +569,12 @@
 "Already a member" = "Allerede medlem";
 "%@ has the join code '%@'. You are already a member of %@." = "%@ har innmeldingskoden \"%@\". Du er allerede medlem av %@.";
 "%@ has the join code '%@'. %@ is already a member of %@." = "%@ har innmeldingskoden \"%@\". %@ er allerede medlem av %@.";
+"Join request sent" = "Innmeldingsforespørsel sendt";
+"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å bli meldt inn i %@. Du vil få tilgang så snart forespørselen er godkjent.";
+"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å melde %@ inn i %@. Du vil få tilgang så snart forespørselen er godkjent.";
+"Join request denied" = "Innmeldingsforespørsel avvist";
+"%@ has join code '%@'. You have already sent a request to join %@. The request was denied. You can delete or resend the request under Settings." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å bli meldt inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt under Innstillinger.";
+"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was denied. You can delete or resend the request under Settings." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om melde %@ inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt under Innstillinger.";
 "Primarily for adults" = "Primært for voksne";
 "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du er mindreårig. Lista med innmeldingskode \"%@\" er først og fremst for voksne. Er du sikker på at du vil melde deg inn?";
 "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ er mindreårig. Lista med innmeldingskode \"%@\" er primært for voksne. Er du sikker på at du vil fortsette?";
@@ -578,7 +583,7 @@
 "Join as %@" = "Meld inn som %@";
 "The list with join code '%@' represents a %@. Do you want to join as %@?" = "Lista med innmeldingskode \"%@\" representerer en %@. Vil du melde deg inn som %@?";
 "Community list" = "Nærmiljøliste";
-"The list with join code '%@' consists of whole households. %@ will also be included in the join request." = "Lista med innmeldingskode \"%@\" består av hele husholdninger. %@ vil også bli tatt med i innmeldingsforespørselen.";
+"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request." = "Lista med innmeldingskode \"%@\" er en nærmiljøliste som består av hele husholdninger. %@ vil også bli innlemmet i innmeldingsforespørselen.";
 
 
 /***

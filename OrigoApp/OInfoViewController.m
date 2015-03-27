@@ -204,7 +204,7 @@ static NSInteger const kSectionKeyMembership = 2;
                 if ([origo.joinCode hasValue]) {
                     cell.detailTextLabel.text = origo.joinCode;
                 } else {
-                    cell.notificationView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+                    cell.notificationView = [UIView infoNotificationView];
                 }
             } else if ([displayKey isEqualToString:kLabelKeyAdmins]) {
                 NSInteger adminCount = [[origo admins] count];
