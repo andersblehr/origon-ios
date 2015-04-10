@@ -614,7 +614,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     
     if ([self targetIs:kTargetSettings]) {
         if (sectionKey == kSectionKeyActions) {
-            cell.selected = NO;
+            [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
             
             NSString *actionKey = [self dataAtIndexPath:indexPath];
             

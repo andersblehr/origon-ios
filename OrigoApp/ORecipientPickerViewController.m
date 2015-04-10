@@ -101,11 +101,15 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
 }
 
 
-- (void)performGroupsAction
+- (void)performRecipientGroupsAction
 {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
     
-    BOOL selectAllOnly = !_titleSegments || [_origo isCommunity] || ([_origo isPrivate] && ![_origo hasTeenRegulars]);
+    BOOL selectAllOnly = !_titleSegments || [_origo isCommunity];
+    
+    if (!selectAllOnly && [_titleSegments numberOfSegments] == 2) {
+        selectAllOnly = [self hasSegment:_segmentParents] && [self hasSegment:_segmentGroupedParents];
+    }
     
     if (selectAllOnly) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
@@ -216,13 +220,13 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendTextButtonWithTarget:self];
         
         if (![self targetIs:kTargetAllContacts] && [[_origo textRecipients] count] > 1) {
-            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem recipientGroupsButtonWithTarget:self]];
         }
     } else if ([self targetIs:kTargetEmail]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendEmailButtonWithTarget:self];
         
         if (![self targetIs:kTargetAllContacts] && [[_origo emailRecipients] count] > 1) {
-            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem recipientGroupsButtonWithTarget:self]];
         }
     }
     
@@ -500,7 +504,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.selected = NO;
+    [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
     
     id<OMember> member = [self dataAtIndexPath:indexPath];
     
@@ -556,7 +560,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         }
     } else {
         if ([self.navigationItem.rightBarButtonItems count] == 1) {
-            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem recipientGroupsButtonWithTarget:self]];
         }
     }
     

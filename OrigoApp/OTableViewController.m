@@ -1981,7 +1981,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             
             [self.navigationController pushViewController:destinationViewController animated:YES];
         } else {
-            cell.selected = NO;
+            [_tableView deselectRowAtIndexPath:indexPath animated:NO];
+            
             didSelectCell = NO;
         }
     }

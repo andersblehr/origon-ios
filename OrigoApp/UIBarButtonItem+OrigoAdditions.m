@@ -14,13 +14,14 @@ NSInteger const kBarButtonTagDirections = 12;
 NSInteger const kBarButtonTagEdit = 13;
 NSInteger const kBarButtonTagFavourite = 14;
 NSInteger const kBarButtonTagGroups = 15;
-NSInteger const kBarButtonTagInfo = 16;
-NSInteger const kBarButtonTagLocation = 17;
-NSInteger const kBarButtonTagLookup = 18;
-NSInteger const kBarButtonTagMultiRole = 19;
-NSInteger const kBarButtonTagNavigation = 20;
-NSInteger const kBarButtonTagPlus = 21;
-NSInteger const kBarButtonTagSettings = 22;
+NSInteger const kBarButtonTagRecipientGroups = 16;
+NSInteger const kBarButtonTagInfo = 17;
+NSInteger const kBarButtonTagLocation = 18;
+NSInteger const kBarButtonTagLookup = 19;
+NSInteger const kBarButtonTagMultiRole = 20;
+NSInteger const kBarButtonTagNavigation = 21;
+NSInteger const kBarButtonTagPlus = 22;
+NSInteger const kBarButtonTagSettings = 23;
 
 NSInteger const kBarButtonTagBack = 30;
 NSInteger const kBarButtonTagCancel = 31;
@@ -91,6 +92,12 @@ static UIBarButtonItem *_flexibleSpace = nil;
 + (instancetype)groupsButtonWithTarget:(id)target
 {
     return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileGroups] target:target action:@selector(performGroupsAction) tag:kBarButtonTagGroups];
+}
+
+
++ (instancetype)recipientGroupsButtonWithTarget:(id)target
+{
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileRecipientGroups] target:target action:@selector(performRecipientGroupsAction) tag:kBarButtonTagRecipientGroups];
 }
 
 

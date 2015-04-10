@@ -143,10 +143,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
                 for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
                     for (OMember *member in [origo members]) {
                         if ([member isJuvenile]) {
-                            if ([member isTeenOrOlder] || [member isHousemateOfUser]) {
-                                [allPeers addObject:member];
-                            }
-                            
                             for (OMember *guardian in [member guardians]) {
                                 for (OOrigo *residence in [guardian residences]) {
                                     [allPeers unionSet:[NSSet setWithArray:[residence elders]]];

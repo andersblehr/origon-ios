@@ -112,6 +112,13 @@
 
 @end
 
+@protocol ROMember <OEntity>
+
+@optional
+- (void)roRoDinBaat;
+
+@end
+
 
 @interface OMember (OrigoAdditions) <OMember>
 

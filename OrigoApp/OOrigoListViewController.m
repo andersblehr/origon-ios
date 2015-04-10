@@ -33,7 +33,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     NSArray *_wards;
     NSMutableArray *_origoTypes;
-    OTableViewCell *_selectedCell;
     
     BOOL _needsEditParents;
 }
@@ -422,8 +421,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         _origo = [self dataAtIndexPath:indexPath];
 
         if ([[_origo membershipForMember:_member] isDeclined]) {
-            _selectedCell = cell;
-            
             OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagDeclinedJoinRequest];
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Delete join request", @"") tag:kButtonTagDeclinedJoinRequestDelete];
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Resend join request", @"") tag:kButtonTagDeclinedJoinRequestResend];
@@ -558,7 +555,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             break;
             
         case kActionSheetTagDeclinedJoinRequest:
-            _selectedCell.selected = NO;
+            [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
 
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 NSArray *requestingMembers = nil;

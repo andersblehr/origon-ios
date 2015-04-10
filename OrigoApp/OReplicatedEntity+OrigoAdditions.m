@@ -16,11 +16,15 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)isTransientProperty:(NSString *)propertyKey
++ (BOOL)isTransientProperty:(NSString *)propertyKey
 {
-    NSArray *transientPropertyKeys = @[kPropertyKeyPasswordHash, kPropertyKeyHashCode];
-    
-    return [transientPropertyKeys containsObject:propertyKey];
+    return [@[kPropertyKeyPasswordHash, kPropertyKeyHashCode] containsObject:propertyKey];
+}
+
+
++ (BOOL)isNullableProperty:(NSString *)propertyKey
+{
+    return ![@[kPropertyKeyCreatedBy, kPropertyKeyDateCreated] containsObject:propertyKey];
 }
 
 
@@ -66,11 +70,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     }
     
     for (NSString *propertyKey in [entityClass propertyKeys]) {
-        if ([@[kPropertyKeyCreatedBy, kPropertyKeyDateCreated] containsObject:propertyKey]) {
-            if (dictionary[propertyKey]) {
-                [entity setValueFromSerialisedValue:dictionary[propertyKey] forKey:propertyKey];
-            }
-        } else {
+        if (dictionary[propertyKey] || [self isNullableProperty:propertyKey]) {
             [entity setValueFromSerialisedValue:dictionary[propertyKey] forKey:propertyKey];
         }
     }
@@ -109,7 +109,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     NSString *hashableString = @"";
     
     for (NSString *key in [[self class] propertyKeys]) {
-        if (![self isTransientProperty:key]) {
+        if (![[self class] isTransientProperty:key]) {
             id value = [self valueForKey:key];
             
             if (value) {
@@ -120,7 +120,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     }
     
     for (NSString *key in [[self class] toOneRelationshipKeys]) {
-        if (![self isTransientProperty:key]) {
+        if (![[self class] isTransientProperty:key]) {
             OReplicatedEntity *entity = [self valueForKey:key];
             
             if (entity) {
@@ -300,13 +300,13 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     dictionary[kInternalKeyEntityClass] = NSStringFromClass([self class]);
     
     for (NSString *key in [[self class] propertyKeys]) {
-        if ([self hasValueForKey:key] && ![self isTransientProperty:key]) {
+        if ([self hasValueForKey:key] && ![[self class] isTransientProperty:key]) {
             dictionary[key] = [self serialisedValueForKey:key];
         }
     }
     
     for (NSString *key in [[self class] toOneRelationshipKeys]) {
-        if ([self hasValueForKey:key] && ![self isTransientProperty:key]) {
+        if ([self hasValueForKey:key] && ![[self class] isTransientProperty:key]) {
             dictionary[key] = [OValidator referenceForEntity:[self valueForKey:key]];
         }
     }
