@@ -41,6 +41,8 @@
 #import "OTextInput.h"
 #import "OTitleViewDelegate.h"
 
+#import "OReplicatedEntity.h"
+#import "OReplicatedEntity+OrigoAdditions.h"
 #import "ODevice.h"
 #import "ODevice+OrigoAdditions.h"
 #import "OMember.h"
@@ -49,8 +51,6 @@
 #import "OMembership+OrigoAdditions.h"
 #import "OOrigo.h"
 #import "OOrigo+OrigoAdditions.h"
-#import "OReplicatedEntity.h"
-#import "OReplicatedEntity+OrigoAdditions.h"
 #import "OReplicatedEntityRef.h"
 
 #import "OEntityProxy.h"

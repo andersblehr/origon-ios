@@ -256,14 +256,12 @@
 + (NSArray *)singleMemberPerPrimaryResidenceFromMembers:(NSArray *)members includeUser:(BOOL)includeUser
 {
     NSMutableArray *singleMemberPerPrimaryAddress = [NSMutableArray array];
-    NSMutableSet *processedCandidates = [NSMutableSet set];
+    NSMutableSet *processedCandidates = includeUser ? [NSMutableSet set] : [NSMutableSet setWithArray:[[[OMeta m].user primaryResidence] elders]];
     
     for (id<OMember> member in members) {
-        if (![member isUser] || includeUser) {
-            if (![processedCandidates containsObject:member]) {
-                [singleMemberPerPrimaryAddress addObject:member];
-                [processedCandidates addObjectsFromArray:[[member primaryResidence] elders]];
-            }
+        if (![processedCandidates containsObject:member]) {
+            [singleMemberPerPrimaryAddress addObject:member];
+            [processedCandidates addObjectsFromArray:[[member primaryResidence] elders]];
         }
     }
     

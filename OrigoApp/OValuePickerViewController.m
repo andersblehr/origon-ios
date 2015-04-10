@@ -112,11 +112,13 @@ static NSInteger const kSectionKeyValues = 0;
         _isMultiValuePicker = ![self targetIs:kTargetMember];
         _isNoValuePicker = YES;
         
-        if ([self targetIs:@[kTargetMember, kTargetMembers]]) {
+        if ([self targetIs:kTargetMember]) {
+            self.title = NSLocalizedString(@"Listed elsewhere", @"");
+        } else if ([self targetIs:kTargetMembers]) {
             if ([_origo isCommunity]) {
-                self.title = NSLocalizedString(@"Households", @"");
+                self.titleView = [OTitleView titleViewWithTitle:NSLocalizedString(@"Households", @"")];
             } else {
-                self.title = NSLocalizedString(@"Listed elsewhere", @"");
+                self.titleView = [OTitleView titleViewWithTitle:NSLocalizedString(@"Listed elsewhere", @"")];
             }
         } else if ([self targetIs:kTargetAffiliation]) {
             if ([@[kTargetRole, kTargetGroup] containsObject:self.target]) {
@@ -271,9 +273,12 @@ static NSInteger const kSectionKeyValues = 0;
             cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
             cell.selectable = NO;
         }
+    } else if ([self targetIs:kTargetMember]) {
+        [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:nil excludeRoles:YES excludeRelations:YES];
     } else if ([self targetIs:kTargetMembers]) {
+        id<OMember> candidate = [self dataAtIndexPath:indexPath];
+        
         if ([_origo isCommunity]) {
-            id<OMember> candidate = [self dataAtIndexPath:indexPath];
             id<OOrigo> primaryResidence = [candidate primaryResidence];
             NSArray *elders = [primaryResidence elders];
             
@@ -294,8 +299,10 @@ static NSInteger const kSectionKeyValues = 0;
                 cell.selectable = NO;
             }
         } else {
-            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:nil excludeRoles:YES excludeRelations:YES];
+            [cell loadMember:candidate inOrigo:nil excludeRoles:YES excludeRelations:YES];
         }
+        
+        cell.checked = [_pickedValues containsObject:candidate];
     } else {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
@@ -309,9 +316,7 @@ static NSInteger const kSectionKeyValues = 0;
             }
         }
         
-        if ([_pickedValues count]) {
-            cell.checked = [_pickedValues containsObject:candidate];
-        }
+        cell.checked = [_pickedValues containsObject:candidate];
     }
     
     if (cell.checked && !_isMultiValuePicker) {
@@ -336,8 +341,9 @@ static NSInteger const kSectionKeyValues = 0;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.selected = NO;
-    cell.checked = cell.checked && [_pickedValues count] == 1 ? _isNoValuePicker : !cell.checked;
+    [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+    
+    cell.checked = cell.checked && [_pickedValues count] == 1 ? !_isNoValuePicker : !cell.checked;
     
     id oldValue = nil;
     id pickedValue = [self dataAtIndexPath:indexPath];

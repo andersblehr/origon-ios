@@ -145,8 +145,10 @@ NSString * const kIconFileEdit = @"830-pencil-toolbar.png";
 NSString * const kIconFileLocation = @"722-location-pin-toolbar.png";
 NSString * const kIconFileDirections = @"852-map-toolbar.png";
 NSString * const kIconFileNavigation = @"113-navigation.png";
+NSString * const kIconFileGroups = @"895-user-group-toolbar.png";
+NSString * const kIconFileRecipientGroups = @"779-users-toolbar.png";
 NSString * const kIconFileInfo = @"724-info-toolbar.png";
-NSString * const kIconFileLookup = @"779-users-toolbar.png";
+NSString * const kIconFileLookup = @"703-download-toolbar.png";
 NSString * const kIconFileAllContacts = @"729-top-list-toolbar.png";
 NSString * const kIconFileFavouriteNo = @"726-star-toolbar.png";
 NSString * const kIconFileFavouriteYes = @"726-star-toolbar-selected.png";
@@ -156,7 +158,6 @@ NSString * const kIconFileCall = @"735-phone.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
 NSString * const kIconFileTwoHeads = @"ro-two-heads.png";
-NSString * const kIconFileGroups = @"895-user-group-toolbar.png";
 
 // Gender codes
 NSString * const kGenderMale = @"M";

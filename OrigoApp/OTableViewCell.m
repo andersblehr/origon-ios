@@ -348,7 +348,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (_isInputCell) {
         CGFloat desiredHeight = [_constrainer heightOfInputCell];
         
-        if (abs(self.frame.size.height - desiredHeight) > 0.5f) {
+        if (fabs(self.frame.size.height - desiredHeight) > 0.5f) {
             [self setNeedsUpdateConstraints];
             
             if ([OMeta iOSVersionIs:@"7"]) {
@@ -660,6 +660,34 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+#pragma mark - UITableViewCell custom accessors
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    if (_selectable) {
+        [super setHighlighted:highlighted animated:animated];
+    }
+}
+
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+{
+    if (_selectable) {
+        [super setSelected:selected animated:animated];
+    }
+}
+
+
+- (void)setTintColor:(UIColor *)tintColor
+{
+    [super setTintColor:tintColor];
+    
+    if ([self.accessoryView isKindOfClass:[UILabel class]]) {
+        ((UILabel *)self.accessoryView).textColor = tintColor;
+    }
+}
+
+
 #pragma mark - UIView overrides
 
 - (void)layoutSubviews
@@ -686,7 +714,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)updateConstraints
 {
     [super updateConstraints];
-
+    
     if (_isInputCell || _isInlineCell) {
         [self removeConstraints:[self constraints]];
         
@@ -700,34 +728,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:options metrics:nil views:_views]];
             }
         }
-    }
-}
-
-
-#pragma mark - UITableViewCell custom accessors
-
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
-{
-    if (_selectable) {
-        [super setHighlighted:highlighted animated:animated];
-    }
-}
-
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    if (_selectable) {
-        [super setSelected:selected animated:animated];
-    }
-}
-
-
-- (void)setTintColor:(UIColor *)tintColor
-{
-    [super setTintColor:tintColor];
-    
-    if ([self.accessoryView isKindOfClass:[UILabel class]]) {
-        ((UILabel *)self.accessoryView).textColor = tintColor;
     }
 }
 

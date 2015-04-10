@@ -24,8 +24,8 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     id<OOrigo> _origo;
     id<OMember> _member;
     
-    OTableViewCell *_joinCell;
     OTableViewCell *_joinCodeCell;
+    
     NSString *_joinCode;
     NSString *_internalJoinCode;
     NSString *_organiserRole;
@@ -202,8 +202,6 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             [actionSheet show];
         }
     } else if ([self targetIs:kTargetOrigo]) {
-        _joinCell = cell;
-        
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagJoin];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Send join request", @"")];
         
@@ -375,10 +373,10 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
 {
     NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
     
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
+
     switch (actionSheet.tag) {
         case kActionSheetTagJoinCode:
-            _joinCodeCell.selected = NO;
-            
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 if (buttonTag == kButtonTagJoinCodeDelete) {
                     _origo.joinCode = nil;
@@ -393,8 +391,6 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             break;
             
         case kActionSheetTagJoin:
-            _joinCell.selected = NO;
-            
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 [_origo instantiate];
                 

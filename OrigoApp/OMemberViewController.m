@@ -1762,7 +1762,7 @@ static NSInteger const kButtonIndexContinue = 1;
             break;
             
         case kActionSheetTagEditRole:
-            _roleCell.selected = NO;
+            [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
             
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 [self editInlineInCell:_roleCell];

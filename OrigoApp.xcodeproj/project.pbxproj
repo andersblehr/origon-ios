@@ -65,6 +65,9 @@
 		5C8A6FDA1A208A0600AA18D6 /* 726-star-toolbar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8A6FD41A208A0600AA18D6 /* 726-star-toolbar@3x.png */; };
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
+		5C8C6B6F1AD809DC00C05AD1 /* 703-download-toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8C6B6C1AD809DC00C05AD1 /* 703-download-toolbar.png */; };
+		5C8C6B701AD809DC00C05AD1 /* 703-download-toolbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8C6B6D1AD809DC00C05AD1 /* 703-download-toolbar@2x.png */; };
+		5C8C6B711AD809DC00C05AD1 /* 703-download-toolbar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8C6B6E1AD809DC00C05AD1 /* 703-download-toolbar@3x.png */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
 		5C986A0C1ABB087A0045573B /* OOrigoJoinerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C986A0B1ABB087A0045573B /* OOrigoJoinerViewController.m */; };
 		5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903417F6B8AD00D957F9 /* 730-envelope.png */; };
@@ -271,6 +274,9 @@
 		5C8B3AB515813DBB000B19FA /* OMemberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberViewController.m; sourceTree = "<group>"; };
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
+		5C8C6B6C1AD809DC00C05AD1 /* 703-download-toolbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "703-download-toolbar.png"; sourceTree = "<group>"; };
+		5C8C6B6D1AD809DC00C05AD1 /* 703-download-toolbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "703-download-toolbar@2x.png"; sourceTree = "<group>"; };
+		5C8C6B6E1AD809DC00C05AD1 /* 703-download-toolbar@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "703-download-toolbar@3x.png"; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "./Default-568h@2x.png"; sourceTree = "<group>"; };
 		5C986A0A1ABB087A0045573B /* OOrigoJoinerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoJoinerViewController.h; sourceTree = "<group>"; };
 		5C986A0B1ABB087A0045573B /* OOrigoJoinerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoJoinerViewController.m; sourceTree = "<group>"; };
@@ -443,6 +449,9 @@
 				5CC129FF19CC7B0E00A545F8 /* 693-ipad.png */,
 				5CC12A0019CC7B0E00A545F8 /* 693-ipad@2x.png */,
 				5CC12A0119CC7B0E00A545F8 /* 693-ipad@3x.png */,
+				5C8C6B6C1AD809DC00C05AD1 /* 703-download-toolbar.png */,
+				5C8C6B6D1AD809DC00C05AD1 /* 703-download-toolbar@2x.png */,
+				5C8C6B6E1AD809DC00C05AD1 /* 703-download-toolbar@3x.png */,
 				5C7BD0461A6CF95B00C1F14B /* 722-location-pin-toolbar.png */,
 				5CE33EFF1A97847A0007272C /* 722-location-pin-toolbar@2x.png */,
 				5C7BD0481A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png */,
@@ -843,7 +852,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0510;
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "Rhelba Source";
 				TargetAttributes = {
 					5CBB63B3146080DF00A9133A = {
@@ -881,6 +890,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C8C6B711AD809DC00C05AD1 /* 703-download-toolbar@3x.png in Resources */,
 				5CD626BF19CB0EAE007DD29B /* 830-pencil-toolbar.png in Resources */,
 				5C7BD04E1A6D1C7A00C1F14B /* InfoPlist.strings in Resources */,
 				5CD626D819CB10F0007DD29B /* 895-user-group-toolbar@2x.png in Resources */,
@@ -939,6 +949,7 @@
 				5CD626D919CB10F0007DD29B /* 895-user-group-toolbar@3x.png in Resources */,
 				5C8A6FD71A208A0600AA18D6 /* 726-star-toolbar-selected@3x.png in Resources */,
 				5CD6268819CB01B6007DD29B /* ro-594-girl.png in Resources */,
+				5C8C6B6F1AD809DC00C05AD1 /* 703-download-toolbar.png in Resources */,
 				5C7BD04B1A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png in Resources */,
 				5C8A6FD91A208A0600AA18D6 /* 726-star-toolbar@2x.png in Resources */,
 				5C7BD0551A6D5F0800C1F14B /* 113-navigation.png in Resources */,
@@ -950,6 +961,7 @@
 				5C98903F17F6B8D500D957F9 /* 735-phone@2x.png in Resources */,
 				5C2BBD1D1AA8539D00DFBACF /* 729-top-list-toolbar@3x.png in Resources */,
 				5CC12A0D19CC829800A545F8 /* ro-692-iphone-5@2x.png in Resources */,
+				5C8C6B701AD809DC00C05AD1 /* 703-download-toolbar@2x.png in Resources */,
 				5C7BD0561A6D5F0800C1F14B /* 113-navigation@2x.png in Resources */,
 				5CD626FF19CB2E7F007DD29B /* ro-two-heads@2x.png in Resources */,
 				5C49A28C1A16902D00D8E596 /* ro-854-list.png in Resources */,
@@ -1131,6 +1143,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1173,6 +1186,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -1200,6 +1214,7 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OrigoApp/OrigoApp-Prefix.pch";
 				INFOPLIST_FILE = "OrigoApp/OrigoApp-Info.plist";
@@ -1220,6 +1235,7 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OrigoApp/OrigoApp-Prefix.pch";
 				INFOPLIST_FILE = "OrigoApp/OrigoApp-Info.plist";
