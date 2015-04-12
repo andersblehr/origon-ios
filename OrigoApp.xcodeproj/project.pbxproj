@@ -403,8 +403,8 @@
 		5CD7723B18D05DA40087E3F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5CDE11AE19F8F92E005018F8 /* OTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableView.h; sourceTree = "<group>"; };
 		5CDE11AF19F8F92E005018F8 /* OTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableView.m; sourceTree = "<group>"; };
-		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OTableViewCell+OrigoAdditions.h"; sourceTree = "<group>"; };
-		5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OTableViewCell+OrigoAdditions.m"; sourceTree = "<group>"; };
+		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OTableViewCell+OrigoAdditions.h"; path = "OrigoApp/OTableViewCell+OrigoAdditions.h"; sourceTree = "<group>"; };
+		5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "OTableViewCell+OrigoAdditions.m"; path = "OrigoApp/OTableViewCell+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CDE879C176F185E00272909 /* OInputCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputCellDelegate.h; sourceTree = "<group>"; };
 		5CE33EFF1A97847A0007272C /* 722-location-pin-toolbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "722-location-pin-toolbar@2x.png"; sourceTree = "<group>"; };
 		5CF3DE271775AD810068B2E7 /* ODefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODefaults.h; sourceTree = "<group>"; };
@@ -734,6 +734,7 @@
 				5C50F2581779A6AD00B961BC /* Cell Layout */,
 				5C4F9766149529BF006E244F /* Cocoa Categories */,
 				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
+				5CD433201ADA53E600DE59E9 /* Cocoa Subclass categories */,
 				5C36BEA51471A05700DD3CEA /* Entities */,
 				5C5ED5CB14F2E95B006BBDFB /* Entity Categories */,
 				5C7C4DCF18E57DDF00903989 /* Entity Proxies */,
@@ -777,6 +778,16 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5CD433201ADA53E600DE59E9 /* Cocoa Subclass categories */ = {
+			isa = PBXGroup;
+			children = (
+				5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.h */,
+				5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m */,
+			);
+			name = "Cocoa Subclass categories";
+			path = ..;
+			sourceTree = "<group>";
+		};
 		5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */ = {
 			isa = PBXGroup;
 			children = (
@@ -792,8 +803,6 @@
 				5CDE11AF19F8F92E005018F8 /* OTableView.m */,
 				5C8B3AB81582493C000B19FA /* OTableViewCell.h */,
 				5C8B3AB91582493C000B19FA /* OTableViewCell.m */,
-				5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.h */,
-				5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m */,
 				5CA10B9A16A7F49F00031D81 /* OTableViewController.h */,
 				5CA10B9B16A7F49F00031D81 /* OTableViewController.m */,
 				5C7379FB1593111B0065AB4F /* OTextField.h */,

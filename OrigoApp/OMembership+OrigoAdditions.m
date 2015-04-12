@@ -134,6 +134,8 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
                 } else {
                     self.status = kMembershipStatusInvited;
                 }
+            } else if ([self.origo isCommunity] && [self.origo userIsMember]) {
+                self.status = kMembershipStatusActive;
             } else {
                 self.status = kMembershipStatusRequested;
             }

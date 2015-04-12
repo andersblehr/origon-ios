@@ -276,7 +276,6 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 {
     NSMutableSet *regulars = [NSMutableSet setWithArray:[self members]];
     [regulars minusSet:[NSSet setWithArray:[self organisers]]];
-    [regulars minusSet:[NSSet setWithArray:[self parentContacts]]];
     
     return [[regulars allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
