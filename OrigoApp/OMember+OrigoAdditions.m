@@ -107,8 +107,10 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
                         for (OOrigo *residence in [member residences]) {
                             for (OMembership *membership in [residence allMemberships]) {
                                 if ([membership isResidency] && membership.member != member) {
-                                    if ([membership.member isJuvenile] == [self isJuvenile]) {
-                                        [allPeers addObject:membership.member];
+                                    if (![self isJuvenile] || ![self isUser]) {
+                                        if ([membership.member isJuvenile] == [self isJuvenile]) {
+                                            [allPeers addObject:membership.member];
+                                        }
                                     }
                                 }
                             }
@@ -118,7 +120,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
             }
         }
         
-        if ([self isJuvenile]) {
+        if ([self isJuvenile] && ![self isUser]) {
             NSMutableSet *siblings = [NSMutableSet set];
             
             for (OMember *guardian in [self guardians]) {
@@ -138,7 +140,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
                     }
                 }
             }
-        } else {
+        } else if (![self isJuvenile]) {
             for (OMember *ward in [self wards]) {
                 for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
                     for (OMember *member in [origo members]) {

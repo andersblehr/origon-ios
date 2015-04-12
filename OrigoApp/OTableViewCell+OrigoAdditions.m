@@ -46,9 +46,8 @@
             BOOL isPeerParticipancy = [participancy.origo isJuvenile] == [[OMeta m].user isJuvenile];
             BOOL isCommunity = isPeerParticipancy ? NO : [participancy.origo isCommunity];
             BOOL isOrganiser = isCommunity ? NO : [[participancy organiserRoles] count] > 0;
-            BOOL isLast = isOrganiser ? NO : participancy == [participancies lastObject];
             
-            if (isPeerParticipancy || isCommunity || isOrganiser || isLast) {
+            if (isPeerParticipancy || isCommunity || isOrganiser) {
                 [associationMemberships addObject:participancy];
                 
                 break;

@@ -112,8 +112,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             
             if ([origo isPrivate]) {
                 keyMember = [origo owner];
-            } else if ([[origo members] count] == 1) {
-                keyMember = [origo members][0];
+            } else {
+                if ([origo isCommunity] && [origo userIsCreator]) {
+                    canDelete = YES;
+                    
+                    for (id<OMember> member in [origo members]) {
+                        canDelete = canDelete && [member isHousemateOfUser];
+                    }
+                } else if ([[origo members] count] == 1) {
+                    keyMember = [origo members][0];
+                }
             }
             
             if (keyMember && origo != [keyMember pinnedFriendList]) {
@@ -313,8 +321,11 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         if ([[membership roles] count]) {
             cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
-        } else {
+        } else if ([origo.descriptionText hasValue]) {
             cell.detailTextLabel.text = origo.descriptionText;
+        } else if ([origo isCommunity] && [membership isAssociate]) {
+            cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         }
     } else if (sectionKey == kSectionKeyWardOrigos) {
         id<OMember> ward = _wards[self.selectedHeaderSegment];
@@ -481,12 +492,14 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     BOOL shouldDeleteCell = YES;
     
-    id<OOrigo> origo = [self dataAtIndexPath:indexPath];
-    
-    if (![origo isPrivate] && [[origo members] count] > 1 && [origo userIsAdmin]) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must appoint another administrator and remove yourself as administrator.", @"")];
+    if (![self canDeleteOrigoAtIndexPath:indexPath]) {
+        id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         
-        shouldDeleteCell = NO;
+        if (![origo isPrivate] && [[origo members] count] > 1 && [origo userIsAdmin]) {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.", @"")];
+            
+            shouldDeleteCell = NO;
+        }
     }
     
     return shouldDeleteCell;

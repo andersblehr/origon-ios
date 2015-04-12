@@ -198,6 +198,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagJoinCode];
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit join code", @"") tag:kButtonTagJoinCodeEdit];
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Delete join code", @"") tag:kButtonTagJoinCodeDelete];
+            actionSheet.destructiveButtonIndex = 1;
             
             [actionSheet show];
         }

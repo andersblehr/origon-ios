@@ -190,7 +190,15 @@ static NSString * const kAddressTemplatesByCountryCode =
                 }
             }
         } else if (![self isPrivate]) {
-            [members addObject:[self ancestorConformingToProtocol:@protocol(OMember)]];
+            id<OMember> member = [self ancestorConformingToProtocol:@protocol(OMember)];
+            
+            if ([self isCommunity]) {
+                for (id<OMember> elder in [[member primaryResidence] elders]) {
+                    [members addObject:elder];
+                }
+            } else {
+                [members addObject:member];
+            }
         }
         
         members = [members sortedArrayUsingSelector:@selector(compare:)];
