@@ -17,12 +17,13 @@ NSString * const kOrigoTypeSports = @"sports";
 NSString * const kOrigoTypeStandard = @"standard";
 NSString * const kOrigoTypeStash = @"~";
 
-static NSString * const kPermissionKeyEdit = @"edit";
-static NSString * const kPermissionKeyAdd = @"add";
-static NSString * const kPermissionKeyDelete = @"delete";
+NSString * const kPermissionKeyEdit = @"edit";
+NSString * const kPermissionKeyAdd = @"add";
+NSString * const kPermissionKeyDelete = @"delete";
+NSString * const kPermissionKeyApplyToAll = @"all";
 
-static NSString * const kDefaultResidencePermissions = @"add:1;delete:1;edit:1";
-static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
+static NSString * const kDefaultResidencePermissions = @"add:1;all:0;delete:1;edit:1";
+static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1";
 
 
 @implementation OOrigo (OrigoAdditions)
@@ -136,6 +137,12 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
     }
     
     return residency;
+}
+
+
+- (BOOL)permissionsApplyToUser
+{
+    return ![[OMeta m].user isJuvenile] || self.permissionsApplyToAll;
 }
 
 
@@ -615,19 +622,19 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 - (BOOL)userCanEdit
 {
-    return [self userIsAdmin] || (self.membersCanEdit && ![[OMeta m].user isJuvenile]);
+    return [self userIsAdmin] || (self.membersCanEdit && [self permissionsApplyToUser]);
 }
 
 
 - (BOOL)userCanAdd
 {
-    return [self userIsAdmin] || (self.membersCanAdd && ![[OMeta m].user isJuvenile]);
+    return [self userIsAdmin] || (self.membersCanAdd && [self permissionsApplyToUser]);
 }
 
 
 - (BOOL)userCanDelete
 {
-    return [self userIsAdmin] || (self.membersCanDelete && ![[OMeta m].user isJuvenile]);
+    return [self userIsAdmin] || (self.membersCanDelete && [self permissionsApplyToUser]);
 }
 
 
@@ -948,7 +955,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
     if (membersCanAdd && membersCanDelete && membersCanEdit) {
         displayPermissions = NSLocalizedString(@"All", @"");
     } else if (membersCanAdd || membersCanDelete || membersCanEdit) {
-        for (NSString *permissionKey in [self permissionKeys]) {
+        for (NSString *permissionKey in [self standardPermissionKeys]) {
             if ([self hasPermissionWithKey:permissionKey]) {
                 displayPermissions = [displayPermissions stringByAppendingString:NSLocalizedString(permissionKey, @"") separator:kSeparatorComma];
             }
@@ -1013,7 +1020,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 #pragma mark - Permissions
 
-- (NSArray *)permissionKeys
+- (NSArray *)standardPermissionKeys
 {
     NSArray *permissionKeys = nil;
     
@@ -1095,6 +1102,18 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 - (BOOL)membersCanDelete
 {
     return [self hasPermissionWithKey:kPermissionKeyDelete];
+}
+
+
+- (void)setPermissionsApplyToAll:(BOOL)permissionsApplyToAll
+{
+    [self setPermission:permissionsApplyToAll forKey:kPermissionKeyApplyToAll];
+}
+
+
+- (BOOL)permissionsApplyToAll
+{
+    return [self hasPermissionWithKey:kPermissionKeyApplyToAll];
 }
 
 

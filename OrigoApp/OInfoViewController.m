@@ -226,7 +226,7 @@ static NSInteger const kSectionKeyMembership = 2;
                     cell.destinationTarget = [origo admins][0];
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyPermissions]) {
-                cell.textLabel.text = NSLocalizedString(@"Member permissions", @"");
+                cell.textLabel.text = NSLocalizedString(@"User permissions", @"");
                 cell.detailTextLabel.text = [origo displayPermissions];
                 cell.destinationId = kIdentifierValueList;
             }

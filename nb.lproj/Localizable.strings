@@ -83,6 +83,7 @@
 "[setting label] edit" = "Redigere listedetaljer";
 "[setting label] add" = "Legge til medlemmer i lista";
 "[setting label] delete" = "Slette medlemmer fra lista";
+"[setting label] all" = "Gjelder også %@";
 
 
 /***
@@ -275,7 +276,7 @@
 "None of them" = "Ingen av dem";
 "None of you" = "Ingen av dere";
 "All of them" = "Alle";
-"Member permissions" = "Medlemstilganger";
+"User permissions" = "Brukertilganger";
 "add" = "legge til";
 "delete" = "slette";
 "edit" = "redigere";
