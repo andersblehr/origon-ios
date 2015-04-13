@@ -122,7 +122,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 
 - (NSMutableArray *)leafFormatsFromFormats:(NSMutableArray *)formats
 {
-    if ([formats count] == 1 && [formats[0] respondsToSelector:@selector(appendFormat:)]) {
+    if (formats.count == 1 && [formats[0] respondsToSelector:@selector(appendFormat:)]) {
         [formats addObject:[NSMutableString stringWithString:formats[0]]];
     }
     
@@ -134,7 +134,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 {
     NSMutableArray *levelFormats = [NSMutableArray array];
     
-    for (NSInteger level = _optionalNestingLevel; level < [formats count]; level++) {
+    for (NSInteger level = _optionalNestingLevel; level < formats.count; level++) {
         NSMutableArray *nestedFormats = formats[level];
         
         for (NSInteger groupLevel = 0; groupLevel < _groupNestingLevel; groupLevel++) {
@@ -185,7 +185,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         } else if ([token isEqualToString:kTokenOptionalBegin]) {
             _optionalNestingLevel++;
             
-            if (_optionalNestingLevel == [formats count]) {
+            if (_optionalNestingLevel == formats.count) {
                 formats[_optionalNestingLevel] = [NSMutableArray arrayWithObject:[NSMutableString stringWithString:formats[_optionalNestingLevel - 1][0]]];
             }
         } else if ([token isEqualToString:kTokenOptionalEnd]) {
@@ -341,7 +341,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         }
     }
     
-    for (NSInteger i = 0; !_formattedNumber && i < [_formats count]; i++) {
+    for (NSInteger i = 0; !_formattedNumber && i < _formats.count; i++) {
         [self matchPhoneNumber:_flattenedNumber toFormat:_formats[i]];
     }
 

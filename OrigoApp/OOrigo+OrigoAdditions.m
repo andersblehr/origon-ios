@@ -108,7 +108,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 {
     OMembership *residency = nil;
     
-    if (![[resident residencies] count] || [resident hasAddress]) {
+    if (![resident residencies].count || [resident hasAddress]) {
         residency = [self addMember:resident isAssociate:NO];
     } else if (![resident isJuvenile] || ![self hasMember:resident]) {
         OOrigo *residence = [resident primaryResidence];
@@ -237,7 +237,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
             }
         }
         
-        if ([residents count]) {
+        if (residents.count) {
             for (OMember *minor in minors) {
                 if ([visibleMinors containsObject:minor]) {
                     [residents addObject:minor];
@@ -347,7 +347,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 {
     NSMutableSet *organisers = [NSMutableSet set];
     
-    if ([self isOrganised] && [[self organiserRoles] count]) {
+    if ([self isOrganised] && [self organiserRoles].count) {
         for (OMembership *membership in [self allMemberships]) {
             if ([membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
                 [organisers addObject:membership.member];
@@ -537,7 +537,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
         if ([self isResidence]) {
             membership = [self addResident:member];
         } else {
-            if (![self isPrivate] && ![self.memberships count] && [member isJuvenile]) {
+            if (![self isPrivate] && !self.memberships.count && [member isJuvenile]) {
                 self.isForMinors = @YES;
             }
             
@@ -723,7 +723,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 - (BOOL)hasRegulars
 {
-    return [[self regulars] count] > ([self isPrivate] ? 0 : 1);
+    return [self regulars].count > ([self isPrivate] ? 0 : 1);
 }
 
 
@@ -743,13 +743,13 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 - (BOOL)hasOrganisers
 {
-    return [[self organisers] count] > 0;
+    return [self organisers].count > 0;
 }
 
 
 - (BOOL)hasParentContacts
 {
-    return [[self parentContacts] count] > 0;
+    return [self parentContacts].count > 0;
 }
 
 
@@ -1126,7 +1126,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
     
     if ([unmappedKey isEqualToString:kPropertyKeyName]) {
         if ([self isResidence]) {
-            if ([[self residents] count] > 1) {
+            if ([self residents].count > 1) {
                 defaultValue = NSLocalizedString(@"Our place", @"");
             } else {
                 defaultValue = NSLocalizedString(@"My place", @"");
@@ -1158,7 +1158,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;delete:0;edit:1";
 
 - (BOOL)isSane
 {
-    return [self.memberships count] > 0;
+    return self.memberships.count > 0;
 }
 
 

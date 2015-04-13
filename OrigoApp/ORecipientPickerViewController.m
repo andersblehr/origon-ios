@@ -60,14 +60,14 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     NSString *title = nil;
     NSString *subtitle = nil;
     
-    if ([_toRecipients count]) {
+    if (_toRecipients.count) {
         title = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"To", @""), [OUtil commaSeparatedListOfMembers:_toRecipients conjoin:NO subjective:YES]];
     } else {
         title = NSLocalizedString(@"Pick recipients", @"");
     }
     
     if ([self targetIs:kTargetEmail]) {
-        if ([_ccRecipients count]) {
+        if (_ccRecipients.count) {
             subtitle = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"Cc", @""), [OUtil commaSeparatedListOfMembers:_ccRecipients conjoin:NO subjective:YES]];
         } else {
             subtitle = nil;
@@ -219,13 +219,13 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     if ([self targetIs:kTargetText]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendTextButtonWithTarget:self];
         
-        if (![self targetIs:kTargetAllContacts] && [[_origo textRecipients] count] > 1) {
+        if (![self targetIs:kTargetAllContacts] && [_origo textRecipients].count > 1) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem recipientGroupsButtonWithTarget:self]];
         }
     } else if ([self targetIs:kTargetEmail]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem sendEmailButtonWithTarget:self];
         
-        if (![self targetIs:kTargetAllContacts] && [[_origo emailRecipients] count] > 1) {
+        if (![self targetIs:kTargetAllContacts] && [_origo emailRecipients].count > 1) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem recipientGroupsButtonWithTarget:self]];
         }
     }
@@ -239,7 +239,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     _segmentOrganisers = UISegmentedControlNoSegment;
     
     if ([self targetIs:kTargetAllContacts]) {
-        if ([[[OMeta m].user favourites] count]) {
+        if ([[OMeta m].user favourites].count) {
             _titleSegments = [self titleSegmentsWithTitles:@[NSLocalizedString(@"Favourites", @""), NSLocalizedString(@"Others", @"")]];
             
             if ([self aspectIs:kAspectFavourites]) {
@@ -258,9 +258,9 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             _segmentGrouped = 1;
         } else {
             NSArray *organisers = [_origo organisers];
-            BOOL hasOrganisers = [organisers count] > 0;
+            BOOL hasOrganisers = organisers.count > 0;
             BOOL userIsOrganiser = hasOrganisers && [_origo userIsOrganiser];
-            BOOL showsOrganisers = hasOrganisers && (!userIsOrganiser || [organisers count] > 1);
+            BOOL showsOrganisers = hasOrganisers && (!userIsOrganiser || organisers.count > 1);
             
             if ([_origo isJuvenile]) {
                 _segmentGrouped = 0;
@@ -269,9 +269,9 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                 
                 if (!listsMembers && [_origo isPrivate] && [_origo hasTeenRegulars]) {
                     if ([self targetIs:kTargetText]) {
-                        listsMembers = [[_origo textRecipientsInSet:[_origo regulars]] count] > 0;
+                        listsMembers = [_origo textRecipientsInSet:[_origo regulars]].count > 0;
                     } else if ([self targetIs:kTargetEmail]) {
-                        listsMembers = [[_origo emailRecipientsInSet:[_origo regulars]] count] > 0;
+                        listsMembers = [_origo emailRecipientsInSet:[_origo regulars]].count > 0;
                     }
                 }
                 
@@ -313,7 +313,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             if (showsOrganisers) {
                 segmentTitles = [segmentTitles arrayByAddingObject:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
                 
-                _segmentOrganisers = [segmentTitles count] - 1;
+                _segmentOrganisers = segmentTitles.count - 1;
             }
         }
         
@@ -358,7 +358,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             [recipientHubs removeObject:[OMeta m].user];
         } else if ([_origo isJuvenile]) {
             for (id<OMember> ward in [[OMeta m].user wards]) {
-                if ([recipientHubs containsObject:ward] && [[ward guardians] count] == 1) {
+                if ([recipientHubs containsObject:ward] && [ward guardians].count == 1) {
                     [recipientHubs removeObject:ward];
                 }
             }
@@ -407,7 +407,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         
         if ([self targetIs:kTargetText]) {
             BOOL includesSome = NO;
-            BOOL includesAll = [recipientCandidates count] > 0;
+            BOOL includesAll = recipientCandidates.count > 0;
             
             for (id<OMember> recipientCandidate in recipientCandidates) {
                 if ([_toRecipients containsObject:recipientCandidate]) {
@@ -425,8 +425,8 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         } else if ([self targetIs:kTargetEmail]) {
             BOOL includesSomeAsTo = NO;
             BOOL includesSomeAsCc = NO;
-            BOOL includesAllAsTo = [recipientCandidates count] > 0;
-            BOOL includesAllAsCc = [recipientCandidates count] > 0;
+            BOOL includesAllAsTo = recipientCandidates.count > 0;
+            BOOL includesAllAsCc = recipientCandidates.count > 0;
             
             for (id<OMember> recipientCandidate in recipientCandidates) {
                 if ([_toRecipients containsObject:recipientCandidate]) {
@@ -459,7 +459,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         }
         
-        cell.selectable = [recipientCandidates count] > 0;
+        cell.selectable = recipientCandidates.count > 0;
         
         if (cell.selectable) {
             _recipientCandidatesByMemberId[member.entityId] = recipientCandidates;
@@ -554,17 +554,17 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     
     [self inferTitleAndSubtitle];
 
-    if ([_toRecipients count] || [_ccRecipients count]) {
-        if ([self.navigationItem.rightBarButtonItems count] > 1) {
+    if (_toRecipients.count || _ccRecipients.count) {
+        if (self.navigationItem.rightBarButtonItems.count > 1) {
             self.navigationItem.rightBarButtonItems = @[self.navigationItem.rightBarButtonItem];
         }
     } else {
-        if ([self.navigationItem.rightBarButtonItems count] == 1) {
+        if (self.navigationItem.rightBarButtonItems.count == 1) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem recipientGroupsButtonWithTarget:self]];
         }
     }
     
-    self.navigationItem.rightBarButtonItem.enabled = [_toRecipients count] > 0;
+    self.navigationItem.rightBarButtonItem.enabled = _toRecipients.count > 0;
 }
 
 
@@ -589,7 +589,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                     NSString *group = nil;
                     
                     if ([self hasSegment:_segmentMembers]) {
-                        group = groups[buttonIndex - [groups count] - 2];
+                        group = groups[buttonIndex - groups.count - 2];
                     } else {
                         group = groups[buttonIndex - 1];
                     }
@@ -633,7 +633,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                     _toRecipients = [[_origo emailRecipientsInSet:recipientCandidates] mutableCopy];
                 }
                 
-                if ([_toRecipients count]) {
+                if (_toRecipients.count) {
                     [self inferTitleAndSubtitle];
                     [self reloadSections];
                     

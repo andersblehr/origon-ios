@@ -57,7 +57,6 @@
 - (NSArray *)addresses;
 - (NSArray *)origos;
 - (NSArray *)hiddenOrigos;
-- (NSArray *)declinedOrigos;
 - (NSArray *)mirroringOrigos;
 
 - (id<OMember>)mother;

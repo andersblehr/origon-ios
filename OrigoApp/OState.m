@@ -117,7 +117,7 @@ static OState *_activeState = nil;
 
 - (void)toggleAction:(NSArray *)alternatingActions
 {
-    if ([alternatingActions count] == 2) {
+    if (alternatingActions.count == 2) {
         if ([_action isEqualToString:alternatingActions[0]]) {
             self.action = alternatingActions[1];
         } else if ([_action isEqualToString:alternatingActions[1]]) {
@@ -265,7 +265,7 @@ static OState *_activeState = nil;
                 }
             }
             
-            if (!peerPivot && [pivotWards count]) {
+            if (!peerPivot && pivotWards.count) {
                 peerPivot = pivotWards[0];
             }
         } else {
@@ -385,7 +385,7 @@ static OState *_activeState = nil;
             if ([_currentOrigo isJuvenile] && ![_currentMember isJuvenile]) {
                 NSArray *wardsInOrigo = [_currentMember wardsInOrigo:_currentOrigo];
                 
-                if ([wardsInOrigo count]) {
+                if (wardsInOrigo.count) {
                     _currentMember = wardsInOrigo[0];
                 }
             }

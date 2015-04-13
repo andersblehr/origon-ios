@@ -308,7 +308,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         constraints = [constraints stringByAppendingString:constraint];
     }
     
-    if ([_detailKeys count]) {
+    if (_detailKeys.count) {
         BOOL didInsertDelimiter = !_titleKey;
         
         for (NSString *key in _detailKeys) {
@@ -440,7 +440,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
     
     if (_blueprint.buttonKeys) {
         NSString *initialButtonKey = [[_blueprint.buttonKeys firstObject] stringByAppendingString:kViewKeySuffixButton];
-        NSArray *postInitialButtonKeys = [_blueprint.buttonKeys subarrayWithRange:NSMakeRange(1, [_blueprint.buttonKeys count] - 1)];
+        NSArray *postInitialButtonKeys = [_blueprint.buttonKeys subarrayWithRange:NSMakeRange(1, _blueprint.buttonKeys.count - 1)];
         
         NSString *buttonConstraints = [NSString stringWithFormat:kHConstraintsButtonInitial, initialButtonKey];
         

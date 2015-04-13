@@ -452,7 +452,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
             }
         }
         
-        if ([replicatedProxies count]) {
+        if (replicatedProxies.count) {
             [[OMeta m].context saveEntityDictionaries:replicatedDictionaries];
             
             for (OEntityProxy *proxy in replicatedProxies) {

@@ -88,7 +88,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
 
         if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]]) {
-            if ([_origo userCanEdit] || [[_origo groups] count]) {
+            if ([_origo userCanEdit] || [_origo groups].count) {
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
             }
         }
@@ -166,7 +166,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
     }
     
-    if ([coHabitantCandidates count]) {
+    if (coHabitantCandidates.count) {
         [self presentCoHabitantsSheetWithCandidates:[coHabitantCandidates allObjects]];
     } else {
         id target = kTargetMember;
@@ -192,7 +192,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     
     _eligibleCandidates = [OUtil sortedGroupsOfResidents:candidates excluding:nil];
     
-    if ([_eligibleCandidates count] == 1) {
+    if (_eligibleCandidates.count == 1) {
         if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
             [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:YES] tag:kButtonTagCoHabitantsAll];
         } else {
@@ -219,7 +219,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 {
     NSString *prompt = nil;
     
-    if ([_recipientCandidates count] > 1) {
+    if (_recipientCandidates.count > 1) {
         if (_recipientType == kRecipientTypeCall) {
             prompt = NSLocalizedString(@"Who do you want to call?", @"");
         } else {
@@ -235,7 +235,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagRecipients];
     
-    if ([_recipientCandidates count] > 1) {
+    if (_recipientCandidates.count > 1) {
         for (id recipientCandidate in _recipientCandidates) {
             if ([recipientCandidate isKindOfClass:[NSArray class]]) {
                 [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:recipientCandidate conjoin:YES subjective:YES]];
@@ -273,7 +273,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     
     NSString *prompt = nil;
     
-    if (joiningMembers && [joiningMembers count] > 1) {
+    if (joiningMembers && joiningMembers.count > 1) {
         prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ have requested to join %@", @""), memberLabel, _origo.name];
     } else {
         prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has requested to join %@", @""), memberLabel, _origo.name];
@@ -334,7 +334,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             _eligibleCandidates = [self.state eligibleCandidates];
         }
         
-        if ([_eligibleCandidates count]) {
+        if (_eligibleCandidates.count) {
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other lists", @"") tag:kButtonTagAddFromLists];
         }
         
@@ -371,7 +371,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 
 - (void)performGroupsAction
 {
-    if (![[_origo groups] count]) {
+    if (![_origo groups].count) {
         self.presentStealthilyOnce = YES;
     }
     
@@ -401,7 +401,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 {
     NSArray *recipientCandidates = [_origo textRecipients];
     
-    if (![_origo isResidence] || [recipientCandidates count] > 2) {
+    if (![_origo isResidence] || recipientCandidates.count > 2) {
         [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:kTargetText meta:_origo];
     } else {
         _recipientType = kRecipientTypeText;
@@ -416,7 +416,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 {
     NSArray *recipientCandidates = [_origo callRecipients];
     
-    if ([recipientCandidates count] > 1) {
+    if (recipientCandidates.count > 1) {
         _recipientType = kRecipientTypeCall;
         _recipientCandidates = recipientCandidates;
         
@@ -431,7 +431,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 {
     NSArray *recipientCandidates = [_origo emailRecipients];
     
-    if (![_origo isResidence] || [recipientCandidates count] > 2) {
+    if (![_origo isResidence] || recipientCandidates.count > 2) {
         [self presentModalViewControllerWithIdentifier:kIdentifierRecipientPicker target:kTargetEmail meta:_origo];
     } else {
         _recipientType = kRecipientTypeEmail;
@@ -559,7 +559,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             cell.textLabel.text = [OUtil labelForElders:elders conjoin:YES];
             cell.detailTextLabel.text = [communityResidence shortAddress];
             
-            if ([elders count] == 1) {
+            if (elders.count == 1) {
                 [cell loadImageForMember:elders[0]];
             } else {
                 [cell loadImageForMembers:elders];
@@ -598,7 +598,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         
         cell.textLabel.text = role;
         
-        if ([roleHolders count] == 1) {
+        if (roleHolders.count == 1) {
             id<OMember> roleHolder = roleHolders[0];
             
             if (sectionKey == kSectionKeyParentContacts) {
@@ -658,7 +658,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     if ([self isBottomSectionKey:sectionKey]) {
         if ([self actionIs:kActionRegister]) {
             hasFooter = [_origo isPrivate];
-        } else if (self.isModal || ([_origo isPrivate] && ![[_origo members] count])) {
+        } else if (self.isModal || ([_origo isPrivate] && ![_origo members].count)) {
             hasFooter = YES;
         } else if ([_origo isResidence]) {
             hasFooter = ![_origo userIsMember];
@@ -685,10 +685,10 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             contactTitle = _coach_;
         }
         
-        number = [[_origo organisers] count] > 1 ? pluralIndefinite : singularIndefinite;
+        number = [_origo organisers].count > 1 ? pluralIndefinite : singularIndefinite;
         headerContent = [[OLanguage nouns][contactTitle][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyParentContacts) {
-        number = [[_origo parentContacts] count] > 1 ? pluralIndefinite : singularIndefinite;
+        number = [_origo parentContacts].count > 1 ? pluralIndefinite : singularIndefinite;
         headerContent = [[OLanguage nouns][_parentContact_][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyMembers) {
         NSString *membersTitle = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
@@ -732,7 +732,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
     } else if ([_origo isPrivate]) {
         if ([self actionIs:kActionRegister]) {
-            if ([_member isJuvenile] && [[_member guardians] count]) {
+            if ([_member isJuvenile] && [_member guardians].count) {
                 if ([_member isUser]) {
                     footerContent = NSLocalizedString(@"This list is only visible to you and your parents.", @"");
                 } else if ([_member isActive]) {
@@ -743,7 +743,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             } else {
                 footerContent = NSLocalizedString(@"This list is only visible to you.", @"");
             }
-        } else if (self.isModal || ![[_origo members] count]) {
+        } else if (self.isModal || ![_origo members].count) {
             if ([_member isJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register friends.", @"");
             } else {
@@ -758,19 +758,19 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 
 - (BOOL)toolbarHasSendTextButton
 {
-    return [[_origo textRecipients] count] > 0;
+    return [_origo textRecipients].count > 0;
 }
 
 
 - (BOOL)toolbarHasCallButton
 {
-    return [[_origo callRecipients] count] > 0;
+    return [_origo callRecipients].count > 0;
 }
 
 
 - (BOOL)toolbarHasSendEmailButton
 {
-    return [[_origo emailRecipients] count] > 0;
+    return [_origo emailRecipients].count > 0;
 }
 
 
@@ -822,7 +822,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
                 canDeleteCell = ![member isUser];
             }
         } else if ([_origo userCanEdit]) {
-            canDeleteCell = [[self roleHoldersForRoleAtIndexPath:indexPath] count] == 1;
+            canDeleteCell = [self roleHoldersForRoleAtIndexPath:indexPath].count == 1;
         }
     }
     
@@ -853,7 +853,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             if (![_origo isCommunity]) {
                 id<OMembership> membership = [_origo membershipForMember:member];
                 
-                if ([membership isResidency] && member.email && [[member residencies] count] == 1) {
+                if ([membership isResidency] && member.email && [member residencies].count == 1) {
                     id<OOrigo> newPrimaryResidence = [OOrigo instanceWithType:kOrigoTypeResidence];
                     [newPrimaryResidence addMember:member];
                     
@@ -1143,7 +1143,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
                 } else {
                     NSArray *coHabitants = nil;
                     
-                    if ([_eligibleCandidates count] == 1) {
+                    if (_eligibleCandidates.count == 1) {
                         if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
                             coHabitants = _eligibleCandidates[kButtonTagCoHabitantsAll];
                         } else {

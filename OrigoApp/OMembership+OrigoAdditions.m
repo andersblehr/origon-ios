@@ -143,7 +143,7 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
             if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
                 self.status = kMembershipStatusListed;
             } else if ([self isResidency]) {
-                if (![self.member isJuvenile] && [[self.member addresses] count] > 1) {
+                if (![self.member isJuvenile] && [self.member addresses].count > 1) {
                     self.status = kMembershipStatusInvited;
                 } else {
                     self.status = kMembershipStatusActive;
@@ -267,7 +267,7 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
 
 - (BOOL)hasAffiliationOfType:(NSString *)type
 {
-    return [[self affiliationsOfType:type] count] > 0;
+    return [self affiliationsOfType:type].count > 0;
 }
 
 

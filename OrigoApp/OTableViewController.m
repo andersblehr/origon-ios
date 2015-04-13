@@ -181,11 +181,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     BOOL shouldEliminate = NO;
     
-    if ([self isEntityViewController] && [_sectionKeys count] > 1) {
+    if ([self isEntityViewController] && _sectionKeys.count > 1) {
         if (section == [self sectionNumberForSectionKey:kInputSectionKey]) {
             OInputCellBlueprint *blueprint = [(id<OInputCellDelegate>)_instance inputCellBlueprint];
             
-            shouldEliminate = blueprint.titleKey && ![blueprint.detailKeys count] && ![_instance hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section + 1]];
+            shouldEliminate = blueprint.titleKey && !blueprint.detailKeys.count && ![_instance hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section + 1]];
         }
     }
     
@@ -223,7 +223,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)setTableViewFooterViewIfNeeded
 {
-    if ([_sectionKeys count]) {
+    if (_sectionKeys.count) {
         _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
         
         if (_usesPlainTableViewStyle) {
@@ -303,7 +303,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
         }
         
-        self.toolbarItems = [toolbarItems count] ? toolbarItems : nil;
+        self.toolbarItems = toolbarItems.count ? toolbarItems : nil;
     }
     
     BOOL toolbarHidden = !self.toolbarItems;
@@ -666,7 +666,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         sectionKey = 0;
         
         if (_usesSectionIndexTitles) {
-            _isUsingSectionIndexTitles = [data count] >= kSectionIndexMinimumDisplayRowCount;
+            _isUsingSectionIndexTitles = data.count >= kSectionIndexMinimumDisplayRowCount;
         }
         
         if (_isUsingSectionIndexTitles) {
@@ -676,8 +676,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             
             [self setData:data sectionIndexLabelKey:nil];
         } else {
-            if ([_sectionIndexTitles count]) {
-                NSInteger numberOfSections = [_sectionKeys count];
+            if (_sectionIndexTitles.count) {
+                NSInteger numberOfSections = _sectionKeys.count;
                 
                 [_sectionKeys removeAllObjects];
                 [_sectionData removeAllObjects];
@@ -690,7 +690,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self setData:data forSectionWithKey:sectionKey];
         }
     } else if (labelKey) {
-        if ([data count]) {
+        if (data.count) {
             NSString *sectionLabelSample = [data[0] valueForKey:labelKey];
             NSString *sectionInitial = [sectionLabelSample substringWithRange:NSMakeRange(0, 1)];
             
@@ -699,20 +699,20 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             NSMutableArray *sectionData = [NSMutableArray array];
             NSArray *remainingData = nil;
             
-            for (NSInteger i = 0; !remainingData && i < [data count]; i++) {
+            for (NSInteger i = 0; !remainingData && i < data.count; i++) {
                 NSString *label = [data[i] valueForKey:labelKey];
                 
                 if ([[label lowercaseString] hasPrefix:[sectionInitial lowercaseString]]) {
                     [sectionData addObject:data[i]];
                 } else {
-                    remainingData = [data subarrayWithRange:NSMakeRange(i, [data count] - i)];
+                    remainingData = [data subarrayWithRange:NSMakeRange(i, data.count - i)];
                 }
             }
             
             [self setData:sectionData forSectionWithKey:sectionKey++];
             [self setData:remainingData sectionIndexLabelKey:nil];
-        } else if ([_sectionKeys count] > sectionKey) {
-            NSRange redundantSections = NSMakeRange(sectionKey, [_sectionKeys count] - sectionKey);
+        } else if (_sectionKeys.count > sectionKey) {
+            NSRange redundantSections = NSMakeRange(sectionKey, _sectionKeys.count - sectionKey);
             NSArray *redundantSectionKeys = [_sectionKeys subarrayWithRange:redundantSections];
             
             [_sectionKeys removeObjectsInRange:redundantSections];
@@ -1060,7 +1060,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles
 {
-    if ([segmentTitles count]) {
+    if (segmentTitles.count) {
         if (_titleSegments) {
             NSString *selectedTitle = [_titleSegments titleForSegmentAtIndex:_titleSegments.selectedSegmentIndex];
             
@@ -1070,7 +1070,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             
             _titleSegments.selectedSegmentIndex = UISegmentedControlNoSegment;
             
-            for (NSInteger i = 0; i < [_titleSegmentTitles count]; i++) {
+            for (NSInteger i = 0; i < _titleSegmentTitles.count; i++) {
                 NSString *segmentTitle = _titleSegmentTitles[i];
                 
                 if (![segmentTitles containsObject:segmentTitle]) {
@@ -1079,7 +1079,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 }
             }
             
-            for (NSInteger i = 0; i < [segmentTitles count]; i++) {
+            for (NSInteger i = 0; i < segmentTitles.count; i++) {
                 NSString *segmentTitle = segmentTitles[i];
                 
                 if (![_titleSegmentTitles containsObject:segmentTitle]) {
@@ -1161,9 +1161,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 
                 if (oldCount) {
                     if (newCount) {
-                        [sectionsToReload addIndex:section - [sectionsToInsert count]];
+                        [sectionsToReload addIndex:section - sectionsToInsert.count];
                     } else {
-                        [sectionsToDelete addIndex:section - [sectionsToInsert count]];
+                        [sectionsToDelete addIndex:section - sectionsToInsert.count];
                     }
                 } else if (newCount) {
                     [sectionsToInsert addIndex:section];
@@ -1174,15 +1174,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
     }
     
-    if ([sectionsToReload count]) {
+    if (sectionsToReload.count) {
         [_tableView reloadSections:sectionsToReload withRowAnimation:rowAnimation];
     }
     
-    if ([sectionsToInsert count]) {
+    if (sectionsToInsert.count) {
         [_tableView insertSections:sectionsToInsert withRowAnimation:rowAnimation];
     }
     
-    if ([sectionsToDelete count]) {
+    if (sectionsToDelete.count) {
         [_tableView deleteSections:sectionsToDelete withRowAnimation:rowAnimation];
         
         NSInteger deletedSection = [sectionsToDelete firstIndex];
@@ -1193,7 +1193,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
     }
     
-    if ([_sectionKeys count]) {
+    if (_sectionKeys.count) {
         NSMutableIndexSet *affectedSections = [NSMutableIndexSet indexSet];
         [affectedSections addIndexes:sectionsToReload];
         [affectedSections addIndexes:sectionsToInsert];
@@ -1686,7 +1686,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (NSInteger)numberOfSectionsInTableView:(OTableView *)tableView
 {
-    return [_sectionKeys count];
+    return _sectionKeys.count;
 }
 
 
@@ -1818,7 +1818,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     CGFloat height = 0.f;
     
     if (_usesPlainTableViewStyle) {
-        height = [_sectionIndexTitles count] ? kPlainTableViewHeaderHeight : 0.f;
+        height = _sectionIndexTitles.count ? kPlainTableViewHeaderHeight : 0.f;
     } else if ([self shouldEliminateSpaceAboveSection:section]) {
         height = kEliminatedHeaderFooterHeight;
     } else {

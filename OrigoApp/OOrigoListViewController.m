@@ -119,7 +119,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
                     for (id<OMember> member in [origo members]) {
                         canDelete = canDelete && [member isHousemateOfUser];
                     }
-                } else if ([[origo members] count] == 1) {
+                } else if ([origo members].count == 1) {
                     keyMember = [origo members][0];
                 }
             }
@@ -160,7 +160,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (void)performAddAction
 {
-    if ([_wards count]) {
+    if (_wards.count) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to create a list for?", @"") delegate:self tag:kActionSheetTagNewOrigoTarget];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Yourself", @"") tag:kButtonTagOrigoTargetUser];
         
@@ -177,7 +177,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (void)performAddToOrigoAction
 {
-    if ([_wards count]) {
+    if (_wards.count) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to join to a list?", @"") delegate:self tag:kActionSheetTagJoinOrigoTarget];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Yourself", @"") tag:kButtonTagOrigoTargetUser];
         
@@ -246,7 +246,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         NSMutableArray *wardsWithHiddenOrigos = [NSMutableArray array];
         
         for (id<OMember> ward in [[OMeta m].user wards]) {
-            if ([[ward hiddenOrigos] count]) {
+            if ([ward hiddenOrigos].count) {
                 [wardsWithHiddenOrigos addObject:ward];
             }
         }
@@ -262,9 +262,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         [self setData:[[OMeta m].user origos] forSectionWithKey:kSectionKeyOrigos];
     }
     
-    if ([_wards count]) {
-        if (self.selectedHeaderSegment > [_wards count] - 1) {
-            self.selectedHeaderSegment = [_wards count] - 1;
+    if (_wards.count) {
+        if (self.selectedHeaderSegment > _wards.count - 1) {
+            self.selectedHeaderSegment = _wards.count - 1;
         }
         
         NSArray *wardOrigos = nil;
@@ -319,7 +319,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         cell.textLabel.text = [origo displayName];
         
-        if ([[membership roles] count]) {
+        if ([membership roles].count) {
             cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
         } else if ([origo.descriptionText hasValue]) {
             cell.detailTextLabel.text = origo.descriptionText;
@@ -453,7 +453,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         if (sectionKey == kSectionKeyUser) {
             if (![origo isStash]) {
-                canDelete = [[[OMeta m].user residences] count] > 1;
+                canDelete = [[OMeta m].user residences].count > 1;
             }
         } else if (sectionKey == kSectionKeyOrigos) {
             if ([[OMeta m].user isJuvenile]) {
@@ -495,7 +495,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     if (![self canDeleteOrigoAtIndexPath:indexPath]) {
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         
-        if (![origo isPrivate] && [[origo members] count] > 1 && [origo userIsAdmin]) {
+        if (![origo isPrivate] && [origo members].count > 1 && [origo userIsAdmin]) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.", @"")];
             
             shouldDeleteCell = NO;
@@ -557,7 +557,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             } else if (buttonIndex != actionSheet.cancelButtonIndex) {
                 NSInteger selectedWardIndex = buttonIndex - 1;
                 
-                if ([_wards count] > 1 && self.selectedHeaderSegment != selectedWardIndex) {
+                if (_wards.count > 1 && self.selectedHeaderSegment != selectedWardIndex) {
                     self.selectedHeaderSegment = selectedWardIndex;
                     [self reloadSectionWithKey:kSectionKeyWardOrigos];
                 }

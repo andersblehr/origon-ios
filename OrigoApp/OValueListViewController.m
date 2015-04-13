@@ -66,7 +66,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [titleSegments addObject:NSLocalizedString(_origo.type, kStringPrefixMembersTitle)];
     }
     
-    if ([titleSegments count] > 1) {
+    if (titleSegments.count > 1) {
         _titleSegments = [self titleSegmentsWithTitles:titleSegments];
         
         [self inferTitleSegment];
@@ -108,7 +108,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         if (_titleSegment == kTitleSegmentParents) {
             [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
         } else if (_titleSegment == kTitleSegmentOrganisers) {
-            if ([[_origo organisers] count]) {
+            if ([_origo organisers].count) {
                 OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
                 [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
                 [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];
@@ -141,9 +141,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     } else if ([self targetIs:kTargetRole]) {
         NSString *buttonTitle = nil;
         
-        if ([_candidates count] == 2) {
+        if (_candidates.count == 2) {
             buttonTitle = NSLocalizedString(@"Send text to both", @"");
-        } else if ([_candidates count] > 2) {
+        } else if (_candidates.count > 2) {
             buttonTitle = NSLocalizedString(@"Send text to all", @"");
         }
         
@@ -173,9 +173,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     } else if ([self targetIs:kTargetRole]) {
         NSString *buttonTitle = nil;
         
-        if ([_candidates count] == 2) {
+        if (_candidates.count == 2) {
             buttonTitle = NSLocalizedString(@"Send email to both", @"");
-        } else if ([_candidates count] > 2) {
+        } else if (_candidates.count > 2) {
             buttonTitle = NSLocalizedString(@"Send email to all", @"");
         }
         
@@ -248,7 +248,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     [super viewDidAppear:animated];
     
     if ([self targetIs:kTargetGroups]) {
-        if (![[_origo groups] count] && ![self aspectIs:kAspectEditable] && !self.wasHidden) {
+        if (![_origo groups].count && ![self aspectIs:kAspectEditable] && !self.wasHidden) {
             [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetGroups: kAspectEditable}];
         }
     }
@@ -281,7 +281,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             _wards = [[[OMeta m].user wards] sortedArrayUsingSelector:@selector(ageCompare:)];
         }
         
-        if ([_wards count] == 1) {
+        if (_wards.count == 1) {
             self.title = [_wards[0] givenName];
             
             _titleSegment = 0;
@@ -331,7 +331,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             
             NSArray *groups = [_origo groups];
             
-            if ([groups count]) {
+            if (groups.count) {
                 _titleSegments = [self titleSegmentsWithTitles:groups];
                 _titleSegment = _titleSegments.selectedSegmentIndex;
             }
@@ -384,7 +384,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         if ([self aspectIs:kAspectEditable]) {
             [self setData:groups forSectionWithKey:kSectionKeyValues];
         } else {
-            NSString *group = [groups count] ? groups[_titleSegment] : @"";
+            NSString *group = groups.count ? groups[_titleSegment] : @"";
             
             [self setData:[_origo membersOfGroup:group] forSectionWithKey:kSectionKeyValues];
         }
@@ -408,13 +408,11 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             
             cell.textLabel.text = NSLocalizedString(target, kStringPrefixSettingLabel);
             
-            NSInteger numberOfDevices = [[[OMeta m].user activeDevices] count];
-            NSInteger numberOfHiddenOrigos = [[[OMeta m].user hiddenOrigos] count];
-            NSInteger numberOfDeclinedOrigos = [[[OMeta m].user declinedOrigos] count];
+            NSInteger numberOfDevices = [[OMeta m].user activeDevices].count;
+            NSInteger numberOfHiddenOrigos = [[OMeta m].user hiddenOrigos].count;
             
             for (id<OMember> ward in [[OMeta m].user wards]) {
-                numberOfHiddenOrigos += [[ward hiddenOrigos] count];
-                numberOfDeclinedOrigos += [[ward declinedOrigos] count];
+                numberOfHiddenOrigos += [ward hiddenOrigos].count;
             }
             
             if ([target isEqualToString:kTargetDevices]) {
@@ -697,7 +695,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     
     if ([self targetIs:kTargetGroups]) {
         if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
-            shouldRelay = ![[_origo groups] count];
+            shouldRelay = ![_origo groups].count;
         }
     }
     
@@ -712,7 +710,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
                 NSArray *groups = [_origo groups];
                 
-                if ([groups count]) {
+                if (groups.count) {
                     if (_titleSegment == UISegmentedControlNoSegment) {
                         self.rowAnimation = UITableViewRowAnimationLeft;
                     }
