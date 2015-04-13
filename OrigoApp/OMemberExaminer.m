@@ -65,7 +65,7 @@ static OMemberExaminer *_instance = nil;
                 _parentCandidateStatus ^= [self parentCandidateStatusForMember:resident];
             }
             
-            if ([candidates count] > 2) {
+            if (candidates.count > 2) {
                 _parentCandidateStatus = kParentCandidateStatusUndetermined;
             }
         } else if ([resident isJuvenile] && ![resident hasParentWithGender:_member.gender]) {
@@ -137,10 +137,10 @@ static OMemberExaminer *_instance = nil;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAllOffspring];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
     
-    if ([_candidates count] == 2) {
+    if (_candidates.count == 2) {
         [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[0] noun:parentNoun] stringByCapitalisingFirstLetter]];
         [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[1] noun:parentNoun] stringByCapitalisingFirstLetter]];
-    } else if ([_candidates count] > 2) {
+    } else if (_candidates.count > 2) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"To some of them", @"")]; // TODO
     }
     
@@ -195,7 +195,7 @@ static OMemberExaminer *_instance = nil;
     if (didCancel) {
         [_delegate examinerDidCancelExamination];
     } else {
-        if ([_registrantOffspring count]) {
+        if (_registrantOffspring.count) {
             for (id<OMember> offspring in _registrantOffspring) {
                 if ([_member.gender isEqualToString:kGenderMale]) {
                     offspring.fatherId = [_member entityId];
@@ -257,8 +257,8 @@ static OMemberExaminer *_instance = nil;
             }
         }
         
-        if ([_candidates count]) {
-            if (![_examinedCandidates count]) {
+        if (_candidates.count) {
+            if (!_examinedCandidates.count) {
                 [self performInitialExamination];
             } else {
                 [self presentNextCandidateSheet];
@@ -346,7 +346,7 @@ static OMemberExaminer *_instance = nil;
                     [_examinedCandidates addObjectsFromArray:_candidates];
                     [_registrantOffspring addObjectsFromArray:_candidates];
                 } else if (buttonTag != kButtonTagNo) {
-                    if ([_candidates count] == 2) {
+                    if (_candidates.count == 2) {
                         [_examinedCandidates addObjectsFromArray:_candidates];
                         [_registrantOffspring addObject:_candidates[buttonTag - 1]];
                     }

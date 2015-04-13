@@ -183,7 +183,7 @@ static NSString * const kAddressTemplatesByCountryCode =
         members = [NSMutableArray array];
         NSSet *memberships = [self allMemberships];
         
-        if ([memberships count]) {
+        if (memberships.count) {
             for (id<OMembership> membership in memberships) {
                 if (![membership isAssociate]) {
                     [members addObject:membership.member];

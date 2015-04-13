@@ -71,7 +71,7 @@
 {
     NSString *label = nil;
     
-    if ([elders count] == 2) {
+    if (elders.count == 2) {
         NSString *lastName1 = [[[elders[0] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
         NSString *lastName2 = [[[elders[1] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
         
@@ -178,7 +178,7 @@
                 } else if (subjective && [member isUser]) {
                     NSString *pronounYou = [OLanguage pronouns][_you_][nominative];
                     
-                    if (![stringItems count]) {
+                    if (!stringItems.count) {
                         pronounYou = [pronounYou stringByCapitalisingFirstLetter];
                     }
                     
@@ -220,7 +220,7 @@
                 id<OMembership> membership = [origo membershipForMember:member];
                 NSArray *roles = [membership roles];
                 
-                if ([roles count]) {
+                if (roles.count) {
                     [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfStrings:roles conjoin:NO conditionallyLowercase:YES]]];
                 } else {
                     [stringItems addObject:[member shortName]];
@@ -288,10 +288,10 @@
     NSArray *sortedMinors = [minors sortedArrayUsingSelector:@selector(subjectiveCompare:)];
     NSArray *sortedResidents = nil;
     
-    if ([sortedElders count] && [sortedMinors count]) {
+    if (sortedElders.count && sortedMinors.count) {
         sortedResidents = @[[sortedElders arrayByAddingObjectsFromArray:sortedMinors], sortedMinors];
     } else {
-        sortedResidents = [sortedElders count] ? @[sortedElders] : @[sortedMinors];
+        sortedResidents = sortedElders.count ? @[sortedElders] : @[sortedMinors];
     }
     
     return sortedResidents;

@@ -91,7 +91,7 @@ static NSInteger const kSectionKeyValues = 0;
         _parentGender = [self.target isEqualToString:kPropertyKeyMotherId] ? kGenderFemale : kGenderMale;
         _parentCandidates = [_ward parentCandidatesWithGender:_parentGender];
         
-        if (![_parentCandidates count]) {
+        if (!_parentCandidates.count) {
             self.usesPlainTableViewStyle = NO;
         }
         
@@ -168,7 +168,7 @@ static NSInteger const kSectionKeyValues = 0;
                 self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
             }
             
-            self.navigationItem.rightBarButtonItem.enabled = [_pickedValues count] > 0;
+            self.navigationItem.rightBarButtonItem.enabled = _pickedValues.count > 0;
         }
     }
     
@@ -183,7 +183,7 @@ static NSInteger const kSectionKeyValues = 0;
     if ([self targetIs:kTargetSetting]) {
         // TODO
     } else if ([self targetIs:kTargetParent]) {
-        if ([_parentCandidates count]) {
+        if (_parentCandidates.count) {
             [self setData:_parentCandidates forSectionWithKey:kSectionKeyValues];
         }
     } else if ([self targetIs:kTargetOrigoType]) {
@@ -285,7 +285,7 @@ static NSInteger const kSectionKeyValues = 0;
             cell.textLabel.text = [OUtil labelForElders:elders conjoin:YES];
             cell.detailTextLabel.text = [primaryResidence shortAddress];
             
-            if ([elders count] == 1) {
+            if (elders.count == 1) {
                 [cell loadImageForMember:elders[0]];
             } else {
                 [cell loadImageForMembers:elders];
@@ -343,7 +343,7 @@ static NSInteger const kSectionKeyValues = 0;
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
     
-    cell.checked = cell.checked && [_pickedValues count] == 1 ? !_isNoValuePicker : !cell.checked;
+    cell.checked = cell.checked && _pickedValues.count == 1 ? !_isNoValuePicker : !cell.checked;
     
     id oldValue = nil;
     id pickedValue = [self dataAtIndexPath:indexPath];
@@ -422,7 +422,7 @@ static NSInteger const kSectionKeyValues = 0;
     
     if (self.isModal) {
         if (_isMultiValuePicker) {
-            self.navigationItem.rightBarButtonItem.enabled = [_pickedValues count] > 0;
+            self.navigationItem.rightBarButtonItem.enabled = _pickedValues.count > 0;
         } else {
             [self.dismisser dismissModalViewController:self];
         }

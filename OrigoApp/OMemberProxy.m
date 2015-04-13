@@ -116,7 +116,7 @@
     } else {
         NSArray *residences = [self residences];
         
-        if ([residences count]) {
+        if (residences.count) {
             primaryResidence = residences[0];
         } else {
             primaryResidence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];

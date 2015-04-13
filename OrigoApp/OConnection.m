@@ -97,7 +97,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
         [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
         
-        if (entities && [entities count]) {
+        if (entities && entities.count) {
             _URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
         }
         
@@ -246,7 +246,7 @@ static NSString * const kURLParameterIdentifier = @"id";
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
-    if ([entities count]) {
+    if (entities.count) {
         [self performHTTPMethod:kHTTPMethodPOST withRoot:kRootModel path:kPathReplicate entities:entities];
     } else {
         [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathFetch entities:nil];

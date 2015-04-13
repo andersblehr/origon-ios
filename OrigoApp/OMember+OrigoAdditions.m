@@ -48,7 +48,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
             }
             
             if (![visibleMembers containsObject:member]) {
-                if (!userWardPeers && [userWards count]) {
+                if (!userWardPeers && userWards.count) {
                     userWardPeers = [NSMutableSet setWithArray:userWards];
                     
                     for (OMember *userWard in userWards) {
@@ -95,7 +95,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         for (OOrigo *origo in [self origosIncludeResidences:YES]) {
             NSArray *organisers = [origo isJuvenile] ? [origo organisers] : nil;
             
-            if (organisers && [organisers count] && [organisers containsObject:self]) {
+            if (organisers && organisers.count && [organisers containsObject:self]) {
                 for (OMember *regular in [origo regulars]) {
                     [allPeers addObjectsFromArray:[regular guardians]];
                 }
@@ -228,12 +228,12 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
             [recipients addObject:guardianRecipient];
         }
         
-        if (groupable && [recipients count] > 1) {
-            if ([parentRecipients count] > 1) {
+        if (groupable && recipients.count > 1) {
+            if (parentRecipients.count > 1) {
                 [recipients addObject:parentRecipients];
             }
             
-            if ([guardianRecipients count]) {
+            if (guardianRecipients.count) {
                 [recipients addObject:[parentRecipients arrayByAddingObjectsFromArray:guardianRecipients]];
             }
         }
@@ -522,8 +522,8 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
             primaryResidence = residence;
         } else if ([residence userIsMember] && ![primaryResidence userIsMember]) {
             primaryResidence = residence;
-        } else if ([[residence residents] count] >= [[primaryResidence residents] count]) {
-            if ([[residence residents] count] > [[primaryResidence residents] count]) {
+        } else if ([residence residents].count >= [primaryResidence residents].count) {
+            if ([residence residents].count > [primaryResidence residents].count) {
                 primaryResidence = residence;
             } else if ([residence.dateCreated isBeforeDate:primaryResidence.dateCreated]) {
                 primaryResidence = residence;
@@ -583,20 +583,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     return [hiddenOrigos sortedArrayUsingSelector:@selector(compare:)];
-}
-
-
-- (NSArray *)declinedOrigos
-{
-    NSMutableArray *declinedOrigos = [NSMutableArray array];
-    
-    for (OMembership *membership in self.memberships) {
-        if ([membership isDeclined] && ![membership hasExpired]) {
-            [declinedOrigos addObject:membership.origo];
-        }
-    }
-    
-    return [declinedOrigos sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -750,7 +736,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 {
     NSArray *parentsOrGuardians = [self parents];
     
-    if ([parentsOrGuardians count] < 2) {
+    if (parentsOrGuardians.count < 2) {
         parentsOrGuardians = [self guardians];
     }
     
@@ -1046,7 +1032,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 - (BOOL)guardiansAreParents
 {
     NSArray *guardians = [self guardians];
-    BOOL guardiansAreParents = [guardians count] > 0;
+    BOOL guardiansAreParents = guardians.count > 0;
     
     if (guardiansAreParents) {
         for (OMember *guardian in guardians) {
@@ -1123,7 +1109,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     NSString *shortName = nil;
     NSArray *names = [self.name componentsSeparatedByString:kSeparatorSpace];
     
-    if ([names count] > 2) {
+    if (names.count > 2) {
         shortName = [[names firstObject] stringByAppendingString:[names lastObject] separator:kSeparatorSpace];
     } else {
         shortName = self.name;
@@ -1236,15 +1222,15 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 {
     NSMutableArray *settingListKeys = [NSMutableArray array];
     
-    if ([[self activeDevices] count] > 1) {
+    if ([self activeDevices].count > 1) {
         [settingListKeys addObject:kTargetDevices];
     }
     
-    BOOL hasHiddenOrigos = [[self hiddenOrigos] count] > 0;
+    BOOL hasHiddenOrigos = [self hiddenOrigos].count > 0;
     
     if (!hasHiddenOrigos) {
         for (OMember *ward in [self wards]) {
-            hasHiddenOrigos = hasHiddenOrigos || [[ward hiddenOrigos] count] > 0;
+            hasHiddenOrigos = hasHiddenOrigos || [ward hiddenOrigos].count > 0;
         }
     }
     
@@ -1274,7 +1260,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (BOOL)isSane
 {
-    return [self.memberships count] > 0;
+    return self.memberships.count > 0;
 }
 
 

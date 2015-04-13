@@ -88,13 +88,13 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     if (!_stagedEntities) {
         _stagedEntities = [NSMutableDictionary dictionary];
         _stagedRelationshipRefs = [NSMutableDictionary dictionary];
-    } else if ([_stagedRelationshipRefs count] == 0) {
+    } else if (_stagedRelationshipRefs.count == 0) {
         [_stagedEntities removeAllObjects];
     }
     
     _stagedEntities[entity.entityId] = entity;
     
-    if ([relationshipRefs count]) {
+    if (relationshipRefs.count) {
         _stagedRelationshipRefs[entity.entityId] = relationshipRefs;
     }
     

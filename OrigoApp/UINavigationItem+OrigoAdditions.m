@@ -18,7 +18,7 @@
     if (!self.rightBarButtonItems) {
         self.rightBarButtonItem = barButtonItem;
     } else {
-        [self insertRightBarButtonItem:barButtonItem atIndex:[self.rightBarButtonItems count]];
+        [self insertRightBarButtonItem:barButtonItem atIndex:self.rightBarButtonItems.count];
     }
 }
 
@@ -27,7 +27,7 @@
 {
     NSMutableArray *rightBarButtonItems = [self.rightBarButtonItems mutableCopy];
     
-    if (rightBarButtonItems && index <= [rightBarButtonItems count]) {
+    if (rightBarButtonItems && index <= rightBarButtonItems.count) {
         [rightBarButtonItems insertObject:barButtonItem atIndex:index];
         [self setRightBarButtonItems:rightBarButtonItems animated:YES];
     }

@@ -511,7 +511,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (_partiallyChecked) {
         self.partiallyChecked = NO;
     } else {
-        self.checkedState = ++_checkedState % [_checkedStateAccessoryViews count];
+        self.checkedState = ++_checkedState % _checkedStateAccessoryViews.count;
     }
 }
 
@@ -596,7 +596,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setCheckedState:(NSInteger)checkedState
 {
-    if (checkedState < [_checkedStateAccessoryViews count]) {
+    if (checkedState < _checkedStateAccessoryViews.count) {
         _checkedState = checkedState;
         
         if (_checkedStateAccessoryViews[checkedState] != [NSNull null]) {

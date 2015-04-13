@@ -207,7 +207,7 @@ static NSInteger const kSectionKeyMembership = 2;
                     cell.notificationView = [OButton infoButton];
                 }
             } else if ([displayKey isEqualToString:kLabelKeyAdmins]) {
-                NSInteger adminCount = [[origo admins] count];
+                NSInteger adminCount = [origo admins].count;
                 
                 if (adminCount > 1) {
                     cell.textLabel.text = [[OLanguage nouns][_administrator_][pluralIndefinite] stringByCapitalisingFirstLetter];
@@ -244,7 +244,7 @@ static NSInteger const kSectionKeyMembership = 2;
                 NSArray *components = [member.createdIn componentsSeparatedByString:kSeparatorList];
                 
                 if ([components[0] isEqualToString:kOrigoTypePrivate]) {
-                    NSInteger numberOfComponents = [components count];
+                    NSInteger numberOfComponents = components.count;
                     
                     if (numberOfComponents == 1) {
                         cell.detailTextLabel.text = NSLocalizedString(kOrigoTypePrivate, kStringPrefixTitle);
@@ -297,13 +297,13 @@ static NSInteger const kSectionKeyMembership = 2;
             
             if ([origo userIsAdmin]) {
                 cell.detailTextLabel.text = [[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter];
-            } else if ([[membership organiserRoles] count]) {
+            } else if ([membership organiserRoles].count) {
                 cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrganiserTitle);
-            } else if ([[membership parentRoles] count]) {
+            } else if ([membership parentRoles].count) {
                 cell.detailTextLabel.text = [[OLanguage nouns][_parentContact_][singularIndefinite] stringByCapitalisingFirstLetter];
-            } else if ([[[OMeta m].user wardsInOrigo:origo] count]) {
+            } else if ([[OMeta m].user wardsInOrigo:origo].count) {
                 cell.detailTextLabel.text = [[OLanguage nouns][_guardian_][singularIndefinite] stringByCapitalisingFirstLetter];
-            } else if ([[membership roles] count]) {
+            } else if ([membership roles].count) {
                 cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
             } else if ([membership isParticipancy]) {
                 cell.detailTextLabel.text = NSLocalizedString(@"Regular member", @"");

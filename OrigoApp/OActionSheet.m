@@ -87,7 +87,7 @@
 
 - (NSInteger)addButtonWithTitle:(NSString *)title
 {
-    return [self addButtonWithTitle:title tag:[_buttonTags count]];
+    return [self addButtonWithTitle:title tag:_buttonTags.count];
 }
 
 

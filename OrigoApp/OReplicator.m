@@ -45,7 +45,7 @@
     BOOL needsReplication = NO;
     
     if (!_isReplicating && [[OMeta m].user isActive]) {
-        needsReplication = [_dirtyEntities count] || [[[OMeta m].context dirtyEntities] count];
+        needsReplication = _dirtyEntities.count || [[OMeta m].context dirtyEntities].count;
     }
     
     return needsReplication;
@@ -96,7 +96,7 @@
 {
     NSSet *dirtyEntities = [[OMeta m].context dirtyEntities];
     
-    if ([dirtyEntities count]) {
+    if (dirtyEntities.count) {
         [[OMeta m].context save];
         
         NSMutableSet *dirtyEntityURIs = [NSMutableSet set];

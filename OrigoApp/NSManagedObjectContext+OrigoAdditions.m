@@ -24,9 +24,9 @@
     
     if (resultsArray == nil) {
         OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
-    } else if ([resultsArray count] > 1) {
+    } else if (resultsArray.count > 1) {
         OLogBreakage(@"Found more than one entity with '%@'='%@'.", key, value);
-    } else if ([resultsArray count] == 1) {
+    } else if (resultsArray.count == 1) {
         entity = resultsArray[0];
     }
     
@@ -436,16 +436,16 @@
         [expiredEntity expire];
     }
     
-    BOOL isSanitised = NO;
+    NSMutableArray *deletedEntities = [NSMutableArray array];
+    NSUInteger numberOfDeletedEntities = -1;
     
-    while (!isSanitised) {
-        isSanitised = YES;
+    while (numberOfDeletedEntities != deletedEntities.count) {
+        numberOfDeletedEntities = deletedEntities.count;
         
         for (OReplicatedEntity *entity in entities) {
-            if (![entity isSane]) {
+            if (![deletedEntities containsObject:entity] && ![entity isSane]) {
                 [self deleteObject:entity];
-                
-                isSanitised = NO;
+                [deletedEntities addObject:entity];
             }
         }
     }

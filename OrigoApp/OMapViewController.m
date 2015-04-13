@@ -180,7 +180,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
     [geocoder geocodeAddressString:origo.address completionHandler:^(NSArray* placemarks, NSError* error) {
         if (!error) {
-            if ([placemarks count] == 1) {
+            if (placemarks.count == 1) {
                 _placemark = [[MKPlacemark alloc] initWithPlacemark:placemarks[0]];
                 MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(_placemark.coordinate, kMapRegionSpan, kMapRegionSpan);
                 
@@ -279,7 +279,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
                     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
                     [geocoder geocodeAddressString:address.address completionHandler:^(NSArray *placemarks, NSError *error) {
                         if (!error) {
-                            if ([placemarks count] == 1) {
+                            if (placemarks.count == 1) {
                                 MKPlacemark *placemark = [[MKPlacemark alloc] initWithPlacemark:placemarks[0]];
                                 
                                 _startItem = [[MKMapItem alloc] initWithPlacemark:placemark];

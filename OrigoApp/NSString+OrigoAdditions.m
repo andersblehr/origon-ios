@@ -93,7 +93,7 @@ static CGFloat const kMatchingEditDistancePercentage = 0.4f;
     NSArray *words1 = [string1 componentsSeparatedByString:kSeparatorSpace];
     NSArray *words2 = [string2 componentsSeparatedByString:kSeparatorSpace];
     
-    if ([words1 count] > [words2 count]) {
+    if (words1.count > words2.count) {
         id temp = words1;
         
         words1 = words2;
@@ -148,7 +148,7 @@ static CGFloat const kMatchingEditDistancePercentage = 0.4f;
 
 - (NSInteger)lineCount
 {
-    return [[self lines] count];
+    return [self lines].count;
 }
 
 

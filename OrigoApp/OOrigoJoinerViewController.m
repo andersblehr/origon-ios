@@ -346,7 +346,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                 } else {
                     [OAlert showAlertWithTitle:NSLocalizedString(@"For minors", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The list with join code '%@' is for minors. You cannot join this list.", @""), _origo.joinCode]];
                 }
-            } else if ([_origo isCommunity] && [[[_member primaryResidence] elders] count] > 1) {
+            } else if ([_origo isCommunity] && [[_member primaryResidence] elders].count > 1) {
                 NSMutableArray *coResidents = [[[_member primaryResidence] elders] mutableCopy];
                 [coResidents removeObject:[OMeta m].user];
                 
