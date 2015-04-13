@@ -17,6 +17,11 @@ extern NSString * const kOrigoTypeSports;
 extern NSString * const kOrigoTypeStandard;
 extern NSString * const kOrigoTypeStash;
 
+extern NSString * const kPermissionKeyEdit;
+extern NSString * const kPermissionKeyAdd;
+extern NSString * const kPermissionKeyDelete;
+extern NSString * const kPermissionKeyApplyToAll;
+
 
 @protocol OOrigo <OEntity>
 
@@ -35,8 +40,9 @@ extern NSString * const kOrigoTypeStash;
 @property (nonatomic, assign) BOOL membersCanEdit;
 @property (nonatomic, assign) BOOL membersCanAdd;
 @property (nonatomic, assign) BOOL membersCanDelete;
+@property (nonatomic, assign) BOOL permissionsApplyToAll;
 
-- (NSArray *)permissionKeys;
+- (NSArray *)standardPermissionKeys;
 - (NSString *)defaultPermissions;
 - (BOOL)hasPermissionWithKey:(NSString *)key;
 - (void)setPermission:(BOOL)permission forKey:(NSString *)key;

@@ -83,6 +83,7 @@
 "[setting label] edit" = "Edit list details";
 "[setting label] add" = "Add members to list";
 "[setting label] delete" = "Delete members from list";
+"[setting label] all" = "Also applies to %@";
 
 
 /***
@@ -275,7 +276,7 @@
 "None of them" = "None of them";
 "None of you" = "None of you";
 "All of them" = "All of them";
-"Member permissions" = "Member permissions";
+"User permissions" = "User permissions";
 "add" = "add";
 "delete" = "delete";
 "edit" = "edit";

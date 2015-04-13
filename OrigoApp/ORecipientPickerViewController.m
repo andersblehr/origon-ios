@@ -262,12 +262,26 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             BOOL userIsOrganiser = hasOrganisers && [_origo userIsOrganiser];
             BOOL showsOrganisers = hasOrganisers && (!userIsOrganiser || organisers.count > 1);
             
+            if (showsOrganisers) {
+                NSMutableArray *reachableOrganisers = [organisers mutableCopy];
+                
+                if (userIsOrganiser) {
+                    [reachableOrganisers removeObject:[OMeta m].user];
+                }
+                
+                if ([self targetIs:kTargetText]) {
+                    showsOrganisers = [_origo textRecipientsInSet:reachableOrganisers].count > 0;
+                } else if ([self targetIs:kTargetEmail]) {
+                    showsOrganisers = [_origo emailRecipientsInSet:reachableOrganisers].count > 0;
+                }
+            }
+            
             if ([_origo isJuvenile]) {
                 _segmentGrouped = 0;
                 
-                BOOL listsMembers = ![_origo isJuvenile] || [[OMeta m].user isJuvenile];
+                BOOL listsMembers = ![_origo isJuvenile] || [[OMeta m].user isJuvenile] || (([_origo isPrivate] || [_origo userIsOrganiser]) && [_origo hasTeenRegulars]);
                 
-                if (!listsMembers && [_origo isPrivate] && [_origo hasTeenRegulars]) {
+                if (listsMembers) {
                     if ([self targetIs:kTargetText]) {
                         listsMembers = [_origo textRecipientsInSet:[_origo regulars]].count > 0;
                     } else if ([self targetIs:kTargetEmail]) {
@@ -309,7 +323,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                     segmentTitles = @[NSLocalizedString(_origo.type, kStringPrefixMembersTitle)];
                 }
             }
-            
+
             if (showsOrganisers) {
                 segmentTitles = [segmentTitles arrayByAddingObject:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
                 

@@ -8,8 +8,8 @@
 
 #import "OValueListViewController.h"
 
-static NSInteger const kSectionKeyValues = 0;
-static NSInteger const kSectionKeyLists = 1;
+static NSInteger const kSectionKeyValues1 = 0;
+static NSInteger const kSectionKeyValues2 = 1;
 static NSInteger const kSectionKeyActions = 2;
 
 static NSInteger const kTitleSegmentFavourites = 0;
@@ -22,6 +22,7 @@ static NSInteger const kTitleSegmentMembers = 2;
 static NSInteger const kPermissionTagEdit = 0;
 static NSInteger const kPermissionTagAdd = 1;
 static NSInteger const kPermissionTagDelete = 2;
+static NSInteger const kPermissionTagApplyToAll = 3;
 
 static NSInteger const kActionSheetTagAdd = 0;
 static NSInteger const kButtonTagAddOrganiser = 0;
@@ -208,7 +209,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     if ([self targetIs:kTargetAllContacts]) {
         [self reloadSections];
     } else {
-        if ([self numberOfRowsInSectionWithKey:kSectionKeyValues]) {
+        if ([self numberOfRowsInSectionWithKey:kSectionKeyValues1]) {
             if (_titleSegment > previousSegment) {
                 self.rowAnimation = UITableViewRowAnimationLeft;
             } else {
@@ -222,7 +223,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             }
         }
         
-        [self reloadSectionWithKey:kSectionKeyValues];
+        [self reloadSectionWithKey:kSectionKeyValues1];
     }
 }
 
@@ -237,6 +238,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         _origo.membersCanAdd = permissionSwitch.on;
     } else if (permissionSwitch.tag == kPermissionTagDelete) {
         _origo.membersCanDelete = permissionSwitch.on;
+    } else if (permissionSwitch.tag == kPermissionTagApplyToAll) {
+        _origo.permissionsApplyToAll = permissionSwitch.on;
     }
 }
 
@@ -265,7 +268,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         self.title = NSLocalizedString(@"Settings", @"");
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
     } else if ([self targetIs:kTargetPermissions]) {
-        self.title = NSLocalizedString(@"Member permissions", @"");
+        self.title = NSLocalizedString(@"User permissions", @"");
     } else if ([self targetIs:kTargetAdmins]) {
         self.title = NSLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
     } else if ([self targetIs:kTargetAllContacts]) {
@@ -343,13 +346,17 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 - (void)loadData
 {
     if ([self targetIs:kTargetSettings]) {
-        [self setData:[[OMeta m].user settingKeys] forSectionWithKey:kSectionKeyValues];
-        [self setData:[[OMeta m].user settingListKeys] forSectionWithKey:kSectionKeyLists];
+        [self setData:[[OMeta m].user settingKeys] forSectionWithKey:kSectionKeyValues1];
+        [self setData:[[OMeta m].user settingListKeys] forSectionWithKey:kSectionKeyValues2];
         [self setData:@[kActionKeyChangePassword, kActionKeyLogout] forSectionWithKey:kSectionKeyActions];
     } else if ([self targetIs:kTargetPermissions]) {
-        [self setData:[_origo permissionKeys] forSectionWithKey:kSectionKeyValues];
+        [self setData:[_origo standardPermissionKeys] forSectionWithKey:kSectionKeyValues1];
+        
+        if ([_origo isJuvenile] && [_origo hasTeenRegulars]) {
+            [self setData:@[kPermissionKeyApplyToAll] forSectionWithKey:kSectionKeyValues2];
+        }
     } else if ([self targetIs:kTargetAdmins]) {
-        [self setData:[_origo admins] forSectionWithKey:kSectionKeyValues];
+        [self setData:[_origo admins] forSectionWithKey:kSectionKeyValues1];
     } else if ([self targetIs:kTargetAllContacts]) {
         _candidates = [self.state eligibleCandidates];
         
@@ -359,9 +366,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             [self setData:[[OMeta m].user nonFavourites] sectionIndexLabelKey:kPropertyKeyName];
         }
     } else if ([self targetIs:kTargetParents]) {
-        [self setData:@[kPropertyKeyMotherId, kPropertyKeyFatherId] forSectionWithKey:kSectionKeyValues];
+        [self setData:@[kPropertyKeyMotherId, kPropertyKeyFatherId] forSectionWithKey:kSectionKeyValues1];
     } else if ([self targetIs:kTargetDevices]) {
-        [self setData:[[OMeta m].user activeDevices] forSectionWithKey:kSectionKeyValues];
+        [self setData:[[OMeta m].user activeDevices] forSectionWithKey:kSectionKeyValues1];
     } else if ([self targetIs:kTargetRole]) {
         if ([self aspectIs:kAspectOrganiserRole]) {
             _candidates = [_origo organisersWithRole:self.target];
@@ -369,24 +376,24 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             _candidates = [_origo parentsWithRole:self.target];
         }
         
-        [self setData:_candidates forSectionWithKey:kSectionKeyValues];
+        [self setData:_candidates forSectionWithKey:kSectionKeyValues1];
     } else if ([self targetIs:kTargetRoles]) {
         if (_titleSegment == kTitleSegmentParents) {
-            [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyValues];
+            [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyValues1];
         } else if (_titleSegment == kTitleSegmentOrganisers) {
-            [self setData:[_origo organiserRoles] forSectionWithKey:kSectionKeyValues];
+            [self setData:[_origo organiserRoles] forSectionWithKey:kSectionKeyValues1];
         } else if (_titleSegment == kTitleSegmentMembers) {
-            [self setData:[_origo memberRoles] forSectionWithKey:kSectionKeyValues];
+            [self setData:[_origo memberRoles] forSectionWithKey:kSectionKeyValues1];
         }
     } else if ([self targetIs:kTargetGroups]) {
         NSArray *groups = [_origo groups];
         
         if ([self aspectIs:kAspectEditable]) {
-            [self setData:groups forSectionWithKey:kSectionKeyValues];
+            [self setData:groups forSectionWithKey:kSectionKeyValues1];
         } else {
             NSString *group = groups.count ? groups[_titleSegment] : @"";
             
-            [self setData:[_origo membersOfGroup:group] forSectionWithKey:kSectionKeyValues];
+            [self setData:[_origo membersOfGroup:group] forSectionWithKey:kSectionKeyValues1];
         }
     }
 }
@@ -397,13 +404,13 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if ([self targetIs:kTargetSettings]) {
-        if (sectionKey == kSectionKeyValues) {
+        if (sectionKey == kSectionKeyValues1) {
             NSString *settingKey = [self dataAtIndexPath:indexPath];
             
             cell.textLabel.text = NSLocalizedString(settingKey, kStringPrefixSettingLabel);
             //cell.detailTextLabel.text = TODO;
             cell.destinationId = kIdentifierValuePicker;
-        } else if (sectionKey == kSectionKeyLists) {
+        } else if (sectionKey == kSectionKeyValues2) {
             NSString *target = [self dataAtIndexPath:indexPath];
             
             cell.textLabel.text = NSLocalizedString(target, kStringPrefixSettingLabel);
@@ -433,13 +440,19 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             }
         }
     } else if ([self targetIs:kTargetPermissions]) {
+        NSArray *standardPermissionKeys = [_origo standardPermissionKeys];
         NSString *permissionKey = [self dataAtIndexPath:indexPath];
         UISwitch *permissionSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-        permissionSwitch.tag = indexPath.row;
+        permissionSwitch.tag = indexPath.section * standardPermissionKeys.count + indexPath.row;
         [permissionSwitch addTarget:self action:@selector(didTogglePermissionSwitch:) forControlEvents:UIControlEventValueChanged];
         permissionSwitch.on = [_origo hasPermissionWithKey:permissionKey];
         
         cell.textLabel.text = NSLocalizedString(permissionKey, kStringPrefixSettingLabel);
+        
+        if ([permissionKey isEqualToString:kPermissionKeyApplyToAll]) {
+            cell.textLabel.text = [NSString stringWithFormat:cell.textLabel.text, [NSLocalizedString(_origo.type, kStringPrefixMembersTitle) stringByLowercasingFirstLetter]];
+        }
+        
         cell.accessoryView = permissionSwitch;
         cell.selectable = NO;
     } else if ([self targetIs:kTargetAdmins]) {
