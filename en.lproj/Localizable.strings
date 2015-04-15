@@ -93,7 +93,7 @@
 // Origo titles
 "[title] community" = "Local community";
 "[title] preschoolClass" = "Preschool class";
-"[title] private" = "Private list";
+"[title] private" = "Private contact list";
 "[title] residence" = "Household";
 "[title] schoolClass" = "School class";
 "[title] sports" = "Sports";
@@ -226,8 +226,9 @@
 
 // Labels
 "-no address-" = "-no address-";
+"Shared list" = "Shared list";
+"Private list" = "Private list";
 "Private list of friends" = "Private list of friends";
-"Private contact list" = "Private contact list";
 
 // Prompts
 "Register contact" = "Register contact";
@@ -280,7 +281,6 @@
 "add" = "add";
 "delete" = "delete";
 "edit" = "edit";
-"inactive" = "inactive";
 
 // Formats
 "%@ at %@" = "%@ at %@";
@@ -374,10 +374,10 @@
 "Guardians in the household" = "Guardians in the household";
 
 // Footers
-"This list is only visible to you." = "This list is only visible to you.";
-"This list is only visible to you and your parents." = "This list is only visible to you and your parents.";
-"This list is only visible to %@." = "This list is only visible to %@.";
-"This list is only visible to %@ and %@." = "This list is only visible to %@ and %@.";
+"This list will only be visible to you." = "This list will only be visible to you.";
+"This list will only be visible to you and adult members of your family." = "This list will only be visible to you and adult members of your family.";
+"This list will only be visible to %@ and adult members of the family." = "This list will only be visible to %@ and adult members of the family.";
+"This list will only be visible to adult members of the family." = "This list will only be visible to adult members of the family.";
 "Tap + to register contacts." = "Tap + to register contacts.";
 "Tap + to register friends." = "Tap + to register friends.";
 "Tap + to register additional guardians in the household." = "Tap + to register additional guardians in the household.";
@@ -460,7 +460,7 @@
 "No child named %@ has been registered by %@." = "No child named %@ has been registered by %@.";
 "New email address" = "New email address";
 "You are about to change your email address from %@ to %@ ..." = "You are about to change your email address from %@ to %@. You need access to the new address to activate this change. Do you want to continue?";
-"You are about to change %@'s email address from %@ to %@ ..." = "You are about to change %@'s email address from %@ to %@. A notification will be sent to the new address. Do you want to continue?";
+"You are about to change %@'s email address from %@ to %@ ..." = "You are about to change %@'s email address from %@ to %@. A notification will be sent to the new as well as the old address. Do you want to continue?";
 "Activation failed" = "Activation failed";
 "The email address %@ could not be activated ..." = "The email address %@ could not be activated. Please try again, or tap Cancel to cancel the change.";
 "Address in use" = "Address in use";
@@ -537,6 +537,7 @@
 "Group name" = "Group name";
 "This device" = "This device";
 "Last seen %@" = "Last seen %@";
+"waiting..." = "waiting...";
 
 
 /***

@@ -72,11 +72,17 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[prompt stringByAppendingString:@"?"] delegate:self tag:kActionSheetTagOrigoType];
     
     for (NSString *origoType in _origoTypes) {
-        if ([origoType isEqualToString:kOrigoTypePrivate]) {
-            if ([_member isJuvenile]) {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Private list of friends", @"")];
+        if ([_member isJuvenile]) {
+            if ([origoType isEqualToString:kOrigoTypeStandard] && [_member isUser]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Shared list", @"")];
+            } else if ([origoType isEqualToString:kOrigoTypePrivate]) {
+                if ([_member isUser]) {
+                    [actionSheet addButtonWithTitle:NSLocalizedString(@"Private list", @"")];
+                } else {
+                    [actionSheet addButtonWithTitle:NSLocalizedString(@"Private list of friends", @"")];
+                }
             } else {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Private contact list", @"")];
+                [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kStringPrefixOrigoTitle)];
             }
         } else {
             [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kStringPrefixOrigoTitle)];

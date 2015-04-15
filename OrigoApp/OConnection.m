@@ -13,10 +13,12 @@ NSInteger const kHTTPStatusCreated = 201;
 NSInteger const kHTTPStatusNoContent = 204;
 NSInteger const kHTTPStatusMultiStatus = 207;
 NSInteger const kHTTPStatusNotModified = 304;
-NSInteger const kHTTPStatusErrorRangeStart = 400;
 NSInteger const kHTTPStatusUnauthorized = 401;
 NSInteger const kHTTPStatusNotFound = 404;
 NSInteger const kHTTPStatusInternalServerError = 500;
+NSInteger const kHTTPStatusServiceUnavailable = 503;
+
+NSInteger const kHTTPStatusErrorRangeStart = 400;
 
 NSString * const kHTTPHeaderLocation = @"Location";
 
@@ -129,7 +131,9 @@ static NSString * const kURLParameterIdentifier = @"id";
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OCrypto basicAuthHeaderWithUserId:email password:password] forHTTPHeaderField:kHTTPHeaderAuthorization];
     
-    if ([path isEqualToString:kPathLogin] && [[OMeta m].appDelegate hasPersistentStore]) {
+    if ([@[kPathRegister, kPathReset, kPathSendCode] containsObject:path]) {
+        [self setValue:[OMeta m].language forURLParameter:kURLParameterLanguage];
+    } else if ([path isEqualToString:kPathLogin] && [[OMeta m].appDelegate hasPersistentStore]) {
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     }
     
@@ -243,6 +247,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (void)replicateEntities:(NSArray *)entities
 {
+    [self setValue:[OMeta m].language forURLParameter:kURLParameterLanguage];
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     

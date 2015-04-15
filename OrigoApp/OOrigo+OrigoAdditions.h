@@ -42,7 +42,7 @@ extern NSString * const kPermissionKeyApplyToAll;
 @property (nonatomic, assign) BOOL membersCanDelete;
 @property (nonatomic, assign) BOOL permissionsApplyToAll;
 
-- (NSArray *)standardPermissionKeys;
+- (NSArray *)memberPermissionKeys;
 - (NSString *)defaultPermissions;
 - (BOOL)hasPermissionWithKey:(NSString *)key;
 - (void)setPermission:(BOOL)permission forKey:(NSString *)key;

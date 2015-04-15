@@ -93,7 +93,7 @@
 // Origo titles
 "[title] community" = "Nærmiljø";
 "[title] preschoolClass" = "Barnehageavdeling";
-"[title] private" = "Privat liste";
+"[title] private" = "Privat kontaktliste";
 "[title] residence" = "Husstand";
 "[title] schoolClass" = "Skoleklasse";
 "[title] sports" = "Sport";
@@ -226,8 +226,9 @@
 
 // Labels
 "-no address-" = "-uten adresse-";
+"Shared list" = "Delt liste";
+"Private list" = "Privat liste";
 "Private list of friends" = "Privat venneliste";
-"Private contact list" = "Privat kontaktliste";
 
 // Prompts
 "Register contact" = "Registrer kontakt";
@@ -280,7 +281,6 @@
 "add" = "legge til";
 "delete" = "slette";
 "edit" = "redigere";
-"inactive" = "inaktiv";
 
 // Formats
 "%@ at %@" = "%@ kl %@";
@@ -373,10 +373,10 @@
 "Guardians in the household" = "Foresatte i husstanden";
 
 // Footers
-"This list is only visible to you." = "Denne lista er bare synlig for deg.";
-"This list is only visible to you and your parents." = "Denne lista er bare synlig for deg og foreldrene dine.";
-"This list is only visible to %@." = "Denne lista er bare synlig for %@.";
-"This list is only visible to %@ and %@." = "Denne lista er bare synlig for %@ og %@.";
+"This list will only be visible to you." = "Denne lista vil bare være synlig for deg.";
+"This list will only be visible to you and adult members of your family." = "Denne lista vil bare være synlig for deg og voksne medlemmer i familien din.";
+"This list will only be visible to %@ and adult members of the family." = "Denne lista vil bare være synlig for %@ og voksne medlemmer i familien.";
+"This list will only be visible to adult members of the family." = "Denne lista vil bare være synlig for voksne medlemmer i familien.";
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
 "Tap + to register friends." = "Trykk + for å registrere venner og venninner.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
@@ -459,7 +459,7 @@
 "No child named %@ has been registered by %@." = "Ingen barn ved navn %@ er registrert av %@.";
 "New email address" = "Ny epostadresse";
 "You are about to change your email address from %@ to %@ ..." = "Du er i ferd med å endre epostadressen din fra %@ til %@. Du må ha tilgang til den nye adressen for å aktivere endringen. Ønsker du å fortsette?";
-"You are about to change %@'s email address from %@ to %@ ..." = "Du er i ferd med å endre epostadressen til %@ fra %@ til %@. Et varsel vil bli sendt til den nye adressen. Ønsker du å fortsette?";
+"You are about to change %@'s email address from %@ to %@ ..." = "Du er i ferd med å endre epostadressen til %@ fra %@ til %@. Et varsel vil bli sendt til både den nye og den gamle adressen. Ønsker du å fortsette?";
 "Activation failed" = "Aktivering mislyktes";
 "The email address %@ could not be activated ..." = "Aktivering av epostadressen %@ mislyktes. Prøv igjen, eller trykk Avbryt for avbryte endringen.";
 "Address in use" = "Adressen er i bruk";
@@ -536,6 +536,7 @@
 "Group name" = "Gruppens navn";
 "This device" = "Denne enheten";
 "Last seen %@" = "Sist sett %@";
+"waiting..." = "venter...";
 
 
 /***
