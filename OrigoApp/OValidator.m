@@ -185,20 +185,10 @@ static NSDictionary *_keyMappings = nil;
 
 + (BOOL)isEmailValue:(id)value
 {
-    BOOL isEmailValue = NO;
+    NSString *emailPattern = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}";
+    NSPredicate *emailPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailPattern];
     
-    if (value && [value isKindOfClass:[NSString class]]) {
-        NSInteger atLocation = [value rangeOfString:@"@"].location;
-        NSInteger dotLocation = [value rangeOfString:@"." options:NSBackwardsSearch].location;
-        NSInteger spaceLocation = [value rangeOfString:@" "].location;
-        
-        isEmailValue = atLocation != NSNotFound;
-        isEmailValue = isEmailValue && dotLocation != NSNotFound;
-        isEmailValue = isEmailValue && dotLocation > atLocation;
-        isEmailValue = isEmailValue && spaceLocation == NSNotFound;
-    }
-    
-    return isEmailValue;
+    return [emailPredicate evaluateWithObject:value];
 }
 
 

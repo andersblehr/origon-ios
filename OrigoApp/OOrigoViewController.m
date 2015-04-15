@@ -490,11 +490,17 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             if (![self.state.baseOrigo isCommunity]) {
                 self.cancelImpliesSkip = self.dismisser.isModal && ![_member hasAddress];
             }
-        } else if ([_origo isPrivate]) {
-            if ([_member isJuvenile]) {
-                self.title = NSLocalizedString(@"Private list of friends", @"");
+        } else if ([_member isJuvenile]) {
+            if ([_origo isStandard] && [_member isUser]) {
+                self.title = NSLocalizedString(@"Shared list", @"");
+            } else if ([_origo isPrivate]) {
+                if ([_member isUser]) {
+                    self.title = NSLocalizedString(@"Private list", @"");
+                } else {
+                    self.title = NSLocalizedString(@"Private list of friends", @"");
+                }
             } else {
-                self.title = NSLocalizedString(@"Private contact list", @"");
+                self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
             }
         } else {
             self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
@@ -734,14 +740,14 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         if ([self actionIs:kActionRegister]) {
             if ([_member isJuvenile] && [_member guardians].count) {
                 if ([_member isUser]) {
-                    footerContent = NSLocalizedString(@"This list is only visible to you and your parents.", @"");
+                    footerContent = NSLocalizedString(@"This list will only be visible to you and adult members of your family.", @"");
                 } else if ([_member isActive]) {
-                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"This list is only visible to %@ and %@.", @""), [_member givenName], [OLanguage labelForParentsRelativeToOffspringWithGender:_member.gender]];
+                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"This list will only be visible to %@ and adult members of the family.", @""), [_member givenName]];
                 } else {
-                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"This list is only visible to %@.", @""), [OLanguage possessiveClauseWithPossessor:_member noun:_parent_]];
+                    footerContent = NSLocalizedString(@"This list will only be visible to adult members of the family.", @"");
                 }
             } else {
-                footerContent = NSLocalizedString(@"This list is only visible to you.", @"");
+                footerContent = NSLocalizedString(@"This list will only be visible to you.", @"");
             }
         } else if (self.isModal || ![_origo members].count) {
             if ([_member isJuvenile]) {

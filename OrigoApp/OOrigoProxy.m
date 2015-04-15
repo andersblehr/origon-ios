@@ -335,6 +335,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+- (BOOL)isStandard
+{
+    return [self isOfType:kOrigoTypeStandard];
+}
+
+
 - (BOOL)isCommunity
 {
     return [self isOfType:kOrigoTypeCommunity];

@@ -350,7 +350,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [self setData:[[OMeta m].user settingListKeys] forSectionWithKey:kSectionKeyValues2];
         [self setData:@[kActionKeyChangePassword, kActionKeyLogout] forSectionWithKey:kSectionKeyActions];
     } else if ([self targetIs:kTargetPermissions]) {
-        [self setData:[_origo standardPermissionKeys] forSectionWithKey:kSectionKeyValues1];
+        [self setData:[_origo memberPermissionKeys] forSectionWithKey:kSectionKeyValues1];
         
         if ([_origo isJuvenile] && [_origo hasTeenRegulars]) {
             [self setData:@[kPermissionKeyApplyToAll] forSectionWithKey:kSectionKeyValues2];
@@ -440,10 +440,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             }
         }
     } else if ([self targetIs:kTargetPermissions]) {
-        NSArray *standardPermissionKeys = [_origo standardPermissionKeys];
         NSString *permissionKey = [self dataAtIndexPath:indexPath];
         UISwitch *permissionSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-        permissionSwitch.tag = indexPath.section * standardPermissionKeys.count + indexPath.row;
+        permissionSwitch.tag = indexPath.section * [_origo memberPermissionKeys].count + indexPath.row;
         [permissionSwitch addTarget:self action:@selector(didTogglePermissionSwitch:) forControlEvents:UIControlEventValueChanged];
         permissionSwitch.on = [_origo hasPermissionWithKey:permissionKey];
         

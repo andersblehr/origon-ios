@@ -955,7 +955,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     if (membersCanAdd && membersCanDelete && membersCanEdit) {
         displayPermissions = NSLocalizedString(@"All", @"");
     } else if (membersCanAdd || membersCanDelete || membersCanEdit) {
-        for (NSString *permissionKey in [self standardPermissionKeys]) {
+        for (NSString *permissionKey in [self memberPermissionKeys]) {
             if ([self hasPermissionWithKey:permissionKey]) {
                 displayPermissions = [displayPermissions stringByAppendingString:NSLocalizedString(permissionKey, @"") separator:kSeparatorComma];
             }
@@ -1020,7 +1020,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 
 #pragma mark - Permissions
 
-- (NSArray *)standardPermissionKeys
+- (NSArray *)memberPermissionKeys
 {
     NSArray *permissionKeys = nil;
     

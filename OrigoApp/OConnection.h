@@ -13,10 +13,12 @@ extern NSInteger const kHTTPStatusCreated;
 extern NSInteger const kHTTPStatusNoContent;
 extern NSInteger const kHTTPStatusMultiStatus;
 extern NSInteger const kHTTPStatusNotModified;
-extern NSInteger const kHTTPStatusErrorRangeStart;
 extern NSInteger const kHTTPStatusUnauthorized;
 extern NSInteger const kHTTPStatusNotFound;
 extern NSInteger const kHTTPStatusInternalServerError;
+extern NSInteger const kHTTPStatusServiceUnavailable;
+
+extern NSInteger const kHTTPStatusErrorRangeStart;
 
 extern NSString * const kHTTPHeaderLocation;
 
