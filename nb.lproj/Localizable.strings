@@ -242,9 +242,10 @@
 "Send email to %@" = "Send epost til %@";
 
 // Alerts
-"No internet connection." = "Ingen internettforbindelse.";
+"No internet connection" = "Ingen internettforbindelse";
 "Password too short" = "For kort passord";
 "The password must be at least %@ characters long." = "Passordet må inneholde minst 6 tegn.";
+"Error" = "Feil";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "Det har oppstått en feil, vennligst prøv igjen senere. [%d: \"%@\"]";
 "Cannot place call" = "Kan ikke ringe";
 "Please verify that %@ is a valid phone number." = "Verifiser at %@ er et gyldig telefonnummer.";
@@ -309,6 +310,7 @@
 "When you register, you will receive an email with an activation code to use in the next step." = "Når du registrerer deg, vil du motta en epost med en aktiveringskode til bruk i neste steg.";
 "The activation code has been sent to %@ ..." = "Aktiveringskoden er sendt til %@. Du kan oppgi koden senere om du ikke har tilgang til eposten din her og nå.";
 "The activation code has been sent to %@." = "Aktiveringskoden er sendt til %@.";
+"You need a working internet connection to continue." = "Du trenger en fungerende internettforbindelse for å fortsette.";
 
 // Buttons
 "Have code" = "Har kode";
@@ -460,6 +462,8 @@
 "New email address" = "Ny epostadresse";
 "You are about to change your email address from %@ to %@ ..." = "Du er i ferd med å endre epostadressen din fra %@ til %@. Du må ha tilgang til den nye adressen for å aktivere endringen. Ønsker du å fortsette?";
 "You are about to change %@'s email address from %@ to %@ ..." = "Du er i ferd med å endre epostadressen til %@ fra %@ til %@. Et varsel vil bli sendt til både den nye og den gamle adressen. Ønsker du å fortsette?";
+"You need a working internet connection to change your email address." = "Du trenger en fungerende internettforbindelse for å endre epostadressen din.";
+"You need a working internet connection to change %@'s email address." = "Du trenger en fungerende internettforbindelse for å endre epostadressen til %@.";
 "Activation failed" = "Aktivering mislyktes";
 "The email address %@ could not be activated ..." = "Aktivering av epostadressen %@ mislyktes. Prøv igjen, eller trykk Avbryt for avbryte endringen.";
 "Address in use" = "Adressen er i bruk";
@@ -554,6 +558,7 @@
 "The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som skal føres opp i denne lista. Ved hjelp av koden kan de føre opp seg selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
 "The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som har barn som skal føres opp i denne lista. Ved hjelp av koden kan de føre opp barna sine selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
 "You may ask an administrator to create a join code for %@." = "Du kan be en administrator om å opprette en innmeldingskode for %@.";
+"You need a working internet connection to create a join code for %@." = "Du trenger en fungerende internettforbindelse for å opprette en innmeldingskode for %@.";
 "Please enter the join code for the list you want to join." = "Oppgi innmeldingskoden til lista du vil melde deg inn i.";
 "Please enter the join code for the list that %@ should be joined to." = "Oppgi innmeldingskoden til lista som %@ skal meldes inn i.";
 "You will get access to %@ as soon as the request has been approved." = "Du vil få tilgang til %@ så snart forespørselen er godkjent.";
@@ -661,7 +666,7 @@
 "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Åpne Innstillinger, gå til Personvern > Stedstjenester og skru på stedstjenestene for å få veibeskrivelse.";
 "Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo." = "Stedstjenestene er skrudd av for Origo. Åpne Innstillinger og gå til Personvern > Stedstjenester for å skru på stedstjenester for Origo.";
 "Error" = "Feil";
-"An error occurred. Please try again another time." = "Det oppstod en feil. Vennligst prøv igjen en annen gang.";
+"An error has occurred. Please try again another time." = "Det har oppstått en feil. Vennligst prøv igjen en annen gang.";
 
 
 /***

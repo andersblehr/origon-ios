@@ -42,6 +42,20 @@
 }
 
 
+#pragma mark - Custom accessors
+
+- (void)setEnabled:(BOOL)enabled
+{
+    [super setEnabled:enabled];
+    
+    if (enabled) {
+        self.backgroundColor = [UIColor globalTintColour];
+    } else {
+        self.backgroundColor = [UIColor tableViewBackgroundColour];
+    }
+}
+
+
 #pragma mark - UIControl overrides
 
 - (void)setHighlighted:(BOOL)highlighted

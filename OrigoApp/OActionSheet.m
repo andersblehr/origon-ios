@@ -20,7 +20,7 @@
 
 @implementation OActionSheet
 
-#pragma mark - Factory methods
+#pragma mark - Block based action sheets
 
 + (void)singleButtonActionSheetWithButtonTitle:(NSString *)buttonTitle action:(void (^)(void))action
 {

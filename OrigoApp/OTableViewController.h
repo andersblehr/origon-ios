@@ -56,6 +56,7 @@
 - (void)didFinishEditingInlineField:(OInputField *)inlineField;
 
 - (BOOL)supportsPullToRefresh;
+- (void)onlineStatusDidChange;
 - (void)didToggleEditMode;
 - (void)didResumeFromBackground;
 - (void)didLogout;
@@ -75,6 +76,7 @@
 @property (nonatomic, assign, readonly) BOOL isHidden;
 @property (nonatomic, assign, readonly) BOOL wasHidden;
 @property (nonatomic, assign, readonly) BOOL didResurface;
+@property (nonatomic, assign, readonly) BOOL isOnline;
 
 @property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
 @property (nonatomic, assign) BOOL usesTableView;
@@ -114,6 +116,8 @@
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 
+- (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles;
+
 - (void)sendTextToRecipients:(id)recipients;
 - (void)sendEmailToRecipients:(id)toRecipients cc:(id)ccRecipients;
 - (void)callRecipient:(id)recipient;
@@ -128,9 +132,6 @@
 
 - (void)editInlineInCell:(OTableViewCell *)inlineCell;
 - (void)cancelInlineEditingIfOngoing;
-
-//- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
-- (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

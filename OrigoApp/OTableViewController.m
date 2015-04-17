@@ -140,6 +140,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (void)insertRefreshControl
+{
+    _refreshControl = [[UIRefreshControl alloc] init];
+    _refreshControl.tintColor = [UIColor lightGrayColor];
+    [_refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
+    
+    [_tableView insertSubview:_refreshControl atIndex:0];
+}
+
+
 - (NSArray *)sortedArrayWithData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
     NSArray *unsortedArray = [data isKindOfClass:[NSSet class]] ? [data allObjects] : data;
@@ -501,6 +511,33 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Selector implementations
 
+- (void)reachabilityDidChange:(NSNotification *)notification
+{
+    Reachability *reachability = [notification object];
+    NetworkStatus reachabilityStatus = [reachability currentReachabilityStatus];
+    
+    BOOL internetConnectionIsWiFi = reachabilityStatus == ReachableViaWiFi;
+    BOOL internetConnectionIsWWAN = reachabilityStatus == ReachableViaWWAN;
+    
+    _isOnline = internetConnectionIsWiFi || internetConnectionIsWWAN;
+    
+    if ([_instance respondsToSelector:@selector(supportsPullToRefresh)]) {
+        if ([_instance supportsPullToRefresh]) {
+            if (_isOnline) {
+                [self insertRefreshControl];
+            } else {
+                [_refreshControl removeFromSuperview];
+                _refreshControl = nil;
+            }
+        }
+    }
+    
+    if ([_instance respondsToSelector:@selector(onlineStatusDidChange)]) {
+        [_instance onlineStatusDidChange];
+    }
+}
+
+
 - (void)refresh
 {
     [[OMeta m].replicator refreshWithRefreshHandler:self];
@@ -757,6 +794,77 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+#pragma mark - Segmented title
+
+- (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles
+{
+    if (segmentTitles.count) {
+        if (_titleSegments) {
+            NSString *selectedTitle = [_titleSegments titleForSegmentAtIndex:_titleSegments.selectedSegmentIndex];
+            
+            if (![segmentTitles containsObject:selectedTitle]) {
+                selectedTitle = nil;
+            }
+            
+            _titleSegments.selectedSegmentIndex = UISegmentedControlNoSegment;
+            
+            for (NSInteger i = 0; i < _titleSegmentTitles.count; i++) {
+                NSString *segmentTitle = _titleSegmentTitles[i];
+                
+                if (![segmentTitles containsObject:segmentTitle]) {
+                    [_titleSegments removeSegmentAtIndex:i animated:YES];
+                    [_titleSegmentTitles removeObjectAtIndex:i];
+                }
+            }
+            
+            for (NSInteger i = 0; i < segmentTitles.count; i++) {
+                NSString *segmentTitle = segmentTitles[i];
+                
+                if (![_titleSegmentTitles containsObject:segmentTitle]) {
+                    [_titleSegments insertSegmentWithTitle:segmentTitle atIndex:i animated:YES];
+                    [_titleSegmentTitles insertObject:segmentTitle atIndex:i];
+                }
+                
+                if (selectedTitle && [segmentTitle isEqualToString:selectedTitle]) {
+                    _titleSegments.selectedSegmentIndex = i;
+                }
+            }
+            
+            if (_titleSegments.selectedSegmentIndex < 0) {
+                _titleSegments.selectedSegmentIndex = 0;
+            }
+        } else {
+            _titleSegmentTitles = [segmentTitles mutableCopy];
+            _titleSegments = [[UISegmentedControl alloc] initWithItems:segmentTitles];
+            _titleSegments.selectedSegmentIndex = 0;
+            _titleSegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenWidth] - 2 * kContentInset, _titleSegments.frame.size.height);
+            [_titleSegments addTarget:_instance action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
+            
+            UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenWidth], kBorderWidth)];
+            segmentsHairline.backgroundColor = [UIColor toolbarHairlineColour];
+            
+            UIView *segmentsView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], kToolbarBarHeight)];
+            segmentsView.backgroundColor = [UIColor toolbarColour];
+            
+            [segmentsView addSubview:_titleSegments];
+            [segmentsView addSubview:segmentsHairline];
+            [self.view addSubview:segmentsView];
+            
+            if (_tableView) {
+                [_tableView setTopContentInset:_tableView.contentInset.top + kToolbarBarHeight];
+            }
+        }
+    } else if (_titleSegments) {
+        [_titleSegments.superview removeFromSuperview];
+        _titleSegments = nil;
+        
+        [_tableView setTopContentInset:_tableView.contentInset.top - kToolbarBarHeight];
+    }
+    
+    return _titleSegments;
+}
+
+
 #pragma mark - Communications
 
 - (void)sendTextToRecipients:(id)recipients
@@ -825,7 +933,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([[UIApplication sharedApplication] canOpenURL:phoneURL]) {
         [[UIApplication sharedApplication] openURL:phoneURL];
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot place call", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify that %@ is a valid phone number.", @""), [OPhoneNumberFormatter formatterForNumber:phoneNumber].formattedNumber]];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot place call", @"") message:[NSString stringWithFormat:NSLocalizedString(@"Please verify that %@ is a valid phone number.", @""), [OPhoneNumberFormatter formatterForNumber:phoneNumber].formattedNumber]];
     }
 }
 
@@ -1056,77 +1164,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Custom titles
-
-- (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles
-{
-    if (segmentTitles.count) {
-        if (_titleSegments) {
-            NSString *selectedTitle = [_titleSegments titleForSegmentAtIndex:_titleSegments.selectedSegmentIndex];
-            
-            if (![segmentTitles containsObject:selectedTitle]) {
-                selectedTitle = nil;
-            }
-            
-            _titleSegments.selectedSegmentIndex = UISegmentedControlNoSegment;
-            
-            for (NSInteger i = 0; i < _titleSegmentTitles.count; i++) {
-                NSString *segmentTitle = _titleSegmentTitles[i];
-                
-                if (![segmentTitles containsObject:segmentTitle]) {
-                    [_titleSegments removeSegmentAtIndex:i animated:YES];
-                    [_titleSegmentTitles removeObjectAtIndex:i];
-                }
-            }
-            
-            for (NSInteger i = 0; i < segmentTitles.count; i++) {
-                NSString *segmentTitle = segmentTitles[i];
-                
-                if (![_titleSegmentTitles containsObject:segmentTitle]) {
-                    [_titleSegments insertSegmentWithTitle:segmentTitle atIndex:i animated:YES];
-                    [_titleSegmentTitles insertObject:segmentTitle atIndex:i];
-                }
-                
-                if (selectedTitle && [segmentTitle isEqualToString:selectedTitle]) {
-                    _titleSegments.selectedSegmentIndex = i;
-                }
-            }
-            
-            if (_titleSegments.selectedSegmentIndex < 0) {
-                _titleSegments.selectedSegmentIndex = 0;
-            }
-        } else {
-            _titleSegmentTitles = [segmentTitles mutableCopy];
-            _titleSegments = [[UISegmentedControl alloc] initWithItems:segmentTitles];
-            _titleSegments.selectedSegmentIndex = 0;
-            _titleSegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenWidth] - 2 * kContentInset, _titleSegments.frame.size.height);
-            [_titleSegments addTarget:_instance action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
-            
-            UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenWidth], kBorderWidth)];
-            segmentsHairline.backgroundColor = [UIColor toolbarHairlineColour];
-            
-            UIView *segmentsView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], kToolbarBarHeight)];
-            segmentsView.backgroundColor = [UIColor toolbarColour];
-            
-            [segmentsView addSubview:_titleSegments];
-            [segmentsView addSubview:segmentsHairline];
-            [self.view addSubview:segmentsView];
-            
-            if (_tableView) {
-                [_tableView setTopContentInset:_tableView.contentInset.top + kToolbarBarHeight];
-            }
-        }
-    } else if (_titleSegments) {
-        [_titleSegments.superview removeFromSuperview];
-        _titleSegments = nil;
-        
-        [_tableView setTopContentInset:_tableView.contentInset.top - kToolbarBarHeight];
-    }
-    
-    return _titleSegments;
-}
-
-
 #pragma mark - Reloading sections
 
 - (void)reloadSections
@@ -1336,9 +1373,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _inputSectionKey = NSNotFound;
     _instance = self;
     _state = [[OState alloc] initWithViewController:self];
+    _isOnline = [OMeta m].hasInternetConnection;
     _rowAnimation = UITableViewRowAnimationNone;
     
     [self initialiseInstance];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
     
     if (self.title && !self.navigationItem.backBarButtonItem) {
         CGFloat titleWidth = [self.title sizeWithFont:[UIFont navigationBarTitleFont] maxWidth:CGFLOAT_MAX].width;
@@ -1390,12 +1430,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         if ([_instance respondsToSelector:@selector(supportsPullToRefresh)]) {
-            if ([_instance supportsPullToRefresh]) {
-                _refreshControl = [[UIRefreshControl alloc] init];
-                _refreshControl.tintColor = [UIColor lightGrayColor];
-                [_refreshControl addTarget:self action:@selector(refresh) forControlEvents:UIControlEventValueChanged];
-                
-                [_tableView insertSubview:_refreshControl atIndex:0];
+            if ([_instance supportsPullToRefresh] && self.isOnline) {
+                [self insertRefreshControl];
             }
         }
     }
@@ -1640,7 +1676,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [[OMeta m].activityIndicator stopAnimating];
     }
     
-    // TODO: Handle errors (-1001: Timeout, and others)
+    if (error.code != NSURLErrorNotConnectedToInternet && error.code != NSURLErrorTimedOut) {
+        [OAlert showAlertForError:error];
+    }
 }
 
 
@@ -1747,11 +1785,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (BOOL)tableView:(OTableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDeleteCell = NO;
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey != _inputSectionKey && ![OMeta m].replicator.isReplicating) {
-        if ([_instance respondsToSelector:@selector(canDeleteCellAtIndexPath:)]) {
-            canDeleteCell = [_instance canDeleteCellAtIndexPath:indexPath];
+    if (self.isOnline) {
+        NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+        
+        if (sectionKey != _inputSectionKey && ![OMeta m].replicator.isReplicating) {
+            if ([_instance respondsToSelector:@selector(canDeleteCellAtIndexPath:)]) {
+                canDeleteCell = [_instance canDeleteCellAtIndexPath:indexPath];
+            }
         }
     }
     

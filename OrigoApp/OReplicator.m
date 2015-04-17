@@ -189,7 +189,7 @@
             [[OMeta m] logout];
         }
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Authentication required", @"") text:NSLocalizedString(@"You have been logged out. Please log in again to continue using Origo on this device.", @"")];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Authentication required", @"") message:NSLocalizedString(@"You have been logged out. Please log in again to continue using Origo on this device.", @"")];
         
     }
 }

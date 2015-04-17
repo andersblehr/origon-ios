@@ -183,19 +183,21 @@ static NSInteger const kSectionKeyMembership = 2;
             } else if ([displayKey isEqualToString:kPropertyKeyType]) {
                 cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
                 
-                BOOL canEdit = [origo userIsAdmin] && ![origo isResidence] && ![origo isCommunity];
-                
-                if (canEdit && [origo isPrivate]) {
-                    canEdit = ![origo isPinned];
-                }
-                
-                if (canEdit && [[OMeta m].user isJuvenile]) {
-                    canEdit = [origo isPrivate];
-                }
-                
-                if (canEdit) {
-                    cell.destinationId = kIdentifierValuePicker;
-                    cell.destinationTarget = kTargetOrigoType;
+                if (self.isOnline) {
+                    BOOL canEdit = [origo userIsAdmin] && ![origo isResidence] && ![origo isCommunity];
+                    
+                    if (canEdit && [origo isPrivate]) {
+                        canEdit = ![origo isPinned];
+                    }
+                    
+                    if (canEdit && [[OMeta m].user isJuvenile]) {
+                        canEdit = [origo isPrivate];
+                    }
+                    
+                    if (canEdit) {
+                        cell.destinationId = kIdentifierValuePicker;
+                        cell.destinationTarget = kTargetOrigoType;
+                    }
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyJoinCode]) {
                 cell.destinationId = kIdentifierJoiner;
@@ -218,7 +220,11 @@ static NSInteger const kSectionKeyMembership = 2;
                 cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo subjective:NO];
                 
                 if ([origo userIsAdmin]) {
-                    cell.destinationId = kIdentifierValuePicker;
+                    if (self.isOnline) {
+                        cell.destinationId = kIdentifierValuePicker;
+                    } else if (adminCount > 1) {
+                        cell.destinationId = kIdentifierValueList;
+                    }
                 } else if (adminCount > 1) {
                     cell.destinationId = kIdentifierValueList;
                 } else if (adminCount == 1) {
@@ -228,7 +234,10 @@ static NSInteger const kSectionKeyMembership = 2;
             } else if ([displayKey isEqualToString:kPropertyKeyPermissions]) {
                 cell.textLabel.text = NSLocalizedString(@"User permissions", @"");
                 cell.detailTextLabel.text = [origo displayPermissions];
-                cell.destinationId = kIdentifierValueList;
+                
+                if (self.isOnline) {
+                    cell.destinationId = kIdentifierValueList;
+                }
             }
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
             id<OMember> member = _entity;
@@ -236,7 +245,7 @@ static NSInteger const kSectionKeyMembership = 2;
             if ([displayKey isEqualToString:kPropertyKeyGender]) {
                 cell.detailTextLabel.text = [[OLanguage genderTermForGender:member.gender isJuvenile:[member isJuvenile]] stringByCapitalisingFirstLetter];
                 
-                if ([member userCanEdit]) {
+                if ([member userCanEdit] && self.isOnline) {
                     cell.destinationId = kIdentifierValuePicker;
                     cell.destinationTarget = kTargetGender;
                 }
@@ -376,6 +385,12 @@ static NSInteger const kSectionKeyMembership = 2;
 - (NSString *)emptyTableViewFooterText
 {
     return [self footerContentForSectionWithKey:kSectionKeyGeneral];
+}
+
+
+- (void)onlineStatusDidChange
+{
+    [self reloadSectionWithKey:kSectionKeyGeneral];
 }
 
 @end

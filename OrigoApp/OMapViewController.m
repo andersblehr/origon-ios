@@ -98,9 +98,9 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 - (void)showAlertForError:(NSError *)error info:(id)info
 {
     if (error.domain == kCLErrorDomain && error.code == kCLErrorGeocodeFoundNoResult) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown address", @"") text:[NSString stringWithFormat:NSLocalizedString(@"No known address matches %@.", @""), info]];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown address", @"") message:[NSString stringWithFormat:NSLocalizedString(@"No known address matches %@.", @""), info]];
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Error", @"") text:NSLocalizedString(@"An error occurred. Please try again another time.", @"")];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Error", @"") message:NSLocalizedString(@"An error has occurred. Please try again another time.", @"")];
     }
     
     self.navigationItem.leftBarButtonItem.enabled = NO;
@@ -109,7 +109,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 
 - (void)showAmbiguousAddressAlertForOrigo:(id<OOrigo>)origo
 {
-    [OAlert showAlertWithTitle:NSLocalizedString(@"Unclear address", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The address %@ is unclear and could not be not found in the map.", @""), [origo singleLineAddress]]];
+    [OAlert showAlertWithTitle:NSLocalizedString(@"Unclear address", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The address %@ is unclear and could not be not found in the map.", @""), [origo singleLineAddress]]];
     
     self.navigationItem.leftBarButtonItem.enabled = NO;
 }
@@ -146,10 +146,10 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
         } else if (status == kCLAuthorizationStatusAuthorizedWhenInUse) {
             [self presentStartingPointSheet];
         } else if (status == kCLAuthorizationStatusDenied) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot give directions", @"") text:NSLocalizedString(@"Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo.", @"")];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot give directions", @"") message:NSLocalizedString(@"Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo.", @"")];
         }
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot give directions", @"") text:NSLocalizedString(@"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.", @"")];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot give directions", @"") message:NSLocalizedString(@"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.", @"")];
     }
 }
 

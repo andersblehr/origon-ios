@@ -232,6 +232,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (OButton *)buttonForKey:(NSString *)key
+{
+    return _views[[key stringByAppendingString:kViewKeySuffixButton]];
+}
+
+
 - (OInputField *)nextInputField
 {
     OInputField *inputField = nil;

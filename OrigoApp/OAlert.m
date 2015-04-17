@@ -15,13 +15,8 @@
 
 + (void)showAlertWithCode:(NSInteger)code message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate
 {
-    NSString *alertMessage = [NSString stringWithFormat:NSLocalizedString(@"An error has occurred. Please try again later. [%d: \"%@\"]", @""), code, message];
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
-    
-    if (tag < NSIntegerMax) {
-        alert.tag = tag;
-    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"") message:[NSString stringWithFormat:NSLocalizedString(@"An error has occurred. Please try again later. [%d: \"%@\"]", @""), code, message] delegate:delegate cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
+    alert.tag = tag;
     
     [alert show];
 }
@@ -29,20 +24,17 @@
 
 #pragma mark - Alert shorthands
 
-+ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
 {
-    [self showAlertWithTitle:title text:text delegate:nil tag:NSIntegerMax];
+    [self showAlertWithTitle:title message:message delegate:nil tag:NSIntegerMax];
 }
 
 
-+ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text delegate:(id)delegate tag:(NSInteger)tag
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message delegate:(id)delegate tag:(NSInteger)tag
 {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
-    
-    if (tag != NSIntegerMax) {
-        alertView.delegate = delegate;
-        alertView.tag = tag;
-    }
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
+    alertView.delegate = delegate;
+    alertView.tag = tag;
     
     [alertView show];
 }

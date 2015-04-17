@@ -402,7 +402,7 @@
     if ([self save:&error]) {
         OLogDebug(@"Entities successfully saved to device.");
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Data error", @"") text:[NSString stringWithFormat:NSLocalizedString(@"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.", @""), [OMeta m].appName]];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Data error", @"") message:[NSString stringWithFormat:NSLocalizedString(@"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.", @""), [OMeta m].appName]];
         
         OLogError(@"Error saving to device: %@ [%@]", [error localizedDescription], [error userInfo]);
     }

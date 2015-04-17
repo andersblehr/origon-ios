@@ -77,6 +77,22 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 }
 
 
+- (void)enableOrDisableButtons
+{
+    if ([self targetIs:kTargetSettings]) {
+        [self reloadSectionWithKey:kSectionKeyActions];
+    } else if ([self targetIs:kTargetGroups]) {
+        if ([self aspectIs:kAspectEditable]) {
+            [self.navigationItem barButtonItemWithTag:kBarButtonItemTagPlus].enabled = self.isOnline;
+            [self reloadSectionWithKey:kSectionKeyValues1];
+        } else {
+            [self.navigationItem barButtonItemWithTag:kBarButtonItemTagEdit].enabled = self.isOnline;
+        }
+    }
+    
+}
+
+
 - (void)inferTitleSegment
 {
     if ([self targetIs:kTargetRoles]) {
@@ -321,12 +337,14 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Groups", @"")];
             
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+            self.navigationItem.leftBarButtonItem.enabled = self.isOnline;
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         } else {
             self.title = NSLocalizedString(@"Groups", @"");
 
             if ([_origo userCanEdit]) {
                 self.navigationItem.leftBarButtonItem = [UIBarButtonItem systemEditButtonWithTarget:self];
+                self.navigationItem.leftBarButtonItem.enabled = self.isOnline;
             }
             
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
@@ -433,11 +451,24 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             NSString *accountKey = [self dataAtIndexPath:indexPath];
             
             if ([accountKey isEqualToString:kActionKeyLogout]) {
-                cell.textLabel.textColor = [UIColor redColor];
                 cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(accountKey, kStringPrefixLabel), [OMeta m].user.name];
+                
+                if (self.isOnline) {
+                    cell.textLabel.textColor = [UIColor redColor];
+                } else {
+                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                }
             } else {
                 cell.textLabel.text = NSLocalizedString(accountKey, kStringPrefixLabel);
+                
+                if (self.isOnline) {
+                    cell.textLabel.textColor = [UIColor textColour];
+                } else {
+                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                }
             }
+            
+            cell.selectable = self.isOnline;
         }
     } else if ([self targetIs:kTargetPermissions]) {
         NSString *permissionKey = [self dataAtIndexPath:indexPath];
@@ -528,8 +559,11 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             
             cell.textLabel.text = group;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[_origo membersOfGroup:group] inOrigo:_origo subjective:YES];
-            cell.destinationId = kIdentifierValuePicker;
-            cell.destinationTarget = @{group: kAspectGroup};
+            
+            if (self.isOnline) {
+                cell.destinationId = kIdentifierValuePicker;
+                cell.destinationTarget = @{group: kAspectGroup};
+            }
         } else {
             [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo excludeRoles:NO excludeRelations:YES];
             cell.selectable = NO;
@@ -736,6 +770,12 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             }
         }
     }
+}
+
+
+- (void)onlineStatusDidChange
+{
+    [self enableOrDisableButtons];
 }
 
 

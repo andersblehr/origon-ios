@@ -26,9 +26,9 @@
 @property (nonatomic, readonly) OMember *user;
 @property (nonatomic, readonly) OReplicator *replicator;
 @property (nonatomic, readonly) OActivityIndicator *activityIndicator;
+@property (nonatomic, readonly) Reachability *internetReachability;
 
-@property (nonatomic, assign, readonly) BOOL internetConnectionIsWiFi;
-@property (nonatomic, assign, readonly) BOOL internetConnectionIsWWAN;
+@property (nonatomic, assign, readonly) BOOL hasInternetConnection;
 @property (nonatomic, assign, readonly) BOOL userDidJustRegister;
 
 @property (nonatomic, weak, readonly) OAppDelegate *appDelegate;
@@ -43,8 +43,6 @@
 - (BOOL)userIsAllSet;
 - (BOOL)userIsLoggedIn;
 - (BOOL)userIsRegistered;
-
-- (BOOL)internetConnectionIsAvailable;
 
 + (BOOL)deviceIsSimulator;
 + (BOOL)iOSVersionIs:(NSString *)majorVersionNumber;

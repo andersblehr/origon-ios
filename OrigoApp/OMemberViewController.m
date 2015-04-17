@@ -88,6 +88,13 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)enableOrDisableButtons
+{
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagFavourite].enabled = self.isOnline;
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagEdit].enabled = self.isOnline;
+}
+
+
 - (void)resetInputState
 {
     [_member useInstance:nil];
@@ -134,7 +141,7 @@ static NSInteger const kButtonIndexContinue = 1;
     } else {
         [_nameField becomeFirstResponder];
         
-        [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member givenName], [_origo displayName]]];
+        [OAlert showAlertWithTitle:@"" message:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member givenName], [_origo displayName]]];
     }
     
     return isEligible;
@@ -153,7 +160,7 @@ static NSInteger const kButtonIndexContinue = 1;
         }
         
         if (!isUniqueEmail) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Address in use", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), _emailField.value]];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Address in use", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), _emailField.value]];
             
             [_emailField becomeFirstResponder];
         }
@@ -296,7 +303,7 @@ static NSInteger const kButtonIndexContinue = 1;
             [self persistMember];
         }
     } else if (activeResidences.count) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"No child named %@ has been registered by %@.", @""), _nameField.value, [OUtil commaSeparatedListOfMembers:activeGuardians conjoin:YES subjective:YES]]];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") message:[NSString stringWithFormat:NSLocalizedString(@"No child named %@ has been registered by %@.", @""), _nameField.value, [OUtil commaSeparatedListOfMembers:activeGuardians conjoin:YES subjective:YES]]];
         
         if (allResidences.count > activeResidences.count) {
             for (id<OOrigo> activeResidence in activeResidences) {
@@ -592,7 +599,7 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)presentAlertForNumberOfUnmatchedResidences:(NSInteger)numberOfUnmatchedResidences
 {
     NSString *title = nil;
-    NSString *text = nil;
+    NSString *message = nil;
     
     if (numberOfUnmatchedResidences == 1) {
         title = NSLocalizedString(@"Unknown address", @"");
@@ -602,17 +609,17 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if (numberOfUnmatchedResidences < [_member residences].count) {
         if (numberOfUnmatchedResidences == 1) {
-            text = NSLocalizedString(@"One of the addresses you provided did not match our records and was not saved.", @"");
+            message = NSLocalizedString(@"One of the addresses you provided did not match our records and was not saved.", @"");
         } else {
-            text = NSLocalizedString(@"Some of the addresses you provided did not match our records and were not saved.", @"");
+            message = NSLocalizedString(@"Some of the addresses you provided did not match our records and were not saved.", @"");
         }
     } else if (numberOfUnmatchedResidences == 1) {
-        text = NSLocalizedString(@"The address you provided did not match our records and was not saved.", @"");
+        message = NSLocalizedString(@"The address you provided did not match our records and was not saved.", @"");
     } else {
-        text = NSLocalizedString(@"The addresses you provided did not match our records and were not saved.", @"");
+        message = NSLocalizedString(@"The addresses you provided did not match our records and were not saved.", @"");
     }
     
-    [OAlert showAlertWithTitle:title text:text];
+    [OAlert showAlertWithTitle:title message:message];
 }
 
 
@@ -620,16 +627,26 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     NSString *message = nil;
     
-    if ([_member isUser]) {
-        message = [NSString stringWithFormat:NSLocalizedString(@"You are about to change your email address from %@ to %@ ...", @""), _member.email, _emailField.value];
+    if (self.isOnline) {
+        if ([_member isUser]) {
+            message = [NSString stringWithFormat:NSLocalizedString(@"You are about to change your email address from %@ to %@ ...", @""), _member.email, _emailField.value];
+        } else {
+            message = [NSString stringWithFormat:NSLocalizedString(@"You are about to change %@'s email address from %@ to %@ ...", @""), [_member givenName], _member.email, _emailField.value];
+        }
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"New email address", @"") message:message delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Continue", @""), nil];
+        alert.tag = kAlertTagEmailChange;
+        
+        [alert show];
     } else {
-        message = [NSString stringWithFormat:NSLocalizedString(@"You are about to change %@'s email address from %@ to %@ ...", @""), [_member givenName], _member.email, _emailField.value];
+        if ([_member isUser]) {
+            message = NSLocalizedString(@"You need a working internet connection to change your email address.", @"");
+        } else {
+            message = [NSString stringWithFormat:NSLocalizedString(@"You need a working internet connection to change %@'s email address.", @""), [_member givenName]];
+        }
+        
+        [OAlert showAlertWithTitle:NSLocalizedString(@"No internet connection", @"") message:message];
     }
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"New email address", @"") message:message delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Continue", @""), nil];
-    alert.tag = kAlertTagEmailChange;
-    
-    [alert show];
 }
 
 
@@ -824,7 +841,7 @@ static NSInteger const kButtonIndexContinue = 1;
     isFavourite = !isFavourite;
     
     NSMutableArray *rightBarButtonItems = [self.navigationItem.rightBarButtonItems mutableCopy];
-    NSInteger toggleIndex = [rightBarButtonItems indexOfObject:[self.navigationItem rightBarButtonItemWithTag:kBarButtonTagFavourite]];
+    NSInteger toggleIndex = [rightBarButtonItems indexOfObject:[self.navigationItem barButtonItemWithTag:kBarButtonItemTagFavourite]];
     
     [rightBarButtonItems replaceObjectAtIndex:toggleIndex withObject:[UIBarButtonItem favouriteButtonWithTarget:self isFavourite:isFavourite]];
     
@@ -1019,6 +1036,8 @@ static NSInteger const kButtonIndexContinue = 1;
         if ([_member userCanEdit]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
         }
+        
+        [self enableOrDisableButtons];
     }
     
     self.requiresSynchronousServerCalls = YES;
@@ -1391,6 +1410,12 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)onlineStatusDidChange
+{
+    [self enableOrDisableButtons];
+}
+
+
 - (void)didToggleEditMode
 {
     if ([_member isHousemateOfUser] && !self.isModal) {
@@ -1652,7 +1677,7 @@ static NSInteger const kButtonIndexContinue = 1;
                 [self reflectMember:actualMember];
                 [self examinerDidFinishExamination];
             } else {
-                [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") text:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
+                [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") message:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
                 
                 [self.inputCell resumeFirstResponder];
             }
@@ -1661,7 +1686,7 @@ static NSInteger const kButtonIndexContinue = 1;
         }
     } else if ([self actionIs:kActionEdit]) {
         if (response.statusCode == kHTTPStatusOK) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Address in use", @"") text:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), _emailField.value]];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Address in use", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), _emailField.value]];
             
             [_emailField becomeFirstResponder];
         } else if (response.statusCode == kHTTPStatusNotFound) {

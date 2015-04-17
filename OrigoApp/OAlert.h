@@ -10,8 +10,8 @@
 
 @interface OAlert : NSObject
 
-+ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text;
-+ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text delegate:(id)delegate tag:(NSInteger)tag;
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)text;
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)text delegate:(id)delegate tag:(NSInteger)tag;
 
 + (void)showAlertForError:(NSError *)error;
 + (void)showAlertForError:(NSError *)error tag:(NSInteger)tag delegate:(id)delegate;

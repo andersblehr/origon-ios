@@ -8,6 +8,8 @@
 
 #import "OConnection.h"
 
+NSInteger const kHTTPStatusErrorRangeStart = 400;
+
 NSInteger const kHTTPStatusOK = 200;
 NSInteger const kHTTPStatusCreated = 201;
 NSInteger const kHTTPStatusNoContent = 204;
@@ -18,14 +20,13 @@ NSInteger const kHTTPStatusNotFound = 404;
 NSInteger const kHTTPStatusInternalServerError = 500;
 NSInteger const kHTTPStatusServiceUnavailable = 503;
 
-NSInteger const kHTTPStatusErrorRangeStart = 400;
-
 NSString * const kHTTPHeaderLocation = @"Location";
+
+NSString * const kOrigoServer = @"https://origoapp.appspot.com";
 
 static BOOL useDevServer = YES;
 
 static NSString * const kDevServer = @"http://localhost:8888";
-static NSString * const kProdServer = @"https://origoapp.appspot.com";
 
 static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
@@ -85,12 +86,12 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (void)performHTTPMethod:(NSString *)HTTPMethod withRoot:(NSString *)root path:(NSString *)path entities:(NSArray *)entities
 {
-    if ([[OMeta m] internetConnectionIsAvailable]) {
+    if ([OMeta m].hasInternetConnection) {
         [self setValue:[OMeta m].deviceId forURLParameter:kURLParameterDeviceId];
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
-        NSString *serverURL = useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kProdServer;
+        NSString *serverURL = useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kOrigoServer;
         
         _URLRequest.HTTPMethod = HTTPMethod;
         _URLRequest.URL = [[[[NSURL URLWithString:serverURL] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];
@@ -121,7 +122,7 @@ static NSString * const kURLParameterIdentifier = @"id";
             OLogBreakage(@"Missing headers and/or parameters in request, aborting.");
         }
     } else {
-        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"No internet connection.", @"") forKey:NSLocalizedDescriptionKey]]];
+        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"No internet connection", @"") forKey:NSLocalizedDescriptionKey]]];
     }
 }
 
