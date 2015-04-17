@@ -18,7 +18,8 @@ static NSString * const kPersistentStoreURLFormat = @"OrigoApp^%@.sqlite";
     NSManagedObjectContext *_managedObjectContext;
     NSPersistentStoreCoordinator *_persistentStoreCoordinator;
     
-    BOOL _isRunningInBackground;
+    BOOL _didJustLaunch;
+    BOOL _didEnterBackground;
 }
 
 @end
@@ -131,6 +132,8 @@ static void uncaughtExceptionHandler(NSException *exception)
     OLogDebug(@"System language: %@", [OMeta m].language);
     //OLogDebug(@"Persistent store: %@", [self persistentStoreURL]);
 
+    _didJustLaunch = YES;
+    
     return YES;
 }
 							
@@ -147,7 +150,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     
     [self saveApplicationState];
     
-    _isRunningInBackground = YES;
+    _didEnterBackground = YES;
 }
 
 
@@ -159,21 +162,25 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    OLogDebug(@"Application did become active");
-    
-    if (_isRunningInBackground) {
+    if (_didJustLaunch) {
+        OLogDebug(@"Application did become active");
+        
+        if ([[OMeta m] userIsAllSet]) {
+            [[OMeta m].replicator replicate];
+        }
+        
+        _didJustLaunch = NO;
+    } else if (_didEnterBackground) {
+        OLogDebug(@"Application did resume from background");
+        
         if ([[OState s].viewController respondsToSelector:@selector(didResumeFromBackground)]) {
             [[OState s].viewController didResumeFromBackground];
         }
         
-        _isRunningInBackground = NO;
+        _didEnterBackground = NO;
         
         if ([[OMeta m] userIsAllSet]) {
             [[OMeta m].replicator replicateIfNeeded];
-        }
-    } else {
-        if ([[OMeta m] userIsAllSet]) {
-            [[OMeta m].replicator replicate];
         }
     }
 }
@@ -183,7 +190,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     OLogDebug(@"Application will terminate");
     
-    if (!_isRunningInBackground) {
+    if (!_didEnterBackground) {
         [self saveApplicationState];
     }
 }

@@ -153,7 +153,7 @@ extern NSString * const kIconFileAllContacts;
 extern NSString * const kIconFileFavouriteNo;
 extern NSString * const kIconFileFavouriteYes;
 extern NSString * const kIconFileAcceptDecline;
-extern NSString * const kIconFileAddToOrigo;
+extern NSString * const kIconFileJoin;
 extern NSString * const kIconFileCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;

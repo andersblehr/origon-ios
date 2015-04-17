@@ -242,9 +242,10 @@
 "Send email to %@" = "Send email to %@";
 
 // Alerts
-"No internet connection." = "No internet connection.";
+"No internet connection" = "No internet connection";
 "Password too short" = "Password too short";
 "The password must be at least %@ characters long." = "The password must be at least %@ characters long.";
+"Error" = "Error";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "An error has occurred. Please try again later. [%d: \"%@\"]";
 "Cannot place call" = "Cannot place call";
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
@@ -309,6 +310,7 @@
 "When you register, you will receive an email with an activation code to use in the next step." = "When you register, you will receive an email with an activation code to use in the next step.";
 "The activation code has been sent to %@ ..." = "The activation code has been sent to %@. You can enter the code later if you don't have access to your email at this time.";
 "The activation code has been sent to %@." = "The activation code has been sent to %@.";
+"You need a working internet connection to continue." = "You need a working internet connection to continue.";
 
 // Buttons
 "Have code" = "Have code";
@@ -461,6 +463,8 @@
 "New email address" = "New email address";
 "You are about to change your email address from %@ to %@ ..." = "You are about to change your email address from %@ to %@. You need access to the new address to activate this change. Do you want to continue?";
 "You are about to change %@'s email address from %@ to %@ ..." = "You are about to change %@'s email address from %@ to %@. A notification will be sent to the new as well as the old address. Do you want to continue?";
+"You need a working internet connection to change your email address." = "You need a working internet connection to change your email address.";
+"You need a working internet connection to change %@'s email address." = "You need a working internet connection to change %@'s email address.";
 "Activation failed" = "Activation failed";
 "The email address %@ could not be activated ..." = "The email address %@ could not be activated. Please try again, or tap Cancel to cancel the change.";
 "Address in use" = "Address in use";
@@ -555,6 +559,7 @@
 "The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.";
 "The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.";
 "You may ask an administrator to create a join code for %@." = "You may ask an administrator to create a join code for %@.";
+"You need a working internet connection to create a join code for %@." = "You need a working internet connection to create a join code for %@.";
 "Please enter the join code for the list you want to join." = "Please enter the join code for the list you want to join.";
 "Please enter the join code for the list that %@ should be joined to." = "Please enter the join code for the list that %@ should be joined to.";
 "You will get access to %@ as soon as the request has been approved." = "You will get access to %@ as soon as the request has been approved.";
@@ -661,7 +666,7 @@
 "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.";
 "Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo." = "Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo.";
 "Error" = "Error";
-"An error occurred. Please try again another time." = "An error occurred. Please try again another time.";
+"An error has occurred. Please try again another time." = "An error has occurred. Please try again another time.";
 
 
 /***

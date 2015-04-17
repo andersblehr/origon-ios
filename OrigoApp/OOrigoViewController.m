@@ -68,7 +68,27 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 
 #pragma mark - Auxiliary methods
 
-- (void)loadNavigationBarItems
+- (NSString *)nameKey
+{
+    NSString *nameKey = nil;
+    
+    if ([_origo isOfType:kOrigoTypePrivate]) {
+        nameKey = kMappedKeyPrivateListName;
+    } else if ([_origo isOfType:kOrigoTypeResidence]) {
+        nameKey = kMappedKeyResidenceName;
+    } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
+        nameKey = kMappedKeyPreschoolClass;
+    } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
+        nameKey = kMappedKeySchoolClass;
+    } else {
+        nameKey = kMappedKeyListName;
+    }
+    
+    return nameKey;
+}
+
+
+- (void)loadRightNavigationBarButtonItems
 {
     self.navigationItem.rightBarButtonItems = nil;
 
@@ -100,27 +120,18 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         if ([_origo userCanAdd]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
         }
+        
+        [self enableOrDisableButtons];
     }
 }
 
 
-- (NSString *)nameKey
+- (void)enableOrDisableButtons
 {
-    NSString *nameKey = nil;
-    
-    if ([_origo isOfType:kOrigoTypePrivate]) {
-        nameKey = kMappedKeyPrivateListName;
-    } else if ([_origo isOfType:kOrigoTypeResidence]) {
-        nameKey = kMappedKeyResidenceName;
-    } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
-        nameKey = kMappedKeyPreschoolClass;
-    } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
-        nameKey = kMappedKeySchoolClass;
-    } else {
-        nameKey = kMappedKeyListName;
-    }
-    
-    return nameKey;
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagLocation].enabled = self.isOnline;
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagGroups].enabled = self.isOnline || [_origo groups].count;
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagEdit].enabled = self.isOnline;
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagPlus].enabled = self.isOnline;
 }
 
 
@@ -513,7 +524,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
         
         if ([_origo isCommitted] && [_member isCommitted]) {
-            [self loadNavigationBarItems];
+            [self loadRightNavigationBarButtonItems];
         } else if (![_origo isReplicated]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
         }
@@ -918,14 +929,14 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
                 _origoType = _origo.type;
                 _needsEditDetails = YES;
                 
-                [self loadNavigationBarItems];
+                [self loadRightNavigationBarButtonItems];
                 self.needsReloadInputSection = YES;
             }
             
             if (_userIsAdmin && ![_origo userIsAdmin]) {
                 _userIsAdmin = NO;
                 
-                [self loadNavigationBarItems];
+                [self loadRightNavigationBarButtonItems];
             }
         }
     }
@@ -935,6 +946,12 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 - (BOOL)supportsPullToRefresh
 {
     return ![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]];
+}
+
+
+- (void)onlineStatusDidChange
+{
+    [self enableOrDisableButtons];
 }
 
 
@@ -1042,7 +1059,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         [self toggleEditMode];
 
         if ([self actionIs:kActionDisplay]) {
-            UIBarButtonItem *locationButton = [self.navigationItem rightBarButtonItemWithTag:kBarButtonTagLocation];
+            UIBarButtonItem *locationButton = [self.navigationItem barButtonItemWithTag:kBarButtonItemTagLocation];
             
             if (!locationButton && [_origo hasAddress]) {
                 [self.navigationItem insertRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self] atIndex:1];
@@ -1083,7 +1100,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
                     if (wasHidden) {
                         [self.navigationController popViewControllerAnimated:YES];
                     } else {
-                        [self loadNavigationBarItems];
+                        [self loadRightNavigationBarButtonItems];
                     }
                 } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
                     if (![_membership isHidden]) {

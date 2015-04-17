@@ -9,6 +9,7 @@
 #import "OMeta.h"
 
 static NSString * const kLocalisationTest = @"Localisation test";
+
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
 
@@ -23,8 +24,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     NSNumber *_isLoggedIn;
     NSString *_authToken;
     NSDate *_authTokenExpiryDate;
-    
-    Reachability *_internetReachability;
 }
 
 @end
@@ -36,26 +35,21 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 
 - (void)checkReachability:(Reachability *)reachability
 {
-    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
+    NetworkStatus reachabilityStatus = [reachability currentReachabilityStatus];
     
-    _internetConnectionIsWiFi = internetStatus == ReachableViaWiFi;
-    _internetConnectionIsWWAN = internetStatus == ReachableViaWWAN;
+    BOOL internetConnectionIsWiFi = reachabilityStatus == ReachableViaWiFi;
+    BOOL internetConnectionIsWWAN = reachabilityStatus == ReachableViaWWAN;
     
-    if (_internetConnectionIsWiFi) {
+    if (internetConnectionIsWiFi) {
         OLogDebug(@"Connected to the internet via Wi-Fi.");
-    } else if (_internetConnectionIsWWAN) {
+    } else if (internetConnectionIsWWAN) {
         OLogDebug(@"Connected to the internet via mobile web (WWAN).");
     } else {
         OLogDebug(@"Not connected to the internet.");
     }
     
     _internetReachability = reachability;
-}
-
-
-- (void)reachabilityDidChange:(NSNotification *)notification
-{
-    [self checkReachability:(Reachability *)[notification object]];
+    _hasInternetConnection = internetConnectionIsWiFi || internetConnectionIsWWAN;
 }
 
 
@@ -95,6 +89,14 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
+#pragma mark - Selector implementations
+
+- (void)reachabilityDidChange:(NSNotification *)notification
+{
+    [self checkReachability:[notification object]];
+}
+
+
 #pragma mark - Singleton instantiation & initialisation
 
 + (id)allocWithZone:(NSZone *)zone
@@ -118,15 +120,13 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
         _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
         _language = [NSLocale preferredLanguages][0];
         _carrier = [[[CTTelephonyNetworkInfo alloc] init] subscriberCellularProvider];
+        _hasInternetConnection = NO;
         
         if ([ODefaults globalDefaultForKey:kDefaultsKeyUserEmail]) {
             self.userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
         }
         
-        _internetConnectionIsWiFi = NO;
-        _internetConnectionIsWWAN = NO;
-        
-        [self checkReachability:[Reachability reachabilityForInternetConnection]];
+        [self checkReachability:[Reachability reachabilityWithHostName:kOrigoServer]];
         
         if ([_internetReachability startNotifier]) {
             OLogDebug(@"Reachability notifier is running.");
@@ -223,14 +223,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 - (BOOL)userIsRegistered
 {
     return _user.dateOfBirth && [_user.mobilePhone hasValue] && [_user hasAddress];
-}
-
-
-#pragma mark - Meta information
-
-- (BOOL)internetConnectionIsAvailable
-{
-    return _internetConnectionIsWiFi || _internetConnectionIsWWAN;
 }
 
 

@@ -8,30 +8,30 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSInteger const kBarButtonTagAcceptDecline;
-extern NSInteger const kBarButtonTagAction;
-extern NSInteger const kBarButtonTagDirections;
-extern NSInteger const kBarButtonTagEdit;
-extern NSInteger const kBarButtonTagFavourite;
-extern NSInteger const kBarButtonTagGroups;
-extern NSInteger const kBarButtonTagRecipientGroups;
-extern NSInteger const kBarButtonTagInfo;
-extern NSInteger const kBarButtonTagLocation;
-extern NSInteger const kBarButtonTagLookup;
-extern NSInteger const kBarButtonTagMultiRole;
-extern NSInteger const kBarButtonTagNavigation;
-extern NSInteger const kBarButtonTagPlus;
-extern NSInteger const kBarButtonTagSettings;
+extern NSInteger const kBarButtonItemTagAcceptDecline;
+extern NSInteger const kBarButtonItemTagAction;
+extern NSInteger const kBarButtonItemTagDirections;
+extern NSInteger const kBarButtonItemTagEdit;
+extern NSInteger const kBarButtonItemTagFavourite;
+extern NSInteger const kBarButtonItemTagGroups;
+extern NSInteger const kBarButtonItemTagRecipientGroups;
+extern NSInteger const kBarButtonItemTagInfo;
+extern NSInteger const kBarButtonItemTagLocation;
+extern NSInteger const kBarButtonItemTagLookup;
+extern NSInteger const kBarButtonItemTagNavigation;
+extern NSInteger const kBarButtonItemTagPlus;
+extern NSInteger const kBarButtonItemTagJoin;
+extern NSInteger const kBarButtonItemTagSettings;
 
-extern NSInteger const kBarButtonTagBack;
-extern NSInteger const kBarButtonTagCancel;
-extern NSInteger const kBarButtonTagDone;
-extern NSInteger const kBarButtonTagLogout;
-extern NSInteger const kBarButtonTagNext;
+extern NSInteger const kBarButtonItemTagBack;
+extern NSInteger const kBarButtonItemTagCancel;
+extern NSInteger const kBarButtonItemTagDone;
+extern NSInteger const kBarButtonItemTagLogout;
+extern NSInteger const kBarButtonItemTagNext;
 
-extern NSInteger const kBarButtonTagPhoneCall;
-extern NSInteger const kBarButtonTagSendEmail;
-extern NSInteger const kBarButtonTagSendText;
+extern NSInteger const kBarButtonItemTagPhoneCall;
+extern NSInteger const kBarButtonItemTagSendEmail;
+extern NSInteger const kBarButtonItemTagSendText;
 
 
 @interface UIBarButtonItem (OrigoAdditions)
@@ -49,7 +49,7 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)directionsButtonWithTarget:(id)target;
 + (instancetype)navigationButtonWithTarget:(id)target;
 + (instancetype)plusButtonWithTarget:(id)target;
-+ (instancetype)addToOrigoButtonWithTarget:(id)target;
++ (instancetype)joinButtonWithTarget:(id)target;
 + (instancetype)settingsButtonWithTarget:(id)target;
 
 + (instancetype)backButtonWithTitle:(NSString *)title;

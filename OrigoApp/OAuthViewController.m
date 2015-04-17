@@ -35,6 +35,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 @interface OAuthViewController () <OTableViewController, OInputCellDelegate, OConnectionDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
+    OTableViewCell *_inputCell;
+    
     OInputField *_emailField;
     OInputField *_passwordField;
     OInputField *_activationCodeField;
@@ -103,6 +105,21 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
+- (void)enableOrDisableButtons
+{
+    if ([self actionIs:kActionLogin]) {
+        [_inputCell buttonForKey:kActionKeyRegister].enabled = self.isOnline;
+        [_inputCell buttonForKey:kActionKeyLogin].enabled = self.isOnline;
+    } else if ([self actionIs:kActionActivate]) {
+        [_inputCell buttonForKey:kActionKeyCancel].enabled = self.isOnline;
+        [_inputCell buttonForKey:kActionKeyActivate].enabled = self.isOnline;
+    } else if ([self actionIs:kActionChange]) {
+        [_inputCell buttonForKey:kActionKeyCancel].enabled = self.isOnline;
+        [_inputCell buttonForKey:kActionKeyChangePassword].enabled = self.isOnline;
+    }
+}
+
+
 - (void)performAuthAction:(NSInteger)authAction
 {
     _authAction = authAction;
@@ -147,7 +164,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         _numberOfFailedAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") text:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") message:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
         } else if ([self targetIs:kTargetEmail]) {
             [self.dismisser dismissModalViewController:self];
         }
@@ -337,14 +354,18 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     NSString *footerContent = nil;
     
-    if ([self actionIs:kActionLogin]) {
-        footerContent = NSLocalizedString(@"When you register, you will receive an email with an activation code to use in the next step.", @"");
-    } else if ([self actionIs:kActionActivate]) {
-        if ([self targetIs:kTargetUser]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
-        } else if ([self targetIs:kTargetEmail]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.target];
+    if (self.isOnline) {
+        if ([self actionIs:kActionLogin]) {
+            footerContent = NSLocalizedString(@"When you register, you will receive an email with an activation code to use in the next step.", @"");
+        } else if ([self actionIs:kActionActivate]) {
+            if ([self targetIs:kTargetUser]) {
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
+            } else if ([self targetIs:kTargetEmail]) {
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.target];
+            }
         }
+    } else {
+        footerContent = NSLocalizedString(@"You need a working internet connection to continue.", @"");
     }
     
     return footerContent;
@@ -353,6 +374,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)willDisplayInputCell:(OTableViewCell *)inputCell
 {
+    _inputCell = inputCell;
+    
     if ([self actionIs:kActionLogin]) {
         _emailField = [inputCell inputFieldForKey:kInputKeyAuthEmail];
         _passwordField = [inputCell inputFieldForKey:kInputKeyPassword];
@@ -364,6 +387,15 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         _newPasswordField = [inputCell inputFieldForKey:kInputKeyNewPassword];
         _repeatNewPasswordField = [inputCell inputFieldForKey:kInputKeyRepeatNewPassword];
     }
+    
+    [self enableOrDisableButtons];
+}
+
+
+- (void)onlineStatusDidChange
+{
+    [self enableOrDisableButtons];
+    [self reloadFooterForSectionWtihKey:kSectionKeyAuth];
 }
 
 
@@ -572,12 +604,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 if (_authAction == kAuthActionRegister) {
                     [self didReceiveAuthInfo:data];
                 } else if (_authAction == kAuthActionLogin) {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"New password", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Your password has been reset and a new password has been generated and sent to %@.", @""), _emailField.value]];
+                    [OAlert showAlertWithTitle:NSLocalizedString(@"New password", @"") message:[NSString stringWithFormat:NSLocalizedString(@"Your password has been reset and a new password has been generated and sent to %@.", @""), _emailField.value]];
                     
                     [_passwordField becomeFirstResponder];
                 }
             } else if ([self actionIs:kActionChange]) {
-                [OAlert showAlertWithTitle:@"" text:NSLocalizedString(@"Your password has been changed.", @"")];
+                [OAlert showAlertWithTitle:@"" message:NSLocalizedString(@"Your password has been changed.", @"")];
                 
                 [self.dismisser dismissModalViewController:self];
             } else if ([self actionIs:kActionActivate] && [self targetIs:kTargetEmail]) {

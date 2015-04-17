@@ -47,7 +47,7 @@
 
 #pragma mark - Accessing elements
 
-- (UIBarButtonItem *)rightBarButtonItemWithTag:(NSInteger)tag
+- (UIBarButtonItem *)barButtonItemWithTag:(NSInteger)tag
 {
     UIBarButtonItem *barButtonItemWithTag = nil;
     
@@ -55,6 +55,10 @@
         if (!barButtonItemWithTag && barButtonItem.tag == tag) {
             barButtonItemWithTag = barButtonItem;
         }
+    }
+    
+    if (!barButtonItemWithTag && self.leftBarButtonItem.tag == tag) {
+        barButtonItemWithTag = self.leftBarButtonItem;
     }
     
     return barButtonItemWithTag;

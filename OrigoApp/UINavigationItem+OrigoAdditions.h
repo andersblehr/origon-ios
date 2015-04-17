@@ -14,6 +14,6 @@
 - (void)insertRightBarButtonItem:(UIBarButtonItem *)barButtonItem atIndex:(NSInteger)index;
 - (void)removeRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
 
-- (UIBarButtonItem *)rightBarButtonItemWithTag:(NSInteger)tag;
+- (UIBarButtonItem *)barButtonItemWithTag:(NSInteger)tag;
 
 @end

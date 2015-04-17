@@ -42,7 +42,12 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 @implementation OOrigoListViewController
 
-#pragma mark - Auxiliary methods
+- (void)enableOrDisableButtons
+{
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagPlus].enabled = self.isOnline;
+    [self.navigationItem barButtonItemWithTag:kBarButtonItemTagJoin].enabled = self.isOnline;
+}
+
 
 - (void)presentAddOrigoSheet
 {
@@ -154,7 +159,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     id<OOrigo> origo = [self dataAtIndexPath:[self.tableView indexPathForCell:embeddedButton.embeddingCell]];
     
-    [OAlert showAlertWithTitle:NSLocalizedString(@"Join requests", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has pending join requests.", @""), origo.name]];
+    [OAlert showAlertWithTitle:NSLocalizedString(@"Join requests", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has pending join requests.", @""), origo.name]];
 }
 
 
@@ -181,7 +186,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
-- (void)performAddToOrigoAction
+- (void)performJoinAction
 {
     if (_wards.count) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to join to a list?", @"") delegate:self tag:kActionSheetTagJoinOrigoTarget];
@@ -212,13 +217,13 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         [actionSheet show];
     } else if ([[OMeta m] userIsLoggedIn] && ![[OMeta m] userIsRegistered]) {
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].userEmail]) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:NSLocalizedString(@"Please verify your details and provide any missing information.", @"")];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") message:NSLocalizedString(@"Please verify your details and provide any missing information.", @"")];
             
             for (id<OMember> ward in [[OMeta m].user wards]) {
                 _needsEditParents = _needsEditParents || ![ward mother] || ![ward father];
             }
         } else if (![OMeta m].userDidJustRegister) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") message:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }
         
         [self presentModalViewControllerWithIdentifier:kIdentifierMember target:[OMeta m].user];
@@ -240,7 +245,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
         
         if ([[OMeta m].user isTeenOrOlder]) {
-            self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self], [UIBarButtonItem addToOrigoButtonWithTarget:self]];
+            self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self], [UIBarButtonItem joinButtonWithTarget:self]];
+            
+            [self enableOrDisableButtons];
         }
     }
 }
@@ -502,7 +509,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         
         if (![origo isPrivate] && [origo members].count > 1 && [origo userIsAdmin]) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.", @"")];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") message:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.", @"")];
             
             shouldDeleteCell = NO;
         }
@@ -546,6 +553,12 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 - (BOOL)supportsPullToRefresh
 {
     return YES;
+}
+
+
+- (void)onlineStatusDidChange
+{
+    [self enableOrDisableButtons];
 }
 
 

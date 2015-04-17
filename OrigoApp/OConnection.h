@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSInteger const kHTTPStatusErrorRangeStart;
+
 extern NSInteger const kHTTPStatusOK;
 extern NSInteger const kHTTPStatusCreated;
 extern NSInteger const kHTTPStatusNoContent;
@@ -18,9 +20,9 @@ extern NSInteger const kHTTPStatusNotFound;
 extern NSInteger const kHTTPStatusInternalServerError;
 extern NSInteger const kHTTPStatusServiceUnavailable;
 
-extern NSInteger const kHTTPStatusErrorRangeStart;
-
 extern NSString * const kHTTPHeaderLocation;
+
+extern NSString * const kOrigoServer;
 
 @interface OConnection : NSObject
 

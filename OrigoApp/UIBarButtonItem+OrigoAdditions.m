@@ -8,30 +8,30 @@
 
 #import "UIBarButtonItem+OrigoAdditions.h"
 
-NSInteger const kBarButtonTagAcceptDecline = 10;
-NSInteger const kBarButtonTagAction = 11;
-NSInteger const kBarButtonTagDirections = 12;
-NSInteger const kBarButtonTagEdit = 13;
-NSInteger const kBarButtonTagFavourite = 14;
-NSInteger const kBarButtonTagGroups = 15;
-NSInteger const kBarButtonTagRecipientGroups = 16;
-NSInteger const kBarButtonTagInfo = 17;
-NSInteger const kBarButtonTagLocation = 18;
-NSInteger const kBarButtonTagLookup = 19;
-NSInteger const kBarButtonTagMultiRole = 20;
-NSInteger const kBarButtonTagNavigation = 21;
-NSInteger const kBarButtonTagPlus = 22;
-NSInteger const kBarButtonTagSettings = 23;
+NSInteger const kBarButtonItemTagAcceptDecline = 10;
+NSInteger const kBarButtonItemTagAction = 11;
+NSInteger const kBarButtonItemTagDirections = 12;
+NSInteger const kBarButtonItemTagEdit = 13;
+NSInteger const kBarButtonItemTagFavourite = 14;
+NSInteger const kBarButtonItemTagGroups = 15;
+NSInteger const kBarButtonItemTagRecipientGroups = 16;
+NSInteger const kBarButtonItemTagInfo = 17;
+NSInteger const kBarButtonItemTagLocation = 18;
+NSInteger const kBarButtonItemTagLookup = 19;
+NSInteger const kBarButtonItemTagNavigation = 20;
+NSInteger const kBarButtonItemTagPlus = 21;
+NSInteger const kBarButtonItemTagJoin = 22;
+NSInteger const kBarButtonItemTagSettings = 23;
 
-NSInteger const kBarButtonTagBack = 30;
-NSInteger const kBarButtonTagCancel = 31;
-NSInteger const kBarButtonTagDone = 32;
-NSInteger const kBarButtonTagLogout = 33;
-NSInteger const kBarButtonTagNext = 34;
+NSInteger const kBarButtonItemTagBack = 30;
+NSInteger const kBarButtonItemTagCancel = 31;
+NSInteger const kBarButtonItemTagDone = 32;
+NSInteger const kBarButtonItemTagLogout = 33;
+NSInteger const kBarButtonItemTagNext = 34;
 
-NSInteger const kBarButtonTagPhoneCall = 40;
-NSInteger const kBarButtonTagSendEmail = 41;
-NSInteger const kBarButtonTagSendText = 42;
+NSInteger const kBarButtonItemTagPhoneCall = 40;
+NSInteger const kBarButtonItemTagSendEmail = 41;
+NSInteger const kBarButtonItemTagSendText = 42;
 
 static UIBarButtonItem *_flexibleSpace = nil;
 
@@ -64,7 +64,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)acceptDeclineButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAcceptDecline] target:target action:@selector(performAcceptDeclineAction) tag:kBarButtonTagAcceptDecline];
+    UIBarButtonItem *button = [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAcceptDecline] target:target action:@selector(performAcceptDeclineAction) tag:kBarButtonItemTagAcceptDecline];
     button.tintColor = [UIColor notificationColour];
     
     return button;
@@ -73,43 +73,43 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)actionButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:@(UIBarButtonSystemItemAction) target:target action:@selector(presentActionSheet) tag:kBarButtonTagAction];
+    return [self barButtonWithVisuals:@(UIBarButtonSystemItemAction) target:target action:@selector(presentActionSheet) tag:kBarButtonItemTagAction];
 }
 
 
 + (instancetype)editButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileEdit] target:target action:@selector(performEditAction) tag:kBarButtonTagEdit];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileEdit] target:target action:@selector(performEditAction) tag:kBarButtonItemTagEdit];
 }
 
 
 + (instancetype)systemEditButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:@(UIBarButtonSystemItemEdit) target:target action:@selector(performEditAction) tag:kBarButtonTagEdit];
+    return [self barButtonWithVisuals:@(UIBarButtonSystemItemEdit) target:target action:@selector(performEditAction) tag:kBarButtonItemTagEdit];
 }
 
 
 + (instancetype)groupsButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileGroups] target:target action:@selector(performGroupsAction) tag:kBarButtonTagGroups];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileGroups] target:target action:@selector(performGroupsAction) tag:kBarButtonItemTagGroups];
 }
 
 
 + (instancetype)recipientGroupsButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileRecipientGroups] target:target action:@selector(performRecipientGroupsAction) tag:kBarButtonTagRecipientGroups];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileRecipientGroups] target:target action:@selector(performRecipientGroupsAction) tag:kBarButtonItemTagRecipientGroups];
 }
 
 
 + (instancetype)infoButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileInfo] target:target action:@selector(performInfoAction) tag:kBarButtonTagInfo];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileInfo] target:target action:@selector(performInfoAction) tag:kBarButtonItemTagInfo];
 }
 
 
 + (instancetype)lookupButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileLookup] target:target action:@selector(performLookupAction) tag:kBarButtonTagLookup];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileLookup] target:target action:@selector(performLookupAction) tag:kBarButtonItemTagLookup];
 }
 
 
@@ -117,7 +117,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 {
     NSString *iconFileName = isFavourite ? kIconFileFavouriteYes : kIconFileFavouriteNo;
     UIBarButtonItem *button = [[self alloc] initWithImage:[UIImage imageNamed:iconFileName] style:UIBarButtonItemStylePlain target:target action:@selector(toggleFavouriteStatus)];
-    button.tag = kBarButtonTagFavourite;
+    button.tag = kBarButtonItemTagFavourite;
     
     return button;
 }
@@ -125,37 +125,37 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)locationButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileLocation] target:target action:@selector(performLocationAction) tag:kBarButtonTagLocation];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileLocation] target:target action:@selector(performLocationAction) tag:kBarButtonItemTagLocation];
 }
 
 
 + (instancetype)directionsButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileDirections] target:target action:@selector(performDirectionsAction) tag:kBarButtonTagDirections];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileDirections] target:target action:@selector(performDirectionsAction) tag:kBarButtonItemTagDirections];
 }
 
 
 + (instancetype)navigationButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileNavigation] target:target action:@selector(performNavigationAction) tag:kBarButtonTagNavigation];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileNavigation] target:target action:@selector(performNavigationAction) tag:kBarButtonItemTagNavigation];
 }
 
 
 + (instancetype)plusButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:@(UIBarButtonSystemItemAdd) target:target action:@selector(performAddAction) tag:kBarButtonTagPlus];
+    return [self barButtonWithVisuals:@(UIBarButtonSystemItemAdd) target:target action:@selector(performAddAction) tag:kBarButtonItemTagPlus];
 }
 
 
-+ (instancetype)addToOrigoButtonWithTarget:(id)target
++ (instancetype)joinButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAddToOrigo] target:target action:@selector(performAddToOrigoAction) tag:kBarButtonTagSettings];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileJoin] target:target action:@selector(performJoinAction) tag:kBarButtonItemTagJoin];
 }
 
 
 + (instancetype)settingsButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSettings] target:target action:@selector(performSettingsAction) tag:kBarButtonTagSettings];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSettings] target:target action:@selector(performSettingsAction) tag:kBarButtonItemTagSettings];
 }
 
 
@@ -163,13 +163,13 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)backButtonWithTitle:(NSString *)title
 {
-    return [self barButtonWithVisuals:title target:nil action:nil tag:kBarButtonTagBack];
+    return [self barButtonWithVisuals:title target:nil action:nil tag:kBarButtonItemTagBack];
 }
 
 
 + (instancetype)cancelButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(@"Cancel", @"") target:target action:@selector(didCancelEditing) tag:kBarButtonTagCancel];
+    return [self barButtonWithVisuals:NSLocalizedString(@"Cancel", @"") target:target action:@selector(didCancelEditing) tag:kBarButtonItemTagCancel];
 }
 
 
@@ -205,7 +205,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
 {
-    UIBarButtonItem *button = [self barButtonWithVisuals:title target:target action:action tag:kBarButtonTagDone];
+    UIBarButtonItem *button = [self barButtonWithVisuals:title target:target action:action tag:kBarButtonItemTagDone];
     button.style = UIBarButtonItemStyleDone;
     button.title = title;
     button.action = action;
@@ -216,13 +216,13 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)nextButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(@"Next", @"") target:target action:@selector(moveToNextInputField) tag:kBarButtonTagNext];
+    return [self barButtonWithVisuals:NSLocalizedString(@"Next", @"") target:target action:@selector(moveToNextInputField) tag:kBarButtonItemTagNext];
 }
 
 
 + (instancetype)logoutButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(kActionKeyLogout, kStringPrefixLabel) target:target action:@selector(logout) tag:kBarButtonTagLogout];
+    return [self barButtonWithVisuals:NSLocalizedString(kActionKeyLogout, kStringPrefixLabel) target:target action:@selector(logout) tag:kBarButtonItemTagLogout];
 }
 
 
@@ -239,19 +239,19 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)sendTextButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendText] target:target action:@selector(performTextAction) tag:kBarButtonTagSendText];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendText] target:target action:@selector(performTextAction) tag:kBarButtonItemTagSendText];
 }
 
 
 + (instancetype)callButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileCall] target:target action:@selector(performCallAction) tag:kBarButtonTagPhoneCall];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileCall] target:target action:@selector(performCallAction) tag:kBarButtonItemTagPhoneCall];
 }
 
 
 + (instancetype)sendEmailButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendEmail] target:target action:@selector(performEmailAction) tag:kBarButtonTagSendEmail];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendEmail] target:target action:@selector(performEmailAction) tag:kBarButtonItemTagSendEmail];
 }
 
 
