@@ -19,6 +19,7 @@ NSString * const kActionLogin = @"login";
 NSString * const kActionPick = @"pick";
 NSString * const kActionRegister = @"register";
 
+NSString * const kTargetAbout = @"about";
 NSString * const kTargetAdmins = @"admins";
 NSString * const kTargetAffiliation = @"affiliation";
 NSString * const kTargetAllContacts = @"contacts";

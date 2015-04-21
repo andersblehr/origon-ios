@@ -25,10 +25,9 @@
 @property (nonatomic) NSString *passwordHash;
 @property (nonatomic) NSString *settings;
 
-@property (nonatomic, assign) BOOL useEnglish;
-
 - (NSArray *)settingKeys;
 - (NSArray *)settingListKeys;
+- (NSArray *)settingActionKeys;
 - (NSString *)defaultSettings;
 
 - (NSComparisonResult)compare:(id<OMember>)other;

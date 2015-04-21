@@ -19,6 +19,7 @@ extern NSString * const kActionLogin;
 extern NSString * const kActionPick;
 extern NSString * const kActionRegister;
 
+extern NSString * const kTargetAbout;
 extern NSString * const kTargetAdmins;
 extern NSString * const kTargetAffiliation;
 extern NSString * const kTargetAllContacts;

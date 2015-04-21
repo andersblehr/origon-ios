@@ -30,6 +30,7 @@
 "[label] modifiedBy" = "Last modified by";
 "[label] motherId" = "Mother";
 "[label] name" = "Name";
+"[label] pingServer" = "Check if server is up again";
 "[label] preschool" = "Preschool";
 "[label] registerOrLogIn" = "Register user or log in";
 "[label] school" = "School";
@@ -253,8 +254,13 @@
 "You have been logged out. Please log in again to continue using Origo on this device." = "You have been logged out. Please log in again to continue using Origo on this device.";
 "Data error" = "Data error";
 "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.";
+"Down for maintenance" = "Down for maintenance";
+"The Origo server is currently down for maintenance. You can still use Origo, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again." = "The Origo server is currently down for maintenance. You can still use Origo, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again.";
+"Still down" = "Still down";
+"The Origo server is still down for maintenance. Please try again in a while." = "The Origo server is still down for maintenance. Please try again in a while.";
 
 // Generic terms
+"About %@" = "About %@";
 "Close" = "Close";
 "Yes" = "Yes";
 "No" = "No";
@@ -399,13 +405,13 @@
 "Add from other lists" = "Add from other lists";
 "Add households" = "Add households";
 "Register parent contact" = "Register parent contact";
-"About %@" = "About %@";
 "Register household member" = "Register household member";
 "Other guardian" = "Other guardian";
 "Remove" = "Remove";
 
 // Prompts
 "Do you want to keep this listing?" = "Do you want to keep this listing?";
+"If not, you can unhide it later under Settings." = "If you hide it, you can unhide it later under Settings.";
 "Do you want to unhide this listing?" = "Do you want to unhide this listing?";
 "%@ has requested to join %@" = "%@ has requested to join %@";
 "%@ have requested to join %@" = "%@ have requested to join %@";
@@ -514,6 +520,7 @@
 "All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
+"Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigoapp.com" = "Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigoapp.com";
 
 // Buttons
 "Send text to both" = "Send text to both";

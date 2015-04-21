@@ -341,7 +341,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
         if (![_localisedStringsBundle pathForResource:_language ofType:@"lproj"]) {
             NSString *testString = [_localisedStringsBundle localizedStringForKey:kLocalisationTest value:@"" table:nil];
             
-            if ([testString isEqualToString:kLocalisationTest] || [OMeta m].user.useEnglish) {
+            if ([testString isEqualToString:kLocalisationTest]) {
                 _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:@"lproj"]];
             }
         }

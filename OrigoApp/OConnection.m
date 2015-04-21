@@ -24,7 +24,8 @@ NSString * const kHTTPHeaderLocation = @"Location";
 
 NSString * const kOrigoServer = @"https://origoapp.appspot.com";
 
-static BOOL useDevServer = YES;
+static BOOL _isDownForMaintenance = NO;
+static BOOL _useDevServer = YES;
 
 static NSString * const kDevServer = @"http://localhost:8888";
 
@@ -91,7 +92,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
-        NSString *serverURL = useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kOrigoServer;
+        NSString *serverURL = _useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kOrigoServer;
         
         _URLRequest.HTTPMethod = HTTPMethod;
         _URLRequest.URL = [[[[NSURL URLWithString:serverURL] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];
@@ -280,9 +281,15 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 #pragma mark - Meta information
 
++ (BOOL)isDownForMaintenance
+{
+    return _isDownForMaintenance;
+}
+
+
 + (BOOL)isUsingDevServer
 {
-    return useDevServer;
+    return _useDevServer;
 }
 
 
@@ -334,6 +341,24 @@ static NSString * const kURLParameterIdentifier = @"id";
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
+    BOOL shouldPostReachabilityChangedNotification = NO;
+
+    if (_HTTPResponse.statusCode == kHTTPStatusServiceUnavailable && !_isDownForMaintenance) {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Down for maintenance", @"") message:NSLocalizedString(@"The Origo server is currently down for maintenance. You can still use Origo, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again.", @"")];
+        
+        _isDownForMaintenance = YES;
+        shouldPostReachabilityChangedNotification = YES;
+    } else if (_HTTPResponse.statusCode != kHTTPStatusServiceUnavailable && _isDownForMaintenance) {
+        _isDownForMaintenance = NO;
+        shouldPostReachabilityChangedNotification = YES;
+    } else if (_HTTPResponse.statusCode == kHTTPStatusServiceUnavailable && _isDownForMaintenance) {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Still down", @"") message:NSLocalizedString(@"The Origo server is still down for maintenance. Please try again in a while.", @"")];
+    }
+    
+    if (shouldPostReachabilityChangedNotification) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:[OMeta m].internetReachability];
+    }
+    
     id deserialisedData = nil;
     
     if (_HTTPResponse.statusCode < kHTTPStatusErrorRangeStart && [_responseData length]) {

@@ -35,6 +35,7 @@ static UIViewController * _reinstantiatedRootViewController;
     BOOL _shouldBeginEditingTitleView;
     BOOL _needsReloadOnModalDismissal;
     BOOL _needsInvokeViewWillAppearOnModalDismissal;
+    BOOL _isOnline;
     
     Class _entityClass;
     NSInteger _inputSectionKey;
@@ -523,7 +524,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if ([_instance respondsToSelector:@selector(supportsPullToRefresh)]) {
         if ([_instance supportsPullToRefresh]) {
-            if (_isOnline) {
+            if (self.isOnline) {
                 [self insertRefreshControl];
             } else {
                 [_refreshControl removeFromSuperview];
@@ -1373,7 +1374,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _inputSectionKey = NSNotFound;
     _instance = self;
     _state = [[OState alloc] initWithViewController:self];
-    _isOnline = [OMeta m].hasInternetConnection;
+    _isOnline = [OMeta m].hasInternetConnection && ![OConnection isDownForMaintenance];
     _rowAnimation = UITableViewRowAnimationNone;
     
     [self initialiseInstance];
@@ -1580,6 +1581,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _state && [_target isKindOfClass:[NSDictionary class]] ? [_target allKeys][0] : _target;
+}
+
+
+- (BOOL)isOnline
+{
+    return _isOnline && ![OConnection isDownForMaintenance];
 }
 
 

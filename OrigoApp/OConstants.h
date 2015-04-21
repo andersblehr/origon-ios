@@ -103,6 +103,7 @@ extern NSString * const kActionKeyChangePassword;
 extern NSString * const kActionKeyJoinOrigo;
 extern NSString * const kActionKeyLogin;
 extern NSString * const kActionKeyLogout;
+extern NSString * const kActionKeyPingServer;
 extern NSString * const kActionKeyRegister;
 
 // Placeholders
