@@ -39,6 +39,7 @@ extern NSString * const kOrigoServer;
 - (void)lookupMemberWithEmail:(NSString *)email;
 - (void)lookupOrigoWithJoinCode:(NSString *)joinCode;
 
++ (BOOL)isDownForMaintenance;
 + (BOOL)isUsingDevServer;
 
 @end

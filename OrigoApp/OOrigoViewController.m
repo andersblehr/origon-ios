@@ -311,7 +311,13 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     } else {
         prompt = NSLocalizedString(@"Do you want to keep this listing?", @"");
         acceptButtonTitle = NSLocalizedString(@"Keep", @"");
-        declineButtonTitle = [_origo isResidence] ? NSLocalizedString(@"Decline", @"") : NSLocalizedString(@"Hide", @"");
+        
+        if ([_origo isResidence]) {
+            declineButtonTitle = NSLocalizedString(@"Decline", @"");
+        } else {
+            declineButtonTitle = NSLocalizedString(@"Hide", @"");
+            prompt = [prompt stringByAppendingString:NSLocalizedString(@"If you hide it, you can unhide it later under Settings.", @"") separator:kSeparatorSpace];
+        }
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAcceptDecline];

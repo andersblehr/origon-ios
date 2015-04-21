@@ -11,6 +11,7 @@
 static NSInteger const kSectionKeyValues1 = 0;
 static NSInteger const kSectionKeyValues2 = 1;
 static NSInteger const kSectionKeyActions = 2;
+static NSInteger const kSectionKeyAbout = 3;
 
 static NSInteger const kTitleSegmentFavourites = 0;
 static NSInteger const kTitleSegmentOthers = 1;
@@ -283,6 +284,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     if ([self targetIs:kTargetSettings]) {
         self.title = NSLocalizedString(@"Settings", @"");
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
+    } else if ([self targetIs:kTargetAbout]) {
+        self.title = [NSString stringWithFormat:@"%@ %@", [OMeta m].appName, [OMeta m].appVersion];
     } else if ([self targetIs:kTargetPermissions]) {
         self.title = NSLocalizedString(@"User permissions", @"");
     } else if ([self targetIs:kTargetAdmins]) {
@@ -366,7 +369,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     if ([self targetIs:kTargetSettings]) {
         [self setData:[[OMeta m].user settingKeys] forSectionWithKey:kSectionKeyValues1];
         [self setData:[[OMeta m].user settingListKeys] forSectionWithKey:kSectionKeyValues2];
-        [self setData:@[kActionKeyChangePassword, kActionKeyLogout] forSectionWithKey:kSectionKeyActions];
+        [self setData:[[OMeta m].user settingActionKeys] forSectionWithKey:kSectionKeyActions];
+        [self setData:@[kTargetAbout] forSectionWithKey:kSectionKeyAbout];
     } else if ([self targetIs:kTargetPermissions]) {
         [self setData:[_origo memberPermissionKeys] forSectionWithKey:kSectionKeyValues1];
         
@@ -426,7 +430,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             NSString *settingKey = [self dataAtIndexPath:indexPath];
             
             cell.textLabel.text = NSLocalizedString(settingKey, kStringPrefixSettingLabel);
-            //cell.detailTextLabel.text = TODO;
+            cell.detailTextLabel.text = @"TODO"; // TODO
             cell.destinationId = kIdentifierValuePicker;
         } else if (sectionKey == kSectionKeyValues2) {
             NSString *target = [self dataAtIndexPath:indexPath];
@@ -448,27 +452,35 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                 cell.destinationId = kIdentifierOrigoList;
             }
         } else if (sectionKey == kSectionKeyActions) {
-            NSString *accountKey = [self dataAtIndexPath:indexPath];
+            NSString *actionKey = [self dataAtIndexPath:indexPath];
             
-            if ([accountKey isEqualToString:kActionKeyLogout]) {
-                cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(accountKey, kStringPrefixLabel), [OMeta m].user.name];
-                
-                if (self.isOnline) {
-                    cell.textLabel.textColor = [UIColor redColor];
-                } else {
-                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
-                }
+            if ([actionKey isEqualToString:kActionKeyPingServer]) {
+                cell.textLabel.text = NSLocalizedString(actionKey, kStringPrefixLabel);
+                cell.selectable = YES;
             } else {
-                cell.textLabel.text = NSLocalizedString(accountKey, kStringPrefixLabel);
-                
-                if (self.isOnline) {
-                    cell.textLabel.textColor = [UIColor textColour];
-                } else {
-                    cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                if ([actionKey isEqualToString:kActionKeyChangePassword]) {
+                    cell.textLabel.text = NSLocalizedString(actionKey, kStringPrefixLabel);
+                    
+                    if (self.isOnline) {
+                        cell.textLabel.textColor = [UIColor textColour];
+                    } else {
+                        cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                    }
+                } else if ([actionKey isEqualToString:kActionKeyLogout]) {
+                    cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(actionKey, kStringPrefixLabel), [OMeta m].user.name];
+                    
+                    if (self.isOnline) {
+                        cell.textLabel.textColor = [UIColor redColor];
+                    } else {
+                        cell.textLabel.textColor = [UIColor tonedDownTextColour];
+                    }
                 }
+                
+                cell.selectable = self.isOnline;
             }
-            
-            cell.selectable = self.isOnline;
+        } else if (sectionKey == kSectionKeyAbout) {
+            cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"About %@", @""), [OMeta m].appName];
+            cell.destinationId = kIdentifierValueList;
         }
     } else if ([self targetIs:kTargetPermissions]) {
         NSString *permissionKey = [self dataAtIndexPath:indexPath];
@@ -600,7 +612,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     NSString *footerText = nil;
     
-    if ([self targetIs:kTargetAllContacts]) {
+    if ([self targetIs:kTargetAbout]) {
+        footerText = NSLocalizedString(@"Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigoapp.com", @"");
+    } else if ([self targetIs:kTargetAllContacts]) {
         if (_titleSegment == kTitleSegmentFavourites) {
             footerText = NSLocalizedString(@"All persons marked as favourites will be listed here ...", @"");
         } else if (_titleSegment == kTitleSegmentOthers) {
@@ -662,7 +676,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             
             NSString *actionKey = [self dataAtIndexPath:indexPath];
             
-            if ([actionKey isEqualToString:kActionKeyChangePassword]) {
+            if ([actionKey isEqualToString:kActionKeyPingServer]) {
+                [[OMeta m].replicator replicate];
+            } else if ([actionKey isEqualToString:kActionKeyChangePassword]) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetPassword];
             } else if ([actionKey isEqualToString:kActionKeyLogout]) {
                 [[OMeta m] logout];

@@ -103,6 +103,7 @@ NSString * const kActionKeyChangePassword = @"changePassword";
 NSString * const kActionKeyJoinOrigo = @"joinOrigo";
 NSString * const kActionKeyLogin = @"login";
 NSString * const kActionKeyLogout = @"logout";
+NSString * const kActionKeyPingServer = @"pingServer";
 NSString * const kActionKeyRegister = @"register";
 
 // Placeholders

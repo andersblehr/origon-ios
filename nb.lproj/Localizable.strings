@@ -30,6 +30,7 @@
 "[label] modifiedBy" = "Sist endret av";
 "[label] motherId" = "Mor";
 "[label] name" = "Navn";
+"[label] pingServer" = "Sjekk om tjeneren er oppe igjen";
 "[label] preschool" = "Barnehage";
 "[label] registerOrLogIn" = "Registrer bruker eller logg inn";
 "[label] school" = "Skole";
@@ -253,8 +254,13 @@
 "You have been logged out. Please log in again to continue using Origo on this device." = "Du har blitt logget ut. Logg inn på nytt for å fortsette å bruke Origo på denne enheten.";
 "Data error" = "Datafeil";
 "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "Det har oppstått en uopprettelig datafeil. For å sikre at du fortsatt har helhetlige data, må du slette og reinstallere %@ på denne enheten.";
+"Down for maintenance" = "Tjeneren blir vedlikeholdt";
+"The Origo server is currently down for maintenance. You can still use Origo, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again." = "Origo-tjeneren er for øyeblikket nede på grunn av vedlikeholdsarbeid. Du kan bruke Origo som vanlig, men du kan ikke gjøre endringer. Om du trenger å gjøre endringer, kan du komme tilbake og sjekke under Innstillinger om tjeneren har kommet opp igjen.";
+"Still down" = "Fremdeles nede";
+"The Origo server is still down for maintenance. Please try again in a while." = "Origo-tjeneren er fremdeles nede på grunn av vedlikeholdsarbeid. Prøv igjen om en stund.";
 
 // Generic terms
+"About %@" = "Om %@";
 "Close" = "Lukk";
 "Yes" = "Ja";
 "No" = "Nei";
@@ -398,13 +404,13 @@
 "Add from other lists" = "Legg til fra andre lister";
 "Add households" = "Legg til husstander";
 "Register parent contact" = "Registrer foreldrekontakt";
-"About %@" = "Om %@";
 "Register household member" = "Registrer medlem i husstanden";
 "Other guardian" = "Annen foresatt";
 "Remove" = "Meld ut";
 
 // Prompts
 "Do you want to keep this listing?" = "Vil du beholde denne oppføringen?";
+"If you hide it, you can unhide it later under Settings." = "Om du skjuler den, kan du hente den fram igjen senere under Innstillinger.";
 "Do you want to unhide this listing?" = "Vil du hente fram igjen denne oppføringen?";
 "%@ has requested to join %@" = "%@ har bedt om å bli med i %@";
 "%@ have requested to join %@" = "%@ har bedt om å bli med i %@";
@@ -513,6 +519,7 @@
 "All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter vil bli listet opp her.";
 "Tap + to add a responsibility." = "Trykk + for å legge til et ansvarsområde.";
 "Tap + to create a group." = "Trykk + for å opprette en gruppe.";
+"Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigoapp.com" = "Konsept & programmering: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigoapp.com";
 
 // Buttons
 "Send text to both" = "Send melding til begge";

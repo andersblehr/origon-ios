@@ -8,8 +8,6 @@
 
 #import "OMember+OrigoAdditions.h"
 
-static NSString * const kSettingKeyUseEnglish = @"useEnglish";
-
 static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 
@@ -1200,18 +1198,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 #pragma mark - Settings
 
-- (void)setUseEnglish:(BOOL)useEnglish
-{
-    self.settings = [OUtil keyValueString:self.settings setValue:@(useEnglish) forKey:kSettingKeyUseEnglish];
-}
-
-
-- (BOOL)useEnglish
-{
-    return [[OUtil keyValueString:self.settings valueForKey:kSettingKeyUseEnglish] boolValue];
-}
-
-
 - (NSArray *)settingKeys
 {
     return @[];
@@ -1239,6 +1225,18 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     return settingListKeys;
+}
+
+
+- (NSArray *)settingActionKeys
+{
+    NSArray *settingActionKeys = @[kActionKeyChangePassword, kActionKeyLogout];
+    
+    if ([OMeta m].hasInternetConnection && [OConnection isDownForMaintenance]) {
+        settingActionKeys = [@[kActionKeyPingServer] arrayByAddingObjectsFromArray:settingActionKeys];
+    }
+    
+    return settingActionKeys;
 }
 
 
