@@ -183,8 +183,8 @@ static NSInteger const kButtonIndexContinue = 1;
         inputMatches = [_dateOfBirthField.value isEqual:dateOfBirth];
     }
     
-    if (inputMatches && _mobilePhoneField.value) {
-        inputMatches = [[[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value] completelyFormattedNumberCanonicalised:YES] isEqualToString:[[OPhoneNumberFormatter formatterForNumber:mobilePhone] completelyFormattedNumberCanonicalised:YES]];
+    if (inputMatches && [mobilePhone hasValue] && ![OMeta deviceIsSimulator]) {
+        inputMatches = _mobilePhoneField.value ? [[[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value] completelyFormattedNumberCanonicalised:YES] isEqualToString:[[OPhoneNumberFormatter formatterForNumber:mobilePhone] completelyFormattedNumberCanonicalised:YES]] : NO;
     }
     
     if (inputMatches && _emailField.value) {
