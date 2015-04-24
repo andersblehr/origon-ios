@@ -1,6 +1,6 @@
 /* 
   Localizable.strings
-  OrigoApp
+  Origon
 
   Created by Anders Blehr on 10.03.14.
   Copyright (c) 2014 Rhelba Source. All rights reserved.
@@ -251,13 +251,13 @@
 "Cannot place call" = "Cannot place call";
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
 "Authentication required" = "Authentication required";
-"You have been logged out. Please log in again to continue using Origo on this device." = "You have been logged out. Please log in again to continue using Origo on this device.";
+"You have been logged out. Please log in again to continue using Origon on this device." = "You have been logged out. Please log in again to continue using Origon on this device.";
 "Data error" = "Data error";
 "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.";
 "Down for maintenance" = "Down for maintenance";
-"The Origo server is currently down for maintenance. You can still use Origo, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again." = "The Origo server is currently down for maintenance. You can still use Origo, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again.";
+"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again." = "The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again.";
 "Still down" = "Still down";
-"The Origo server is still down for maintenance. Please try again in a while." = "The Origo server is still down for maintenance. Please try again in a while.";
+"The Origon server is still down for maintenance. Please try again in a while." = "The Origon server is still down for maintenance. Please try again in a while.";
 
 // Generic terms
 "About %@" = "About %@";
@@ -305,7 +305,7 @@
 " and " = " and ";
 
 // Email signature
-"Sent from Origo - http://origoapp.com" = "\n\nSent from Origo - http://origoapp.com";
+"Sent from Origon - http://origon.co" = "\n\nSent from Origon - http://origon.co";
 
 
 /***
@@ -355,10 +355,10 @@
 "Resend join request" = "Resend join request";
 
 // Alerts
-"Welcome to Origo" = "Welcome to Origo";
+"Welcome to Origon" = "Welcome to Origon";
 "Please verify your details and provide any missing information." = "Please verify your details and provide any missing information.";
 "Incomplete registration" = "Incomplete registration";
-"You must complete your registration before you can start using Origo." = "You must complete your registration before you can start using Origo.";
+"You must complete your registration before you can start using Origon." = "You must complete your registration before you can start using Origon.";
 "You are administrator" = "You are administrator";
 "You are an administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator." = "You are an administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.";
 "Join requests" = "Join requests";
@@ -520,7 +520,7 @@
 "All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
-"Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigoapp.com" = "Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigoapp.com";
+"Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigon.co" = "Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigon.co";
 
 // Buttons
 "Send text to both" = "Send text to both";
@@ -671,7 +671,7 @@
 "The address %@ is unclear and could not be not found in the map." = "The address %@ is unclear and could not be not found in the map.";
 "Cannot give directions" = "Cannot give directions";
 "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.";
-"Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo." = "Location services are disabled for Origo. Open Settings and go to Privacy > Location Services to enable location services for Origo.";
+"Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon." = "Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon.";
 "Error" = "Error";
 "An error has occurred. Please try again another time." = "An error has occurred. Please try again another time.";
 
