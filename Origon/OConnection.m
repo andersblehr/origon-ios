@@ -22,7 +22,7 @@ NSInteger const kHTTPStatusServiceUnavailable = 503;
 
 NSString * const kHTTPHeaderLocation = @"Location";
 
-NSString * const kOrigoServer = @"https://origoapp.appspot.com";
+NSString * const kOrigonServer = @"https://origoapp.appspot.com";
 
 static BOOL _isDownForMaintenance = NO;
 static BOOL _useDevServer = YES;
@@ -92,7 +92,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
-        NSString *serverURL = _useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kOrigoServer;
+        NSString *serverURL = _useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kOrigonServer;
         
         _URLRequest.HTTPMethod = HTTPMethod;
         _URLRequest.URL = [[[[NSURL URLWithString:serverURL] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];

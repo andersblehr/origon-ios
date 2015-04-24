@@ -22,7 +22,7 @@ extern NSInteger const kHTTPStatusServiceUnavailable;
 
 extern NSString * const kHTTPHeaderLocation;
 
-extern NSString * const kOrigoServer;
+extern NSString * const kOrigonServer;
 
 @interface OConnection : NSObject
 
