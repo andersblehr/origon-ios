@@ -437,7 +437,9 @@ static NSInteger const kSectionKeyValues = 0;
     BOOL canDeleteCell = NO;
     
     if ([self targetIs:kTargetRole] && [self aspectIs:kAspectOrganiserRole]) {
-        canDeleteCell = ![_pickedValues containsObject:[self dataAtIndexPath:indexPath]];
+        id<OMember> organiserCandidate = [self dataAtIndexPath:indexPath];
+        
+        canDeleteCell = ![_pickedValues containsObject:organiserCandidate] && ![[_origo organisers] containsObject:organiserCandidate];
     }
     
     return canDeleteCell;
@@ -446,7 +448,14 @@ static NSInteger const kSectionKeyValues = 0;
 
 - (void)deleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    [[_origo membershipForMember:[self dataAtIndexPath:indexPath]] expire];
+    id<OMember> organiser = [self dataAtIndexPath:indexPath];
+    id<OMembership> organiserMembership = [_origo membershipForMember:organiser];
+    
+    if (![organiserMembership isAssociate] || ![_origo indirectlyKnowsAboutMember:organiser]) {
+        [organiserMembership expire];
+    } else {
+        [organiserMembership expireOrganiserCandidacy];
+    }
 }
 
 

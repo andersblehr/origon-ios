@@ -1206,10 +1206,6 @@ static NSInteger const kButtonIndexContinue = 1;
         } else if (![_member isJuvenile] || [_member isHousemateOfUser] || [_member isTeenOrOlder]) {
             if ([_member isActive]) {
                 footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is active on %@.", @""), [_member givenName], [OMeta m].appName];
-            } else if ([_member isManaged]) {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is represented on %@.", @""), [_member givenName], [OMeta m].appName];
-            } else {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"%@ is not active on %@.", @""), [_member givenName], [OMeta m].appName];
             }
         }
     }
@@ -1587,7 +1583,7 @@ static NSInteger const kButtonIndexContinue = 1;
     if ([self actionIs:kActionRegister]) {
         self.returnData = entity;
         
-        if (!_membership) {
+        if (!_membership && ![self targetIs:kTargetGuardian]) {
             _membership = [_origo addMember:_member];
         }
         

@@ -30,50 +30,42 @@
 - (NSArray *)associationMembershipsForMember:(id<OMember>)member
 {
     NSMutableArray *associationMemberships = [NSMutableArray array];
+    NSArray *participancies = [[[member participanciesIncludeHidden:YES] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
     
-    BOOL isGuardianOfUserWards = [[OMeta m].user wards].count > 0;
-    
-    for (id<OMember> ward in [[OMeta m].user wards]) {
-        isGuardianOfUserWards = isGuardianOfUserWards && [ward hasGuardian:member];
+    for (id<OMembership> participancy in participancies) {
+        id<OOrigo> origo = participancy.origo;
+        
+        BOOL isForPeers = [origo isJuvenile] == [[OMeta m].user isJuvenile];
+        BOOL isOrganiser = isForPeers ? NO : [origo isJuvenile] && [participancy organiserRoles].count;
+        BOOL isForWards = isOrganiser ? NO : [origo isJuvenile] && [[OMeta m].user wards].count;
+        BOOL isCommunity = isForWards ? NO : [origo isCommunity];
+        
+        if (isForPeers || isForWards || isCommunity || isOrganiser) {
+            [associationMemberships addObject:participancy];
+            
+            break;
+        }
     }
     
-    if (isGuardianOfUserWards) {
-        [associationMemberships addObject:[[[OMeta m].user primaryResidence] membershipForMember:member]];
-    } else {
-        NSArray *participancies = [[[member participanciesIncludeHidden:YES] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+    if (!associationMemberships.count) {
+        NSArray *listings = [[[member listings] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
         
-        for (id<OMembership> participancy in participancies) {
-            BOOL isPeerParticipancy = [participancy.origo isJuvenile] == [[OMeta m].user isJuvenile];
-            BOOL isCommunity = isPeerParticipancy ? NO : [participancy.origo isCommunity];
-            BOOL isOrganiser = isCommunity ? NO : [participancy organiserRoles].count > 0;
+        for (id<OMembership> listing in listings) {
+            id<OMember> owner = [listing.origo owner];
             
-            if (isPeerParticipancy || isCommunity || isOrganiser) {
-                [associationMemberships addObject:participancy];
+            if ([owner isUser] || [owner isWardOfUser]) {
+                [associationMemberships addObject:listing];
                 
                 break;
             }
         }
         
         if (!associationMemberships.count) {
-            NSArray *listings = [[[member listings] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+            NSArray *associateMemberships = [[[member associateMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
             
-            for (id<OMembership> listing in listings) {
-                id<OMember> owner = [listing.origo owner];
-                
-                if ([owner isUser] || [owner isWardOfUser]) {
-                    [associationMemberships addObject:listing];
-                    
-                    break;
-                }
-            }
-            
-            if (!associationMemberships.count) {
-                NSArray *associateMemberships = [[[member associateMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
-                
-                for (id<OMembership> associateMembership in associateMemberships) {
-                    if ([associateMembership.origo isJuvenile] != [member isJuvenile]) {
-                        [associationMemberships addObject:associateMembership];
-                    }
+            for (id<OMembership> associateMembership in associateMemberships) {
+                if ([associateMembership.origo isJuvenile] != [member isJuvenile]) {
+                    [associationMemberships addObject:associateMembership];
                 }
             }
         }
@@ -85,7 +77,15 @@
 
 - (void)loadAssociationInfoForMember:(id<OMember>)member
 {
-    if ([member isHousemateOfUser]) {
+    BOOL memberIsGuardianOfUserWard = NO;
+    
+    if ([[OMeta m].user wards].count) {
+        for (id<OMember> ward in [[OMeta m].user wards]) {
+            memberIsGuardianOfUserWard = memberIsGuardianOfUserWard || [ward hasGuardian:member];
+        }
+    }
+    
+    if (memberIsGuardianOfUserWard || [member isHousemateOfUser]) {
         self.textLabel.text = [member isJuvenile] ? [member givenName] : member.name;
     } else {
         NSString *association = nil;

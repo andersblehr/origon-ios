@@ -95,7 +95,7 @@
         OMember *member = membership.member;
         OOrigo *origo = membership.origo;
         
-        if ([membership isResidency]) {
+        if ([membership isResidency] && origo == [member primaryResidence]) {
             NSMutableArray *communities = [NSMutableArray array];
             
             for (OMembership *participancy in [member participancies]) {

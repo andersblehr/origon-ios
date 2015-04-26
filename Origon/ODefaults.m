@@ -8,11 +8,11 @@
 
 #import "ODefaults.h"
 
-NSString * const kDefaultsKeyAuthExpiryDate = @"origo.date.authExpiry";
-NSString * const kDefaultsKeyDeviceId = @"origo.id.device";
-NSString * const kDefaultsKeyUserEmail = @"origo.user.email";
-NSString * const kDefaultsKeyLastReplicationDate = @"origo.date.lastReplication";
-NSString * const kDefaultsKeyUserId = @"origo.id.user";
+NSString * const kDefaultsKeyAuthExpiryDate = @"origon.date.authExpiry";
+NSString * const kDefaultsKeyDeviceId = @"origon.device.id";
+NSString * const kDefaultsKeyUserId = @"origon.user.id";
+NSString * const kDefaultsKeyUserEmail = @"origon.user.email";
+NSString * const kDefaultsKeyLastReplicationDate = @"origon.date.lastReplication";
 
 static NSString *userEmail = nil;
 static NSString *userId = nil;

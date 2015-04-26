@@ -8,11 +8,10 @@
 
 #import "OAuthViewController.h"
 
-static CGFloat const kLogoHeight = 40.f;
-static CGFloat const kLogoFontSize = 26.f;
-
-static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
-static NSString * const kLogoText = @"..origo..";
+static CGFloat const kStatusBarHeight = 20.f;
+static CGFloat const kLogoHeight = 60.f;
+static CGFloat const kLogoCornerRadius = 12.f;
+static CGFloat const kLogoAlpha = 0.7f;
 
 static NSInteger const kAuthActionNone = 0;
 static NSInteger const kAuthActionRegister = 1;
@@ -60,22 +59,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)addLogoBanner
 {
-    CGFloat screenWidth = [OMeta screenWidth];
-    CGRect logoFrame = CGRectMake(0.f, kLogoHeight, screenWidth, kLogoHeight);
-    UILabel *logoBanner = [[UILabel alloc] initWithFrame:logoFrame];
-    logoBanner.backgroundColor = [UIColor toolbarColour];
-    logoBanner.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
-    logoBanner.text = kLogoText;
-    logoBanner.textAlignment = NSTextAlignmentCenter;
-    logoBanner.textColor = [UIColor globalTintColour];
-    
-    UIView *topHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, screenWidth, kBorderWidth)];
-    topHairline.backgroundColor = [UIColor toolbarHairlineColour];
-    [logoBanner addSubview:topHairline];
-    
-    UIView *bottomHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kLogoHeight, screenWidth, kBorderWidth)];
-    bottomHairline.backgroundColor = [UIColor toolbarHairlineColour];
-    [logoBanner addSubview:bottomHairline];
+    UIImageView *logoBanner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:kIconFileLogo]];
+    logoBanner.center = CGPointMake([OMeta screenWidth] / 2.f, kLogoHeight + kStatusBarHeight);
+    logoBanner.layer.masksToBounds = YES;
+    logoBanner.layer.cornerRadius = kLogoCornerRadius;
+    logoBanner.alpha = kLogoAlpha;
     
     [self.view addSubview:logoBanner];
     [self.tableView setTopContentInset:2.f * kLogoHeight];

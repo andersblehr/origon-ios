@@ -514,11 +514,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reachabilityDidChange:(NSNotification *)notification
 {
-    Reachability *reachability = [notification object];
-    NetworkStatus reachabilityStatus = [reachability currentReachabilityStatus];
+    BOOL internetConnectionIsWiFi = NO;
+    BOOL internetConnectionIsWWAN = NO;
     
-    BOOL internetConnectionIsWiFi = reachabilityStatus == ReachableViaWiFi;
-    BOOL internetConnectionIsWWAN = reachabilityStatus == ReachableViaWWAN;
+    Reachability *reachability = [notification object];
+    
+    if (reachability) {
+        NetworkStatus reachabilityStatus = [reachability currentReachabilityStatus];
+        
+        internetConnectionIsWiFi = reachabilityStatus == ReachableViaWiFi;
+        internetConnectionIsWWAN = reachabilityStatus == ReachableViaWWAN;
+    }
     
     _isOnline = internetConnectionIsWiFi || internetConnectionIsWWAN;
     
@@ -1681,10 +1687,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([OMeta m].activityIndicator.isAnimating) {
         [[OMeta m].activityIndicator stopAnimating];
-    }
-    
-    if (error.code != NSURLErrorNotConnectedToInternet && error.code != NSURLErrorTimedOut) {
-        [OAlert showAlertForError:error];
     }
 }
 

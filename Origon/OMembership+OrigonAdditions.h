@@ -60,6 +60,7 @@ extern NSString * const kAffiliationTypeGroup;
 - (BOOL)hasAffiliationOfType:(NSString *)type;
 - (void)addAffiliation:(NSString *)affiliation ofType:(NSString *)type;
 - (void)removeAffiliation:(NSString *)affiliation ofType:(NSString *)type;
+- (void)expireOrganiserCandidacy;
 - (NSString *)typeOfAffiliation:(NSString *)affiliation;
 - (NSArray *)affiliationsOfType:(NSString *)type;
 - (NSArray *)affiliationsOfType:(NSString *)type includeCandidacy:(BOOL)includeCandidacy;

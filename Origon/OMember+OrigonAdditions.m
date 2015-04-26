@@ -861,10 +861,6 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         residency.isAdmin = [self isJuvenile] ? @(![residency.origo hasAdmin]) : @YES;
     }
     
-    for (OOrigo *residence in [self residences]) {
-        residence.permissions = [residence defaultPermissions];
-    }
-    
     for (OMember *ward in [self wards]) {
         [ward pinnedFriendList];
     }
