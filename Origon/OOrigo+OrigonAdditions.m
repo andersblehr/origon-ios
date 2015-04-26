@@ -160,7 +160,6 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 {
     OOrigo *instance = [super instanceWithId:entityId];
     instance.origoId = entityId;
-    instance.permissions = [instance defaultPermissions];
     
     return instance;
 }
@@ -1126,10 +1125,6 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
         
         for (OMembership *membership in [self allMemberships]) {
             [membership alignWithOrigoIsAssociate:[membership isAssociate]];
-        }
-
-        if (!self.permissions) {
-            self.permissions = [self defaultPermissions];
         }
     }
 }

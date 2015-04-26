@@ -131,6 +131,7 @@ NSString * const kStringPrefixAddOrganiserRoleButton = @"[add organiser role]";
 NSString * const kStringPrefixEditOrganiserRoleButton = @"[edit organiser role]";
 
 // Icon file names
+NSString * const kIconFileLogo = @"Icon-60.png";
 NSString * const kIconFileResidence = @"ro-750-home-toolbar-selected.png";
 NSString * const kIconFileList = @"ro-854-list.png";
 NSString * const kIconFileOrigo = @"10-contract.png";

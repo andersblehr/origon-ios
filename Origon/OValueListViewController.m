@@ -616,7 +616,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         footerText = NSLocalizedString(@"Concept & programming: Anders Blehr (@rhelba)\nCopyright © 2015 Rhelba Source\n\norigon.co", @"");
     } else if ([self targetIs:kTargetAllContacts]) {
         if (_titleSegment == kTitleSegmentFavourites) {
-            footerText = NSLocalizedString(@"All persons marked as favourites will be listed here ...", @"");
+            footerText = NSLocalizedString(@"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.", @"");
         } else if (_titleSegment == kTitleSegmentOthers) {
             footerText = NSLocalizedString(@"All who are not marked as favourites will be listed here.", @"");
         }

@@ -113,7 +113,6 @@ static NSString * const kAddressTemplatesByCountryCode =
 {
     OOrigo *instance = [super instantiate];
     instance.origoId = instance.entityId;
-    instance.permissions = [instance defaultPermissions];
     
     return instance;
 }
@@ -419,7 +418,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (NSString *)shortAddress
 {
-    return [self.address lines][0];
+    return [self hasAddress] ? [self.address lines][0] : NSLocalizedString(@"-no address-", @"");
 }
 
 @end

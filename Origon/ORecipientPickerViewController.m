@@ -512,6 +512,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     
     if (!cell.selectable) {
         cell.textLabel.textColor = [UIColor tonedDownTextColour];
+        cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
     }
 }
 

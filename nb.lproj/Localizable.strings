@@ -336,6 +336,9 @@
  * OOrigoListViewController strings
  ***/
 
+// View title
+"Lists" = "Lister";
+
 // Headers
 "My lists" = "Mine lister";
 
@@ -388,8 +391,6 @@
 "Tap + to register contacts." = "Trykk + for å registrere kontakter.";
 "Tap + to register friends." = "Trykk + for å registrere venner og venninner.";
 "Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
-"This household is represented on %@." = "Denne husstanden er representert på %@.";
-"No one in this household is active on %@." = "Ingen i denne husstanden er aktive på %@.";
 
 // Labels
 "Awaiting approval..." = "Venter på godkjenning...";
@@ -438,8 +439,6 @@
 "Before you can register a friend, you must register his or her guardians." = "Før du kan registrere en venn eller venninne, må du registrere hans eller hennes foresatte.";
 "Tap + to register additional guardians." = "Trykk + for å registrere flere foresatte.";
 "%@ is active on %@." = "%@ er aktiv på %@.";
-"%@ is represented on %@." = "%@ er representert på %@.";
-"%@ is not active on %@." = "%@ er ikke aktiv på %@.";
 
 // Buttons
 "To some of them" = "Til noen av dem";
@@ -515,7 +514,7 @@
 "Edit groups" = "Rediger grupper";
 
 // Footers
-"All persons marked as favourites will be listed here ..." = "Alle personer markert som favoritter vil bli listet opp her. Trykk på ☆ i personbildet for å markere en person som favoritt.";
+"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite." = "Dette er din private favorittliste. Trykk på ☆ i personbildet for å markere en person som favoritt.";
 "All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter vil bli listet opp her.";
 "Tap + to add a responsibility." = "Trykk + for å legge til et ansvarsområde.";
 "Tap + to create a group." = "Trykk + for å opprette en gruppe.";

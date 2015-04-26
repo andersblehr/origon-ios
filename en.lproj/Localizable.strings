@@ -337,6 +337,9 @@
  * OOrigoListViewController strings
  ***/
 
+// View title
+"Lists" = "Lists";
+
 // Headers
 "My lists" = "My lists";
 
@@ -389,8 +392,6 @@
 "Tap + to register contacts." = "Tap + to register contacts.";
 "Tap + to register friends." = "Tap + to register friends.";
 "Tap + to register additional guardians in the household." = "Tap + to register additional guardians in the household.";
-"This household is represented on %@." = "This household is represented on %@.";
-"No one in this household is active on %@." = "No one in this household is active on %@.";
 
 // Labels
 "Awaiting approval..." = "Awaiting approval...";
@@ -439,8 +440,6 @@
 "Before you can register a friend, you must register his or her guardians." = "Before you can register a friend, you must register his or her guardians.";
 "Tap + to register additional guardians." = "Tap + to register additional guardians.";
 "%@ is active on %@." = "%@ is active on %@.";
-"%@ is represented on %@." = "%@ is represented on %@.";
-"%@ is not active on %@." = "%@ is not active on %@.";
 
 // Buttons
 "To some of them" = "To some of them";
@@ -516,7 +515,7 @@
 "Edit groups" = "Edit groups";
 
 // Footers
-"All persons marked as favourites will be listed here ..." = "All persons marked as favourites will be listed here. Tap ☆ in the person view to mark a person as favourite.";
+"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite." = "This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.";
 "All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";

@@ -126,7 +126,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
             self.userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
         }
         
-        [self checkReachability:[Reachability reachabilityWithHostName:kOrigonServer]];
+        [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
         if ([_internetReachability startNotifier]) {
             OLogDebug(@"Reachability notifier is running.");

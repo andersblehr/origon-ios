@@ -742,16 +742,8 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     NSString *footerContent = NSLocalizedString(_origo.type, kStringPrefixFooter);
     
     if ([_origo isResidence]) {
-        if ([self actionIs:kActionRegister]) {
-            if ([self aspectIs:kAspectJuvenile]) {
-                footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
-            }
-        } else if (!self.isModal && ![_origo userIsMember]) {
-            if ([_origo hasAdmin]) {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"This household is represented on %@.", @""), [OMeta m].appName];
-            } else {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"No one in this household is active on %@.", @""), [OMeta m].appName];
-            }
+        if (self.isModal && [self aspectIs:kAspectJuvenile]) {
+            footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
         }
     } else if ([_origo isPrivate]) {
         if ([self actionIs:kActionRegister]) {
@@ -916,6 +908,8 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         if ([viewController.identifier isEqualToString:kIdentifierMember]) {
             if ([_origo isResidence]) {
                 [self.inputCell readData];
+            } else if ([_origo isCommunity]) {
+                [_origo addMember:viewController.returnData];
             }
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {

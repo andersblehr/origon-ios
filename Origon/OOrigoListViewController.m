@@ -241,7 +241,6 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         self.title = NSLocalizedString(self.target, kStringPrefixSettingLabel);
     } else {
         self.titleView = [OTitleView titleViewWithTitle:[OMeta m].appName subtitle:[OMeta m].user.name];
-        
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
         
         if ([[OMeta m].user isTeenOrOlder]) {
@@ -436,7 +435,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[ward givenName]];
         } else if (self.target != [OMeta m].user) {
             self.target = [OMeta m].user;
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[OMeta m].appName];
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Lists", @"")];
         }
     }
     

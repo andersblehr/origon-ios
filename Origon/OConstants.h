@@ -131,6 +131,7 @@ extern NSString * const kStringPrefixEditOrganiserRoleButton;
 extern NSString * const kStringPrefixSettingTitle;
 
 // Icon file names
+extern NSString * const kIconFileLogo;
 extern NSString * const kIconFileResidence;
 extern NSString * const kIconFileList;
 extern NSString * const kIconFileOrigo;

@@ -127,6 +127,12 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
             } else {
                 self.status = kMembershipStatusRequested;
             }
+        } else if ([self isResidency]) {
+            if (![self.member isJuvenile] && [self.member addresses].count > 1) {
+                self.status = kMembershipStatusInvited;
+            } else {
+                self.status = kMembershipStatusActive;
+            }
         } else if ([self.member isHousemateOfUser]) {
             if ([self.origo indirectlyKnowsAboutMember:[OMeta m].user]) {
                 if ([self.member isWardOfUser]) {
@@ -139,18 +145,10 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
             } else {
                 self.status = kMembershipStatusRequested;
             }
+        } else if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
+            self.status = kMembershipStatusListed;
         } else {
-            if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
-                self.status = kMembershipStatusListed;
-            } else if ([self isResidency]) {
-                if (![self.member isJuvenile] && [self.member addresses].count > 1) {
-                    self.status = kMembershipStatusInvited;
-                } else {
-                    self.status = kMembershipStatusActive;
-                }
-            } else {
-                self.status = kMembershipStatusInvited;
-            }
+            self.status = kMembershipStatusInvited;
         }
     }
 }
@@ -308,6 +306,16 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
             [self demote];
         }
     }
+    
+    [self marshalAffiliations:affiliationsByType];
+}
+
+
+- (void)expireOrganiserCandidacy
+{
+    NSDictionary *affiliationsByType = [self unmarshalAffiliations];
+    
+    [affiliationsByType[kAffiliationTypeOrganiserRole] removeObject:kPlaceholderAffiliation];
     
     [self marshalAffiliations:affiliationsByType];
 }

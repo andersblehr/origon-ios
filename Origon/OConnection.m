@@ -22,10 +22,10 @@ NSInteger const kHTTPStatusServiceUnavailable = 503;
 
 NSString * const kHTTPHeaderLocation = @"Location";
 
-NSString * const kOrigonServer = @"https://origoapp.appspot.com";
+NSString * const kOrigonServer = @"https://origon-api.appspot.com";
 
-static BOOL _isDownForMaintenance = NO;
 static BOOL _useDevServer = YES;
+static BOOL _isDownForMaintenance = NO;
 
 static NSString * const kDevServer = @"http://localhost:8888";
 
@@ -388,6 +388,12 @@ static NSString * const kURLParameterIdentifier = @"id";
 	OLogError(@"Connection failed with error: %@ (%ld)", [error localizedDescription], (long)[error code]);
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    
+    if (error.code == NSURLErrorNotConnectedToInternet || error.code == NSURLErrorTimedOut) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:nil];
+    } else {
+        [OAlert showAlertForError:error];
+    }
     
     [_delegate connection:self didFailWithError:error];
 }
