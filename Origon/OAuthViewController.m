@@ -9,7 +9,9 @@
 #import "OAuthViewController.h"
 
 static CGFloat const kStatusBarHeight = 20.f;
-static CGFloat const kLogoHeight = 60.f;
+static CGFloat const kScreenHeightSmall = 460.f;
+static CGFloat const kLogoRadius = 60.f;
+static CGFloat const kLogoRadiusSmall = 25.f;
 static CGFloat const kLogoCornerRadius = 12.f;
 static CGFloat const kLogoAlpha = 0.7f;
 
@@ -59,14 +61,21 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)addLogoBanner
 {
-    UIImageView *logoBanner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:kIconFileLogo]];
-    logoBanner.center = CGPointMake([OMeta screenWidth] / 2.f, kLogoHeight + kStatusBarHeight);
+    BOOL isSmallScreen = [OMeta screenSize].height == kScreenHeightSmall;
+    NSString *logoFile = isSmallScreen ? kIconFileLogoSmall : kIconFileLogo;
+    CGFloat logoRadius = isSmallScreen ? kLogoRadiusSmall : kLogoRadius;
+    CGFloat logoCornerRadius = isSmallScreen ? kLogoCornerRadius / 2.f : kLogoCornerRadius;
+    
+    UIImageView *logoBanner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:logoFile]];
+    logoBanner.center = CGPointMake([OMeta screenSize].width / 2.f, logoRadius + kStatusBarHeight);
     logoBanner.layer.masksToBounds = YES;
-    logoBanner.layer.cornerRadius = kLogoCornerRadius;
+    logoBanner.layer.cornerRadius = logoCornerRadius;
     logoBanner.alpha = kLogoAlpha;
     
-    [self.view addSubview:logoBanner];
-    [self.tableView setTopContentInset:2.f * kLogoHeight];
+    self.tableView.backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenSize].width, [OMeta screenSize].height)];
+    self.tableView.backgroundView.backgroundColor = [UIColor tableViewBackgroundColour];
+    [self.tableView.backgroundView addSubview:logoBanner];
+    [self.tableView setTopContentInset:2.f * logoRadius];
 }
 
 

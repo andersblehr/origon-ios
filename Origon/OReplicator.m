@@ -176,9 +176,9 @@
                 }
                 
                 [[OMeta m].context save];
-                
-                [self resetUserReplicationState];
             }
+            
+            [self resetUserReplicationState];
             
             if (refreshHandler) {
                 [refreshHandler reloadSections];

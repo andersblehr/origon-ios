@@ -77,15 +77,7 @@
 
 - (void)loadAssociationInfoForMember:(id<OMember>)member
 {
-    BOOL memberIsGuardianOfUserWard = NO;
-    
-    if ([[OMeta m].user wards].count) {
-        for (id<OMember> ward in [[OMeta m].user wards]) {
-            memberIsGuardianOfUserWard = memberIsGuardianOfUserWard || [ward hasGuardian:member];
-        }
-    }
-    
-    if (memberIsGuardianOfUserWard || [member isHousemateOfUser]) {
+    if ([member isGuardianOfWardOfUser] || [member isHousemateOfUser]) {
         self.textLabel.text = [member isJuvenile] ? [member givenName] : member.name;
     } else {
         NSString *association = nil;

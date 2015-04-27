@@ -46,7 +46,7 @@
 
 + (BOOL)deviceIsSimulator;
 + (BOOL)iOSVersionIs:(NSString *)majorVersionNumber;
-+ (CGFloat)screenWidth;
++ (CGSize)screenSize;
 
 
 @end

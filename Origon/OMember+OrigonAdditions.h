@@ -79,6 +79,7 @@
 
 - (BOOL)isUser;
 - (BOOL)isWardOfUser;
+- (BOOL)isGuardianOfWardOfUser;
 - (BOOL)isHousemateOfUser;
 - (BOOL)isManaged;
 - (BOOL)isFavourite;

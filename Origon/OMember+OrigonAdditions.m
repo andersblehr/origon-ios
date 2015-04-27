@@ -900,6 +900,18 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
+- (BOOL)isGuardianOfWardOfUser
+{
+    BOOL isGuardianOfWardOfUser = NO;
+    
+    for (id<OMember> ward in [[OMeta m].user wards]) {
+        isGuardianOfWardOfUser = isGuardianOfWardOfUser || [ward hasGuardian:self];
+    }
+    
+    return isGuardianOfWardOfUser;
+}
+
+
 - (BOOL)isHousemateOfUser
 {
     return [self isUser] || [[[OMeta m].user housemates] containsObject:self];
@@ -912,7 +924,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     
     if (!isManaged) {
         for (OMember *housemate in [self allHousemates]) {
-            isManaged = isManaged || [housemate isActive];
+            isManaged = isManaged || ([housemate isActive] && ![housemate isJuvenile]);
         }
     }
     
@@ -1040,18 +1052,19 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (BOOL)userCanEdit
 {
-    OMember *user = [OMeta m].user;
-    BOOL userCanEdit = [self isUser] || [self isWardOfUser];
+    BOOL userCanEdit = [self isUser];
     
     if (!userCanEdit && ![self isActive]) {
         if ([self isManaged]) {
-            userCanEdit = [self isHousemateOfUser] && [user isTeenOrOlder];
+            userCanEdit = [self isHousemateOfUser] && ![[OMeta m].user isJuvenile];
+        } else if ([self isGuardianOfWardOfUser]) {
+            userCanEdit = YES;
         } else {
             OOrigo *baseOrigo = [OState s].baseOrigo;
             OMembership *baseMembership = [baseOrigo userMembership];
             
             if ([baseMembership isAssociate]) {
-                for (OMember *ward in [user wards]) {
+                for (OMember *ward in [[OMeta m].user wards]) {
                     OMembership *wardMembership = [baseOrigo membershipForMember:ward];
                     
                     if (![wardMembership isAssociate]) {
@@ -1061,8 +1074,8 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
             }
             
             if ([baseMembership isActive]) {
-                if ([user isJuvenile]) {
-                    userCanEdit = [self isJuvenile] && [user isTeenOrOlder];
+                if ([[OMeta m].user isJuvenile]) {
+                    userCanEdit = [self isJuvenile];
                 } else {
                     userCanEdit = YES;
                 }
