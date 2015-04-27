@@ -531,7 +531,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 
 - (CGFloat)labeledTextWidth
 {
-    return [OMeta screenWidth] - 2 * kDefaultCellPadding - [self labelWidth] - kTextViewWidthAdjustment;
+    return [OMeta screenSize].width - 2 * kDefaultCellPadding - [self labelWidth] - kTextViewWidthAdjustment;
 }
 
 

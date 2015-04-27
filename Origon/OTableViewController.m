@@ -446,7 +446,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)footerHeightWithText:(NSString *)footerText
 {
-    CGFloat textHeight = [footerText lineCountWithFont:[UIFont footerFont] maxWidth:[OMeta screenWidth] - 2 * kContentInset] * [UIFont footerFont].lineHeight;
+    CGFloat textHeight = [footerText lineCountWithFont:[UIFont footerFont] maxWidth:[OMeta screenSize].width - 2 * kContentInset] * [UIFont footerFont].lineHeight;
     
     return textHeight + 2 * kDefaultCellPadding;
 }
@@ -480,7 +480,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [_segmentedHeader setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateNormal];
     [_segmentedHeader addTarget:self action:@selector(didSelectHeaderSegment) forControlEvents:UIControlEventValueChanged];
     
-    UIView *segmentedHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], headerViewHeight)];
+    UIView *segmentedHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenSize].width, headerViewHeight)];
     segmentedHeaderView.backgroundColor = [UIColor clearColor];
     [segmentedHeaderView addSubview:_segmentedHeader];
     
@@ -491,8 +491,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (UIView *)footerViewWithText:(NSString *)footerText
 {
     CGFloat footerHeight = [self footerHeightWithText:footerText];
-    CGRect footerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], footerHeight);
-    CGRect labelFrame = CGRectMake(kContentInset, 0.f, [OMeta screenWidth] - 2 * kContentInset, footerHeight + kFooterHeadroom);
+    CGRect footerFrame = CGRectMake(0.f, 0.f, [OMeta screenSize].width, footerHeight);
+    CGRect labelFrame = CGRectMake(kContentInset, 0.f, [OMeta screenSize].width - 2 * kContentInset, footerHeight + kFooterHeadroom);
     
     UIView *footerView = [[UIView alloc] initWithFrame:footerFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:labelFrame];
@@ -844,13 +844,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _titleSegmentTitles = [segmentTitles mutableCopy];
             _titleSegments = [[UISegmentedControl alloc] initWithItems:segmentTitles];
             _titleSegments.selectedSegmentIndex = 0;
-            _titleSegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenWidth] - 2 * kContentInset, _titleSegments.frame.size.height);
+            _titleSegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenSize].width - 2 * kContentInset, _titleSegments.frame.size.height);
             [_titleSegments addTarget:_instance action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
             
-            UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenWidth], kBorderWidth)];
+            UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenSize].width, kBorderWidth)];
             segmentsHairline.backgroundColor = [UIColor toolbarHairlineColour];
             
-            UIView *segmentsView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], kToolbarBarHeight)];
+            UIView *segmentsView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenSize].width, kToolbarBarHeight)];
             segmentsView.backgroundColor = [UIColor toolbarColour];
             
             [segmentsView addSubview:_titleSegments];
@@ -1390,7 +1390,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (self.title && !self.navigationItem.backBarButtonItem) {
         CGFloat titleWidth = [self.title sizeWithFont:[UIFont navigationBarTitleFont] maxWidth:CGFLOAT_MAX].width;
         
-        if (titleWidth / [OMeta screenWidth] > 0.3f) {
+        if (titleWidth / [OMeta screenSize].width > 0.3f) {
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Back", @"")];
         }
     }
@@ -1943,10 +1943,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         CGFloat headerViewHeight = [self tableView:tableView heightForHeaderInSection:section];
         CGFloat headerHeight = [[UIFont headerFont] headerHeight];
         CGFloat headroom = headerViewHeight - headerHeight;
-        CGRect headerViewFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], headerViewHeight);
+        CGRect headerViewFrame = CGRectMake(0.f, 0.f, [OMeta screenSize].width, headerViewHeight);
         headerView = [[UIView alloc] initWithFrame:headerViewFrame];
         
-        CGRect headerFrame = CGRectMake(kContentInset, headroom, [OMeta screenWidth] - 2 * kContentInset, headerHeight);
+        CGRect headerFrame = CGRectMake(kContentInset, headroom, [OMeta screenSize].width - 2 * kContentInset, headerHeight);
         UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
         headerLabel.backgroundColor = [UIColor clearColor];
         headerLabel.textColor = [UIColor headerTextColour];

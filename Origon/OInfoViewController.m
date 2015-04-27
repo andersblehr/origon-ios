@@ -91,7 +91,7 @@ static NSInteger const kSectionKeyMembership = 2;
 {
     id<OMember> instigator = [[OMeta m].context memberWithEmail:email];
     
-    cell.detailTextLabel.text = instigator.name;
+    cell.detailTextLabel.text = [instigator shortName];
     
     if ([instigator isUser] || [[_entity entityId] isEqualToString:instigator.entityId]) {
         cell.selectable = NO;
@@ -272,7 +272,7 @@ static NSInteger const kSectionKeyMembership = 2;
                     }
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyActiveSince]) {
-                cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Represented on %@", @""), [OMeta m].appName];
+                cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"On %@", @""), [OMeta m].appName];
                 
                 if ([member isManaged]) {
                     cell.detailTextLabel.text = NSLocalizedString(@"Through household", @"");

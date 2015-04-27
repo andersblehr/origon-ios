@@ -35,7 +35,7 @@ static CGFloat const kTitlePadding = 3.f;
 
 - (void)computeWidth
 {
-    CGFloat maxWidth = [OMeta screenWidth] - kNavigationBarReservedWidth;
+    CGFloat maxWidth = [OMeta screenSize].width - kNavigationBarReservedWidth;
     
     if (!_didSizeToFit) {
         _width = kMinimumNonZeroWidth;

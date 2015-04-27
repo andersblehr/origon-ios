@@ -240,9 +240,9 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-+ (CGFloat)screenWidth
++ (CGSize)screenSize
 {
-    return [UIScreen mainScreen].applicationFrame.size.width;
+    return [UIScreen mainScreen].applicationFrame.size;
 }
 
 

@@ -589,7 +589,10 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 {
     BOOL isAdmin = NO;
     
-    if ([self isPrivate]) {
+    if ([self isResidence]) {
+        isAdmin = isAdmin || ([self userIsCreator] && ![self hasAdmin]);
+        isAdmin = isAdmin || ([self userIsMember] && [[OMeta m].user isTeenOrOlder]);
+    } else if ([self isPrivate]) {
         isAdmin = [self userIsCreator] || [self isPinned];
     } else {
         isAdmin = [[self userMembership].isAdmin boolValue];
@@ -720,7 +723,11 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     BOOL hasAdmin = NO;
     
     for (OMembership *membership in [self allMemberships]) {
-        hasAdmin = hasAdmin || [membership.isAdmin boolValue];
+        if ([self isResidence]) {
+            hasAdmin = hasAdmin || ([membership.member isActive] && [membership.member isTeenOrOlder]);
+        } else {
+            hasAdmin = hasAdmin || [membership.isAdmin boolValue];
+        }
     }
     
     return hasAdmin;

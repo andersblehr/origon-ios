@@ -495,7 +495,13 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             }
         }
         
-        NSInteger titleSegment = _titleSegments.selectedSegmentIndex;
+        NSInteger titleSegment = UISegmentedControlNoSegment;
+        
+        if ([self targetIs:kTargetAllContacts] && !_titleSegments) {
+            titleSegment = kTitleSegmentOthers;
+        } else {
+            titleSegment = _titleSegments.selectedSegmentIndex;
+        }
         
         if ([self targetIs:kTargetAllContacts] && titleSegment == kTitleSegmentOthers) {
             [cell loadMember:member inOrigo:nil excludeRoles:YES excludeRelations:YES];

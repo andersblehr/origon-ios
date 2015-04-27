@@ -853,20 +853,24 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     [self cancelInlineEditingIfOngoing];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
-    
-    if (![_member isJuvenile] || [_member isWardOfUser]) {
-        if ([_member hasAddress]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register an address", @"") tag:kButtonTagEditAddAddress];
-        } else {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
-        }
+    if ([[OMeta m].user isJuvenile]) {
+        [self scrollToTopAndToggleEditMode];
     } else {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Register guardian", @"") tag:kButtonTagEditAddGuardian];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
+        
+        if (![_member isJuvenile] || [_member isWardOfUser]) {
+            if ([_member hasAddress]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register an address", @"") tag:kButtonTagEditAddAddress];
+            } else {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
+            }
+        } else if (![[OMeta m].user isJuvenile]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register guardian", @"") tag:kButtonTagEditAddGuardian];
+        }
+        
+        [actionSheet show];
     }
-    
-    [actionSheet show];
 }
 
 
@@ -975,7 +979,7 @@ static NSInteger const kButtonIndexContinue = 1;
     
     [super viewDidAppear:animated];
     
-    if ([self actionIs:kActionDisplay]) {
+    if ([self actionIs:kActionDisplay] && ![[OMeta m].user isJuvenile]) {
         if ([_member isHousemateOfUser] && ![_member hasValueForKey:kPropertyKeyDateOfBirth]) {
             [self toggleEditMode];
             [[self.inputCell nextInvalidInputField] becomeFirstResponder];
