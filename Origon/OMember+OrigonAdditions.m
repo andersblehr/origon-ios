@@ -237,7 +237,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         }
     }
     
-    if ([self hasValueForKey:key] && ![self isUser]) {
+    if ([self hasValueForKey:key] && ![self isUser] && ![self isOutOfBounds]) {
         [recipients addObject:self];
     }
     

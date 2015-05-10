@@ -848,7 +848,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     
     if ([self isResidence]) {
         for (OMember *resident in [self residents]) {
-            if (![resident isUser]) {
+            if (![resident isUser] && ![resident isOutOfBounds]) {
                 recipientCandidates = [recipientCandidates arrayByAddingObject:resident];
             }
         }

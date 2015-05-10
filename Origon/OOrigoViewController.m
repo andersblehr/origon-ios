@@ -431,16 +431,10 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 
 - (void)performCallAction
 {
-    NSArray *recipientCandidates = [_origo callRecipients];
+    _recipientType = kRecipientTypeCall;
+    _recipientCandidates = [_origo callRecipients];
     
-    if (recipientCandidates.count > 1) {
-        _recipientType = kRecipientTypeCall;
-        _recipientCandidates = recipientCandidates;
-        
-        [self presentRecipientsSheet];
-    } else {
-        [self callRecipient:_origo];
-    }
+    [self presentRecipientsSheet];
 }
 
 

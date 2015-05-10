@@ -198,7 +198,7 @@
     OReplicatedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
     entity.entityId = entityId;
     entity.dateCreated = [NSDate date];
-    entity.createdBy = [OMeta m].userEmail;
+    entity.createdBy = [OMeta m].userId;
 
     return entity;
 }
