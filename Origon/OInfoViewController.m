@@ -87,17 +87,21 @@ static NSInteger const kSectionKeyMembership = 2;
 }
 
 
-- (void)listCell:(OTableViewCell *)cell loadDetailsForInstigatorWithEmail:(NSString *)email
+- (void)listCell:(OTableViewCell *)cell loadDetailsForInstigatorWithId:(NSString *)instigatorId
 {
-    id<OMember> instigator = [[OMeta m].context memberWithEmail:email];
+    id<OMember> instigator = [[OMeta m].context entityWithId:instigatorId];
     
-    cell.detailTextLabel.text = [instigator shortName];
-    
-    if ([instigator isUser] || [[_entity entityId] isEqualToString:instigator.entityId]) {
-        cell.selectable = NO;
+    if (instigator) {
+        cell.detailTextLabel.text = [instigator shortName];
+        
+        if ([instigator isUser] || [[_entity entityId] isEqualToString:instigator.entityId]) {
+            cell.selectable = NO;
+        } else {
+            cell.destinationId = kIdentifierMember;
+            cell.destinationTarget = instigator;
+        }
     } else {
-        cell.destinationId = kIdentifierMember;
-        cell.destinationTarget = instigator;
+        // TODO: Look up remotely
     }
 }
 
@@ -172,9 +176,9 @@ static NSInteger const kSectionKeyMembership = 2;
                 cell.textLabel.text = NSLocalizedString(displayKey, kStringPrefixAlternateLabel);
             }
             
-            [self listCell:cell loadDetailsForInstigatorWithEmail:[_entity createdBy]];
+            [self listCell:cell loadDetailsForInstigatorWithId:[_entity createdBy]];
         } else if ([displayKey isEqualToString:kPropertyKeyModifiedBy]) {
-            [self listCell:cell loadDetailsForInstigatorWithEmail:[_entity modifiedBy]];
+            [self listCell:cell loadDetailsForInstigatorWithId:[_entity modifiedBy]];
         } else if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
             id<OOrigo> origo = [_entity instance];
             
@@ -323,9 +327,9 @@ static NSInteger const kSectionKeyMembership = 2;
             cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixLabel);
             
             if ([propertyKey isEqualToString:kPropertyKeyCreatedBy]) {
-                [self listCell:cell loadDetailsForInstigatorWithEmail:membership.createdBy];
+                [self listCell:cell loadDetailsForInstigatorWithId:membership.createdBy];
             } else if ([propertyKey isEqualToString:kPropertyKeyModifiedBy]) {
-                [self listCell:cell loadDetailsForInstigatorWithEmail:membership.modifiedBy];
+                [self listCell:cell loadDetailsForInstigatorWithId:membership.modifiedBy];
             }
         }
     }

@@ -750,6 +750,10 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
+    
+    // NOTE TO REVIEWERS: Xcode Analyzer warns of a potential memory leak on multiValues here.
+    // However, releasing multiValues here instead of inside if block causes the app to crash
+    // in certain cases.
 }
 
 
@@ -779,6 +783,10 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
+    
+    // NOTE TO REVIEWERS: Xcode Analyzer warns of a potential memory leak on multiValues here.
+    // However, releasing multiValues here instead of inside if block causes the app to crash
+    // in certain cases.
 }
 
 
@@ -820,6 +828,10 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
+    
+    // NOTE TO REVIEWERS: Xcode Analyzer warns of a potential memory leak on multiValues here.
+    // However, releasing multiValues here instead of inside if block causes the app to crash
+    // in certain cases.
 }
 
 
@@ -1092,7 +1104,7 @@ static NSInteger const kButtonIndexContinue = 1;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] conjoin:NO];
             cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         } else if ([residence hasTelephone]) {
-            cell.detailTextLabel.text = [[OPhoneNumberFormatter formatterForNumber:residence.telephone] formattedNumber];
+            cell.detailTextLabel.text = [[OPhoneNumberFormatter formatterForNumber:residence.telephone] completelyFormattedNumberCanonicalised:YES];
         }
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];

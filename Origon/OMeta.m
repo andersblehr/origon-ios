@@ -117,7 +117,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     
     if (self) {
         _appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
-        _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
+        _appVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
         _language = [NSLocale preferredLanguages][0];
         _carrier = [[[CTTelephonyNetworkInfo alloc] init] subscriberCellularProvider];
         _hasInternetConnection = NO;

@@ -24,7 +24,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 + (BOOL)isNullableProperty:(NSString *)propertyKey
 {
-    return ![@[kPropertyKeyCreatedBy, kPropertyKeyDateCreated] containsObject:propertyKey];
+    return ![@[kPropertyKeyCreatedBy, kPropertyKeyDateCreated, kPropertyKeyPasswordHash] containsObject:propertyKey];
 }
 
 
@@ -317,7 +317,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (BOOL)userIsCreator
 {
-    return [self.createdBy isEqualToString:[OMeta m].userEmail];
+    return [self.createdBy isEqualToString:[OMeta m].userId];
 }
 
 

@@ -216,7 +216,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         
         [actionSheet show];
     } else if ([[OMeta m] userIsLoggedIn] && ![[OMeta m] userIsRegistered]) {
-        if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].userEmail]) {
+        if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].userId]) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origon", @"") message:NSLocalizedString(@"Please verify your details and provide any missing information.", @"")];
             
             for (id<OMember> ward in [[OMeta m].user wards]) {

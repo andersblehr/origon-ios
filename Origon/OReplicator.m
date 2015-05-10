@@ -71,7 +71,7 @@
         
         for (OReplicatedEntity *entity in _dirtyEntities) {
             if (entity.dateReplicated) {
-                entity.modifiedBy = [OMeta m].userEmail;
+                entity.modifiedBy = [OMeta m].userId;
             }
             
             [entities addObject:[entity toDictionary]];
