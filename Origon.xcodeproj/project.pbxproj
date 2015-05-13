@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -898,7 +898,7 @@
 			attributes = {
 				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0630;
-				ORGANIZATIONNAME = "Rhelba Source";
+				ORGANIZATIONNAME = "Origon Flow";
 				TargetAttributes = {
 					5CBB63B3146080DF00A9133A = {
 						DevelopmentTeam = 68M9JL23T5;
@@ -906,7 +906,7 @@
 				};
 			};
 			buildConfigurationList = 5CBB63AE146080DD00A9133A /* Build configuration list for PBXProject "Origon" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (

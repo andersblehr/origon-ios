@@ -1007,7 +1007,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
             if ([self hasAddress]) {
                 recipientLabel = [self shortAddress];
             } else {
-                recipientLabel = [NSString stringWithFormat:@"Home: %@", formattedPhoneNumber];
+                recipientLabel = [NSString stringWithFormat:NSLocalizedString(@"Home: %@", @""), formattedPhoneNumber];
             }
         } else {
             recipientLabel = formattedPhoneNumber;
