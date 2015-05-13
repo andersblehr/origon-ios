@@ -50,7 +50,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
                     userWardPeers = [NSMutableSet setWithArray:userWards];
                     
                     for (OMember *userWard in userWards) {
-                        [userWardPeers unionSet:[NSSet setWithArray:[userWard allPeers]]];
+                        [userWardPeers unionSet:[userWard directPeers]];
                     }
                 }
                 
@@ -65,19 +65,19 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
-- (NSArray *)allWards
+- (NSSet *)directPeers
 {
-    NSMutableArray *allWards = [NSMutableArray array];
+    NSMutableSet *directPeers = [NSMutableSet set];
     
-    if (![self isJuvenile]) {
-        for (OMember *housemate in [self allHousemates]) {
-            if ([housemate isJuvenile]) {
-                [allWards addObject:housemate];
+    for (OOrigo *origo in [self origosIncludeResidences:YES]) {
+        for (OMember *member in [origo members]) {
+            if ([member isJuvenile] == [self isJuvenile]) {
+                [directPeers addObject:member];
             }
         }
     }
     
-    return allWards;
+    return directPeers;
 }
 
 
@@ -91,9 +91,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         NSMutableSet *allPeers = [NSMutableSet set];
         
         for (OOrigo *origo in [self origosIncludeResidences:YES]) {
-            NSArray *organisers = [origo isJuvenile] ? [origo organisers] : nil;
-            
-            if (organisers && organisers.count && [organisers containsObject:self]) {
+            if ([origo isJuvenile] && [[origo organisers] containsObject:self]) {
                 for (OMember *regular in [origo regulars]) {
                     [allPeers addObjectsFromArray:[regular guardians]];
                 }
@@ -162,6 +160,22 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     }
     
     return _cachedPeersByMemberId[self.entityId];
+}
+
+
+- (NSArray *)allWards
+{
+    NSMutableArray *allWards = [NSMutableArray array];
+    
+    if (![self isJuvenile]) {
+        for (OMember *housemate in [self allHousemates]) {
+            if ([housemate isJuvenile]) {
+                [allWards addObject:housemate];
+            }
+        }
+    }
+    
+    return allWards;
 }
 
 
@@ -359,9 +373,11 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 {
     NSArray *callRecipients = [self recipientsForCommunicationsKey:kPropertyKeyMobilePhone groupable:NO];
     
-    for (OOrigo *residence in [self residences]) {
-        if ([residence hasTelephone]) {
-            callRecipients = [callRecipients arrayByAddingObject:residence];
+    if (![self isUser]) {
+        for (OOrigo *residence in [self residences]) {
+            if ([residence hasTelephone]) {
+                callRecipients = [callRecipients arrayByAddingObject:residence];
+            }
         }
     }
     

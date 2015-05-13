@@ -677,8 +677,6 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             hasFooter = [_origo isPrivate];
         } else if (self.isModal || ([_origo isPrivate] && ![_origo members].count)) {
             hasFooter = YES;
-        } else if ([_origo isResidence]) {
-            hasFooter = ![_origo userIsMember];
         }
     }
     

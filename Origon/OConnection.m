@@ -92,7 +92,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
-        NSString *serverURL = _useDevServer && [OMeta deviceIsSimulator] ? kDevServer : kOrigonServer;
+        NSString *serverURL = [OConnection isUsingDevServer] ? kDevServer : kOrigonServer;
         
         _URLRequest.HTTPMethod = HTTPMethod;
         _URLRequest.URL = [[[[NSURL URLWithString:serverURL] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];
@@ -289,7 +289,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 + (BOOL)isUsingDevServer
 {
-    return _useDevServer;
+    return _useDevServer && [OMeta deviceIsSimulator];
 }
 
 
