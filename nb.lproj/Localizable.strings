@@ -434,7 +434,7 @@
 "Responsibilities in %@" = "Ansvar i %@";
 
 // Footers
-"New %@ members will receive an invitation by email." = "Nye %@-medlemmer vil motta en invitasjon på epost.";
+"New list members who are not registered on %@ will receive an email inviting them to join %@." = "Nye listemedlemmer som ikke er registrert på %@, vil motta en epost som inviterer dem til %@.";
 "Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
 "Before you can register a friend, you must register his or her guardians." = "Før du kan registrere en venn eller venninne, må du registrere hans eller hennes foresatte.";
 "Tap + to register additional guardians." = "Trykk + for å registrere flere foresatte.";
@@ -561,8 +561,8 @@
 "Send join request for %@:" = "Send innmeldingsforespørsel for %@:";
 
 // Footers
-"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som skal føres opp i denne lista. Ved hjelp av koden kan de føre opp seg selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
-"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som har barn som skal føres opp i denne lista. Ved hjelp av koden kan de føre opp barna sine selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
+"The join code can be shared with other %@ users who might be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som kan føres opp i denne lista. Ved hjelp av koden kan de føre opp seg selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
+"The join code can be shared with other %@ users whose children might be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "Innmeldingskoden deles med andre %@-brukere som har barn som kan føres opp i denne lista. Ved hjelp av koden kan de føre opp barna sine selv ved å trykke på innmeldingsknappen (innsirklet plusstegn) i startbildet.";
 "You may ask an administrator to create a join code for %@." = "Du kan be en administrator om å opprette en innmeldingskode for %@.";
 "You need a working internet connection to create a join code for %@." = "Du trenger en fungerende internettforbindelse for å opprette en innmeldingskode for %@.";
 "Please enter the join code for the list you want to join." = "Oppgi innmeldingskoden til lista du vil melde deg inn i.";

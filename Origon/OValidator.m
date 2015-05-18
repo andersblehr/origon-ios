@@ -28,7 +28,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isNameKey:(NSString *)key
 {
     if (!_nameKeys) {
-        _nameKeys = @[kPropertyKeyName, kMappedKeyFullName, kMappedKeyResidenceName];
+        _nameKeys = @[kPropertyKeyName, kMappedKeyFullName];
     }
     
     return [_nameKeys containsObject:key];

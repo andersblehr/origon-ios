@@ -75,7 +75,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 }
 
 
-#pragma mark - iOS 7 default colours
+#pragma mark - Default colours
 
 
 + (instancetype)toolbarColour
@@ -99,18 +99,6 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 + (instancetype)tableViewSeparatorColour
 {
     return [self colorWithRed:200/255.f green:199/255.f blue:204/255.f alpha:1.f];
-}
-
-
-+ (instancetype)cellBackgroundColour
-{
-    return [self whiteColor];
-}
-
-
-+ (instancetype)selectedCellBackgroundColour
-{
-    return [self tableViewSeparatorColour];
 }
 
 

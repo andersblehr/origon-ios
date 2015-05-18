@@ -25,8 +25,6 @@
 + (instancetype)toolbarHairlineColour;
 + (instancetype)tableViewBackgroundColour;
 + (instancetype)tableViewSeparatorColour;
-+ (instancetype)cellBackgroundColour;
-+ (instancetype)selectedCellBackgroundColour;
 + (instancetype)alertViewBackgroundColour;
 
 + (instancetype)globalTintColour;

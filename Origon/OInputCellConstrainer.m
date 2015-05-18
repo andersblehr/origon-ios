@@ -576,11 +576,13 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
     } else {
         inputField.keyboardType = UIKeyboardTypeDefault;
         
-        if ([OValidator isNameKey:key]) {
-            inputField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-        } else if ([OValidator isPasswordKey:key]) {
+        if ([OValidator isPasswordKey:key]) {
             inputField.secureTextEntry = YES;
             ((OTextField *)inputField).clearsOnBeginEditing = YES;
+        } else if ([OValidator isNameKey:key]) {
+            inputField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        } else {
+            inputField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
         }
     }
     

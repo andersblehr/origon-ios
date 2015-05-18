@@ -22,8 +22,6 @@ extern NSInteger const kHTTPStatusServiceUnavailable;
 
 extern NSString * const kHTTPHeaderLocation;
 
-extern NSString * const kOrigonServer;
-
 @interface OConnection : NSObject
 
 + (instancetype)connectionWithDelegate:(id)delegate;
