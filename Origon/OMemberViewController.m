@@ -1200,7 +1200,7 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if (![_member isUser]) {
         if ([self actionIs:kActionRegister]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"New %@ members will receive an invitation by email.", @""), [OMeta m].appName];
+            footerContent = [NSString stringWithFormat:NSLocalizedString(@"New list members who are not registered on %@ will receive an email inviting them to join %@.", @""), [OMeta m].appName, [OMeta m].appName];
             
             if ([_member isJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register additional guardians.", @"");

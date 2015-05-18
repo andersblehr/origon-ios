@@ -350,7 +350,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             cell.detailTextLabel.text = origo.descriptionText;
         }
     }
-    
+
     if ([membership needsUserAcceptance]) {
         cell.destinationId = kIdentifierOrigo;
         cell.notificationView = [OLabel genericLabelWithText:NSLocalizedString(@"New!", @"")];
@@ -536,6 +536,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             for (id<OMember> member in [origo members]) {
                 [[origo membershipForMember:member] expire];
             }
+        } else {
+            origo.joinCode = nil;
+            origo.internalJoinCode = nil;
         }
         
         [[origo membershipForMember:keyMember] expire];

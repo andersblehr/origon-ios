@@ -435,7 +435,7 @@
 "Responsibilities in %@" = "Responsibilities in %@";
 
 // Footers
-"New %@ members will receive an invitation by email." = "New %@ members will receive an invitation by email.";
+"New list members who are not registered on %@ will receive an email inviting them to join %@." = "New list members who are not registered on %@ will receive an email inviting them to join %@.";
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
 "Before you can register a friend, you must register his or her guardians." = "Before you can register a friend, you must register his or her guardians.";
 "Tap + to register additional guardians." = "Tap + to register additional guardians.";
@@ -562,8 +562,8 @@
 "Send join request for %@:" = "Send join request for %@:";
 
 // Footers
-"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.";
-"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.";
+"The join code can be shared with other %@ users who might be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users who might be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.";
+"The join code can be shared with other %@ users whose children might be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view." = "The join code can be shared with other %@ users whose children might be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.";
 "You may ask an administrator to create a join code for %@." = "You may ask an administrator to create a join code for %@.";
 "You need a working internet connection to create a join code for %@." = "You need a working internet connection to create a join code for %@.";
 "Please enter the join code for the list you want to join." = "Please enter the join code for the list you want to join.";

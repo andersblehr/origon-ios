@@ -43,9 +43,9 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     NSString *footerText = nil;
     
     if ([_origo isJuvenile]) {
-        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users whose children should be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
+        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users whose children might be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
     } else {
-        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users who should be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
+        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users who might be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
     }
     
     return footerText;
@@ -83,7 +83,12 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             }
         }
         
-        if (existingMembership) {
+        if ([existingMembership isAssociate]) {
+            _origo = origo;
+            self.navigationItem.rightBarButtonItem = nil;
+            
+            [self reloadSections];
+        } else if (existingMembership) {
             if ([existingMembership isActive]) {
                 if ([_member isUser]) {
                     [OAlert showAlertWithTitle:NSLocalizedString(@"Already a member", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You are already a member of %@.", @""), origo.name, _joinCode, origo.name]];
@@ -429,7 +434,9 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             
         case kActionSheetTagJoin:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                [_origo instantiate];
+                if (![_origo instance]) {
+                    [_origo instantiate];
+                }
                 
                 id<OMembership> membership = [_origo addMember:_member];
                 
