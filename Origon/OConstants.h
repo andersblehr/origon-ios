@@ -181,7 +181,6 @@ extern NSInteger const kAgeOfMajority;
 extern CGFloat const kNavigationBarHeight;
 extern CGFloat const kNavigationBarTitleHeight;
 extern CGFloat const kToolbarBarHeight;
-extern CGFloat const kBorderWidth;
 extern CGFloat const kContentInset;
 
 // Misc constants

@@ -228,6 +228,18 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 
 #pragma mark - Convenience methods
 
++ (CGSize)screenSize
+{
+    return [UIScreen mainScreen].applicationFrame.size;
+}
+
+
++ (CGFloat)borderWidth
+{
+    return 1.f / [UIScreen mainScreen].scale;
+}
+
+
 + (BOOL)deviceIsSimulator
 {
     return [[UIDevice currentDevice].model containsString:@"Simulator"];
@@ -237,12 +249,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 + (BOOL)iOSVersionIs:(NSString *)majorVersionNumber
 {
     return [[UIDevice currentDevice].systemVersion hasPrefix:majorVersionNumber];
-}
-
-
-+ (CGSize)screenSize
-{
-    return [UIScreen mainScreen].applicationFrame.size;
 }
 
 

@@ -163,7 +163,7 @@ static CGFloat const kTextInsetY = 1.2f;
         self.placeholder = NSLocalizedString(key, kStringPrefixPlaceholder);
         self.returnKeyType = _isInlineField ? UIReturnKeyDone : UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
-        self.layer.borderWidth = kBorderWidth;
+        self.layer.borderWidth = [OMeta borderWidth];
         self.layer.borderColor = [[UIColor clearColor] CGColor];
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];

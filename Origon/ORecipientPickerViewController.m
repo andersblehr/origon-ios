@@ -105,7 +105,8 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
 {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
     
-    BOOL selectAllOnly = !_titleSegments || [_origo isCommunity];
+    NSArray *groups = [_origo groups];
+    BOOL selectAllOnly = !groups.count && (!_titleSegments || [_origo isCommunity]);
     
     if (!selectAllOnly && [_titleSegments numberOfSegments] == 2) {
         selectAllOnly = [self hasSegment:_segmentParents] && [self hasSegment:_segmentGroupedParents];
@@ -117,21 +118,35 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         actionSheet.title = NSLocalizedString(@"Select recipients", @"");
 
         if ([self hasSegment:_segmentMembers]) {
-            if ([_origo isPrivate] || [_origo isStandard]) {
-                [actionSheet addButtonWithTitle:[_origo displayName] tag:kButtonTagGroupMembers];
-            } else {
-                [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixMembersTitle) tag:kButtonTagGroupMembers];
+            if (_titleSegments) {
+                NSString *buttonTitle = nil;
+                
+                if ([_origo isPrivate] || [_origo isStandard]) {
+                    buttonTitle = [_origo displayName];
+                } else {
+                    buttonTitle = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+                }
+                
+                [actionSheet addButtonWithTitle:buttonTitle tag:kButtonTagGroupMembers];
             }
             
-            for (NSString *group in [_origo groups]) {
-                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(_origo.type, kStringPrefixMembersTitle), group] tag:kButtonTagGroupMembersInGroup];
+            for (NSString *group in groups) {
+                NSString *buttonTitle = nil;
+                
+                if (_titleSegments) {
+                    buttonTitle = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(_origo.type, kStringPrefixMembersTitle), group];
+                } else {
+                    buttonTitle = group;
+                }
+                
+                [actionSheet addButtonWithTitle:buttonTitle tag:kButtonTagGroupMembersInGroup];
             }
         }
         
         if ([self hasSegment:_segmentParents]) {
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents", @"") tag:kButtonTagGroupParents];
             
-            for (NSString *group in [_origo groups]) {
+            for (NSString *group in groups) {
                 [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Parents in %@", @""), group] tag:kButtonTagGroupParentsInGroup];
             }
             

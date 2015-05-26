@@ -126,7 +126,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         if (_titleSegment == kTitleSegmentParents) {
             [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
         } else if (_titleSegment == kTitleSegmentOrganisers) {
-            if ([_origo organisers].count) {
+            if ([_origo organiserCandidates].count) {
                 OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
                 [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
                 [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];

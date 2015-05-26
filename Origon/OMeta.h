@@ -44,9 +44,10 @@
 - (BOOL)userIsLoggedIn;
 - (BOOL)userIsRegistered;
 
++ (CGSize)screenSize;
++ (CGFloat)borderWidth;
+
 + (BOOL)deviceIsSimulator;
 + (BOOL)iOSVersionIs:(NSString *)majorVersionNumber;
-+ (CGSize)screenSize;
-
 
 @end
