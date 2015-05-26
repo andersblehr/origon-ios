@@ -185,7 +185,11 @@ static NSInteger const kSectionKeyMembership = 2;
             if ([displayKey isEqualToString:kPropertyKeyName]) {
                 cell.detailTextLabel.text = [origo displayName];
             } else if ([displayKey isEqualToString:kPropertyKeyType]) {
-                cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
+                if ([origo isPrivate] && [[origo owner] isJuvenile]) {
+                    cell.detailTextLabel.text = NSLocalizedString(@"Private list of friends", @"");
+                } else {
+                    cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
+                }
                 
                 if (self.isOnline) {
                     BOOL canEdit = [origo userIsAdmin] && ![origo isResidence] && ![origo isCommunity];

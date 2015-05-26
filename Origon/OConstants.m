@@ -181,7 +181,6 @@ NSInteger const kAgeOfMajority = 18;
 CGFloat const kNavigationBarHeight = 64.f;
 CGFloat const kNavigationBarTitleHeight = 44.f;
 CGFloat const kToolbarBarHeight = 44.f;
-CGFloat const kBorderWidth = 0.5f;
 CGFloat const kContentInset = 14.f;
 
 

@@ -376,6 +376,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     if ([self actionIs:kActionLogin]) {
         _emailField = [inputCell inputFieldForKey:kInputKeyAuthEmail];
         _passwordField = [inputCell inputFieldForKey:kInputKeyPassword];
+        
+        ((UITextField *)_emailField).clearButtonMode = UITextFieldViewModeAlways;
     } else if ([self actionIs:kActionActivate]) {
         _activationCodeField = [inputCell inputFieldForKey:kInputKeyActivationCode];
         _repeatPasswordField = [inputCell inputFieldForKey:kInputKeyRepeatPassword];

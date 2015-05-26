@@ -138,12 +138,6 @@ static void uncaughtExceptionHandler(NSException *exception)
 }
 							
 
-- (void)applicationWillResignActive:(UIApplication *)application
-{
-    // TODO: Delete if not implemented.
-}
-
-
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     OLogDebug(@"Application did enter background");
@@ -151,12 +145,6 @@ static void uncaughtExceptionHandler(NSException *exception)
     [self saveApplicationState];
     
     _didEnterBackground = YES;
-}
-
-
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-    // TODO: Delete if not implemented.
 }
 
 
@@ -178,10 +166,6 @@ static void uncaughtExceptionHandler(NSException *exception)
         }
         
         _didEnterBackground = NO;
-        
-        if ([[OMeta m] userIsAllSet]) {
-            [[OMeta m].replicator replicateIfNeeded];
-        }
     }
 }
 

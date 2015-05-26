@@ -107,10 +107,8 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem locationButtonWithTarget:self]];
         }
 
-        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]]) {
-            if ([_origo userCanEdit] || [_origo groups].count) {
-                [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
-            }
+        if (![_origo isResidence] && ([_origo userCanEdit] || [_origo groups].count)) {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
         }
         
         if ([_origo userCanEdit]) {

@@ -434,7 +434,8 @@
 "Responsibilities in %@" = "Ansvar i %@";
 
 // Footers
-"New list members who are not registered on %@ will receive an email inviting them to join %@." = "Nye listemedlemmer som ikke er registrert på %@, vil motta en epost som inviterer dem til %@.";
+"The first time somebody is added to a list, they receive an email inviting them to join %@." = "Første gang noen blir lagt til i en liste, mottar de en epost som inviterer dem til å registrere seg på %@.";
+"New list members who are not registered on %@ will receive an email informing them that they have been added to a list on %@." = "Nye listemedlemmer som ikke er registrert på %@, vil motta en epost som informerer dem om at de er blitt lagt til i en liste på %@.";
 "Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
 "Before you can register a friend, you must register his or her guardians." = "Før du kan registrere en venn eller venninne, må du registrere hans eller hennes foresatte.";
 "Tap + to register additional guardians." = "Trykk + for å registrere flere foresatte.";

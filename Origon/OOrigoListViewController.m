@@ -205,6 +205,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 #pragma mark - View lifecycle
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    if ([[OMeta m] userIsAllSet]) {
+        [[OMeta m].replicator refreshWithRefreshHandler:self];
+    }
+}
+
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];

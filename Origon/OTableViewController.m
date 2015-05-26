@@ -847,7 +847,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _titleSegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenSize].width - 2 * kContentInset, _titleSegments.frame.size.height);
             [_titleSegments addTarget:_instance action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
             
-            UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenSize].width, kBorderWidth)];
+            UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenSize].width, [OMeta borderWidth])];
             segmentsHairline.backgroundColor = [UIColor toolbarHairlineColour];
             
             UIView *segmentsView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenSize].width, kToolbarBarHeight)];

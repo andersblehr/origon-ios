@@ -435,7 +435,7 @@
 "Responsibilities in %@" = "Responsibilities in %@";
 
 // Footers
-"New list members who are not registered on %@ will receive an email inviting them to join %@." = "New list members who are not registered on %@ will receive an email inviting them to join %@.";
+"The first time somebody is added to a list, they receive an email inviting them to join %@." = "The first time somebody is added to a list, they receive an email inviting them to join %@.";
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
 "Before you can register a friend, you must register his or her guardians." = "Before you can register a friend, you must register his or her guardians.";
 "Tap + to register additional guardians." = "Tap + to register additional guardians.";
