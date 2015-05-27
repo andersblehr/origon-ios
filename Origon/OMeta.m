@@ -240,6 +240,12 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
++ (BOOL)deviceIs_iPhone
+{
+    return [[UIDevice currentDevice].model hasPrefix:@"iPhone"];
+}
+
+
 + (BOOL)deviceIsSimulator
 {
     return [[UIDevice currentDevice].model containsString:@"Simulator"];

@@ -280,11 +280,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
         }
         
-        BOOL hasSignal = [[OMeta m].carrier.mobileNetworkCode hasValue];
-        BOOL deviceCanMakeCall = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]];
-        
-        if ((hasSignal && deviceCanMakeCall) || [OMeta deviceIsSimulator]) {
-            if ([_instance respondsToSelector:@selector(toolbarHasCallButton)]) {
+        if ([_instance respondsToSelector:@selector(toolbarHasCallButton)]) {
+            BOOL hasSignal = [[OMeta m].carrier.mobileNetworkCode hasValue];
+            BOOL deviceCanMakeCall = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]];
+            BOOL is_iPhoneSimulator = [OMeta deviceIsSimulator] && [OMeta deviceIs_iPhone];
+            
+            if ((hasSignal && deviceCanMakeCall) || is_iPhoneSimulator) {
                 hasCallButton = [_instance toolbarHasCallButton];
             }
         }

@@ -1125,7 +1125,7 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     UITableViewCellStyle cellStyle = kTableViewCellStyleDefault;
     
-    if (sectionKey == kSectionKeyRoles && ([_origo userCanEdit])) {
+    if (sectionKey == kSectionKeyRoles && ([_roleMembership.origo userCanEdit])) {
         cellStyle = kTableViewCellStyleInline;
     }
     
