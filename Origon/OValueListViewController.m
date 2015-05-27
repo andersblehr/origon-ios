@@ -613,7 +613,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSString *footerText = nil;
     
     if ([self targetIs:kTargetAbout]) {
-        footerText = NSLocalizedString(@"Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Origon Flow\n\norigon.co", @"");
+        footerText = NSLocalizedString(@"Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co", @"");
     } else if ([self targetIs:kTargetAllContacts]) {
         if (_titleSegment == kTitleSegmentFavourites) {
             footerText = NSLocalizedString(@"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.", @"");
