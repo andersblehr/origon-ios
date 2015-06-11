@@ -174,7 +174,7 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     NSString *name = dictionary[kPropertyKeyName];
     NSDate *dateOfBirth = [NSDate dateFromSerialisedDate:dictionary[kPropertyKeyDateOfBirth]];
-    NSString *mobilePhone = dictionary[kPropertyKeyMobilePhone];
+    //NSString *mobilePhone = dictionary[kPropertyKeyMobilePhone];
     NSString *email = dictionary[kPropertyKeyEmail];
     
     BOOL inputMatches = [_nameField.value fuzzyMatches:name];
@@ -182,10 +182,12 @@ static NSInteger const kButtonIndexContinue = 1;
     if (inputMatches && _dateOfBirthField) {
         inputMatches = [_dateOfBirthField.value isEqual:dateOfBirth];
     }
-    
-    if (inputMatches && [mobilePhone hasValue] && ![OMeta deviceIsSimulator]) {
-        inputMatches = _mobilePhoneField.value ? [[[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value] completelyFormattedNumberCanonicalised:YES] isEqualToString:[[OPhoneNumberFormatter formatterForNumber:mobilePhone] completelyFormattedNumberCanonicalised:YES]] : NO;
-    }
+  
+// NOTE: Commented out to simplify member registration for 1.0.1. Comment back in if too loose.
+
+//    if (inputMatches && [mobilePhone hasValue] && ![OMeta deviceIsSimulator]) {
+//        inputMatches = _mobilePhoneField.value ? [[[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value] completelyFormattedNumberCanonicalised:YES] isEqualToString:[[OPhoneNumberFormatter formatterForNumber:mobilePhone] completelyFormattedNumberCanonicalised:YES]] : NO;
+//    }
     
     if (inputMatches && _emailField.value) {
         inputMatches = [_emailField.value isEqualToString:email];
@@ -1490,7 +1492,7 @@ static NSInteger const kButtonIndexContinue = 1;
             isValid = [_nameField hasValidValue];
         }
         
-        if (isValid && [self aspectIs:kAspectHousehold]) {
+        if (isValid && _dateOfBirthField) {
             isValid = [_dateOfBirthField hasValidValue];
         }
         
@@ -1498,8 +1500,12 @@ static NSInteger const kButtonIndexContinue = 1;
             isValid = [_mobilePhoneField hasValidValue];
         }
         
-        if (isValid && _emailField.value) {
-            isValid = [_emailField hasValidValue] && [self isUniqueEmail:_emailField.value];
+        if (isValid) {
+            if (_emailField.value) {
+                isValid = [_emailField hasValidValue] && [self isUniqueEmail:_emailField.value];
+            } else {
+                isValid = ![_member.email hasValue];
+            }
         }
         
         if (isValid && !([_dateOfBirthField.value isBirthDateOfMinor] || [_member isJuvenile])) {
