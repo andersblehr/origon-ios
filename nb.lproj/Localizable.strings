@@ -35,7 +35,7 @@
 "[label] registerOrLogIn" = "Registrer bruker eller logg inn";
 "[label] school" = "Skole";
 "[label] logout" = "Logg ut";
-"[label] telephone" = "Telefon";
+"[label] telephone" = "Fasttelefon";
 "[label] type" = "Type";
 
 // Alternate labels
@@ -516,7 +516,7 @@
 
 // Footers
 "This is your private favourites list. Tap ☆ in the person view to mark a person as favourite." = "Dette er din private favorittliste. Trykk på ☆ i personbildet for å markere en person som favoritt.";
-"All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter vil bli listet opp her.";
+"All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter, vil bli listet opp her.";
 "Tap + to add a responsibility." = "Trykk + for å legge til et ansvarsområde.";
 "Tap + to create a group." = "Trykk + for å opprette en gruppe.";
 "Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Konsept & kode: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";

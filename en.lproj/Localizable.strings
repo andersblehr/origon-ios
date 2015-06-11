@@ -35,7 +35,7 @@
 "[label] registerOrLogIn" = "Register user or log in";
 "[label] school" = "School";
 "[label] logout" = "Log out";
-"[label] telephone" = "Telephone";
+"[label] telephone" = "Landline";
 "[label] type" = "Type";
 
 // Alternate labels

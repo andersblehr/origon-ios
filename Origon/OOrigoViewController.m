@@ -462,7 +462,9 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             _membership.status = kMembershipStatusWaiting;
         }
         
-        if (_needsEditDetails || ([_origo isResidence] && ![_origo hasAddress])) {
+        if ([_membership needsUserAcceptance] || [_membership isHidden]) {
+            [self performAcceptDeclineAction];
+        } else if (_needsEditDetails || ([_origo isResidence] && ![_origo hasAddress])) {
             [self toggleEditMode];
             
             _needsEditDetails = NO;
