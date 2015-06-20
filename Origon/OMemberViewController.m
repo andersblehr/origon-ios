@@ -406,7 +406,16 @@ static NSInteger const kButtonIndexContinue = 1;
     OActionSheet *actionSheet = nil;
     
     if (_cachedCandidates.count == 1) {
-        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"Should %@ also be registered at this address?", @""), [OUtil commaSeparatedListOfMembers:_cachedCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:YES]] delegate:self tag:kActionSheetTagCoHabitants];
+        NSString *prompt = nil;
+        NSArray *allCoHabitants = _cachedCandidates[kButtonTagCoHabitantsAll];
+        
+        if (allCoHabitants.count == 1) {
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"[sg] Should %@ also be registered at this address?", @""), [allCoHabitants[0] givenName]];
+        } else {
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"[pl] Should %@ also be registered at this address?", @""), [OUtil commaSeparatedListOfMembers:allCoHabitants conjoin:YES subjective:YES]];
+        }
+        
+        actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagCoHabitants];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagCoHabitantsAll];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagCoHabitantsNone];
     } else {
@@ -418,7 +427,7 @@ static NSInteger const kButtonIndexContinue = 1;
             if ([_cachedCandidates[kButtonTagCoHabitantsAll] containsObject:[OMeta m].user]) {
                 [actionSheet addButtonWithTitle:NSLocalizedString(@"None of you", @"") tag:kButtonTagCoHabitantsNone];
             } else {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagCoHabitantsNone];
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them [persons]", @"") tag:kButtonTagCoHabitantsNone];
             }
         }
     }
@@ -538,7 +547,7 @@ static NSInteger const kButtonIndexContinue = 1;
             if (_addressBookHomeNumbers.count == 1 && _addressBookMappings.count == 1) {
                 prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ the phone number for %@?", @""), _addressBookHomeNumbers[0], [_addressBookMappings[0] shortAddress]];
             } else {
-                prompt = [NSString stringWithFormat:NSLocalizedString(@"Which address has the number %@?", @""), _addressBookHomeNumbers[0]];
+                prompt = [NSString stringWithFormat:NSLocalizedString(@"Which address has phone number %@?", @""), _addressBookHomeNumbers[0]];
             }
         }
     }
@@ -805,7 +814,7 @@ static NSInteger const kButtonIndexContinue = 1;
             
             if ([label isEqualToString:(NSString *)kABHomeLabel]) {
                 CFTypeRef address = ABMultiValueCopyValueAtIndex(multiValues, i);
-                [_addressBookAddresses addObject:[OOrigoProxy proxyFromAddressBookAddress:address]];
+                [_addressBookAddresses addObject:[OOrigoProxy residenceProxyFromAddress:address]];
                 CFRelease(address);
             }
         }
@@ -820,7 +829,7 @@ static NSInteger const kButtonIndexContinue = 1;
         if (_addressBookHomeNumbers.count) {
             if (!_addressBookAddresses.count && ![_member hasAddress]) {
                 if (_addressBookHomeNumbers.count == 1) {
-                    [[OOrigoProxy proxyWithType:kOrigoTypeResidence] addMember:_member];
+                    [[OOrigoProxy residenceProxyUseDefaultName:YES] addMember:_member];
                 }
             }
             
@@ -1202,11 +1211,17 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if (![_member isUser]) {
         if ([self actionIs:kActionRegister]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"The first time somebody is added to a list, they receive an email inviting them to join %@.", @""), [OMeta m].appName, [OMeta m].appName];
-            
             if ([_member isJuvenile]) {
                 footerContent = NSLocalizedString(@"Tap + to register additional guardians.", @"");
             } else {
+                if ([_origo isResidence]) {
+                    footerContent = NSLocalizedString(@"New household members are notified by email that their household has been added on Origon.", @"");
+                } else if ([_origo isPrivate]) {
+                    footerContent = NSLocalizedString(@"New listings are notified by email that they have been added to a private list on Origon.", @"");
+                } else {
+                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"New list members are notified by email that they have been added to the list %@ on Origon.", @""), _origo.name];
+                }
+                
                 id<OMember> minor = nil;
                 
                 if ([[self.entity ancestor] conformsToProtocol:@protocol(OMember)]) {
@@ -1872,7 +1887,7 @@ static NSInteger const kButtonIndexContinue = 1;
                         }
                     }
                     
-                    primaryResidence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
+                    primaryResidence = [OOrigoProxy residenceProxyUseDefaultName:![_member isUser]];
                     [primaryResidence addMember:_member];
                     
                     for (id<OMember> coHabitant in coHabitants) {

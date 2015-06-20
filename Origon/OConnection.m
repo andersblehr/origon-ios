@@ -343,7 +343,7 @@ static NSString * const kURLParameterIdentifier = @"id";
     BOOL shouldPostReachabilityChangedNotification = NO;
 
     if (_HTTPResponse.statusCode == kHTTPStatusServiceUnavailable && !_isDownForMaintenance) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Down for maintenance", @"") message:NSLocalizedString(@"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. If you need to make changes, you can come back and check under Settings if the server has come up again.", @"")];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Down for maintenance", @"") message:NSLocalizedString(@"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again.", @"")];
         
         _isDownForMaintenance = YES;
         shouldPostReachabilityChangedNotification = YES;

@@ -8,15 +8,11 @@
 
 #import "OMeta.h"
 
-static NSString * const kLocalisationTest = @"Localisation test";
-
 static NSTimeInterval const kTimeInterval30Days = 2592000;
-//static NSTimeInterval const kTimeInterval30Days = 30;
 
 
 @interface OMeta () {
 @private
-    NSBundle *_localisedStringsBundle;
     
     OReplicator *_replicator;
     OActivityIndicator *_activityIndicator;
@@ -118,7 +114,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     if (self) {
         _appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         _appVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
-        _language = [NSLocale preferredLanguages][0];
+        _language = [[[NSBundle mainBundle] preferredLocalizations][0] substringToIndex:2];
         _carrier = [[[CTTelephonyNetworkInfo alloc] init] subscriberCellularProvider];
         _hasInternetConnection = NO;
         
@@ -342,24 +338,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     }
     
     return _authToken;
-}
-
-
-- (NSBundle *)localisedStringsBundle
-{
-    if (!_localisedStringsBundle) {
-        _localisedStringsBundle = [NSBundle mainBundle];
-        
-        if (![_localisedStringsBundle pathForResource:_language ofType:@"lproj"]) {
-            NSString *testString = [_localisedStringsBundle localizedStringForKey:kLocalisationTest value:@"" table:nil];
-            
-            if ([testString isEqualToString:kLocalisationTest]) {
-                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:@"lproj"]];
-            }
-        }
-    }
-    
-    return _localisedStringsBundle;
 }
 
 

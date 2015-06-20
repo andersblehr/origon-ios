@@ -11,7 +11,7 @@
 
 #undef NSLocalizedString
 #define NSLocalizedString(key, prefix) \
-        [[OMeta m].localisedStringsBundle localizedStringForKey:([prefix length] ? [prefix stringByAppendingString:key separator:@" "] : key) value:nil table:nil]
+        [[NSBundle mainBundle] localizedStringForKey:([prefix length] ? [prefix stringByAppendingString:key separator:@" "] : key) value:nil table:nil]
 
 #import <AddressBook/AddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>

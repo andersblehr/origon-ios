@@ -129,7 +129,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     _window.tintColor = [UIColor globalTintColour];
     
     OLogDebug(@"Device ID: %@", [OMeta m].deviceId);
-    OLogDebug(@"System language: %@", [OMeta m].language);
+    OLogDebug(@"Localisation: %@", [[NSBundle mainBundle] preferredLocalizations][0]);
     //OLogDebug(@"Persistent store: %@", [self persistentStoreURL]);
 
     _didJustLaunch = YES;

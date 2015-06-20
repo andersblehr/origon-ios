@@ -80,11 +80,11 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - Factory methods
 
-+ (instancetype)proxyWithType:(NSString *)type
++ (instancetype)residenceProxyUseDefaultName:(BOOL)useDefaultName
 {
-    OOrigoProxy *proxy = [self proxyForEntityOfClass:[OOrigo class] meta:type];
+    OOrigoProxy *proxy = [self proxyForEntityOfClass:[OOrigo class] meta:kOrigoTypeResidence];
     
-    if ([proxy isResidence]) {
+    if (useDefaultName) {
         proxy.name = kPlaceholderDefault;
     }
     
@@ -92,7 +92,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-+ (instancetype)proxyFromAddressBookAddress:(CFDictionaryRef)address
++ (instancetype)residenceProxyFromAddress:(CFDictionaryRef)address
 {
     OOrigoProxy *proxy = [[self alloc] initWithAddressBookAddress:address];
     proxy.name = kPlaceholderDefault;

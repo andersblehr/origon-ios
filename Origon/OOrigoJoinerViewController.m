@@ -43,9 +43,9 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     NSString *footerText = nil;
     
     if ([_origo isJuvenile]) {
-        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users whose children might be included in this list. They can then use the code to join their children to the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
+        footerText = NSLocalizedString(@"The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.", @"");
     } else {
-        footerText = [NSString stringWithFormat:NSLocalizedString(@"The join code can be shared with other %@ users who might be included in this list. They can then use the code to join the list themselves by tapping the join button (circled plus sign) in the start view.", @""), [OMeta m].appName];
+        footerText = NSLocalizedString(@"The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.", @"");
     }
     
     return footerText;
@@ -54,7 +54,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
 
 - (void)showJoinCodeSetAlertAndReplicate
 {
-    [OAlert showAlertWithTitle:NSLocalizedString(@"The code has been set", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The join code for %@ is '%@'. You may now share it with other %@ users who should be in the list.", @""), _origo.name, _origo.joinCode, [OMeta m].appName]];
+    [OAlert showAlertWithTitle:NSLocalizedString(@"The code has been set", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The join code for %@ is '%@'. You may now share it with those you wish to include in the list.", @""), _origo.name, _origo.joinCode]];
     
     [[OMeta m].replicator replicateIfNeeded];
 }
@@ -246,7 +246,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     NSString *headerContent = nil;
     
     if ([_member isUser]) {
-        headerContent = [NSLocalizedString(@"Send join request", @"") stringByAppendingString:kSeparatorColon];
+        headerContent = [NSLocalizedString(@"Send join request:", @"") stringByAppendingString:kSeparatorColon];
     } else {
         headerContent = [NSString stringWithFormat:NSLocalizedString(@"Send join request for %@:", @""), [_member givenName]];
     }
@@ -352,7 +352,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             
             [self showJoinCodeSetAlertAndReplicate];
         } else {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"The code is in use", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.", @""), _joinCode]];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Code in use", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.", @""), _joinCode]];
             
             [self editInlineInCell:_joinCodeCell];
         }

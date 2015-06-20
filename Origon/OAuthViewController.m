@@ -276,7 +276,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have handy the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Go back", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Go back", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
             alert.tag = kAlertTagWelcomeBack;
             
             [alert show];
@@ -356,9 +356,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             footerContent = NSLocalizedString(@"When you register, you will receive an email with an activation code to use in the next step.", @"");
         } else if ([self actionIs:kActionActivate]) {
             if ([self targetIs:kTargetUser]) {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"Your activation code has been sent to %@ ...", @""), _emailField.value];
             } else if ([self targetIs:kTargetEmail]) {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.target];
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"Your activation code has been sent to %@.", @""), self.target];
             }
         }
     } else {
