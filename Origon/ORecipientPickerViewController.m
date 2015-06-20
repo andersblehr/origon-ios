@@ -103,21 +103,24 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
 
 - (void)performRecipientGroupsAction
 {
+    NSArray *groups = [_origo groups];
+    
+    BOOL hasMembers = [self hasSegment:_segmentMembers];
+    BOOL hasParents = [self hasSegment:_segmentParents];
+    BOOL hasOrganisers = [self hasSegment:_segmentOrganisers];
+    BOOL parentsOnly = hasParents && !hasMembers && !hasOrganisers;
+    BOOL isClass = [_origo isOfType:@[kOrigoTypePreschoolClass, kOrigoTypeSchoolClass]];
+    
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
     
-    NSArray *groups = [_origo groups];
-    BOOL selectAllOnly = !groups.count && (!_titleSegments || [_origo isCommunity]);
-    
-    if (!selectAllOnly && [_titleSegments numberOfSegments] == 2) {
-        selectAllOnly = [self hasSegment:_segmentParents] && [self hasSegment:_segmentGroupedParents];
-    }
-    
-    if (selectAllOnly) {
+    if ((!groups.count && (!_titleSegments || [_origo isCommunity])) || (parentsOnly && !isClass)) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
     } else {
+        BOOL needsEverybody = NO;
+        
         actionSheet.title = NSLocalizedString(@"Select recipients", @"");
 
-        if ([self hasSegment:_segmentMembers]) {
+        if (hasMembers) {
             if (_titleSegments) {
                 NSString *buttonTitle = nil;
                 
@@ -143,7 +146,9 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             }
         }
         
-        if ([self hasSegment:_segmentParents]) {
+        if (hasParents) {
+            needsEverybody = hasMembers;
+            
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents", @"") tag:kButtonTagGroupParents];
             
             for (NSString *group in groups) {
@@ -164,11 +169,15 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             }
         }
         
-        if ([self hasSegment:_segmentOrganisers]) {
+        if (hasOrganisers) {
+            needsEverybody = needsEverybody || hasMembers || hasParents;
+            
             [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) tag:kButtonTagGroupOrganisers];
         }
         
-        [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Everybody", @""), [NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
+        if (needsEverybody) {
+            [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Everybody", @""), [NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
+        }
     }
     
     [actionSheet show];

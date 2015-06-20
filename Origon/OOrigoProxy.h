@@ -10,7 +10,7 @@
 
 @interface OOrigoProxy : OEntityProxy<OOrigo>
 
-+ (instancetype)proxyWithType:(NSString *)type;
-+ (instancetype)proxyFromAddressBookAddress:(CFDictionaryRef)address;
++ (instancetype)residenceProxyUseDefaultName:(BOOL)useDefaultName;
++ (instancetype)residenceProxyFromAddress:(CFDictionaryRef)address;
 
 @end

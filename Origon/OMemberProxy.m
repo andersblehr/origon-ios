@@ -119,7 +119,7 @@
         if (residences.count) {
             primaryResidence = residences[0];
         } else {
-            primaryResidence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
+            primaryResidence = [OOrigoProxy residenceProxyUseDefaultName:YES];
             [primaryResidence addMember:self];
         }
     }

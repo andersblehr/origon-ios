@@ -518,7 +518,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         
         if (![origo isPrivate] && [origo members].count > 1 && [origo userIsAdmin]) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") message:NSLocalizedString(@"You are an administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.", @"")];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") message:NSLocalizedString(@"You are the administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.", @"")];
             
             shouldDeleteCell = NO;
         }

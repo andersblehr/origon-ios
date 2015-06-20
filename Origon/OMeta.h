@@ -20,7 +20,6 @@
 @property (nonatomic, readonly) NSString *appVersion;
 @property (nonatomic, readonly) NSString *authToken;
 @property (nonatomic, readonly) NSString *language;
-@property (nonatomic, readonly) NSBundle *localisedStringsBundle;
 @property (nonatomic, readonly) CTCarrier *carrier;
 
 @property (nonatomic, readonly) OMember *user;

@@ -198,6 +198,10 @@
 		5C07847C1AEBA46F00FC5B03 /* Icon-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60.png"; sourceTree = "<group>"; };
 		5C1473961A93420F00CB387F /* OButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OButton.h; sourceTree = "<group>"; };
 		5C1473971A93421100CB387F /* OButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OButton.m; sourceTree = "<group>"; };
+		5C16F1041B3466360005D474 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5C16F1051B3466560005D474 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5C16F1081B3551530005D474 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5C16F1091B3551850005D474 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5C17E1411AEC25D8008E5EC5 /* Icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40.png"; sourceTree = "<group>"; };
 		5C17E1421AEC25D8008E5EC5 /* Icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@2x.png"; sourceTree = "<group>"; };
 		5C17E1451AEC25F1008E5EC5 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
@@ -277,7 +281,6 @@
 		5C7BD0461A6CF95B00C1F14B /* 722-location-pin-toolbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "722-location-pin-toolbar.png"; sourceTree = "<group>"; };
 		5C7BD0481A6CF95B00C1F14B /* 722-location-pin-toolbar@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "722-location-pin-toolbar@3x.png"; sourceTree = "<group>"; };
 		5C7BD04F1A6D1C7A00C1F14B /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5C7BD0511A6D1C8200C1F14B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5C7BD0521A6D5F0800C1F14B /* 113-navigation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "113-navigation.png"; sourceTree = "<group>"; };
 		5C7BD0531A6D5F0800C1F14B /* 113-navigation@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "113-navigation@2x.png"; sourceTree = "<group>"; };
 		5C7BD0541A6D5F0800C1F14B /* 113-navigation@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "113-navigation@3x.png"; sourceTree = "<group>"; };
@@ -424,7 +427,6 @@
 		5CD626FE19CB2E7F007DD29B /* ro-two-heads@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ro-two-heads@2x.png"; sourceTree = "<group>"; };
 		5CD6270019CB32F9007DD29B /* ro-two-heads.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ro-two-heads.png"; sourceTree = "<group>"; };
 		5CD6270219CB3619007DD29B /* ro-two-heads@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ro-two-heads@3x.png"; sourceTree = "<group>"; };
-		5CD7723B18D05DA40087E3F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5CDE11AE19F8F92E005018F8 /* OTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableView.h; sourceTree = "<group>"; };
 		5CDE11AF19F8F92E005018F8 /* OTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableView.m; sourceTree = "<group>"; };
 		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OTableViewCell+OrigonAdditions.h"; path = "Origon/OTableViewCell+OrigonAdditions.h"; sourceTree = "<group>"; };
@@ -898,7 +900,7 @@
 			attributes = {
 				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0630;
-				ORGANIZATIONNAME = "Origon Flow";
+				ORGANIZATIONNAME = "Anders Blehr";
 				TargetAttributes = {
 					5CBB63B3146080DF00A9133A = {
 						DevelopmentTeam = 68M9JL23T5;
@@ -918,6 +920,9 @@
 				sv,
 				da,
 				Base,
+				"en-GB",
+				"en-US",
+				"es-MX",
 			);
 			mainGroup = 5CBB63A9146080DD00A9133A;
 			productRefGroup = 5CBB63B5146080DF00A9133A /* Products */;
@@ -1163,7 +1168,8 @@
 			isa = PBXVariantGroup;
 			children = (
 				5C58AA8818CE029000778B9F /* nb */,
-				5CD7723B18D05DA40087E3F6 /* en */,
+				5C16F1041B3466360005D474 /* en-GB */,
+				5C16F1081B3551530005D474 /* en */,
 			);
 			name = Localizable.strings;
 			path = ..;
@@ -1173,7 +1179,8 @@
 			isa = PBXVariantGroup;
 			children = (
 				5C7BD04F1A6D1C7A00C1F14B /* nb */,
-				5C7BD0511A6D1C8200C1F14B /* en */,
+				5C16F1051B3466560005D474 /* en-GB */,
+				5C16F1091B3551850005D474 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

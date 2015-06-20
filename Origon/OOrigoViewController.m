@@ -357,7 +357,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
             
             if ([_origo isJuvenile]) {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register parent contact", @"") tag:kButtonTagAddParentContact];
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register parent representative", @"") tag:kButtonTagAddParentContact];
             }
         }
         

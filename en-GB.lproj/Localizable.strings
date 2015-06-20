@@ -26,12 +26,12 @@
 "[label] fatherId" = "Father";
 "[label] gender" = "Gender";
 "[label] joinCode" = "Join code";
-"[label] mobilePhone" = "Cell";
+"[label] mobilePhone" = "Mobile";
 "[label] modifiedBy" = "Last modified by";
 "[label] motherId" = "Mother";
 "[label] name" = "Name";
 "[label] pingServer" = "Check if server is up again";
-"[label] preschool" = "Preschool";
+"[label] preschool" = "Nursery";
 "[label] registerOrLogIn" = "Register user or log in";
 "[label] school" = "School";
 "[label] logout" = "Log out";
@@ -44,7 +44,7 @@
 
 // Placeholders
 "[placeholder] activationCode" = "Activation code from email";
-"[placeholder] address" = "Street address\nCity, state and ZIP";
+"[placeholder] address" = "Street address\nPostal code and city/town";
 "[placeholder] arena" = "Home arena";
 "[placeholder] authEmail" = "Your email address";
 "[placeholder] club" = "Name of club";
@@ -55,13 +55,13 @@
 "[placeholder] givenName" = "Name";
 "[placeholder] joinCode" = "Join code";
 "[placeholder] listName" = "List name";
-"[placeholder] mobilePhone" = "Cellular phone number";
+"[placeholder] mobilePhone" = "Mobile phone number";
 "[placeholder] name"  = "Name";
 "[placeholder] newPassword" = "New password";
 "[placeholder] oldPassword" = "Old password";
 "[placeholder] password" = "Password";
 "[placeholder] photo" = "Photo";
-"[placeholder] preschool" = "Name of preschool";
+"[placeholder] preschool" = "Name of nursery school";
 "[placeholder] preschoolClass" = "Class";
 "[placeholder] privateListName" = "List name";
 "[placeholder] repeatNewPassword" = "Repeat new password";
@@ -93,7 +93,7 @@
 
 // Origo titles
 "[title] community" = "Local community";
-"[title] preschoolClass" = "Preschool class";
+"[title] preschoolClass" = "Nursery class";
 "[title] private" = "Private contact list";
 "[title] residence" = "Household";
 "[title] schoolClass" = "School class";
@@ -102,9 +102,9 @@
 
 // Registration footers
 "[registration footer] community" = "Tap + to register households.";
-"[registration footer] preschoolClass" = "Tap + to register children and teachers.";
+"[registration footer] preschoolClass" = "Tap + to register children, teachers and assistants.";
 "[registration footer] residence" = "Tap + to register members of the household.";
-"[registration footer] schoolClass" = "Tap + to register students and teachers.";
+"[registration footer] schoolClass" = "Tap + to register pupils and teachers.";
 "[registration footer] sports" = "Tap + to register players and coaches.";
 "[registration footer] standard" = "Tap + to register members.";
 
@@ -112,7 +112,7 @@
 "[add member] community" = "Register household";
 "[add member] preschoolClass" = "Register child";
 "[add member] residence" = "New household member";
-"[add member] schoolClass" = "Register student";
+"[add member] schoolClass" = "Register pupil";
 "[add member] sports" = "Register player";
 "[add member] standard" = "Register member";
 
@@ -120,7 +120,7 @@
 "[member] community" = "Member";
 "[member] preschoolClass" = "Child";
 "[member] residence" = "Resident";
-"[member] schoolClass" = "Student";
+"[member] schoolClass" = "Pupil";
 "[member] sports" = "Player";
 "[member] standard" = "Member";
 
@@ -129,7 +129,7 @@
 "[members] preschoolClass" = "Children";
 "[members] private" = "Friends";
 "[members] residence" = "In the household";
-"[members] schoolClass" = "Students";
+"[members] schoolClass" = "Pupils";
 "[members] sports" = "Players";
 "[members] standard" = "Members";
 
@@ -137,7 +137,7 @@
 "[new member] community" = "In the household";
 "[new member] preschoolClass" = "Child";
 "[new member] residence" = "In the household";
-"[new member] schoolClass" = "Student";
+"[new member] schoolClass" = "Pupil";
 "[new member] sports" = "Player";
 "[new member] standard" = "Member";
 
@@ -149,12 +149,12 @@
 "[all members] standard" = "All members";
 
 // Organiser registration button titles
-"[add organiser] preschoolClass" = "Register teacher";
+"[add organiser] preschoolClass" = "Register teacher or assistant";
 "[add organiser] schoolClass" = "Register teacher";
 "[add organiser] sports" = "Register coach";
 
 // Organiser titles
-"[organiser] preschoolClass" = "Teacher";
+"[organiser] preschoolClass" = "Teacher/assistant";
 "[organiser] schoolClass" = "Teacher";
 "[organiser] sports" = "Coach";
 
@@ -237,10 +237,10 @@
 "Register friend" = "Register friend";
 "Register address" = "Register address";
 "Who do you want to text?" = "Who do you want to text?";
-"Who do you want to call?" = "Who do you want to call?";
+"Who do you want to call?" = "Who do you want to ring?";
 "Who do you want to email?" = "Who do you want to email?";
 "Send text to %@" = "Send text to %@";
-"Call %@" = "Call %@";
+"Call %@" = "Ring %@";
 "Send email to %@" = "Send email to %@";
 
 // Alerts
@@ -279,7 +279,7 @@
 "None" = "None";
 "Both" = "Both";
 "All" = "All";
-"Favorites" = "Favorites";
+"Favourites" = "Favourites";
 "Others" = "Others";
 "None of them [persons]" = "None of them";
 "None of them" = "None of them";
@@ -508,8 +508,8 @@
 "Edit groups" = "Edit groups";
 
 // Footers
-"This is your private favorites list. Tap ☆ in the person view to mark a person as favorite." = "This is your private favorites list. Tap ☆ in the person view to mark a person as favorite.";
-"All who are not marked as favorites will be listed here." = "All who are not marked as favorites will be listed here.";
+"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite." = "This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.";
+"All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
 "Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
