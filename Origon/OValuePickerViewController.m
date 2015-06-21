@@ -266,6 +266,7 @@ static NSInteger const kSectionKeyValues = 0;
             if (!isActive) {
                 cell.textLabel.text = [cell.textLabel.text stringByAppendingFormat:@" (%@)", NSLocalizedString(@"waiting...", @"")];
                 cell.textLabel.textColor = [UIColor valueTextColour];
+                cell.detailTextLabel.textColor = [UIColor valueTextColour];
                 cell.selectable = NO;
             }
         } else {

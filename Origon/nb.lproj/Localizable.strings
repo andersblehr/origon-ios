@@ -487,6 +487,10 @@
 "Does %@ live with %@?" = "Bor %@ med %@?";
 "Does %@ live with %@ or %@?" = "Bor %@ med %@ eller %@?";
 
+// Labels
+"Favourite" = "Favoritt";
+"Not favourite" = "Ikke favoritt";
+
 // Terms
 "his parents" = "foreldrene hans";
 "her parents" = "foreldrene hennes";

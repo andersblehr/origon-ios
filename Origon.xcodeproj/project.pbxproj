@@ -47,10 +47,10 @@
 		5C4F977B1496AF88006E244F /* NSURL+OrigonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+OrigonAdditions.m */; };
 		5C50581C14CAEC76000D6587 /* UIView+OrigonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+OrigonAdditions.m */; };
 		5C53A1FB18F895510023BF8A /* OMemberProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C53A1FA18F895510023BF8A /* OMemberProxy.m */; };
-		5C58AA8718CE028500778B9F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C58AA8518CE028500778B9F /* Localizable.strings */; };
 		5C5ED5CE14F2E9FE006BBDFB /* OReplicatedEntity+OrigonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigonAdditions.m */; };
 		5C629FF014C62038001DA01F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FEF14C62038001DA01F /* OOrigoViewController.m */; };
 		5C64105917D499450005B192 /* ONavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C64105817D499450005B192 /* ONavigationController.m */; };
+		5C70542A1B35AC4300F2FC65 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C70542C1B35AC4300F2FC65 /* Localizable.strings */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
 		5C74DCAD1A9B2341009C17C9 /* 779-users-toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C74DCAA1A9B2341009C17C9 /* 779-users-toolbar.png */; };
 		5C74DCAE1A9B2341009C17C9 /* 779-users-toolbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C74DCAB1A9B2341009C17C9 /* 779-users-toolbar@2x.png */; };
@@ -198,9 +198,7 @@
 		5C07847C1AEBA46F00FC5B03 /* Icon-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60.png"; sourceTree = "<group>"; };
 		5C1473961A93420F00CB387F /* OButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OButton.h; sourceTree = "<group>"; };
 		5C1473971A93421100CB387F /* OButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OButton.m; sourceTree = "<group>"; };
-		5C16F1041B3466360005D474 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		5C16F1051B3466560005D474 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		5C16F1081B3551530005D474 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C16F1091B3551850005D474 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5C17E1411AEC25D8008E5EC5 /* Icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40.png"; sourceTree = "<group>"; };
 		5C17E1421AEC25D8008E5EC5 /* Icon-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@2x.png"; sourceTree = "<group>"; };
@@ -256,13 +254,15 @@
 		5C50581B14CAEC76000D6587 /* UIView+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+OrigonAdditions.m"; sourceTree = "<group>"; };
 		5C53A1F918F895510023BF8A /* OMemberProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMemberProxy.h; sourceTree = "<group>"; };
 		5C53A1FA18F895510023BF8A /* OMemberProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberProxy.m; sourceTree = "<group>"; };
-		5C58AA8818CE029000778B9F /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C5ED5CC14F2E9FE006BBDFB /* OReplicatedEntity+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OReplicatedEntity+OrigonAdditions.h"; sourceTree = "<group>"; };
 		5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OReplicatedEntity+OrigonAdditions.m"; sourceTree = "<group>"; };
 		5C629FEE14C62038001DA01F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
 		5C629FEF14C62038001DA01F /* OOrigoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoViewController.m; sourceTree = "<group>"; };
 		5C64105717D499450005B192 /* ONavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ONavigationController.h; sourceTree = "<group>"; };
 		5C64105817D499450005B192 /* ONavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ONavigationController.m; sourceTree = "<group>"; };
+		5C70542B1B35AC4300F2FC65 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5C70542D1B35AC6A00F2FC65 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5C70542E1B35AC7200F2FC65 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C7379FB1593111B0065AB4F /* OTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextField.h; sourceTree = "<group>"; };
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
 		5C74DCAA1A9B2341009C17C9 /* 779-users-toolbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "779-users-toolbar.png"; sourceTree = "<group>"; };
@@ -791,7 +791,7 @@
 				5C3F999A178AD58600E31A44 /* Origon.h */,
 				5CBB63C6146080DF00A9133A /* Origon-Prefix.pch */,
 				5CBB63C0146080DF00A9133A /* Origon-Info.plist */,
-				5C58AA8518CE028500778B9F /* Localizable.strings */,
+				5C70542C1B35AC4300F2FC65 /* Localizable.strings */,
 				5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */,
 				5C276E7A1475B9A800A6C500 /* Media */,
 			);
@@ -960,7 +960,6 @@
 				5CD6270119CB32F9007DD29B /* ro-two-heads.png in Resources */,
 				5CD48F5419CDE8A500ECB761 /* 739-question-selected@2x.png in Resources */,
 				5C49A2881A168DC400D8E596 /* ro-854-list@2x.png in Resources */,
-				5C58AA8718CE028500778B9F /* Localizable.strings in Resources */,
 				5CD626DD19CB145C007DD29B /* 10-contract.png in Resources */,
 				5CD626D719CB10F0007DD29B /* 895-user-group-toolbar.png in Resources */,
 				5C01A2D419F26F470043B0DD /* Launch Screen.xib in Resources */,
@@ -1026,6 +1025,7 @@
 				5CD626A719CB0C0E007DD29B /* 740-gear-toolbar.png in Resources */,
 				5C17E1431AEC25D8008E5EC5 /* Icon-40.png in Resources */,
 				5CD6267A19CAF221007DD29B /* 769-male-toolbar@2x.png in Resources */,
+				5C70542A1B35AC4300F2FC65 /* Localizable.strings in Resources */,
 				5C7BD0491A6CF95B00C1F14B /* 722-location-pin-toolbar.png in Resources */,
 				5C2BBD1B1AA8539C00DFBACF /* 729-top-list-toolbar.png in Resources */,
 				5C7BD0571A6D5F0800C1F14B /* 113-navigation@3x.png in Resources */,
@@ -1164,15 +1164,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		5C58AA8518CE028500778B9F /* Localizable.strings */ = {
+		5C70542C1B35AC4300F2FC65 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5C58AA8818CE029000778B9F /* nb */,
-				5C16F1041B3466360005D474 /* en-GB */,
-				5C16F1081B3551530005D474 /* en */,
+				5C70542B1B35AC4300F2FC65 /* en-GB */,
+				5C70542D1B35AC6A00F2FC65 /* nb */,
+				5C70542E1B35AC7200F2FC65 /* en */,
 			);
 			name = Localizable.strings;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */ = {

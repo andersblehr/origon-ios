@@ -488,6 +488,10 @@
 "Does %@ live with %@?" = "Does %@ live with %@?";
 "Does %@ live with %@ or %@?" = "Does %@ live with %@ or %@?";
 
+// Labels
+"Favourite" = "Favourite";
+"Not favourite" = "Not favourite";
+
 // Terms
 "his parents" = "his parents";
 "her parents" = "her parents";

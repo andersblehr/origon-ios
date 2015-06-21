@@ -1,10 +1,10 @@
-/* 
-  Localizable.strings
-  Origon
-
-  Created by Anders Blehr on 19/06/15.
-  Copyright (c) 2015 Origon Flow. All rights reserved.
-*/
+/*
+ Localizable.strings
+ Origon
+ 
+ Created by Anders Blehr on 10.03.14.
+ Copyright (c) 2014 Rhelba Source. All rights reserved.
+ */
 
 
 /***
@@ -26,7 +26,7 @@
 "[label] fatherId" = "Father";
 "[label] gender" = "Gender";
 "[label] joinCode" = "Join code";
-"[label] mobilePhone" = "Mobile";
+"[label] mobilePhone" = "Cell";
 "[label] modifiedBy" = "Last modified by";
 "[label] motherId" = "Mother";
 "[label] name" = "Name";
@@ -44,7 +44,7 @@
 
 // Placeholders
 "[placeholder] activationCode" = "Activation code from email";
-"[placeholder] address" = "Street address\nCity, State ZIP";
+"[placeholder] address" = "Street address\nCity, state and ZIP";
 "[placeholder] arena" = "Home arena";
 "[placeholder] authEmail" = "Your email address";
 "[placeholder] club" = "Name of club";
@@ -55,7 +55,7 @@
 "[placeholder] givenName" = "Name";
 "[placeholder] joinCode" = "Join code";
 "[placeholder] listName" = "List name";
-"[placeholder] mobilePhone" = "Mobile number";
+"[placeholder] mobilePhone" = "Cellular phone number";
 "[placeholder] name"  = "Name";
 "[placeholder] newPassword" = "New password";
 "[placeholder] oldPassword" = "Old password";
@@ -105,7 +105,7 @@
 "[registration footer] preschoolClass" = "Tap + to register children and teachers.";
 "[registration footer] residence" = "Tap + to register members of the household.";
 "[registration footer] schoolClass" = "Tap + to register students and teachers.";
-"[registration footer] sports" = "Tap + to register participants and coaches.";
+"[registration footer] sports" = "Tap + to register players and coaches.";
 "[registration footer] standard" = "Tap + to register members.";
 
 // Member registration button titles
@@ -113,7 +113,7 @@
 "[add member] preschoolClass" = "Register child";
 "[add member] residence" = "New household member";
 "[add member] schoolClass" = "Register student";
-"[add member] sports" = "Register participant";
+"[add member] sports" = "Register player";
 "[add member] standard" = "Register member";
 
 // Member titles
@@ -121,7 +121,7 @@
 "[member] preschoolClass" = "Child";
 "[member] residence" = "Resident";
 "[member] schoolClass" = "Student";
-"[member] sports" = "Participant";
+"[member] sports" = "Player";
 "[member] standard" = "Member";
 
 // Member list titles
@@ -130,7 +130,7 @@
 "[members] private" = "Friends";
 "[members] residence" = "In the household";
 "[members] schoolClass" = "Students";
-"[members] sports" = "Participants";
+"[members] sports" = "Players";
 "[members] standard" = "Members";
 
 // New member titles
@@ -138,7 +138,7 @@
 "[new member] preschoolClass" = "Child";
 "[new member] residence" = "In the household";
 "[new member] schoolClass" = "Student";
-"[new member] sports" = "Participant";
+"[new member] sports" = "Player";
 "[new member] standard" = "Member";
 
 // Origo collective titles
@@ -256,7 +256,7 @@
 "Data error" = "Data error";
 "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device.";
 "Down for maintenance" = "Down for maintenance";
-"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings if the server has come up again." = "The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings if the server has come up again.";
+"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again." = "The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again.";
 "Still down" = "Still down";
 "The Origon server is still down for maintenance. Please try again in a while." = "The Origon server is still down for maintenance. Please try again in a while.";
 
@@ -279,7 +279,7 @@
 "None" = "None";
 "Both" = "Both";
 "All" = "All";
-"Favourites" = "Favourites";
+"Favorites" = "Favorites";
 "Others" = "Others";
 "None of them [persons]" = "None of them";
 "None of them" = "None of them";
@@ -327,7 +327,7 @@
 "Activation failed" = "Activation failed";
 "It looks like you may have lost the activation code ..." = "It looks like you may have lost the activation code or forgotten your password. Let's start over.";
 "Welcome back!" = "Welcome back!";
-"If you have handy the activation code sent to %@ ..." = "If you have handy the activation code sent to %@, you can now activate your membership. If not, go back and we'll send you a new one.";
+"If you have the activation code sent to %@ ..." = "If you have the activation code sent to %@, you can now activate your membership. If not, go back and we'll send you a new one.";
 "Your password has been changed." = "Your password has been changed.";
 "Did you forget the password?" = "Did you forget the password?";
 "New password" = "New password";
@@ -401,7 +401,7 @@
 "Edit responsibilities" = "Edit responsibilities";
 "Add from other lists" = "Add from other lists";
 "Add households" = "Add households";
-"Register parent contact" = "Register parent contact";
+"Register parent representative" = "Register parent representative";
 "Register household member" = "Register household member";
 "Other guardian" = "Other guardian";
 "Remove" = "Remove";
@@ -483,10 +483,14 @@
 "%@ has more than one home phone number. Which number do you want to provide?" = "%@ has more than one home phone number. Which number do you want to provide?";
 "%@ has only one home phone number, %@. Which address has this number?" = "%@ has only one home phone number, %@. Which address has this number?";
 "%@ has more than one home phone number. Which address has the number %@?" = "%@ has more than one home phone number. Which address has the number %@?";
-"Which address has the number %@?" = "Which address has the number %@?";
+"Which address has phone number %@?" = "Which address has phone number %@?";
 "Is %@ the phone number for %@?" = "Is %@ the phone number for %@?";
 "Does %@ live with %@?" = "Does %@ live with %@?";
 "Does %@ live with %@ or %@?" = "Does %@ live with %@ or %@?";
+
+// Labels
+"Favourite" = "Favorite";
+"Not favourite" = "Not favorite";
 
 // Terms
 "his parents" = "his parents";
@@ -508,8 +512,8 @@
 "Edit groups" = "Edit groups";
 
 // Footers
-"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite." = "This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.";
-"All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
+"This is your private favorites list. Tap ☆ in the person view to mark a person as favorite." = "This is your private favorites list. Tap ☆ in the person view to mark a person as favorite.";
+"All who are not marked as favorites will be listed here." = "All who are not marked as favorites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
 "Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
@@ -554,8 +558,8 @@
 "Send join request for %@:" = "Send join request for %@:";
 
 // Footers
-"The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and then enter the join code." = "The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and then enter the join code.";
-"The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and then enter the join code." = "The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and then enter the join code.";
+"The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code." = "The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.";
+"The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code." = "The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.";
 "You may ask an administrator to create a join code for %@." = "You may ask an administrator to create a join code for %@.";
 "You need a working internet connection to create a join code for %@." = "You need a working internet connection to create a join code for %@.";
 "Please enter the join code for the list you want to join." = "Please enter the join code for the list you want to join.";
@@ -657,11 +661,10 @@
 
 // Alerts
 "Unknown address" = "Unknown address";
-"No known address matches %@." = "No know address matches %@.";
+"No known address matches %@." = "No known address matches %@.";
 "Unclear address" = "Unclear address";
 "The address %@ is unclear and could not be not found in the map." = "The address %@ is unclear and could not be not found in the map.";
 "Cannot give directions" = "Cannot give directions";
 "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.";
 "Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon." = "Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon.";
-"Error" = "Error";
 "An error has occurred. Please try again another time." = "An error has occurred. Please try again another time.";
