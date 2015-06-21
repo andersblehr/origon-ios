@@ -130,6 +130,53 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)showIsFavouritePopUp:(BOOL)isFavourite
+{
+    UIImage *image = [[UIImage imageNamed:kIconFileFavouriteNo] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *highlightedImage = [[UIImage imageNamed:kIconFileFavouriteYes] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image highlightedImage:highlightedImage];
+    imageView.tintColor = [UIColor whiteColor];
+    imageView.highlighted = isFavourite;
+    
+    NSString *text = isFavourite ? NSLocalizedString(@"Favourite", @"") : NSLocalizedString(@"Not favourite", @"");
+    
+    CGSize textSize = [text sizeWithFont:[UIFont titleFont] maxWidth:CGFLOAT_MAX];
+    CGFloat padding = 2.f * kDefaultCellPadding;
+    CGFloat popUpWidth = MAX(imageView.image.size.width, textSize.width) + padding;
+    CGFloat popUpHeight = imageView.image.size.height + textSize.height + padding;
+    CGFloat popUpX = ([OMeta screenSize].width - popUpWidth) / 2.f;
+    CGFloat popUpY = [OMeta screenSize].height * 2.f / 5.f - popUpHeight / 2.f;
+    
+    UIView *popUpView = [[UIView alloc] initWithFrame:CGRectMake(popUpX, popUpY, popUpWidth, popUpHeight)];
+    popUpView.backgroundColor = [UIColor blackColor];
+    popUpView.alpha = 0.9f;
+    popUpView.layer.cornerRadius = 5.f;
+    
+    CGRect imageViewFrame = imageView.frame;
+    imageViewFrame.origin.x = (popUpWidth - imageView.image.size.width) / 2.f;
+    imageViewFrame.origin.y = padding / 3.f;
+    imageView.frame = imageViewFrame;
+    
+    CGFloat labelX = (popUpWidth - textSize.width) / 2.f;
+    CGFloat labelY = imageView.image.size.height + 2.f * padding / 3.f;
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(labelX, labelY, textSize.width, textSize.height)];
+    label.font = [UIFont titleFont];
+    label.text = text;
+    label.textColor = [UIColor whiteColor];
+    
+    [popUpView addSubview:imageView];
+    [popUpView addSubview:label];
+    [self.view.window addSubview:popUpView];
+    self.view.window.userInteractionEnabled = NO;
+    
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, 1.f * NSEC_PER_SEC);
+    dispatch_after(delay, dispatch_get_main_queue(), ^(void) {
+        self.view.window.userInteractionEnabled = YES;
+        [popUpView removeFromSuperview];
+    });
+}
+
+
 #pragma mark - Input validation
 
 - (BOOL)reflectIfEligibleMember:(id<OMember>)member
@@ -869,6 +916,8 @@ static NSInteger const kButtonIndexContinue = 1;
     [rightBarButtonItems replaceObjectAtIndex:toggleIndex withObject:[UIBarButtonItem favouriteButtonWithTarget:self isFavourite:isFavourite]];
     
     self.navigationItem.rightBarButtonItems = rightBarButtonItems;
+    
+    [self showIsFavouritePopUp:isFavourite];
 }
 
 
