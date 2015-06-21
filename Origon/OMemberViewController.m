@@ -44,6 +44,9 @@ static NSInteger const kActionSheetTagRecipients = 8;
 static NSInteger const kAlertTagEmailChange = 0;
 static NSInteger const kButtonIndexContinue = 1;
 
+static CGFloat const kPopUpAlpha = 0.9f;
+static CGFloat const kPopUpCornerRadius = 5.f;
+
 
 @interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate> {
 @private
@@ -145,12 +148,12 @@ static NSInteger const kButtonIndexContinue = 1;
     CGFloat popUpWidth = MAX(imageView.image.size.width, textSize.width) + padding;
     CGFloat popUpHeight = imageView.image.size.height + textSize.height + padding;
     CGFloat popUpX = ([OMeta screenSize].width - popUpWidth) / 2.f;
-    CGFloat popUpY = [OMeta screenSize].height * 2.f / 5.f - popUpHeight / 2.f;
+    CGFloat popUpY = ([OMeta screenSize].height - popUpHeight) / 2.f;
     
     UIView *popUpView = [[UIView alloc] initWithFrame:CGRectMake(popUpX, popUpY, popUpWidth, popUpHeight)];
     popUpView.backgroundColor = [UIColor blackColor];
-    popUpView.alpha = 0.9f;
-    popUpView.layer.cornerRadius = 5.f;
+    popUpView.alpha = kPopUpAlpha;
+    popUpView.layer.cornerRadius = kPopUpCornerRadius;
     
     CGRect imageViewFrame = imageView.frame;
     imageViewFrame.origin.x = (popUpWidth - imageView.image.size.width) / 2.f;
