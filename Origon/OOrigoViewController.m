@@ -303,11 +303,11 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     NSString *declineButtonTitle = nil;
     
     if ([_membership isHidden]) {
-        prompt = NSLocalizedString(@"Do you want to unhide this listing?", @"");
+        prompt = NSLocalizedString(@"Do you want to unhide this list?", @"");
         acceptButtonTitle = NSLocalizedString(@"Unhide", @"");
         declineButtonTitle = NSLocalizedString(@"Keep hidden", @"");
     } else {
-        prompt = NSLocalizedString(@"Do you want to keep this listing?", @"");
+        prompt = NSLocalizedString(@"Do you want to keep this list?", @"");
         acceptButtonTitle = NSLocalizedString(@"Keep", @"");
         
         if ([_origo isResidence]) {

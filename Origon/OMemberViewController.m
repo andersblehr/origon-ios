@@ -1078,7 +1078,7 @@ static CGFloat const kPopUpCornerRadius = 5.f;
         if ([self targetIs:kTargetUser]) {
             self.title = NSLocalizedString(@"About you", @"");
         } else if ([self targetIs:kTargetGuardian]) {
-            self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
+            self.title = [[OLanguage nouns][_guardian_][singularIndefinite] stringByCapitalisingFirstLetter];
         } else if ([self targetIs:kTargetOrganiser]) {
             self.titleView = [OTitleView titleViewWithTitle:nil];
             self.titleView.placeholder = NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle);
@@ -1230,7 +1230,7 @@ static CGFloat const kPopUpCornerRadius = 5.f;
             if ([_member hasParent:guardian]) {
                 headerContent = [guardian parentNoun][singularIndefinite];
             } else {
-                headerContent = [OLanguage nouns][_guardian_][singularIndefinite];
+                headerContent = [guardian guardianNoun][singularIndefinite];
             }
         } else if ([_member guardiansAreParents]) {
             headerContent = [OLanguage nouns][_parent_][pluralIndefinite];

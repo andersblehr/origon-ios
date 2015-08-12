@@ -35,6 +35,7 @@
 "[label] registerOrLogIn" = "Registrer bruker eller logg inn";
 "[label] school" = "Skole";
 "[label] logout" = "Logg ut";
+"[label] logoutName" = "Logg ut %@";
 "[label] telephone" = "Fasttelefon";
 "[label] type" = "Type";
 
@@ -97,7 +98,7 @@
 "[title] private" = "Privat kontaktliste";
 "[title] residence" = "Husstand";
 "[title] schoolClass" = "Skoleklasse";
-"[title] sports" = "Sport";
+"[title] sports" = "Sportsgruppe/lag";
 "[title] standard" = "Standardliste";
 
 // Registration footers
@@ -195,6 +196,8 @@
 "coach" = "trener;-;trenere;-;-;-";
 "father" = "far;faren;-;-;faren din;faren til %@";
 "guardian" = "foresatt;-;foresatte;-;-;-";
+"guardian_f" = "foresatt;-;foresatte;-;-;-";
+"guardian_m" = "foresatt;-;foresatte;-;-;-";
 "mother" = "mor;moren;-;-;moren din;moren til %@";
 "parent" = "forelder;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
 "parentContact" = "foreldrekontakt;-;foreldrekontakter;-;-;-";
@@ -215,6 +218,7 @@
 // Buttons
 "OK" = "OK";
 "Edit" = "Rediger";
+"Edit %@" = "Rediger %@";
 "Next" = "Neste";
 "Done" = "Ferdig";
 "Use" = "Bruk";
@@ -330,6 +334,10 @@
 "If you have the activation code sent to %@ ..." = "Om du har aktiveringskoden som ble sendt til %@, så kan du aktivere medlemskapet ditt nå. Om ikke, kan du gå tilbake og få tilsendt en ny.";
 "Your password has been changed." = "Passordet ditt har blitt endret.";
 "Did you forget the password?" = "Har du glemt passordet?";
+"User not found" = "Bruker finnes ikke";
+"No user has registered with the email address %@. Please tap Register if you want to register with this address." = "Ingen bruker har registrert seg med epostadressen %@. Trykk Registrer om du ønsker å registrere deg med denne adressen.";
+"Already registered" = "Allerede registrert";
+"A user with email address %@ is already registered. Please tap Log in if you want to log in with this address." = "En bruker med epostadresse %@ er allerede registrert. Trykk Logg inn om du ønsker å logge inn med denne adressen.";
 "New password" = "Nytt passord";
 "Your password has been reset and a new password has been generated and sent to %@." = "Passordet ditt har blitt tilbakestilt og et nytt passord er generert og sendt til %@.";
 
@@ -370,7 +378,8 @@
 "Your household includes minors. Would you like to provide parent relations?" = "Husstanden din omfatter mindreårige. Vil du angi foreldrerelasjoner?";
 "Who do you want to join to a list?" = "Hvem vil du melde inn i en liste?";
 "Who do you want to create a list for?" = "Hvem vil du opprette en liste for?";
-"What sort of list do you want to create" = "Hva slags liste vil du opprette";
+"What sort of list do you want to create?" = "Hva slags liste vil du opprette?";
+"What sort of list do you want to create for %@?" = "Hva slags liste vil du opprette for %@?";
 
 
 /***
@@ -406,9 +415,9 @@
 "Remove" = "Meld ut";
 
 // Prompts
-"Do you want to keep this listing?" = "Vil du beholde denne oppføringen?";
+"Do you want to keep this list?" = "Vil du beholde denne lista?";
 "If you hide it, you can unhide it later under Settings." = "Om du skjuler den, kan du hente den fram igjen senere under Innstillinger.";
-"Do you want to unhide this listing?" = "Vil du hente fram igjen denne oppføringen?";
+"Do you want to unhide this list?" = "Vil du hente fram igjen denne lista?";
 "%@ has requested to join %@" = "%@ har bedt om å bli med i %@";
 "%@ have requested to join %@" = "%@ har bedt om å bli med i %@";
 
@@ -515,7 +524,7 @@
 "All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter, vil bli listet opp her.";
 "Tap + to add a responsibility." = "Trykk + for å legge til et ansvarsområde.";
 "Tap + to create a group." = "Trykk + for å opprette en gruppe.";
-"Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Konsept & kode: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
+"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Versjon: %@\nKonsept & kode: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
 
 // Buttons
 "Send text to both" = "Send melding til begge";
@@ -586,8 +595,10 @@
 "%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om å bli meldt inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt i startbildet.";
 "%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view." = "%@ har innmeldingskoden \"%@\". Du har allerede sendt en forespørsel om melde %@ inn i %@. Forespørselen ble avvist. Du kan slette eller sende forespørselen på nytt i startbildet.";
 "Primarily for adults" = "Primært for voksne";
-"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du er mindreårig. Lista med innmeldingskode \"%@\" er først og fremst for voksne. Er du sikker på at du vil melde deg inn?";
-"%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ er mindreårig. Lista med innmeldingskode \"%@\" er primært for voksne. Er du sikker på at du vil fortsette?";
+"You are a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du er mindreårig. Lista med innmeldingskode \"%@\" er først og fremst for voksne. Er du sikker på at du vil melde deg inn?";
+"You are a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du er mindreårig. Lista med innmeldingskode \"%@\" er først og fremst for voksne. Er du sikker på at du vil melde deg inn?";
+"%@ is a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ er mindreårig. Lista med innmeldingskode \"%@\" er primært for voksne. Er du sikker på at du vil fortsette?";
+"%@ is a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ er mindreårig. Lista med innmeldingskode \"%@\" er primært for voksne. Er du sikker på at du vil fortsette?";
 "For minors" = "For mindreårige";
 "The list with join code '%@' is for minors. You cannot join this list." = "Lista med innmeldingskode \"%@\" er for mindreårige. Du kan ikke melde deg inn i denne lista.";
 "Join as %@" = "Meld inn som %@";
@@ -600,8 +611,10 @@
  * ORecipientPickerViewController strings
  ***/
 
+// View title
+"Recipients" = "Mottakere";
+
 // Prompts
-"Pick recipients" = "Velg mottakere";
 "Select recipients" = "Velg mottakere";
 
 // Buttons
@@ -609,7 +622,6 @@
 "Grouped" = "Gruppert";
 "Everybody" = "Alle";
 "Select all" = "Velg alle";
-"All parents" = "Alle foreldre";
 "Parents of boys" = "Gutteforeldre";
 "Parents of girls" = "Jenteforeldre";
 "Parents in %@" = "Foreldre i %@";

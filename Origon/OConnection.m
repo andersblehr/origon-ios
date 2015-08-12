@@ -17,6 +17,7 @@ NSInteger const kHTTPStatusMultiStatus = 207;
 NSInteger const kHTTPStatusNotModified = 304;
 NSInteger const kHTTPStatusUnauthorized = 401;
 NSInteger const kHTTPStatusNotFound = 404;
+NSInteger const kHTTPSTatusConflict = 409;
 NSInteger const kHTTPStatusInternalServerError = 500;
 NSInteger const kHTTPStatusServiceUnavailable = 503;
 

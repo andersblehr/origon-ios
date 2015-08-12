@@ -8,7 +8,8 @@
 
 #import "OMeta.h"
 
-static NSTimeInterval const kTimeInterval30Days = 2592000;
+//static NSTimeInterval const kTimeInterval30Days = 2592000;
+static NSTimeInterval const kTimeInterval100Years = 3153600000;
 
 
 @interface OMeta () {
@@ -196,12 +197,8 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
             _authTokenExpiryDate = [ODefaults userDefaultForKey:kDefaultsKeyAuthExpiryDate];
             
             if (_authTokenExpiryDate) {
-                NSDate *now = [NSDate date];
-                
-                if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
-                    _authToken = [OCrypto authTokenWithExpiryDate:_authTokenExpiryDate];
-                    _user = [self.context entityWithId:_userId];
-                }
+                _authToken = [OCrypto authTokenWithExpiryDate:_authTokenExpiryDate];
+                _user = [self.context entityWithId:_userId];
             }
         }
 
@@ -333,7 +330,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 - (NSString *)authToken
 {
     if (!_authToken) {
-        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
+        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval100Years];
         _authToken = [OCrypto authTokenWithExpiryDate:_authTokenExpiryDate];
     }
     

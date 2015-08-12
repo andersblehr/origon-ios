@@ -321,7 +321,7 @@ static NSInteger const kSectionKeyMembership = 2;
             } else if ([[OMeta m].user wardsInOrigo:origo].count) {
                 cell.detailTextLabel.text = [[OLanguage nouns][_guardian_][singularIndefinite] stringByCapitalisingFirstLetter];
             } else if ([membership roles].count) {
-                cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
+                cell.detailTextLabel.text = [[OUtil commaSeparatedListOfNouns:[membership roles] conjoin:NO] stringByCapitalisingFirstLetter];
             } else if ([membership isParticipancy]) {
                 cell.detailTextLabel.text = NSLocalizedString(@"Regular member", @"");
             } else if ([membership isCommunityMembership]) {

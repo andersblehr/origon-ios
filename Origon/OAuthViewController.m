@@ -276,7 +276,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Go back", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"Go back", @""), NSLocalizedString(@"Have code", @""), nil];
             alert.tag = kAlertTagWelcomeBack;
             
             [alert show];
@@ -356,7 +356,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             footerContent = NSLocalizedString(@"When you register, you will receive an email with an activation code to use in the next step.", @"");
         } else if ([self actionIs:kActionActivate]) {
             if ([self targetIs:kTargetUser]) {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"Your activation code has been sent to %@ ...", @""), _emailField.value];
+                footerContent = [NSString stringWithFormat:NSLocalizedString(@"Your activation code has been sent to %@ ...", @""), [OMeta m].userEmail];
             } else if ([self targetIs:kTargetEmail]) {
                 footerContent = [NSString stringWithFormat:NSLocalizedString(@"Your activation code has been sent to %@.", @""), self.target];
             }
@@ -625,24 +625,30 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             
             [self userDidAuthenticateWithData:data];
         }
-    } else if (response.statusCode == kHTTPStatusUnauthorized) {
-        [self.inputCell shakeCellVibrate:YES];
-        
-        if ([self actionIs:kActionLogin]) {
-            _numberOfFailedAttempts++;
+    } else {
+        if (response.statusCode == kHTTPStatusUnauthorized) {
+            [self.inputCell shakeCellVibrate:YES];
             
-            if (_numberOfFailedAttempts == kMaxAttempts) {
-                _numberOfFailedAttempts = 0;
+            if ([self actionIs:kActionLogin]) {
+                _numberOfFailedAttempts++;
                 
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"Did you forget the password?", @"") delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
-                alert.tag = kAlertTagForgottenPassword;
-                
-                [alert show];
+                if (_numberOfFailedAttempts == kMaxAttempts) {
+                    _numberOfFailedAttempts = 0;
+                    
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"Did you forget the password?", @"") delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
+                    alert.tag = kAlertTagForgottenPassword;
+                    
+                    [alert show];
+                } else {
+                    [_passwordField becomeFirstResponder];
+                }
             } else {
                 [_passwordField becomeFirstResponder];
             }
-        } else {
-            [_passwordField becomeFirstResponder];
+        } else if (response.statusCode == kHTTPStatusNotFound) {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"User not found", @"") message:[NSString stringWithFormat:NSLocalizedString(@"No user has registered with the email address %@. Please tap Register if you want to register with this address.", @""), _emailField.value]];
+        } else if (response.statusCode == kHTTPSTatusConflict) {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Already registered", @"") message:[NSString stringWithFormat:NSLocalizedString(@"A user with email address %@ is already registered. Please tap Log in if you want to log in with this address.", @""), _emailField.value]];
         }
     }
 }

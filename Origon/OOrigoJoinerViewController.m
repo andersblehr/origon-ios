@@ -366,9 +366,17 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                 NSString *message = nil;
                 
                 if ([_member isUser]) {
-                    message = [NSString stringWithFormat:NSLocalizedString(@"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?", @""), _origo.joinCode];
+                    if ([_member isMale]) {
+                        message = [NSString stringWithFormat:NSLocalizedString(@"You are a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?", @""), _origo.joinCode];
+                    } else {
+                        message = [NSString stringWithFormat:NSLocalizedString(@"You are a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?", @""), _origo.joinCode];
+                    }
                 } else {
-                    message = [NSString stringWithFormat:NSLocalizedString(@"%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?", @""), [_member givenName], _origo.joinCode];
+                    if ([_member isMale]) {
+                        message = [NSString stringWithFormat:NSLocalizedString(@"%@ is a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?", @""), [_member givenName], _origo.joinCode];
+                    } else {
+                        message = [NSString stringWithFormat:NSLocalizedString(@"%@ is a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?", @""), [_member givenName], _origo.joinCode];
+                    }
                 }
                 
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Primarily for adults", @"") message:message delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
@@ -377,8 +385,8 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                 [alert show];
             } else if (![_member isJuvenile] && [_origo isJuvenile]) {
                 if ([_origo isOrganised]) {
-                    NSString *origoTitle = [NSLocalizedString(_origo.type, kStringPrefixOrigoTitle) stringByLowercasingFirstLetter];
-                    NSString *organiserTitle = [NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle) stringByLowercasingFirstLetter];
+                    NSString *origoTitle = [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixOrigoTitle)];
+                    NSString *organiserTitle = [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle)];
                     
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Join as %@", @""), organiserTitle] message:[NSString stringWithFormat:NSLocalizedString(@"The list with join code '%@' represents a %@. Do you want to join as %@?", @""), _origo.joinCode, origoTitle, organiserTitle] delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
                     alert.tag = kAlertTagJoinAsOrganiser;

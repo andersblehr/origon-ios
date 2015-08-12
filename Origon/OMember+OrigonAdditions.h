@@ -98,6 +98,7 @@
 
 - (NSArray *)pronoun;
 - (NSArray *)parentNoun;
+- (NSArray *)guardianNoun;
 
 - (NSString *)lastName;
 - (NSString *)shortName;

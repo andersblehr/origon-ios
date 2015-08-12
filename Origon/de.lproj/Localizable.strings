@@ -12,7 +12,7 @@
  ***/
 
 // Labels
-"[label] activate" = "Gib Aktivierungscode ein";
+"[label] activate" = "Aktivierungscode eingeben";
 "[label] address" = "Adresse";
 "[label] admins" = "Administratoren";
 "[label] arena" = "Feld";
@@ -27,7 +27,7 @@
 "[label] gender" = "Geschlecht";
 "[label] joinCode" = "Beitretungscode";
 "[label] mobilePhone" = "Handy";
-"[label] modifiedBy" = "Zuletzt modifiziert von";
+"[label] modifiedBy" = "Zuletzt geändert von";
 "[label] motherId" = "Mutter";
 "[label] name" = "Name";
 "[label] pingServer" = "Überprüfen ob Server online ist";
@@ -35,18 +35,19 @@
 "[label] registerOrLogIn" = "Benutzer registrieren oder einloggen";
 "[label] school" = "Schule";
 "[label] logout" = "Abmelden";
+"[label] logoutName" = "%@ abmelden";
 "[label] telephone" = "Festnetz";
-"[label] type" = "Type";
+"[label] type" = "Art";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Geboren";
 "[alternate label] createdBy" = "Erstellt von";
 
 // Placeholders
-"[placeholder] activationCode" = "Aktivierungscode von E-Mail";
+"[placeholder] activationCode" = "Aktivierungscode aus E-Mail";
 "[placeholder] address" = "Straße\nPostleitzahl und Stadt";
 "[placeholder] arena" = "Sport- oder spielfeld";
-"[placeholder] authEmail" = "Ihre E-Mail-Adresse";
+"[placeholder] authEmail" = "Deine E-Mail-Adresse";
 "[placeholder] club" = "Der Name des Vereins";
 "[placeholder] dateOfBirth" = "Geburtsdatum";
 "[placeholder] descriptionText" = "Eine optionale Beschreibung";
@@ -69,7 +70,7 @@
 "[placeholder] residenceName" = "Hausname";
 "[placeholder] school" = "Name der Schule";
 "[placeholder] schoolClass" = "Klasse";
-"[placeholder] telephone" = "Festnetznummer";
+"[placeholder] telephone" = "Festnetztelefonnummer";
 
 // Titles
 "[title] register" = "Registrieren";
@@ -80,7 +81,7 @@
 
 // Setting lables
 "[setting label] devices" = "Aktive Geräte";
-"[setting label] hidden" = "Verborgene Listen";
+"[setting label] hidden" = "Versteckte Listen";
 "[setting label] edit" = "Listendetails bearbeiten";
 "[setting label] add" = "Kontakte hinzufügen";
 "[setting label] delete" = "Kontakte löschen";
@@ -97,40 +98,40 @@
 "[title] private" = "Private Kontaktliste";
 "[title] residence" = "Haushalt";
 "[title] schoolClass" = "Schulklasse";
-"[title] sports" = "Sport";
+"[title] sports" = "Sportgruppe/Mannschaft";
 "[title] standard" = "Standardliste";
 
 // Registration footers
-"[registration footer] community" = "+ tippen, um Haushalte zu registrieren.";
-"[registration footer] preschoolClass" = "+ tippen, um Kinder und Erzieher/innen zu registrieren.";
-"[registration footer] residence" = "+ tippen, um Haushaltsmitglieder zu registrieren.";
-"[registration footer] schoolClass" = "+ tippen, um Schüler/innen und Lehrer/innen zu registrieren.";
-"[registration footer] sports" = "+ tippen, um Teilnehmer/innen und Trainer/innen zu registrieren.";
-"[registration footer] standard" = "+ tippen, um Mitglieder zu registrieren.";
+"[registration footer] community" = "Zum Registrieren der Haushalte, + tippen.";
+"[registration footer] preschoolClass" = "Zum Registrieren der Kinder und Erzieher, + tippen.";
+"[registration footer] residence" = "Zum Registrieren zusätzlicher Haushaltsmitglieder, + tippen.";
+"[registration footer] schoolClass" = "Zum Registrieren der Schüler und Lehrer, + tippen.";
+"[registration footer] sports" = "Zum Registrieren der Teilnehmer und Trainer, + tippen.";
+"[registration footer] standard" = "Zum Registrieren der Mitglieder, + tippen.";
 
 // Member registration button titles
 "[add member] community" = "Haushalt registrieren";
 "[add member] preschoolClass" = "Kind registrieren";
 "[add member] residence" = "Neues Haushaltsmitglied";
-"[add member] schoolClass" = "Schüler/in registrieren";
-"[add member] sports" = "Teilnehmer/in registrieren";
+"[add member] schoolClass" = "Schüler registrieren";
+"[add member] sports" = "Teilnehmer registrieren";
 "[add member] standard" = "Mitglied registrieren";
 
 // Member titles
 "[member] community" = "Mitglied";
 "[member] preschoolClass" = "Kind";
 "[member] residence" = "Bewohner";
-"[member] schoolClass" = "Schüler/in";
-"[member] sports" = "Teilnehmer/in";
+"[member] schoolClass" = "Schüler";
+"[member] sports" = "Teilnehmer";
 "[member] standard" = "Mitglied";
 
 // Member list titles
 "[members] community" = "Mitglieder";
 "[members] preschoolClass" = "Kinder";
-"[members] private" = "Freund/innen";
+"[members] private" = "Freunde";
 "[members] residence" = "Im Haushalt";
-"[members] schoolClass" = "Schüler/innen";
-"[members] sports" = "Teilnehmer/innen";
+"[members] schoolClass" = "Schüler";
+"[members] sports" = "Teilnehmer";
 "[members] standard" = "Mitglieder";
 
 // New member titles
@@ -138,7 +139,7 @@
 "[new member] preschoolClass" = "Kind";
 "[new member] residence" = "Im Haushalt";
 "[new member] schoolClass" = "Schüler/in";
-"[new member] sports" = "Teilnehmer/in";
+"[new member] sports" = "Teilnehmer";
 "[new member] standard" = "Mitglied";
 
 // Origo collective titles
@@ -149,19 +150,19 @@
 "[all members] standard" = "Alle mitglieder";
 
 // Organiser registration button titles
-"[add organiser] preschoolClass" = "Erzieher/in registrieren";
-"[add organiser] schoolClass" = "Lehrer/in registrieren";
-"[add organiser] sports" = "Trainer/in registrieren";
+"[add organiser] preschoolClass" = "Erzieher registrieren";
+"[add organiser] schoolClass" = "Lehrer registrieren";
+"[add organiser] sports" = "Trainer registrieren";
 
 // Organiser titles
-"[organiser] preschoolClass" = "Erzieher/in";
-"[organiser] schoolClass" = "Lehrer/in";
-"[organiser] sports" = "Trainer/in";
+"[organiser] preschoolClass" = "Erzieher";
+"[organiser] schoolClass" = "Lehrer";
+"[organiser] sports" = "Trainer";
 
 // Organiser list titles
-"[organisers] preschoolClass" = "Erzieher/innen";
-"[organisers] schoolClass" = "Lehrer/innen";
-"[organisers] sports" = "Trainer/innen";
+"[organisers] preschoolClass" = "Erzieher";
+"[organisers] schoolClass" = "Lehrer";
+"[organisers] sports" = "Trainer";
 
 // Organiser roles
 "[organiser role] preschoolClass" = "Verantwortlichkeit";
@@ -187,25 +188,27 @@
 "questionTemplate" = "{verb} {subject} {argument}?";
 
 // Verbs
-"be" = "bin;sind;ist;sind;seid;sind";
+"be" = "bin;bist;ist;sind;seid;sind";
 
 // Nouns
 "address" = "Adresse;die Adresse;Adressen;die Adressen;-;-";
 "administrator" = "Administrator;-;Administratoren;-;-;-";
-"coach" = "Trainer/in;-;Trainer/innen;-;-;-";
-"father" = "Vater;der Vater;-;-;Ihr Vater;der Vater von %@";
-"guardian" = "Erwachsener;-;Erwachsene;-;-;-";
-"mother" = "Mutter;die Mutter;-;-;Ihre Mutter;die Mutter von %@";
-"parent" = "Elter;-;Eltern;die Eltern;Ihre Eltern;die Eltern von %@";
-"parentContact" = "Elternvertreter/in;-;Elternvertreter/innen;-;-;-";
-"preschoolTeacher" = "Erzieher/in;-;Erzieher/innen;-;-;-";
-"teacher" = "Lehrer/in;-;Lehrer/innen;-;-;-";
+"coach" = "Trainer;-;Trainer;-;-;-";
+"father" = "Vater;der Vater;-;-;dein Vater;der Vater von %@";
+"guardian" = "Erwachsene/r;-;Erwachsene im Haushalt;-;-;-";
+"guardian_f" = "Erwachsene im Haushalt;-;Erwachsene im Haushalt;-;-;-";
+"guardian_m" = "Erwachsener im Haushalt;-;Erwachsene im Haushalt;-;-;-";
+"mother" = "Mutter;die Mutter;-;-;deine Mutter;die Mutter von %@";
+"parent" = "Elter;-;Eltern;die Eltern;deine Eltern;die Eltern von %@";
+"parentContact" = "Elternvertreter;-;Elternvertreter;-;-;-";
+"preschoolTeacher" = "Erzieher;-;Erzieher;-;-;-";
+"teacher" = "Lehrer;-;Lehrer;-;-;-";
 
 // Pronouns
 "he" = "er;ihn;ihm";
 "I" = "ich;mich;mir";
 "she" = "sie;sie;ihr";
-"you" = "Sie;Sie;Ihr";
+"you" = "du;dich;dir";
 
 
 /***
@@ -215,6 +218,7 @@
 // Buttons
 "OK" = "OK";
 "Edit" = "Bearbeiten";
+"Edit %@" = "%@ bearbeiten";
 "Next" = "Weiter";
 "Done" = "Fertig";
 "Use" = "Nutzen";
@@ -223,22 +227,22 @@
 "Cancel" = "Abbrechen";
 "Skip" = "Auslassen";
 "Back" = "Zurück";
-"Hide" = "Verbergen";
-"Home: %@" = "Nach Hause: %@";
+"Hide" = "Verstecken";
+"Home: %@" = "Zuhause: %@";
 
 // Labels
 "-no address-" = "-keine Adresse-";
 "Shared list" = "Geteilte Liste";
 "Private list" = "Private Liste";
-"Private list of friends" = "Private Freund/innenliste";
+"Private list of friends" = "Private Freundesliste";
 
 // Prompts
 "Register contact" = "Kontakt registrieren";
 "Register friend" = "Freund/in registrieren";
 "Register address" = "Adresse registrieren";
-"Who do you want to text?" = "An wen möchten Sie Nachricht senden?";
-"Who do you want to call?" = "Wen möchten Sie anrufen?";
-"Who do you want to email?" = "An wen möchten Sie E-Mail senden?";
+"Who do you want to text?" = "An wen möchtest du Nachricht senden?";
+"Who do you want to call?" = "Wen möchtest du anrufen?";
+"Who do you want to email?" = "An wen möchtest du E-Mail senden?";
 "Send text to %@" = "Nachricht an %@ senden";
 "Call %@" = "%@ anrufen";
 "Send email to %@" = "E-Mail an %@ senden";
@@ -252,11 +256,11 @@
 "Cannot place call" = "Kann nicht anrufen";
 "Please verify that %@ is a valid phone number." = "Bitte überprüfen, ob %@ eine gültige Telefonnummer ist.";
 "Authentication required" = "Autentifizierung erforderlich";
-"You have been logged out. Please log in again to continue using Origon on this device." = "Sie sind abgemeldet worden. Bitte wieder einloggen um weiterhin Origon auf diesem Gerät nutzen zu können.";
+"You have been logged out. Please log in again to continue using Origon on this device." = "Du bist abgemeldet worden. Bitte wieder einloggen um weiterhin Origon auf diesem Gerät nutzen zu können.";
 "Data error" = "Datenfehler";
-"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "Ein nicht behebbarer Datenfehler ist aufgetreten. Bitte %@ auf diesem Gerät löschen und neu installieren, um die Integrität Ihrer Daten zu gewährleisten.";
+"An unrecoverable data error has occurred. To ensure the continued integrity of your data, you must delete and reinstall %@ on this device." = "Ein nicht behebbarer Datenfehler ist aufgetreten. Bitte %@ auf diesem Gerät löschen und neu installieren, um die Integrität deiner Daten zu gewährleisten.";
 "Down for maintenance" = "Für Wartung heruntergefahren";
-"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again." = "Der Origon-Server ist wegen Wartungsarbeiten vorübergehend nicht verfügbar. Sie können weiterhin Origon nutzen, aber Änderungen sind nicht möglich. Sie können laufend unter Einstellungen prüfen, ob der Server wieder verfügbar ist.";
+"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again." = "Der Origon-Server ist wegen Wartungsarbeiten vorübergehend nicht verfügbar. Du kannst weiterhin Origon nutzen, aber Änderungen sind nicht möglich. Du kannst laufend unter Einstellungen prüfen, ob der Server wieder verfügbar ist.";
 "Still down" = "Noch nicht verfügbar";
 "The Origon server is still down for maintenance. Please try again in a while." = "Der Origon-Server ist noch nicht verfügbar. Bitte später erneut versuchen.";
 
@@ -299,7 +303,7 @@
 "%@ [friend of] %@" = "%@ von %@";
 "%@ [guardian of] %@" = "%@ von %@";
 "%@ in %@" = "%@ in %@";
-"%@'s friends" = "Freund/innen von %@";
+"%@'s friends" = "Freundesliste von %@";
 "Lives with %@" = "Wohnt mit %@ zusammen";
 
 // Separators
@@ -314,24 +318,28 @@
  ***/
 
 // Footers
-"When you register, you will receive an email with an activation code to use in the next step." = "Wann Sie sich registrieren, werden Sie einen Aktivierungscode bei E-Mail bekommen, welchen Sie im nächsten Schritt benötigen werden.";
-"Your activation code has been sent to %@ ..." = "Ihrer Aktivierungscode wurde an %@ gesendet. Sie können den Code auch später eingeben wenn Sie im Moment keinen Zugang zur E-Mail haben.";
-"Your activation code has been sent to %@." = "Ihrer Aktivierungscode wurde an %@ gesendet.";
-"You need a working internet connection to continue." = "Sie müssen Zugang zum Internet haben, um fortfahren zu können.";
+"When you register, you will receive an email with an activation code to use in the next step." = "Wenn du dich registrierst, wirst du einen Aktivierungscode per E-Mail bekommen, den du im nächsten Schritt benötigen wirst.";
+"Your activation code has been sent to %@ ..." = "Dein Aktivierungscode wurde an %@ gesendet. Wenn du im Moment keinen Zugang zur E-Mail hast, kannst du den Code auch später eingeben.";
+"Your activation code has been sent to %@." = "Dein Aktivierungscode wurde an %@ gesendet.";
+"You need a working internet connection to continue." = "Du musst Zugang zum Internet haben, um fortfahren zu können.";
 
 // Buttons
 "Have code" = "Habe Code";
-"Go back" = "Zurück gehen";
+"Go back" = "Zurückgehen";
 
 // Alerts
 "Activation failed" = "Aktivierung gescheitert";
-"It looks like you may have lost the activation code ..." = "Es scheint als ob Sie ihren Aktivierungscode verloren oder ihr Passwort vergessen haben. Fangen Sie erneut an.";
+"It looks like you may have lost the activation code ..." = "Es scheint, als ob du deinen Aktivierungscode verloren oder dein Passwort vergessen hast. Bitte erneut anfangen.";
 "Welcome back!" = "Willkommen zurück!";
-"If you have the activation code sent to %@ ..." = "Wenn Sie den Aktivierungscode vorhanden hast, welchen an %@ gesendet wurde, können Sie jetzt Ihre Mitgliedschaft aktivieren. Wenn nicht, gehen Sie zurück, und wir werden Ihnen einen neuen Code senden.";
-"Your password has been changed." = "Ihr Passwort wurde geändert.";
-"Did you forget the password?" = "Haben Sie Ihr Passwort vergessen?";
+"If you have the activation code sent to %@ ..." = "Wenn du den Aktivierungscode vorhanden hast, der an %@ gesendet wurde, kannst du deine Mitgliedschaft jetzt aktivieren. Wenn nicht, bitte zurückgehen, und wir werden dir einen neuen Code senden.";
+"Your password has been changed." = "Dein Passwort wurde geändert.";
+"Did you forget the password?" = "Hast du dein Passwort vergessen?";
+"User not found" = "Benutzer nicht gefunden";
+"No user has registered with the email address %@. Please tap Register if you want to register with this address." = "Kein Benutzer hat sich mit der E-Mail-Adresse %@ registriert. Bitte Registrieren tippen, wenn du dich mit dieser Adresse registrieren möchtest.";
+"Already registered" = "Bereits registriert";
+"A user with email address %@ is already registered. Please tap Log in if you want to log in with this address." = "Ein Benutzer mit der E-Mail-Adresse %@ ist bereits registriert. Bitte Einloggen tippen, wenn du dich mit dieser Adresse einloggen möchtest.";
 "New password" = "Neues Passwort";
-"Your password has been reset and a new password has been generated and sent to %@." = "Ihr Passwort wurde zurückgesetzt und ein neues generiert und an %@ gesendet.";
+"Your password has been reset and a new password has been generated and sent to %@." = "Dein Passwort wurde zurückgesetzt und ein neues generiert und an %@ gesendet.";
 
 
 /***
@@ -345,33 +353,34 @@
 "My lists" = "Meine Listen";
 
 // Footers
-"No hidden lists." = "Keine verborgenen Listen.";
+"No hidden lists." = "Keine versteckten Listen.";
 
 // Labels
 "All contacts" = "Alle Kontakte";
 "New!" = "Neu!";
 
 // Buttons
-"Yourself" = "Sich selbst";
+"Yourself" = "Dich selbst";
 "Move out" = "Ausziehen";
 "Delete join request" = "Beitretungsantrag löschen";
 "Resend join request" = "Beitretungsantrag erneut senden";
 
 // Alerts
 "Welcome to Origon" = "Willkommen bei Origon";
-"Please verify your details and provide any missing information." = "Bitte Ihre Angaben überprüfen und alle fehlenden Informationen nachtragen.";
+"Please verify your details and provide any missing information." = "Bitte deine Angaben überprüfen und alle fehlenden Informationen nachtragen.";
 "Incomplete registration" = "Unvollständige Registrierung";
-"You must complete your registration before you can start using Origon." = "Sie müssen Ihre Registrierung vollenden bevor Sie damit anfangen können, Origon zu nutzen.";
-"You are administrator" = "Sie sind Administrator";
-"You are the administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator." = "Sie sind der Administrator dieser Liste. Wenn Sie sie verbergen möchten, müssen Sie zuerst einen anderen Administrator benennen und sich selbst als Administrator entfernen.";
+"You must complete your registration before you can start using Origon." = "Du musst deine Registrierung vollenden bevor du Origon nutzen kannst.";
+"You are administrator" = "Du bist Administrator";
+"You are the administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator." = "Du bist der Administrator dieser Liste. Wenn du sie verstecken möchtest, musst du zuerst einen anderen Administrator benennen und dich selbst als Administrator entfernen.";
 "Join requests" = "Beitretungsanträge";
 "%@ has pending join requests." = "%@ hat unbehandelte Beitretungsanträge.";
 
 // Prompts
-"Your household includes minors. Would you like to provide parent relations?" = "Ihr Haushalt unfässt Minderjährige. Möchten Sie Elternverbindungen angeben?";
-"Who do you want to join to a list?" = "Wen möchten Sie einer Liste beitreten lassen?";
-"Who do you want to create a list for?" = "Für wen möchten Sie eine Liste erstellen?";
-"What sort of list do you want to create" = "Welche Art von Liste möchten Sie erstellen?";
+"Your household includes minors. Would you like to provide parent relations?" = "Zu deinem Haushalt gehören minderjährige Kinder. Möchtest du Elternverbindungen angeben?";
+"Who do you want to join to a list?" = "Wen möchtest du einer Liste beitreten lassen?";
+"Who do you want to create a list for?" = "Für wen möchtest du eine Liste erstellen?";
+"What sort of list do you want to create?" = "Welche Art von Liste möchtest du erstellen?";
+"What sort of list do you want to create for %@?" = "Welche Art von Liste möchtest du für %@ erstellen?";
 
 
 /***
@@ -382,34 +391,34 @@
 "Guardians in the household" = "Erwachsene im Haushalt";
 
 // Footers
-"This list will only be visible to you." = "Diese Liste wird nur für Sie sichtbar sein.";
-"This list will only be visible to you and adult members of your family." = "Diese Liste wird nur für Sie und Ihre erwachsenen Familienmitglieder sichtbar sein.";
+"This list will only be visible to you." = "Diese Liste wird nur für dich sichtbar sein.";
+"This list will only be visible to you and adult members of your family." = "Diese Liste wird nur für dich und deine erwachsenen Familienmitglieder sichtbar sein.";
 "This list will only be visible to %@ and adult members of the family." = "Diese Liste wird nur für %@ und erwachsene Familienmitglieder sichtbar sein.";
 "This list will only be visible to adult members of the family." = "Diese Liste wird nur für erwachsene Familienmitglieder sichtbar sein.";
-"Tap + to register contacts." = "+ tippen, um Kontakte zu registrieren.";
-"Tap + to register friends." = "+ tippen, um Freunde und Freundinnen zu registrieren.";
-"Tap + to register additional guardians in the household." = "+ tippen, um zusätzliche Erwachsene im Haushalt zu registrieren.";
+"Tap + to register contacts." = "Zum Registrieren zusätzlicher Kontakten, + tippen.";
+"Tap + to register friends." = "Zum Registrieren der Freunde und Freundinnen, + tippen.";
+"Tap + to register additional guardians in the household." = "Zum Registrieren zusätzlicher Erwachsenen im Haushalt, + tippen.";
 
 // Labels
-"Awaiting approval..." = "Auf Genehmigung wartend...";
+"Awaiting approval..." = "Auf Befürwortung wartend...";
 
 // Buttons
 "Keep" = "Behalten";
 "Decline" = "Ablehnen";
-"Unhide" = "Sichtbar machen";
-"Keep hidden" = "Verborgen behalten";
+"Unhide" = "Enthüllen";
+"Keep hidden" = "Versteckt behalten";
 "Edit responsibilities" = "Verantwortlichkeiten bearbeiten";
 "Add from other lists" = "Aus anderen Listen hinzufügen";
 "Add households" = "Haushalte hinzufügen";
 "Register parent representative" = "Elternvertreter registrieren";
 "Register household member" = "Haushaltsmitglied registrieren";
-"Other guardian" = "Anderer Erwachsener";
+"Other guardian" = "Andere/r Erwachsene/r";
 "Remove" = "Entfernen";
 
 // Prompts
-"Do you want to keep this listing?" = "Möchten Sie diese Aufführung behalten?";
-"If not, you can unhide it later under Settings." = "Wenn Sie sie verbergen, können Sie sie später unter Einstellungen wieder sichtbar machen.";
-"Do you want to unhide this listing?" = "Möchten Sie diese Aufführung wieder sichtbar machen?";
+"Do you want to keep this list?" = "Möchtest du diese Liste behalten?";
+"If you hide it, you can unhide it later under Settings." = "Wenn du sie versteckst, kannst du sie später unter Einstellungen wieder enthüllen.";
+"Do you want to unhide this list?" = "Möchtest du diese Liste enthüllen?";
 "%@ has requested to join %@" = "%@ hat beantragt, %@ beizutreten";
 "%@ have requested to join %@" = "%@ haben beantragt, %@ beizutreten";
 
@@ -423,7 +432,7 @@
  ***/
 
 // View titles
-"About you" = "Über Sie";
+"About you" = "Über dich";
 "Complete registration" = "Registrierung vollenden";
 
 // Headers
@@ -432,18 +441,17 @@
 
 // Footers
 "New household members are notified by email that their household has been added on Origon." = "Neue Haushaltsmitglieder werden per E-Mail benachrichtigt, dass ihr Haushalt auf Origon eingetragen worden ist.";
-"New listings are notified by email that they have been added to a private list on Origon." = "Neue Einträge werden per E-Mail benachrichtigt, dass sie zu einer privaten Liste auf Origion hinzugefügt worden sind.";
+"New listings are notified by email that they have been added to a private list on Origon." = "Neue Einträge werden per E-Mail benachrichtigt, dass sie zu einer privaten Liste auf Origon hinzugefügt worden sind.";
 "New list members are notified by email that they have been added to the list %@ on Origon." = "Neue Listenmitglieder werden per E-Mail benachrichtigt, dass sie zu der Liste %@ auf Origon hinzugefügt worden sind.";
-"The first time somebody is added to a list, they receive an email inviting them to join %@." = "Das erste Mal, eine Person zu einer Liste hinzugefügt wird, bekommt sie eine Einladungs-E-Mail, %@ beizutreten.";
-"Before you can register a minor, you must register his or her guardians." = "Bevor Sie einen Minderjährigen registrieren können, müssen Sie zuerst die Erwachsenen im Haushalt registrieren.";
-"Before you can register a friend, you must register his or her guardians." = "Bevor Sie eine/n Freund/in registrieren können, müssen Sie zuerst die Erwachsenen im Haushalt registrieren.";
-"Tap + to register additional guardians." = "+ tippen, um zusätzliche Erwachsene zu registrieren.";
+"Before you can register a minor, you must register his or her guardians." = "Bevor du einen Minderjährigen registrieren kannst, musst du zuerst die Erwachsenen im Haushalt registrieren.";
+"Before you can register a friend, you must register his or her guardians." = "Bevor du eine/n Freund/in registrieren kannst, musst du zuerst die Erwachsenen im Haushalt registrieren.";
+"Tap + to register additional guardians." = "Zum Registrieren zusätzlicher Erwachsenen, + tippen.";
 "%@ is active on %@." = "%@ ist auf %@ aktiv.";
 
 // Buttons
 "To some of them" = "Von einigen unter ihnen";
 "Register an address" = "Eine Adresse registrieren";
-"Register guardian" = "Erwachsenen registrieren";
+"Register guardian" = "Erwachsene/r registrieren";
 "Other address" = "Andere Adresse";
 "Retrieve from Contacts"   = "Von Kontakten herausholen";
 "Retrieve from lists" = "Von Listen herausholen";
@@ -452,21 +460,21 @@
 
 // Alerts
 "Incorrect details" = "Unrichtige Informationen";
-"The details you have provided do not match our records ..." = "Die Informationen, die Sie angegeben haben, stimmen nicht mit unseren überein. Bitte überprüfen, dass alle Informationen aktuell sind.";
+"The details you have provided do not match our records ..." = "Die Informationen, die du angegeben hast, stimmen nicht mit unseren überein. Bitte überprüfen, dass alle Informationen aktuell sind.";
 "Unknown address" = "Unbekannte Adresse";
 "Unknown addresses" = "Unbekannte Adressen";
-"One of the addresses you provided did not match our records and was not saved." = "Eine der Adressen, die Sie aufgegeben haben, stimmt mit unseren Informationen nicht überein und wurde nicht gespeichert.";
-"Some of the addresses you provided did not match our records and were not saved." = "Einige der Adressen, die Sie aufgegeben haben, stimmen mit unseren Informationen nicht überein und wurden nicht gespeichert.";
+"One of the addresses you provided did not match our records and was not saved." = "Eine der Adressen, die du aufgegeben hast, stimmt mit unseren Informationen nicht überein und wurde nicht gespeichert.";
+"Some of the addresses you provided did not match our records and were not saved." = "Einige der Adressen, die du aufgegeben hast, stimmen mit unseren Informationen nicht überein und wurden nicht gespeichert.";
 "The address you provided did not match our records and was not saved." = "Die aufgegebene Adresse stimmt mit unseren Informationen nicht überein und wurde nicht gespeichert.";
 "The addresses you provided did not match our records and were not saved." = "Die aufgegebenen Adressen stimmen mit unseren Informationen nicht überein und wurden nicht gespeichert.";
 "%@ is already in %@." = "%@ ist bereits in %@.";
 "Unknown child" = "Unbekanntes Kind";
 "No child named %@ has been registered by %@." = "Kein Kind namens %@ ist von %@ registriert worden.";
 "New email address" = "Neue E-Mail-Adresse";
-"You are about to change your email address from %@ to %@ ..." = "Sie sind im Begriff, Ihre E-Mail-Adresse von %@ zu %@ zu ändern. Sie brauchen Zugang zur neuen Adresse, um diese Änderung zu aktivieren. Möchten Sie fortfahren?";
-"You are about to change %@'s email address from %@ to %@ ..." = "Sie sind im Begriff, die E-Mail-Adresse von %@ von %@ zu %@ zu ändern. Eine Mitteilung wird an die neue sowohl als die alte Adresse gesendet werden. Möchten Sie fortfahren?";
-"You need a working internet connection to change your email address." = "Sie müssen Zugang zum Internet haben, um Ihre E-Mail-Adresse ändern zu können.";
-"You need a working internet connection to change %@'s email address." = "Sie müssen Zugang zum Internet haben, um die E-Mail-Adresse von %@ ändern zu können.";
+"You are about to change your email address from %@ to %@ ..." = "Du bist im Begriff, deine E-Mail-Adresse von %@ zu %@ zu ändern. Du musst Zugang zur neuen Adresse haben, um diese Änderung zu aktivieren. Möchtest du fortfahren?";
+"You are about to change %@'s email address from %@ to %@ ..." = "Du bist im Begriff, die E-Mail-Adresse von %@ von %@ zu %@ zu ändern. Eine Mitteilung wird an die neue sowohl als die alte Adresse gesendet werden. Möchtest du fortfahren?";
+"You need a working internet connection to change your email address." = "Du musst Zugang zum Internet haben, um deine E-Mail-Adresse ändern zu können.";
+"You need a working internet connection to change %@'s email address." = "Du musst Zugang zum Internet haben, um die E-Mail-Adresse von %@ ändern zu können.";
 "The email address %@ could not be activated ..." = "Die E-Mail-Adresse %@ konnte nicht aktiviert werden. Bitte erneut versuchen, oder Abbrechen tippen, um die Änderung zu abbrechen.";
 "Address in use" = "Adresse im Gebrauch";
 "The email address %@ is already in use." = "Die E-Mail-Adresse %@ ist im Gebrauch.";
@@ -474,20 +482,24 @@
 // Prompts
 "[sg] Should %@ also be registered at this address?" = "Sollte auch %@ unter dieser Adresse registriert werden?";
 "[pl] Should %@ also be registered at this address?" = "Sollten auch %@ unter dieser Adresse registriert werden?";
-"Who else should be registered at this address?" = "Wen sonst sollte unter dieser Adresse registriert werden?";
-"Are you a %@ or a %@?" = "Sind Sie %@ oder %@?";
+"Who else should be registered at this address?" = "Wer sonst sollte unter dieser Adresse registriert werden?";
+"Are you a %@ or a %@?" = "Bist du %@ oder %@?";
 "Is %@ a %@ or a %@?" = "Ist %@ %@ oder %@?";
-"%@ has more than one mobile phone number. Which number do you want to provide?" = "%@ hat mehr als eine Mobiltelefonnummer. Welche Nummer möchten Sie angeben?";
-"%@ has more than one email address. Which address do you want to provide?" = "%@ hat mehr als eine E-Mail-Adresse. Welche Adresse möchten sie angeben?";
-"%@ has more than one home address. Which address do you want to provide?" = "%@ har mehr als eine Heimatadresse. Welche Adresse möchten sie angeben?";
+"%@ has more than one mobile phone number. Which number do you want to provide?" = "%@ hat mehr als eine Mobiltelefonnummer. Welche Nummer möchtest du angeben?";
+"%@ has more than one email address. Which address do you want to provide?" = "%@ hat mehr als eine E-Mail-Adresse. Welche Adresse möchtest du angeben?";
+"%@ has more than one home address. Which address do you want to provide?" = "%@ har mehr als eine Heimatadresse. Welche Adresse möchtest du angeben?";
 "%@ has more than one home phone number. Which number is valid for %@?" = "%@ hat mehr als eine Heimattelefonnummer. Welche Nummer ist für %@ gültig?";
-"%@ has more than one home phone number. Which number do you want to provide?" = "%@ hat mehr als eine Heimattelefonnummer. Welche Nummer möchten Sie angeben?";
+"%@ has more than one home phone number. Which number do you want to provide?" = "%@ hat mehr als eine Heimattelefonnummer. Welche Nummer möchtest du angeben?";
 "%@ has only one home phone number, %@. Which address has this number?" = "%@ hat nur eine Heimattelefonnummer, %@. Welche Adresse hat diese Nummer?";
 "%@ has more than one home phone number. Which address has the number %@?" = "%@ hat mehr als eine Heimattelefonnummer. Welche Adresse hat die Nummer %@?";
 "Which address has phone number %@?" = "Welche Adresse hat die Telefonnummer %@?";
 "Is %@ the phone number for %@?" = "Ist %@ die Telefonnummer für %@?";
 "Does %@ live with %@?" = "Wohnt %@ mit %@ zusammen?";
 "Does %@ live with %@ or %@?" = "Wohnt %@ mit %@ oder %@ zusammen?";
+
+// Labels
+"Favourite" = "Favorit";
+"Not favourite" = "Nicht Favorit";
 
 // Terms
 "his parents" = "seine Eltern";
@@ -509,11 +521,11 @@
 "Edit groups" = "Gruppen bearbeiten";
 
 // Footers
-"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite." = "Dies ist Ihre private Favoritenliste. ☆ im Personenbild tippen, um eine Person als Favorit zu markieren.";
-"All who are not marked as favourites will be listed here." = "Alle, die nicht als Favoriten markiert sind, werden hier aufgelistet.";
-"Tap + to add a responsibility." = "+ tippen, um eine Veranwortlichkeit hinzuzufügen.";
-"Tap + to create a group." = "+ tippen, um eine Gruppe zu erstellen.";
-"Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Konzept & Code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
+"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite." = "Hier ist deine private Favoritenliste. ☆ im Personenbild tippen, um eine Person als Favorit zu markieren.";
+"All who are not marked as favourites will be listed here." = "Alle, die nicht als Favoriten markiert sind, werden hier gelistet.";
+"Tap + to add a responsibility." = "Zum Hinzufügen einer Verantwortlichkeit, + tippen.";
+"Tap + to create a group." = "Zum Erstellen einer neuen Gruppe, + tippen.";
+"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Version: %@\nKonzept & Code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
 
 // Buttons
 "Send text to both" = "Nachricht an beide senden";
@@ -527,11 +539,11 @@
  ***/
 
 // View titles
-"Listed elsewhere" = "Anderswo aufgelistet";
+"Listed elsewhere" = "Anderswo gelistet";
 "Type" = "Art";
 
 // Footers
-"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ und %@ müssen unter derselben Adresse aufgeführt sein. Sie können eine separate Adresse für die Beiden registrieren, wenn Sie und %@ nicht zusammenwohnen.";
+"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ und %@ müssen unter derselben Adresse aufgeführt sein. Du kannst eine separate Adresse für die Beiden registrieren, wenn du nicht mit %@ zusammenwohnst.";
 
 // Buttons
 "Add" = "Hinzufügen";
@@ -555,13 +567,13 @@
 "Send join request for %@:" = "Beitretungsantrag für %@ senden:";
 
 // Footers
-"The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and then enter the join code." = "Der Beitretungscode kann mit denjenigen geteilt werden, die Sie in diese Liste eintragen möchten. Sie können dann selbst der Liste beitreten, indem sie im Startbild die Beitretungstaste (eingegreistes Pluszeichen) tippen und zunächst den Beitretungscode angeben.";
-"The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and then enter the join code." = "Der Beitretungscode kann mit den Eltern von Kindern geteilt wereden, die Sie in diese Liste eintragen möchten. Sie können dann ihre Kinder selbst in die Liste eintragen, indem sie im Startbild die Beitretungstaste (eingekreistes Pluszeichen) tippen und zunächst den Beitretungscode angeben.";
-"You may ask an administrator to create a join code for %@." = "Sie können einen Administrator darum fragen, einen Beitretungscode für %@ zu erstellen.";
-"You need a working internet connection to create a join code for %@." = "Sie müssen Zugang zum Internet haben, um einen Beitretungscode für %@ erstellen zu können.";
-"Please enter the join code for the list you want to join." = "Bitte den Beitretungscode der Liste angeben, der Sie beitreten möchten.";
-"Please enter the join code for the list that %@ should be joined to." = "Bitte den Beitretungscode der Liste angeben, in welche Sie %@ einzutragen möchten.";
-"You will get access to %@ as soon as the request has been approved." = "Sie werden zu %@ Zugang bekommen, sobald der Antrag befürwortet ist.";
+"The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code." = "Der Beitretungscode kann mit Personen geteilt werden, die du in diese Liste eintragen möchtest. Sie können dann selbst der Liste beitreten, indem sie im Startbild die Beitretungstaste (eingegreistes Pluszeichen) tippen und zunächst den Beitretungscode eingeben.";
+"The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code." = "Der Beitretungscode kann mit den Eltern von Kindern geteilt werden, die du in diese Liste eintragen möchtest. Sie können dann ihre Kinder selbst in die Liste eintragen, indem sie im Startbild die Beitretungstaste (eingekreistes Pluszeichen) tippen und zunächst den Beitretungscode eingeben.";
+"You may ask an administrator to create a join code for %@." = "Du kannst einen Administrator darum beten, einen Beitretungscode für %@ zu erstellen.";
+"You need a working internet connection to create a join code for %@." = "Du musst Zugang zum Internet haben, um einen Beitretungscode für %@ erstellen zu können.";
+"Please enter the join code for the list you want to join." = "Bitte den Beitretungscode der Liste angeben, der du beitreten möchtest.";
+"Please enter the join code for the list that %@ should be joined to." = "Bitte den Beitretungscode der Liste angeben, in welche du %@ einzutragen möchtest.";
+"You will get access to %@ as soon as the request has been approved." = "Du wirst zu %@ Zugang bekommen, sobald der Antrag befürwortet ist.";
 
 // Buttons
 "Edit join code" = "Beitretungscode bearbeiten";
@@ -569,51 +581,54 @@
 
 // Alerts
 "The code has been set" = "Der Code ist gesetzt";
-"The join code for %@ is '%@'. You may now share it with those you wish to include in the list." = "Der Beitretungscode für %@ ist \"%@\". Sie können ihn jetzt mit denjenigen teilen, die Sie in die Liste eintragen möchten.";
+"The join code for %@ is '%@'. You may now share it with those you wish to include in the list." = "Der Beitretungscode für %@ ist \"%@\". Du kannst ihn jetzt mit denjenigen teilen, die du in die Liste eintragen möchtest.";
 "Code in use" = "Code im Gebrauch";
-"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "Der Beitretungscode \"%@\" ist bereits im Gebrauch. Bitte versuchen Sie, den Code präziser zu machen, zum Beispiel durch die Eingliederung eines Standorts und/oder eines Jahres.";
+"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year." = "Der Beitretungscode \"%@\" ist bereits im Gebrauch. Bitte versuchen, den Code präziser zu machen, zum Beispiel durch die Eingliederung eines Standorts und/oder eines Jahres.";
 "Unknown join code" = "Unbekannter Beitretungscode";
-"The join code '%@' is unknown. Please check your spelling." = "Der Beitretungscode \"%@\" ist unbekannt. Bitte Ihre Schreibweise überprüfen.";
+"The join code '%@' is unknown. Please check your spelling." = "Der Beitretungscode \"%@\" ist unbekannt. Bitte deine Schreibweise überprüfen.";
 "Already a member" = "Bereits Mitglied";
-"%@ has join code '%@'. You are already a member of %@." = "%@ hat Beitretungscode \"%@\". Sie sind bereits Mitglied von %@.";
+"%@ has join code '%@'. You are already a member of %@." = "%@ hat Beitretungscode \"%@\". Du bist bereits Mitglied von %@.";
 "%@ has join code '%@'. %@ is already a member of %@." = "%@ hat Beitretungscode \"%@\". %@ ist bereits Mitglied von %@.";
 "Awaiting approval" = "Warte auf Befürwortung";
-"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved." = "%@ hat Beitretungscode \"%@\". Sie haben bereits einen Beitretungsantrag für %@ gesendet. Sie bekommen Zugang sobald der Antrag befürwortet ist.";
-"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved." = "%@ hat Beitretungscode \"%@\". Sie haben bereits einen Antrag gesendet, um %@ %@ beitreten zu lassen. Sie bekommen Zugang sobald der Antrag befürwortet ist.";
+"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved." = "%@ hat Beitretungscode \"%@\". Du hast bereits einen Beitretungsantrag für %@ gesendet. Du bekommst Zugang sobald der Antrag befürwortet ist.";
+"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved." = "%@ hat Beitretungscode \"%@\". Du hast bereits einen Antrag gesendet, um %@ %@ beitreten zu lassen. Du bekommst Zugang sobald der Antrag befürwortet ist.";
 "Join request declined" = "Beitretungsantrag abgelehnt";
-"%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view." = "%@ hat Beitretungscode \"%@\". Sie haben bereits einen Beitretungsantrag für %@ gesendet. Der Antrag wurde abgelehnt. Sie können im Startbild den Antrag löschen oder erneut senden.";
-"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view." = "%@ hat Beitretungscode \"%@\". Sie haben bereits einen Antrag gesendet, um %@ %@ beitreten zu lassen. Der Antrag wurde abgelehnt. Sie können im Startbild den Antrag löschen oder erneut senden.";
+"%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view." = "%@ hat Beitretungscode \"%@\". Du hast bereits einen Beitretungsantrag für %@ gesendet. Der Antrag wurde abgelehnt. Du kannst im Startbild den Antrag löschen oder erneut senden.";
+"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view." = "%@ hat Beitretungscode \"%@\". Du hast bereits einen Antrag gesendet, um %@ %@ beitreten zu lassen. Der Antrag wurde abgelehnt. Du kannst im Startbild den Antrag löschen oder erneut senden.";
 "Primarily for adults" = "Primär für Erwachsene";
-"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?";
-"%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
-"For minors" = "For minors";
-"The list with join code '%@' is for minors. You cannot join this list." = "The list with join code '%@' is for minors. You cannot join this list.";
-"Join as %@" = "Join as %@";
-"The list with join code '%@' represents a %@. Do you want to join as %@?" = "The list with join code '%@' represents a %@. Do you want to join as %@?";
-"Community list" = "Community list";
-"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request." = "The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request.";
+"You are a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du bist Minderjähriger. Die Liste mit Beitretungscode \"%@\" ist primär für Erwachsene. Bist du sicher, dass du der Liste beitreten möchtest?";
+"You are a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "Du bist Minderjährige. Die Liste mit Beitretungscode \"%@\" ist primär für Erwachsene. Bist du sicher, dass du der Liste beitreten möchtest?";
+"%@ is a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ ist Minderjähriger. Die Liste mit Beitretungscode \"%@\" ist primär für Erwachsene. Bist du sicher, dass du fortfahren möchtest?";
+"%@ is a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ ist Minderjährige. Die Liste mit Beitretungscode \"%@\" ist primär für Erwachsene. Bist du sicher, dass du fortfahren möchtest?";
+"For minors" = "Für Minderjährige";
+"The list with join code '%@' is for minors. You cannot join this list." = "Die Liste mit Beitretungscode \"%@\" ist für Minderjährige. Du kannst der Liste nicht beitreten.";
+"Join as %@" = "Als %@ beitreten";
+"The list with join code '%@' represents a %@. Do you want to join as %@?" = "Die Liste mit Beitretungscode \"%@\" repräsentiert eine %@. Möchtest du als %@ beitreten?";
+"Community list" = "Gemeindeliste";
+"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request." = "Die Liste mit Beitretungscode \"%@\" ist eine Gemeindeliste, die aus gesamten Haushalten besteht. Der Beitretungsantrag wird auch %@ umfassen.";
 
 /***
  * ORecipientPickerViewController strings
  ***/
 
+// View title
+"Recipients" = "Empfänger";
+
 // Prompts
-"Pick recipients" = "Pick recipients";
-"Select recipients" = "Select recipients";
+"Select recipients" = "Empfänger wählen";
 
 // Buttons
-"Parents" = "Parents";
-"Grouped" = "Grouped";
-"Everybody" = "Everybody";
-"Select all" = "Select all";
-"All parents" = "All parents";
-"Parents of boys" = "Parents of boys";
-"Parents of girls" = "Parents of girls";
-"Parents in %@" = "Parents in %@";
+"Parents" = "Eltern";
+"Grouped" = "Gruppiert";
+"Everybody" = "Alle";
+"Select all" = "Alle wählen";
+"Parents of boys" = "Eltern von Jungen";
+"Parents of girls" = "Eltern von Mädchen";
+"Parents in %@" = "Eltern in %@";
 
 // Labels
-"To" = "To";
-"Cc" = "Cc";
+"To" = "An";
+"Cc" = "Kopie";
 
 
 /***
@@ -621,24 +636,24 @@
  ***/
 
 // View titles
-"About this list" = "About this list";
-"About this household" = "About this household";
+"About this list" = "Über diese Liste";
+"About this household" = "Über diesen Haushalt";
 
 // Footers
-"Created %@." = "Created %@.";
-"Registered %@." = "Registered %@.";
-"Active on %@ since %@." = "Active on %@ since %@.";
-"Last modified %@." = "Last modified %@.";
+"Created %@." = "%@ erstellt.";
+"Registered %@." = "%@ registriert.";
+"Active on %@ since %@." = "Seit %2$@ auf %1$@ aktiv.";
+"Last modified %@." = "%@ zuletzt geändert.";
 
 // Buttons
-"About" = "About";
+"About" = "Über";
 
 // Labels
-"On %@" = "On %@";
-"Through household" = "Through household";
-"My membership" = "My membership";
-"Regular member" = "Regular member";
-"Community member" = "Community member";
+"On %@" = "Auf %@";
+"Through household" = "Durch Haushalt";
+"My membership" = "Meine Mitgliedschaft";
+"Regular member" = "Reguläres Mitglied";
+"Community member" = "Gemeindemitglied";
 
 
 /***
@@ -648,20 +663,20 @@
 // Titles
 "Standard" = "Standard";
 "Hybrid" = "Hybrid";
-"Satellite" = "Satellite";
+"Satellite" = "Satellit";
 
 // Prompts
-"Select starting point for directions" = "Select starting point for directions";
+"Select starting point for directions" = "Startort für Wegbeschreibung angeben";
 
 // Buttons
-"Current location" = "Current location";
+"Current location" = "Aktueller Standort";
 
 // Alerts
-"Unknown address" = "Unknown address";
-"No known address matches %@." = "No known address matches %@.";
-"Unclear address" = "Unclear address";
-"The address %@ is unclear and could not be not found in the map." = "The address %@ is unclear and could not be not found in the map.";
-"Cannot give directions" = "Cannot give directions";
-"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.";
-"Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon." = "Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon.";
-"An error has occurred. Please try again another time." = "An error has occurred. Please try again another time.";
+"Unknown address" = "Unbekannte Adresse";
+"No known address matches %@." = "Keine bekannten Adressen stimmen mit %@ überein.";
+"Unclear address" = "Unklare Adresse";
+"The address %@ is unclear and could not be not found in the map." = "Die Adresse %@ ist unklar und konnte nicht auf der Karte gefunden werden.";
+"Cannot give directions" = "Wegbeschreibung nich erlaubt";
+"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions." = "Einstellungen öffnen und unter Datenschutz > Ortungsdienste die Ortungsdienste einschalten, um Wegbeschreibungen zu bekommen.";
+"Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon." = "Benutzung der Ortungsdienste ist für Origon nicht erlaubt. Einstellungen öffnen und unter Datenschutz > Ortungsdienste den Zugang auf Standort für Origon erlauben.";
+"An error has occurred. Please try again another time." = "Ein Fehler ist aufgetreten. Bitte ein anderes Mal erneut versuchen";

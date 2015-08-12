@@ -68,13 +68,15 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     [_origoTypes addObject:kOrigoTypePrivate];
     
-    NSString *prompt = NSLocalizedString(@"What sort of list do you want to create", @"");
+    NSString *prompt = nil;
     
-    if ([_member isWardOfUser]) {
-        prompt = [prompt stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"for %@", @""), [_member givenName]] separator:kSeparatorSpace];
+    if ([_member isUser]) {
+        prompt = NSLocalizedString(@"What sort of list do you want to create?", @"");
+    } else {
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"What sort of list do you want to create for %@?", @""), [_member givenName]];
     }
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[prompt stringByAppendingString:@"?"] delegate:self tag:kActionSheetTagOrigoType];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagOrigoType];
     
     for (NSString *origoType in _origoTypes) {
         if ([_member isJuvenile]) {
@@ -342,7 +344,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         cell.textLabel.text = [origo displayName];
         
         if ([membership roles].count) {
-            cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
+            cell.detailTextLabel.text = [[OUtil commaSeparatedListOfNouns:[membership roles] conjoin:NO] stringByCapitalisingFirstLetter];
         } else if ([origo.descriptionText hasValue]) {
             cell.detailTextLabel.text = origo.descriptionText;
         } else if ([origo isCommunity] && [membership isAssociate]) {

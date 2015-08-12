@@ -285,7 +285,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         self.title = NSLocalizedString(@"Settings", @"");
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
     } else if ([self targetIs:kTargetAbout]) {
-        self.title = [NSString stringWithFormat:@"%@ %@", [OMeta m].appName, [OMeta m].appVersion];
+        self.title = [NSString stringWithFormat:NSLocalizedString(@"About %@", @""), [OMeta m].appName];
     } else if ([self targetIs:kTargetPermissions]) {
         self.title = NSLocalizedString(@"User permissions", @"");
     } else if ([self targetIs:kTargetAdmins]) {
@@ -466,8 +466,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                     } else {
                         cell.textLabel.textColor = [UIColor tonedDownTextColour];
                     }
-                } else if ([actionKey isEqualToString:kActionKeyLogout]) {
-                    cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(actionKey, kStringPrefixLabel), [OMeta m].user.name];
+                } else if ([actionKey isEqualToString:kActionKeyLogoutName]) {
+                    cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(actionKey, kStringPrefixLabel), [OMeta m].user.name];
                     
                     if (self.isOnline) {
                         cell.textLabel.textColor = [UIColor redColor];
@@ -492,7 +492,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         cell.textLabel.text = NSLocalizedString(permissionKey, kStringPrefixSettingLabel);
         
         if ([permissionKey isEqualToString:kPermissionKeyApplyToAll]) {
-            cell.textLabel.text = [NSString stringWithFormat:cell.textLabel.text, [NSLocalizedString(_origo.type, kStringPrefixMembersTitle) stringByLowercasingFirstLetter]];
+            cell.textLabel.text = [NSString stringWithFormat:cell.textLabel.text, [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixMembersTitle)]];
         }
         
         cell.accessoryView = permissionSwitch;
@@ -613,7 +613,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSString *footerText = nil;
     
     if ([self targetIs:kTargetAbout]) {
-        footerText = NSLocalizedString(@"Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co", @"");
+        footerText = [NSString stringWithFormat:NSLocalizedString(@"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co", @""), [OMeta m].appVersion];
     } else if ([self targetIs:kTargetAllContacts]) {
         if (_titleSegment == kTitleSegmentFavourites) {
             footerText = NSLocalizedString(@"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.", @"");
@@ -680,7 +680,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                 [[OMeta m].replicator replicate];
             } else if ([actionKey isEqualToString:kActionKeyChangePassword]) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetPassword];
-            } else if ([actionKey isEqualToString:kActionKeyLogout]) {
+            } else if ([actionKey isEqualToString:kActionKeyLogoutName]) {
                 [[OMeta m] logout];
             }
         }

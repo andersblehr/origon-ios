@@ -35,6 +35,7 @@
 "[label] registerOrLogIn" = "Register user or log in";
 "[label] school" = "School";
 "[label] logout" = "Log out";
+"[label] logoutName" = "Log out %@";
 "[label] telephone" = "Landline";
 "[label] type" = "Type";
 
@@ -97,7 +98,7 @@
 "[title] private" = "Private contact list";
 "[title] residence" = "Household";
 "[title] schoolClass" = "School class";
-"[title] sports" = "Sports";
+"[title] sports" = "Sports group/team";
 "[title] standard" = "Standard list";
 
 // Registration footers
@@ -195,6 +196,8 @@
 "coach" = "coach;-;coaches;-;-;-";
 "father" = "father;the father;-;-;your father;%@'s father";
 "guardian" = "guardian;-;guardians;-;-;-";
+"guardian_f" = "guardian;-;guardians;-;-;-";
+"guardian_m" = "guardian;-;guardians;-;-;-";
 "mother" = "mother;the mother;-;-;your mother;%@'s mother";
 "parent" = "parent;-;parents;the parents;your parents;%@'s parents";
 "parentContact" = "parent representative;-;parent representatives;-;-;-";
@@ -215,6 +218,7 @@
 // Buttons
 "OK" = "OK";
 "Edit" = "Edit";
+"Edit %@" = "Edit %@";
 "Next" = "Next";
 "Done" = "Done";
 "Use" = "Use";
@@ -330,6 +334,10 @@
 "If you have the activation code sent to %@ ..." = "If you have the activation code sent to %@, you can now activate your membership. If not, go back and we'll send you a new one.";
 "Your password has been changed." = "Your password has been changed.";
 "Did you forget the password?" = "Did you forget the password?";
+"User not found" = "User not found";
+"No user has registered with the email address %@. Please tap Register if you want to register with this address." = "No user has registered with the email address %@. Please tap Register if you want to register with this address.";
+"Already registered" = "Already registered";
+"A user with email address %@ is already registered. Please tap Log in if you want to log in with this address." = "A user with email address %@ is already registered. Please tap Log in if you want to log in with this address.";
 "New password" = "New password";
 "Your password has been reset and a new password has been generated and sent to %@." = "Your password has been reset and a new password has been generated and sent to %@.";
 
@@ -371,7 +379,8 @@
 "Your household includes minors. Would you like to provide parent relations?" = "Your household includes minors. Would you like to provide parent relations?";
 "Who do you want to join to a list?" = "Who do you want to join to a list?";
 "Who do you want to create a list for?" = "Who do you want to create a list for?";
-"What sort of list do you want to create" = "What sort of list do you want to create";
+"What sort of list do you want to create?" = "What sort of list do you want to create?";
+"What sort of list do you want to create for %@?" = "What sort of list do you want to create for %@?";
 
 
 /***
@@ -407,9 +416,9 @@
 "Remove" = "Remove";
 
 // Prompts
-"Do you want to keep this listing?" = "Do you want to keep this listing?";
-"If not, you can unhide it later under Settings." = "If you hide it, you can unhide it later under Settings.";
-"Do you want to unhide this listing?" = "Do you want to unhide this listing?";
+"Do you want to keep this list?" = "Do you want to keep this list?";
+"If you hide it, you can unhide it later under Settings." = "If you hide it, you can unhide it later under Settings.";
+"Do you want to unhide this list?" = "Do you want to unhide this list?";
 "%@ has requested to join %@" = "%@ has requested to join %@";
 "%@ have requested to join %@" = "%@ have requested to join %@";
 
@@ -516,7 +525,7 @@
 "All who are not marked as favorites will be listed here." = "All who are not marked as favorites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
-"Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Concept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
+"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
 
 // Buttons
 "Send text to both" = "Send text to both";
@@ -587,8 +596,10 @@
 "%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view." = "%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view.";
 "%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view." = "%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view.";
 "Primarily for adults" = "Primarily for adults";
-"You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?";
-"%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
+"You are a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?";
+"You are a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?" = "You are a minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?";
+"%@ is a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
+"%@ is a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
 "For minors" = "For minors";
 "The list with join code '%@' is for minors. You cannot join this list." = "The list with join code '%@' is for minors. You cannot join this list.";
 "Join as %@" = "Join as %@";
@@ -600,8 +611,10 @@
  * ORecipientPickerViewController strings
  ***/
 
+// View title
+"Recipients" = "Recipients";
+
 // Prompts
-"Pick recipients" = "Pick recipients";
 "Select recipients" = "Select recipients";
 
 // Buttons
@@ -609,7 +622,6 @@
 "Grouped" = "Grouped";
 "Everybody" = "Everybody";
 "Select all" = "Select all";
-"All parents" = "All parents";
 "Parents of boys" = "Parents of boys";
 "Parents of girls" = "Parents of girls";
 "Parents in %@" = "Parents in %@";

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -214,6 +214,8 @@
 		5C198B7216D76343002D3976 /* OInputCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OInputCellBlueprint.m; sourceTree = "<group>"; };
 		5C1A81BB1645CE22003DCCAF /* UIBarButtonItem+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+OrigonAdditions.h"; sourceTree = "<group>"; };
 		5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+OrigonAdditions.m"; sourceTree = "<group>"; };
+		5C1B2D801B384CB1009F3690 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5C1B2D811B384CB8009F3690 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* OConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConstants.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* OConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OConstants.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* OAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthViewController.h; sourceTree = "<group>"; };
@@ -899,7 +901,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0510;
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = "Anders Blehr";
 				TargetAttributes = {
 					5CBB63B3146080DF00A9133A = {
@@ -908,7 +910,7 @@
 				};
 			};
 			buildConfigurationList = 5CBB63AE146080DD00A9133A /* Build configuration list for PBXProject "Origon" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1170,6 +1172,7 @@
 				5C70542B1B35AC4300F2FC65 /* en-GB */,
 				5C70542D1B35AC6A00F2FC65 /* nb */,
 				5C70542E1B35AC7200F2FC65 /* en */,
+				5C1B2D801B384CB1009F3690 /* de */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1180,6 +1183,7 @@
 				5C7BD04F1A6D1C7A00C1F14B /* nb */,
 				5C16F1051B3466560005D474 /* en-GB */,
 				5C16F1091B3551850005D474 /* en */,
+				5C1B2D811B384CB8009F3690 /* de */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
