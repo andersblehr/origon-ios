@@ -41,7 +41,7 @@ static NSInteger const kSectionKeyValues = 0;
 {
     NSArray *groups = [[_origo membershipForMember:member] groups];
     
-    cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:groups conjoin:NO];
+    cell.detailTextLabel.text = [OUtil commaSeparatedListOfNames:groups conjoin:NO];
     
     if ([groups containsObject:_affiliation]) {
         cell.detailTextLabel.textColor = [UIColor textColour];
@@ -390,7 +390,7 @@ static NSInteger const kSectionKeyValues = 0;
                 [pickedAddresses addObject:[[pickedMember primaryResidence] shortAddress]];
             }
             
-            self.titleView.subtitle = [OUtil commaSeparatedListOfStrings:pickedAddresses conjoin:NO];
+            self.titleView.subtitle = [OUtil commaSeparatedListOfNames:pickedAddresses conjoin:NO];
         } else {
             self.titleView.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo subjective:NO];
         }

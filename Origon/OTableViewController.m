@@ -1701,7 +1701,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (shouldBeginEditing) {
         _shouldBeginEditingTitleView = NO;
     } else {
-        NSString *buttonTitle = [NSLocalizedString(@"Edit", @"") stringByAppendingString:[_titleView.placeholder stringByConditionallyLowercasingFirstLetter] separator:kSeparatorSpace];
+        NSString *buttonTitle = [NSString stringWithFormat:NSLocalizedString(@"Edit %@", @""), [OLanguage inlineNoun:_titleView.placeholder]];
         
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
             _titleView.editing = YES;

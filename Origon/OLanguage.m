@@ -15,6 +15,8 @@ NSString * const _administrator_ = @"administrator";
 NSString * const _coach_ = @"coach";
 NSString * const _father_ = @"father";
 NSString * const _guardian_ = @"guardian";
+NSString * const _guardian_f_ = @"guardian_f";
+NSString * const _guardian_m_ = @"guardian_m";
 NSString * const _mother_ = @"mother";
 NSString * const _parent_ = @"parent";
 NSString * const _parentContact_ = @"parentContact";
@@ -27,13 +29,15 @@ NSString * const _she_ = @"she";
 NSString * const _you_ = @"you";
 
 static NSString * const kPartOfSpeechVerbs = @"be";
-static NSString * const kPartOfSpeechNouns = @"address;administrator;coach;father;guardian;mother;parent;parentContact;preschoolTeacher;teacher";
+static NSString * const kPartOfSpeechNouns = @"address;administrator;coach;father;guardian;guardian_f;guardian_m;mother;parent;parentContact;preschoolTeacher;teacher";
 static NSString * const kPartOfSpeechPronouns = @"he;I;she;you";
 
 static NSString * const kPlaceholderSubject = @"{subject}";
 static NSString * const kPlaceholderVerb = @"{verb}";
 static NSString * const kPlaceholderArgument = @"{argument}";
 static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
+
+static NSString * const kLanguageCodeGerman = @"de";
 
 
 @interface OLanguage ()
@@ -164,6 +168,14 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 + (NSDictionary *)pronouns
 {
     return [[self language] pronouns];
+}
+
+
+#pragma mark - Noun casing handling
+
++ (NSString *)inlineNoun:(NSString *)noun
+{
+    return [[OMeta m].language isEqualToString:kLanguageCodeGerman] ? [noun stringByCapitalisingFirstLetter] : [noun stringByConditionallyLowercasingFirstLetter];
 }
 
 

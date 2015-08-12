@@ -74,7 +74,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
         if ([self shouldDisplayElementsForKey:key]) {
             width = MAX(width, [self widthWithKey:key prefix:kStringPrefixLabel]);
             
-            if ([OValidator isAlternatingLabelKey:key]) {
+            if ([OValidator isAlternatingLabelKey:key] && [_delegate isReceivingInput]) {
                 width = MAX(width, [self widthWithKey:key prefix:kStringPrefixAlternateLabel]);
             }
         }

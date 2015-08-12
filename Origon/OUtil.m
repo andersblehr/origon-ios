@@ -47,6 +47,36 @@
 }
 
 
++ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin asNames:(BOOL)asNames
+{
+    NSMutableString *commaSeparatedList = nil;
+    
+    if ([strings count]) {
+        if ([strings isKindOfClass:[NSSet class]]) {
+            strings = [[strings allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        }
+        
+        for (NSString *string in strings) {
+            NSString *stringItem = asNames ? string : [OLanguage inlineNoun:string];
+            
+            if (!commaSeparatedList) {
+                commaSeparatedList = [NSMutableString stringWithString:stringItem];
+            } else {
+                if (conjoin && string == [strings lastObject]) {
+                    [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
+                } else {
+                    [commaSeparatedList appendString:kSeparatorComma];
+                }
+                
+                [commaSeparatedList appendString:stringItem];
+            }
+        }
+    }
+    
+    return commaSeparatedList;
+}
+
+
 #pragma mark - Handling settings
 
 + (NSString *)keyValueString:(NSString *)keyValueString setValue:(id)value forKey:(NSString *)key
@@ -88,39 +118,15 @@
 }
 
 
-+ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin
++ (NSString *)commaSeparatedListOfNouns:(id)nouns conjoin:(BOOL)conjoin
 {
-    return [self commaSeparatedListOfStrings:strings conjoin:conjoin conditionallyLowercase:NO];
+    return [self commaSeparatedListOfStrings:nouns conjoin:conjoin asNames:NO];
 }
 
 
-+ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin conditionallyLowercase:(BOOL)conditionallyLowercase
++ (NSString *)commaSeparatedListOfNames:(id)names conjoin:(BOOL)conjoin
 {
-    NSMutableString *commaSeparatedList = nil;
-    
-    if ([strings count]) {
-        if ([strings isKindOfClass:[NSSet class]]) {
-            strings = [[strings allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-        }
-        
-        for (NSString *string in strings) {
-            NSString *stringItem = conditionallyLowercase ? [string stringByConditionallyLowercasingFirstLetter] : string;
-            
-            if (!commaSeparatedList) {
-                commaSeparatedList = [NSMutableString stringWithString:stringItem];
-            } else {
-                if (conjoin && string == [strings lastObject]) {
-                    [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
-                } else {
-                    [commaSeparatedList appendString:kSeparatorComma];
-                }
-                
-                [commaSeparatedList appendString:stringItem];
-            }
-        }
-    }
-    
-    return commaSeparatedList;
+    return [self commaSeparatedListOfStrings:names conjoin:conjoin asNames:YES];
 }
 
 
@@ -156,7 +162,7 @@
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin conditionallyLowercase:NO];
+    return [self commaSeparatedListOfNames:stringItems conjoin:conjoin];
 }
 
 
@@ -202,7 +208,7 @@
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoin:NO conditionallyLowercase:NO];
+    return [self commaSeparatedListOfNames:stringItems conjoin:NO];
 }
 
 
@@ -221,7 +227,7 @@
                 NSArray *roles = [membership roles];
                 
                 if (roles.count) {
-                    [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfStrings:roles conjoin:NO conditionallyLowercase:YES]]];
+                    [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfNouns:roles conjoin:NO]]];
                 } else {
                     [stringItems addObject:[member shortName]];
                 }
@@ -229,7 +235,7 @@
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoin:NO conditionallyLowercase:NO];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:NO asNames:NO];
 }
 
 

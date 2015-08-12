@@ -14,8 +14,8 @@
 + (NSString *)keyValueString:(NSString *)keyValueString valueForKey:(NSString *)key;
 
 + (NSString *)labelForElders:(NSArray *)elders conjoin:(BOOL)conjoin;
-+ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin;
-+ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin conditionallyLowercase:(BOOL)conditionallyLowercase;
++ (NSString *)commaSeparatedListOfNouns:(id)nouns conjoin:(BOOL)conjoin;
++ (NSString *)commaSeparatedListOfNames:(id)names conjoin:(BOOL)conjoin;
 + (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin;
 + (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin subjective:(BOOL)subjective;
 + (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo subjective:(BOOL)subjective;

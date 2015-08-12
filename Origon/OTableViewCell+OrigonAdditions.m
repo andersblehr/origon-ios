@@ -142,9 +142,9 @@
                 isParentOfAll = isParentOfAll && [isParentOfWard boolValue];
             }
             
-            NSString *parentLabel = isParentOfAll ? [member parentNoun][singularIndefinite] : [OLanguage nouns][_guardian_][singularIndefinite];
+            NSString *parentLabel = isParentOfAll ? [member parentNoun][singularIndefinite] : [member guardianNoun][singularIndefinite];
             
-            association = [NSString stringWithFormat:NSLocalizedString(@"%@ [guardian of] %@", @""), [parentLabel stringByCapitalisingFirstLetter], [OUtil commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
+            association = [NSString stringWithFormat:NSLocalizedString(@"%@ [guardian of] %@", @""), [parentLabel stringByCapitalisingFirstLetter], [OUtil commaSeparatedListOfNames:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
         }
         
         self.textLabel.text = [member displayNameInOrigo:origo];
@@ -241,7 +241,7 @@
         NSArray *roles = [[origo membershipForMember:member] roles];
         
         if (roles.count && !excludeRoles) {
-            self.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:roles conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
+            self.detailTextLabel.text = [[OUtil commaSeparatedListOfNouns:roles conjoin:NO] stringByCapitalisingFirstLetter];
         } else if (!excludeRelations) {
             BOOL needsRelations = [member isJuvenile] != [[OState s].currentMember isJuvenile];
             needsRelations = needsRelations || [member isJuvenile] != [[OMeta m].user isJuvenile];

@@ -25,9 +25,6 @@ extern NSString * const kReuseIdentifierUserLogin;
 extern NSString * const kReuseIdentifierUserActivation;
 extern NSString * const kReuseIdentifierPasswordChange;
 
-// Language codes
-extern NSString * const kLanguageCodeEnglish;
-
 // NSUserDefaults keys
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;
@@ -103,6 +100,7 @@ extern NSString * const kActionKeyChangePassword;
 extern NSString * const kActionKeyJoinOrigo;
 extern NSString * const kActionKeyLogin;
 extern NSString * const kActionKeyLogout;
+extern NSString * const kActionKeyLogoutName;
 extern NSString * const kActionKeyPingServer;
 extern NSString * const kActionKeyRegister;
 

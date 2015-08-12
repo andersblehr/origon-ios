@@ -1125,6 +1125,12 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 }
 
 
+- (NSArray *)guardianNoun
+{
+    return [self isMale] ? [OLanguage nouns][_guardian_m_] : [OLanguage nouns][_guardian_f_];
+}
+
+
 #pragma mark - Display strings
 
 - (NSString *)shortName
@@ -1159,7 +1165,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     NSString *annotatedName = nil;
     
     if ([origo instance]) {
-        annotatedName = [NSString stringWithFormat:@"%@ (%@)", [self givenName], [OUtil commaSeparatedListOfStrings:[[origo membershipForMember:self] roles] conjoin:NO conditionallyLowercase:YES]];
+        annotatedName = [NSString stringWithFormat:@"%@ (%@)", [self givenName], [OUtil commaSeparatedListOfNouns:[[origo membershipForMember:self] roles] conjoin:NO]];
     }
     
     return annotatedName;
@@ -1255,7 +1261,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (NSArray *)settingActionKeys
 {
-    NSArray *settingActionKeys = @[kActionKeyChangePassword, kActionKeyLogout];
+    NSArray *settingActionKeys = @[kActionKeyChangePassword, kActionKeyLogoutName];
     
     if ([OMeta m].hasInternetConnection && [OConnection isDownForMaintenance]) {
         settingActionKeys = [@[kActionKeyPingServer] arrayByAddingObjectsFromArray:settingActionKeys];

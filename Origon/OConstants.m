@@ -25,9 +25,6 @@ NSString * const kReuseIdentifierUserLogin = @"login";
 NSString * const kReuseIdentifierUserActivation = @"activate";
 NSString * const kReuseIdentifierPasswordChange = @"passwordChange";
 
-// Language codes
-NSString * const kLanguageCodeEnglish = @"en";
-
 // NSUserDefaults keys
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
@@ -103,6 +100,7 @@ NSString * const kActionKeyChangePassword = @"changePassword";
 NSString * const kActionKeyJoinOrigo = @"joinOrigo";
 NSString * const kActionKeyLogin = @"login";
 NSString * const kActionKeyLogout = @"logout";
+NSString * const kActionKeyLogoutName = @"logoutName";
 NSString * const kActionKeyPingServer = @"pingServer";
 NSString * const kActionKeyRegister = @"register";
 

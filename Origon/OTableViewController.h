@@ -53,6 +53,7 @@
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 - (void)viewWillBeDismissed;
 
+- (NSString *)editTitleViewPrompt;
 - (void)didFinishEditingInlineField:(OInputField *)inlineField;
 
 - (BOOL)supportsPullToRefresh;

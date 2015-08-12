@@ -39,6 +39,8 @@ extern NSString * const _administrator_;
 extern NSString * const _coach_;
 extern NSString * const _father_;
 extern NSString * const _guardian_;
+extern NSString * const _guardian_f_;
+extern NSString * const _guardian_m_;
 extern NSString * const _mother_;
 extern NSString * const _parent_;
 extern NSString * const _parentContact_;
@@ -55,6 +57,8 @@ extern NSString * const _you_;
 + (NSDictionary *)verbs;
 + (NSDictionary *)nouns;
 + (NSDictionary *)pronouns;
+
++ (NSString *)inlineNoun:(NSString *)noun;
 
 + (NSString *)predicateClauseWithSubject:(id)subject predicate:(NSString *)predicate;
 + (NSString *)possessiveClauseWithPossessor:(id)possessor noun:(NSString *)nounKey;

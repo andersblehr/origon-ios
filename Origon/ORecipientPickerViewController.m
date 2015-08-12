@@ -63,7 +63,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     if (_toRecipients.count) {
         title = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"To", @""), [OUtil commaSeparatedListOfMembers:_toRecipients conjoin:NO subjective:YES]];
     } else {
-        title = NSLocalizedString(@"Pick recipients", @"");
+        title = NSLocalizedString(@"Recipients", @"");
     }
     
     if ([self targetIs:kTargetEmail]) {
