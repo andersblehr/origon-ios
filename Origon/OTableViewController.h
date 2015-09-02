@@ -86,6 +86,7 @@
 @property (nonatomic, assign) BOOL cancelImpliesSkip;
 
 @property (nonatomic, assign) BOOL didCancel;
+@property (nonatomic, assign) BOOL forceDeleteCell;
 @property (nonatomic, assign) BOOL presentStealthilyOnce;
 @property (nonatomic, assign) BOOL needsReloadInputSection;
 

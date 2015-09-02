@@ -1827,8 +1827,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         BOOL shouldDeleteCell = YES;
         
-        if ([_instance respondsToSelector:@selector(shouldDeleteCellAtIndexPath:)]) {
-            shouldDeleteCell = [_instance shouldDeleteCellAtIndexPath:indexPath];
+        if (_forceDeleteCell) {
+            _forceDeleteCell = NO;
+        } else {
+            if ([_instance respondsToSelector:@selector(shouldDeleteCellAtIndexPath:)]) {
+                shouldDeleteCell = [_instance shouldDeleteCellAtIndexPath:indexPath];
+            }
         }
         
         if (shouldDeleteCell) {

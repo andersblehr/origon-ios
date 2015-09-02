@@ -21,18 +21,21 @@ static NSInteger const kActionSheetTagDeclinedJoinRequest = 4;
 static NSInteger const kButtonTagDeclinedJoinRequestDelete = 0;
 static NSInteger const kButtonTagDeclinedJoinRequestResend = 1;
 
+static NSInteger const kAlertTagDeleteCell = 0;
+
 static NSInteger const kSectionKeyUser = 0;
 static NSInteger const kSectionKeyOrigos = 1;
 static NSInteger const kSectionKeyWardOrigos = 2;
 
 
-@interface OOrigoListViewController () <OTableViewController, UIActionSheetDelegate> {
+@interface OOrigoListViewController () <OTableViewController, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     id<OMember> _member;
     id<OOrigo> _origo;
     
     NSArray *_wards;
     NSMutableArray *_origoTypes;
+    NSIndexPath *_bookmarkedIndexPath;
     
     BOOL _needsEditParents;
 }
@@ -118,7 +121,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             membership = [origo membershipForMember:_wards[self.selectedHeaderSegment]];
         }
         
-        if ([membership isRequested]) {
+        if (([origo userIsAdmin] && ![origo isPrivate]) || [membership isRequested]) {
             canDelete = YES;
         } else {
             id<OMember> keyMember = nil;
@@ -516,11 +519,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     BOOL shouldDeleteCell = YES;
     
-    if (![self canDeleteOrigoAtIndexPath:indexPath]) {
+    if ([self canDeleteOrigoAtIndexPath:indexPath]) {
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
-        
+
         if (![origo isPrivate] && [origo members].count > 1 && [origo userIsAdmin]) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") message:NSLocalizedString(@"You are the administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.", @"")];
+            _bookmarkedIndexPath = indexPath;
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Delete shared list?", @"") message:[NSString stringWithFormat:NSLocalizedString(@"You are about to permanently delete the shared contact list '%@'. It will be removed from Origon for all members of the list. Are you sure you want to delete it?", @""), origo.name] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
+            alert.tag = kAlertTagDeleteCell;
+            
+            [alert show];
             
             shouldDeleteCell = NO;
         }
@@ -544,23 +552,21 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     }
     
     if ([self canDeleteOrigoAtIndexPath:indexPath]) {
-        if ([origo isPrivate]) {
+        if ([origo isPrivate] || ([origo members].count > 1 && [origo userIsAdmin])) {
             for (id<OMember> member in [origo members]) {
                 [[origo membershipForMember:member] expire];
             }
-        } else {
-            origo.joinCode = nil;
-            origo.internalJoinCode = nil;
         }
         
         [[origo membershipForMember:keyMember] expire];
+        
+        origo.joinCode = nil;
+        origo.internalJoinCode = nil;
     } else {
         [origo membershipForMember:keyMember].status = kMembershipStatusListed;
-        
-        [OMember clearCachedPeers];
     }
     
-    [[OMeta m].replicator replicate];
+    [OMember clearCachedPeers];
 }
 
 
@@ -664,6 +670,26 @@ static NSInteger const kSectionKeyWardOrigos = 2;
             default:
                 break;
         }
+    }
+}
+
+
+#pragma mark - UIAlertViewDelegate conformance
+
+- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kAlertTagDeleteCell:
+            if (buttonIndex != alertView.cancelButtonIndex) {
+                self.forceDeleteCell = YES;
+                
+                [self tableView:self.tableView commitEditingStyle:UITableViewCellEditingStyleDelete forRowAtIndexPath:_bookmarkedIndexPath];
+            }
+            
+            break;
+            
+        default:
+            break;
     }
 }
 

@@ -559,7 +559,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-#pragma mark - UIAlertViewDelegate implementation
+#pragma mark - UIAlertViewDelegate conformance
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
