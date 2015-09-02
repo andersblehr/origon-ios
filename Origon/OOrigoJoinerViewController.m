@@ -246,7 +246,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     NSString *headerContent = nil;
     
     if ([_member isUser]) {
-        headerContent = [NSLocalizedString(@"Send join request:", @"") stringByAppendingString:kSeparatorColon];
+        headerContent = [NSLocalizedString(@"Send join request", @"") stringByAppendingString:kSeparatorColon];
     } else {
         headerContent = [NSString stringWithFormat:NSLocalizedString(@"Send join request for %@:", @""), [_member givenName]];
     }
@@ -388,7 +388,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                     NSString *origoTitle = [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixOrigoTitle)];
                     NSString *organiserTitle = [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle)];
                     
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Join as %@", @""), organiserTitle] message:[NSString stringWithFormat:NSLocalizedString(@"The list with join code '%@' represents a %@. Do you want to join as %@?", @""), _origo.joinCode, origoTitle, organiserTitle] delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Join as %@?", @""), organiserTitle] message:[NSString stringWithFormat:NSLocalizedString(@"The list with join code '%@' represents a %@. Do you want to join as %@?", @""), _origo.joinCode, origoTitle, organiserTitle] delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
                     alert.tag = kAlertTagJoinAsOrganiser;
                     
                     [alert show];
@@ -461,7 +461,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
 }
 
 
-#pragma mark - UIAlertViewDelegate conformace
+#pragma mark - UIAlertViewDelegate conformance
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {

@@ -370,8 +370,8 @@
 "Please verify your details and provide any missing information." = "Please verify your details and provide any missing information.";
 "Incomplete registration" = "Incomplete registration";
 "You must complete your registration before you can start using Origon." = "You must complete your registration before you can start using Origon.";
-"You are administrator" = "You are administrator";
-"You are the administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator." = "You are the administrator of this list. If you want to hide it, you must first appoint another administrator and remove yourself as administrator.";
+"Delete shared list?" = "Delete shared list?";
+"You are about to permanently delete the shared contact list '%@'. It will be removed from Origon for all members of the list. Are you sure you want to delete it?" = "You are about to permanently delete the shared contact list '%@'. It will be removed from Origon for all members of the list. Are you sure you want to delete it?";
 "Join requests" = "Join requests";
 "%@ has pending join requests." = "%@ has pending join requests.";
 
@@ -525,7 +525,7 @@
 "All who are not marked as favorites will be listed here." = "All who are not marked as favorites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
-"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co" = "Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co";
+"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co\nsupport@origon.co" = "Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co\nsupport@origon.co";
 
 // Buttons
 "Send text to both" = "Send text to both";
@@ -563,7 +563,7 @@
 "Join list" = "Join list";
 
 // Headers
-"Send join request:" = "Send join request:";
+"Send join request" = "Send join request";
 "Send join request for %@:" = "Send join request for %@:";
 
 // Footers
@@ -602,7 +602,7 @@
 "%@ is a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?" = "%@ is a minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?";
 "For minors" = "For minors";
 "The list with join code '%@' is for minors. You cannot join this list." = "The list with join code '%@' is for minors. You cannot join this list.";
-"Join as %@" = "Join as %@";
+"Join as %@?" = "Join as %@?";
 "The list with join code '%@' represents a %@. Do you want to join as %@?" = "The list with join code '%@' represents a %@. Do you want to join as %@?";
 "Community list" = "Community list";
 "The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request." = "The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request.";
