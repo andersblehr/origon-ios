@@ -8,10 +8,6 @@
 
 #import "UIFont+OrigonAdditions.h"
 
-static NSString * const kGlobalFontName = @"HelveticaNeue";
-static NSString * const kGlobalBoldFontName = @"HelveticaNeue-Bold";
-static NSString * const kGlobalMediumFontName = @"HelveticaNeue-Medium";
-
 static CGFloat const kNavigationBarTitleFontSize = 17.f;
 static CGFloat const kNavigationBarSubtitleFontSize = 11.f;
 static CGFloat const kHeaderFontSize = 15.f;
@@ -32,13 +28,13 @@ static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 
 + (instancetype)navigationBarTitleFont
 {
-    return [self fontWithName:kGlobalMediumFontName size:kNavigationBarTitleFontSize];
+    return [self boldSystemFontOfSize:kNavigationBarTitleFontSize];
 }
 
 
 + (instancetype)navigationBarSubtitleFont
 {
-    return [self fontWithName:kGlobalFontName size:kNavigationBarSubtitleFontSize];
+    return [self systemFontOfSize:kNavigationBarSubtitleFontSize];
 }
 
 
@@ -50,43 +46,43 @@ static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 
 + (instancetype)headerFont
 {
-    return [self fontWithName:kGlobalFontName size:kHeaderFontSize];
+    return [self systemFontOfSize:kHeaderFontSize];
 }
 
 
 + (instancetype)footerFont
 {
-    return [self fontWithName:kGlobalFontName size:kFooterFontSize];
+    return [self systemFontOfSize:kFooterFontSize];
 }
 
 
 + (instancetype)titleFont
 {
-    return [self fontWithName:kGlobalFontName size:kTitleFontSize];
+    return [self systemFontOfSize:kTitleFontSize];
 }
 
 
 + (instancetype)detailFont
 {
-    return [self fontWithName:kGlobalFontName size:kDetailFontSize];
+    return [self systemFontOfSize:kDetailFontSize];
 }
 
 
 + (instancetype)boldDetailFont
 {
-    return [self fontWithName:kGlobalBoldFontName size:kDetailFontSize];
+    return [self boldSystemFontOfSize:kDetailFontSize];
 }
 
 
 + (instancetype)listTextFont
 {
-    return [self fontWithName:kGlobalFontName size:kListTextFontSize];
+    return [self systemFontOfSize:kListTextFontSize];
 }
 
 
 + (instancetype)listDetailTextFont
 {
-    return [self fontWithName:kGlobalFontName size:kListDetailFontSize];
+    return [self systemFontOfSize:kListDetailFontSize];
 }
 
 

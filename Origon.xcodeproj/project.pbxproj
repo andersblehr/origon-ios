@@ -901,7 +901,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0510;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Anders Blehr";
 				TargetAttributes = {
 					5CBB63B3146080DF00A9133A = {
@@ -1208,6 +1208,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1286,6 +1287,7 @@
 				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
 				INFOPLIST_FILE = "Origon/Origon-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -1307,6 +1309,7 @@
 				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
 				INFOPLIST_FILE = "Origon/Origon-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -1326,6 +1329,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
 				INFOPLIST_FILE = "OrigonTests/OrigonTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = OrigonTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
@@ -1342,6 +1346,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
 				INFOPLIST_FILE = "OrigonTests/OrigonTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = OrigonTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};

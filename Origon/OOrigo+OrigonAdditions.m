@@ -787,7 +787,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
         OMembership *directMembership = [self membershipForMember:member];
         
         for (OMembership *membership in [self allMemberships]) {
-            if (membership != directMembership && [membership isMirrored]) {
+            if (!indirectlyKnows && membership != directMembership && [membership isMirrored]) {
                 id residencies = [NSMutableSet set];
                 
                 if ([self isJuvenile]) {

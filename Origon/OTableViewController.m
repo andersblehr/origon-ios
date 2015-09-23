@@ -12,7 +12,7 @@ static NSString * const kViewControllerSuffixList = @"ListViewController";
 static NSString * const kViewControllerSuffixPicker = @"PickerViewController";
 static NSString * const kViewControllerSuffixDefault = @"ViewController";
 
-static NSString * const kProtocolTel = @"tel://";
+static NSString * const kProtocolTel = @"tel:";
 
 static CGFloat const kInitialHeadroomHeight = 28.f;
 static CGFloat const kPlainTableViewHeaderHeight = 24.f;
@@ -1544,7 +1544,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
 - (NSUInteger)supportedInterfaceOrientations
+#else
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+#endif
 {
     return UIInterfaceOrientationMaskPortrait;
 }

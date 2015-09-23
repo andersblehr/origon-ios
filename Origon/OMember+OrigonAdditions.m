@@ -1089,7 +1089,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
                 }
             }
             
-            if ([baseMembership isActive]) {
+            if (!baseOrigo || [baseMembership isActive]) {
                 if ([[OMeta m].user isJuvenile]) {
                     userCanEdit = [self isJuvenile];
                 } else {
