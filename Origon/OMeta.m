@@ -241,7 +241,11 @@ static NSTimeInterval const kTimeInterval100Years = 3153600000;
 
 + (BOOL)deviceIsSimulator
 {
-    return [[UIDevice currentDevice].model containsString:@"Simulator"];
+#if TARGET_IPHONE_SIMULATOR
+    return YES;
+#else
+    return NO;
+#endif
 }
 
 

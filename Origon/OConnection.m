@@ -66,14 +66,13 @@ static NSString * const kURLParameterLanguage = @"lang";
 static NSString * const kURLParameterIdentifier = @"id";
 
 
-@interface OConnection () <NSURLConnectionDataDelegate> {
+@interface OConnection () <NSURLSessionDataDelegate> {
 @private
     BOOL _requestIsValid;
     
     NSMutableURLRequest *_URLRequest;
     NSMutableDictionary *_URLParameters;
-    NSHTTPURLResponse *_HTTPResponse;
-	NSMutableData *_responseData;
+    NSMutableData *_responseData;
     
     id<OConnectionDelegate> _delegate;
 }
@@ -108,22 +107,27 @@ static NSString * const kURLParameterIdentifier = @"id";
         if ([_delegate respondsToSelector:@selector(connection:willSendRequest:)]) {
             [_delegate connection:self willSendRequest:_URLRequest];
         }
-    
+        
         if (_requestIsValid) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
             
-            OLogDebug(@"Creating connection using URL: %@", _URLRequest.URL);
-            NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:_URLRequest delegate:self];
-            
-            if (!URLConnection) {
-                OLogError(@"Failed to create URL connection. URL request: %@", _URLRequest);
-                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-            }
+            OLogDebug(@"Creating session using URL: %@", _URLRequest.URL);
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+            NSURLSessionDataTask *task = [session dataTaskWithRequest:_URLRequest];
+            [task resume];
         } else {
             OLogBreakage(@"Missing headers and/or parameters in request, aborting.");
         }
     } else {
-        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"No internet connection", @"") forKey:NSLocalizedDescriptionKey]]];
+        NSInteger code = NSURLErrorNotConnectedToInternet;
+        NSString *description = NSLocalizedString(@"No internet connection", @"");
+        NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:code userInfo:[NSDictionary dictionaryWithObject:description forKey:NSLocalizedDescriptionKey]];
+        
+        OLogError(@"Connection failed with error: %@ (%ld)", description, (long)code);
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:nil];
+        
+        [_delegate connection:self didFailWithError:error];
     }
 }
 
@@ -293,109 +297,75 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-#pragma mark - NSURLConnectionDataDelegate conformance
+#pragma mark - NSURLSessionDataDelegate conformance
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    OLogVerbose(@"Received response. HTTP status code: %d", response.statusCode);
+    OLogVerbose(@"Received data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     
-    [_responseData setLength:0];
-    
-    if (response.statusCode < kHTTPStatusErrorRangeStart) {
-        NSString *replicationDate = [response allHeaderFields][kHTTPHeaderLastModified];
-        
-        if (replicationDate) {
-            [OMeta m].lastReplicationDate = replicationDate;
-        }
-    } else if (response.statusCode != kHTTPStatusNotFound) {
-        OLogError(@"Server error: %@", [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode]);
-        
-        if (response.statusCode == kHTTPStatusInternalServerError) {
-            [OAlert showAlertForHTTPStatus:kHTTPStatusInternalServerError];
-        }
-    }
-    
-    _HTTPResponse = response;
+    [_responseData appendData:data];
 }
 
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-	OLogVerbose(@"Received data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-
-	[_responseData appendData:data];
-}
-
-
-- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse;
-{
-	OLogVerbose(@"Will cache response: %@", cachedResponse);
-    
-	return cachedResponse;
-}
-
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
-{
-    OLogDebug(@"Server request completed. HTTP status code: %ld", (long)_HTTPResponse.statusCode);
-    
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
-    BOOL shouldPostReachabilityChangedNotification = NO;
-
-    if (_HTTPResponse.statusCode == kHTTPStatusServiceUnavailable && !_isDownForMaintenance) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Down for maintenance", @"") message:NSLocalizedString(@"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again.", @"")];
-        
-        _isDownForMaintenance = YES;
-        shouldPostReachabilityChangedNotification = YES;
-    } else if (_HTTPResponse.statusCode != kHTTPStatusServiceUnavailable && _isDownForMaintenance) {
-        _isDownForMaintenance = NO;
-        shouldPostReachabilityChangedNotification = YES;
-    } else if (_HTTPResponse.statusCode == kHTTPStatusServiceUnavailable && _isDownForMaintenance) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Still down", @"") message:NSLocalizedString(@"The Origon server is still down for maintenance. Please try again in a while.", @"")];
-    }
-    
-    if (shouldPostReachabilityChangedNotification) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:[OMeta m].internetReachability];
-    }
-    
-    id deserialisedData = nil;
-    
-    if (_HTTPResponse.statusCode < kHTTPStatusErrorRangeStart && [_responseData length]) {
-        deserialisedData = [NSJSONSerialization deserialise:_responseData];
-    }
-    
-    [_delegate connection:self didCompleteWithResponse:_HTTPResponse data:deserialisedData];
-}
-
-
-#pragma mark - NSURLConnectionDelegate conformance
-
-- (void)connection:(NSURLConnection *)connection willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-	OLogVerbose(@"Requesting default handling for authentication challenge: %@", challenge);
-    
-    if ([challenge.sender respondsToSelector:@selector(performDefaultHandlingForAuthenticationChallenge:)]) {
-        [challenge.sender performDefaultHandlingForAuthenticationChallenge:challenge];
-    } else {
-        [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
-    }
-}
-
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-	OLogError(@"Connection failed with error: %@ (%ld)", [error localizedDescription], (long)[error code]);
-    
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if (error.code == NSURLErrorNotConnectedToInternet || error.code == NSURLErrorTimedOut) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:nil];
-    } else {
-        [OAlert showAlertForError:error];
-    }
+    NSHTTPURLResponse *response = (NSHTTPURLResponse *)task.response;
     
-    [_delegate connection:self didFailWithError:error];
+    if (error) {
+        OLogError(@"Connection failed with error: %@ (%ld)", [error localizedDescription], (long)[error code]);
+        
+        if (error.code == NSURLErrorNotConnectedToInternet || error.code == NSURLErrorTimedOut) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:nil];
+        } else {
+            [OAlert showAlertForError:error];
+        }
+        
+        [_delegate connection:self didFailWithError:error];
+    } else {
+        OLogDebug(@"Server request completed. HTTP status code: %ld", (long)response.statusCode);
+        
+        if (response.statusCode < kHTTPStatusErrorRangeStart) {
+            NSString *replicationDate = [response allHeaderFields][kHTTPHeaderLastModified];
+            
+            if (replicationDate) {
+                [OMeta m].lastReplicationDate = replicationDate;
+            }
+        } else if (response.statusCode != kHTTPStatusNotFound) {
+            OLogError(@"Server error: %@", [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode]);
+            
+            if (response.statusCode == kHTTPStatusInternalServerError) {
+                [OAlert showAlertForHTTPStatus:kHTTPStatusInternalServerError];
+            }
+        }
+        
+        BOOL shouldPostReachabilityChangedNotification = NO;
+        
+        if (response.statusCode == kHTTPStatusServiceUnavailable && !_isDownForMaintenance) {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Down for maintenance", @"") message:NSLocalizedString(@"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again.", @"")];
+            
+            _isDownForMaintenance = YES;
+            shouldPostReachabilityChangedNotification = YES;
+        } else if (response.statusCode != kHTTPStatusServiceUnavailable && _isDownForMaintenance) {
+            _isDownForMaintenance = NO;
+            shouldPostReachabilityChangedNotification = YES;
+        } else if (response.statusCode == kHTTPStatusServiceUnavailable && _isDownForMaintenance) {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Still down", @"") message:NSLocalizedString(@"The Origon server is still down for maintenance. Please try again in a while.", @"")];
+        }
+        
+        if (shouldPostReachabilityChangedNotification) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:[OMeta m].internetReachability];
+        }
+        
+        id deserialisedData = nil;
+        
+        if (response.statusCode < kHTTPStatusErrorRangeStart && [_responseData length]) {
+            deserialisedData = [NSJSONSerialization deserialise:_responseData];
+        }
+        
+        [_delegate connection:self didCompleteWithResponse:response data:deserialisedData];
+    }
 }
 
 @end
