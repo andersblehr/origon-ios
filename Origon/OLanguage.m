@@ -58,7 +58,7 @@ static NSString * const kLanguageCodeGerman = @"de";
     NSMutableDictionary *forms = [NSMutableDictionary dictionary];
     
     for (NSString *word in [partOfSpeech componentsSeparatedByString:kSeparatorList]) {
-        forms[word] = [NSLocalizedString(word, @"") componentsSeparatedByString:kSeparatorList];
+        forms[word] = [OLocalizedString(word, @"") componentsSeparatedByString:kSeparatorList];
     }
     
     return forms;
@@ -216,7 +216,7 @@ static NSString * const kLanguageCodeGerman = @"de";
     NSString *subjectString = [self subjectStringWithSubject:subject isQuestion:YES];
     NSString *verbString = [self verbStringWithVerb:verb subject:subject isQuestion:YES];
     
-    NSString *question = NSLocalizedString(@"questionTemplate", @"");
+    NSString *question = OLocalizedString(@"questionTemplate", @"");
     question = [question stringByReplacingSubstring:kPlaceholderSubject withString:subjectString];
     question = [question stringByReplacingSubstring:kPlaceholderVerb withString:verbString];
     question = [question stringByReplacingSubstring:kPlaceholderArgument withString:argument];
@@ -232,9 +232,9 @@ static NSString * const kLanguageCodeGerman = @"de";
     NSString *genderString = nil;
     
     if ([gender isEqualToString:kGenderMale]) {
-        genderString = isJuvenile ? NSLocalizedString(@"boy", @"") : NSLocalizedString(@"man", @"");
+        genderString = isJuvenile ? OLocalizedString(@"boy", @"") : OLocalizedString(@"man", @"");
     } else if ([gender isEqualToString:kGenderFemale]) {
-        genderString = isJuvenile ? NSLocalizedString(@"girl", @"") : NSLocalizedString(@"woman", @"");
+        genderString = isJuvenile ? OLocalizedString(@"girl", @"") : OLocalizedString(@"woman", @"");
     }
     
     return genderString;
@@ -246,9 +246,9 @@ static NSString * const kLanguageCodeGerman = @"de";
     NSString *parentsLabel = nil;
     
     if ([gender isEqualToString:kGenderMale]) {
-        parentsLabel = NSLocalizedString(@"his parents", @"");
+        parentsLabel = OLocalizedString(@"his parents", @"");
     } else if ([gender isEqualToString:kGenderFemale]) {
-        parentsLabel = NSLocalizedString(@"her parents", @"");
+        parentsLabel = OLocalizedString(@"her parents", @"");
     }
     
     return parentsLabel;
@@ -260,9 +260,9 @@ static NSString * const kLanguageCodeGerman = @"de";
     NSString *parentLabel = nil;
     
     if ([parentGender isEqualToString:kGenderMale]) {
-        parentLabel = [offspringGender isEqualToString:kGenderMale] ? NSLocalizedString(@"his father", @"") : NSLocalizedString(@"her father", @"");
+        parentLabel = [offspringGender isEqualToString:kGenderMale] ? OLocalizedString(@"his father", @"") : OLocalizedString(@"her father", @"");
     } else if ([parentGender isEqualToString:kGenderFemale]) {
-        parentLabel = [offspringGender isEqualToString:kGenderMale] ? NSLocalizedString(@"his mother", @"") : NSLocalizedString(@"her mother", @"");
+        parentLabel = [offspringGender isEqualToString:kGenderMale] ? OLocalizedString(@"his mother", @"") : OLocalizedString(@"her mother", @"");
     }
     
     return parentLabel;

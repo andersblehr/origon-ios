@@ -25,7 +25,7 @@ static NSCalendar *_calendar = nil;
 + (NSCalendar *)calendar
 {
     if (!_calendar) {
-        _calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        _calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     }
     
     return _calendar;
@@ -34,7 +34,7 @@ static NSCalendar *_calendar = nil;
 
 - (NSDateComponents *)dateComponentsBeforeDate:(NSDate *)date;
 {
-    return [[[self class] calendar] components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions];
+    return [[[self class] calendar] components:NSCalendarUnitYear fromDate:self toDate:date options:kNilOptions];
 }
 
 
@@ -106,7 +106,7 @@ static NSCalendar *_calendar = nil;
 
 - (NSString *)localisedAgeString
 {
-    return [NSString stringWithFormat:NSLocalizedString(@"%d years", @""), [self yearsBeforeNow]];
+    return [NSString stringWithFormat:OLocalizedString(@"%d years", @""), [self yearsBeforeNow]];
 }
 
 
@@ -120,7 +120,7 @@ static NSCalendar *_calendar = nil;
 
 - (NSInteger)yearsBeforeDate:(NSDate *)date
 {
-    return [[NSDate calendar] components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions].year;
+    return [[NSDate calendar] components:NSCalendarUnitYear fromDate:self toDate:date options:kNilOptions].year;
 }
 
 

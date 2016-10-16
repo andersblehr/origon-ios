@@ -62,7 +62,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 
 - (CGFloat)widthWithKey:(NSString *)key prefix:(NSString *)prefix
 {
-    return [NSLocalizedString(key, prefix) sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX].width;
+    return [OLocalizedString(key, prefix) sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX].width;
 }
 
 
@@ -105,7 +105,7 @@ static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
                 } else if ([entity hasValueForKey:key]) {
                     height += [OTextView heightWithText:[entity valueForKey:key] maxWidth:[constrainer labeledTextWidth]];
                 } else {
-                    height += [OTextView heightWithText:NSLocalizedString(key, kStringPrefixPlaceholder) maxWidth:[constrainer labeledTextWidth]];
+                    height += [OTextView heightWithText:OLocalizedString(key, kStringPrefixPlaceholder) maxWidth:[constrainer labeledTextWidth]];
                 }
             } else {
                 height += [UIFont detailFieldHeight];

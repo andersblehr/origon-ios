@@ -29,7 +29,7 @@
         self.backgroundColor = [UIColor clearColor];
         self.font = [UIFont detailFont];
         self.hidden = YES;
-        self.text = NSLocalizedString(key, kStringPrefixLabel);
+        self.text = OLocalizedString(key, kStringPrefixLabel);
         self.textAlignment = centred ? NSTextAlignmentCenter : NSTextAlignmentRight;
         self.textColor = [UIColor labelTextColour];
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -66,9 +66,9 @@
     
     if ([OValidator isAlternatingLabelKey:_key]) {
         if (_useAlternateText) {
-            self.text = NSLocalizedString(_key, kStringPrefixAlternateLabel);
+            self.text = OLocalizedString(_key, kStringPrefixAlternateLabel);
         } else {
-            self.text = NSLocalizedString(_key, kStringPrefixLabel);
+            self.text = OLocalizedString(_key, kStringPrefixLabel);
         }
     }
 }

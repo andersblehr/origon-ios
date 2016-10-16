@@ -154,7 +154,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 - (void)setAppearanceForPendingJoinRequestInCell:(OTableViewCell *)cell
 {
     cell.textLabel.textColor = [UIColor valueTextColour];
-    cell.detailTextLabel.text = NSLocalizedString(@"Awaiting approval...", @"");
+    cell.detailTextLabel.text = OLocalizedString(@"Awaiting approval...", @"");
     cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
     
     if ([_origo userCanAdd]) {
@@ -215,9 +215,9 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     }
     
     if (![_origo userIsMember] && [_member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Other guardian", @"") tag:kButtonTagCoHabitantsGuardian];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Other guardian", @"") tag:kButtonTagCoHabitantsGuardian];
     } else {
-        [actionSheet addButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixAddMemberButton) tag:kButtonTagCoHabitantsNew];
+        [actionSheet addButtonWithTitle:OLocalizedString(kOrigoTypeResidence, kStringPrefixAddMemberButton) tag:kButtonTagCoHabitantsNew];
     }
     
     [actionSheet show];
@@ -230,14 +230,14 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     
     if (_recipientCandidates.count > 1) {
         if (_recipientType == kRecipientTypeCall) {
-            prompt = NSLocalizedString(@"Who do you want to call?", @"");
+            prompt = OLocalizedString(@"Who do you want to call?", @"");
         } else {
             _recipientCandidates = [_recipientCandidates arrayByAddingObject:[NSArray arrayWithArray:_recipientCandidates]];
             
             if (_recipientType == kRecipientTypeText) {
-                prompt = NSLocalizedString(@"Who do you want to text?", @"");
+                prompt = OLocalizedString(@"Who do you want to text?", @"");
             } else if (_recipientType == kRecipientTypeEmail) {
-                prompt = NSLocalizedString(@"Who do you want to email?", @"");
+                prompt = OLocalizedString(@"Who do you want to email?", @"");
             }
         }
     }
@@ -283,14 +283,14 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     NSString *prompt = nil;
     
     if (joiningMembers && joiningMembers.count > 1) {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ have requested to join %@", @""), memberLabel, _origo.name];
+        prompt = [NSString stringWithFormat:OLocalizedString(@"%@ have requested to join %@", @""), memberLabel, _origo.name];
     } else {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has requested to join %@", @""), memberLabel, _origo.name];
+        prompt = [NSString stringWithFormat:OLocalizedString(@"%@ has requested to join %@", @""), memberLabel, _origo.name];
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagJoinRequest];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Accept", @"") tag:kButtonTagJoinRequestAccept];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Decline", @"") tag:kButtonTagJoinRequestDecline];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Accept", @"") tag:kButtonTagJoinRequestAccept];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Decline", @"") tag:kButtonTagJoinRequestDecline];
     
     [actionSheet show];
 }
@@ -303,18 +303,18 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     NSString *declineButtonTitle = nil;
     
     if ([_membership isHidden]) {
-        prompt = NSLocalizedString(@"Do you want to unhide this list?", @"");
-        acceptButtonTitle = NSLocalizedString(@"Unhide", @"");
-        declineButtonTitle = NSLocalizedString(@"Keep hidden", @"");
+        prompt = OLocalizedString(@"Do you want to unhide this list?", @"");
+        acceptButtonTitle = OLocalizedString(@"Unhide", @"");
+        declineButtonTitle = OLocalizedString(@"Keep hidden", @"");
     } else {
-        prompt = NSLocalizedString(@"Do you want to keep this list?", @"");
-        acceptButtonTitle = NSLocalizedString(@"Keep", @"");
+        prompt = OLocalizedString(@"Do you want to keep this list?", @"");
+        acceptButtonTitle = OLocalizedString(@"Keep", @"");
         
         if ([_origo isResidence]) {
-            declineButtonTitle = NSLocalizedString(@"Decline", @"");
+            declineButtonTitle = OLocalizedString(@"Decline", @"");
         } else {
-            declineButtonTitle = NSLocalizedString(@"Hide", @"");
-            prompt = [prompt stringByAppendingString:NSLocalizedString(@"If you hide it, you can unhide it later under Settings.", @"") separator:kSeparatorSpace];
+            declineButtonTitle = OLocalizedString(@"Hide", @"");
+            prompt = [prompt stringByAppendingString:OLocalizedString(@"If you hide it, you can unhide it later under Settings.", @"") separator:kSeparatorSpace];
         }
     }
     
@@ -335,12 +335,12 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         
         if ([_origo isPrivate]) {
             if ([_member isJuvenile]) {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register friend", @"") tag:kButtonTagAddMember];
+                [actionSheet addButtonWithTitle:OLocalizedString(@"Register friend", @"") tag:kButtonTagAddMember];
             } else {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register contact", @"") tag:kButtonTagAddMember];
+                [actionSheet addButtonWithTitle:OLocalizedString(@"Register contact", @"") tag:kButtonTagAddMember];
             }
         } else {
-            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
+            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
         }
         
         if ([_origo isCommunity]) {
@@ -350,14 +350,14 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
         
         if (_eligibleCandidates.count) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other lists", @"") tag:kButtonTagAddFromLists];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Add from other lists", @"") tag:kButtonTagAddFromLists];
         }
         
         if ([_origo isOrganised]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
+            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
             
             if ([_origo isJuvenile]) {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register parent representative", @"") tag:kButtonTagAddParentContact];
+                [actionSheet addButtonWithTitle:OLocalizedString(@"Register parent representative", @"") tag:kButtonTagAddParentContact];
             }
         }
         
@@ -376,8 +376,8 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         [self scrollToTopAndToggleEditMode];
     } else {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
         
         [actionSheet show];
     }
@@ -493,9 +493,9 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             id<OOrigo> primaryResidence = [_member primaryResidence];
             
             if ([primaryResidence hasAddress] && [primaryResidence isCommitted]) {
-                self.title = NSLocalizedString(kPropertyKeyAddress, kStringPrefixLabel);
+                self.title = OLocalizedString(kPropertyKeyAddress, kStringPrefixLabel);
             } else {
-                self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
+                self.title = OLocalizedString(_origo.type, kStringPrefixOrigoTitle);
             }
 
             if (![self.state.baseOrigo isCommunity]) {
@@ -503,22 +503,22 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
             }
         } else if ([_member isJuvenile]) {
             if ([_origo isStandard] && [_member isUser]) {
-                self.title = NSLocalizedString(@"Shared list", @"");
+                self.title = OLocalizedString(@"Shared list", @"");
             } else if ([_origo isPrivate]) {
                 if ([_member isUser]) {
-                    self.title = NSLocalizedString(@"Private list", @"");
+                    self.title = OLocalizedString(@"Private list", @"");
                 } else {
-                    self.title = NSLocalizedString(@"Private list of friends", @"");
+                    self.title = OLocalizedString(@"Private list of friends", @"");
                 }
             } else {
-                self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
+                self.title = OLocalizedString(_origo.type, kStringPrefixOrigoTitle);
             }
         } else {
-            self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
+            self.title = OLocalizedString(_origo.type, kStringPrefixOrigoTitle);
         }
     } else if ([self actionIs:kActionDisplay]) {
         if ([_origo isResidence] && ![self aspectIs:kAspectHousehold]) {
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:OLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
         } else {
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_origo displayName]];
         }
@@ -706,16 +706,16 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         number = [_origo parentContacts].count > 1 ? pluralIndefinite : singularIndefinite;
         headerContent = [[OLanguage nouns][_parentContact_][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyMembers) {
-        NSString *membersTitle = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+        NSString *membersTitle = OLocalizedString(_origo.type, kStringPrefixMembersTitle);
         
         if ([_origo isJuvenile]) {
             headerContent = @[membersTitle, [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
         } else if ([_origo isCommunity]) {
-            headerContent = @[membersTitle, NSLocalizedString(@"Households", @"")];
+            headerContent = @[membersTitle, OLocalizedString(@"Households", @"")];
         } else {
             if (![_origo isCommitted] && [_origo isResidence]) {
                 if (![_member isCommitted] && [self aspectIs:kAspectJuvenile]) {
-                    headerContent = NSLocalizedString(@"Guardians in the household", @"");
+                    headerContent = OLocalizedString(@"Guardians in the household", @"");
                 } else {
                     headerContent = membersTitle;
                 }
@@ -731,30 +731,30 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 
 - (NSString *)footerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *footerContent = NSLocalizedString(_origo.type, kStringPrefixFooter);
+    NSString *footerContent = OLocalizedString(_origo.type, kStringPrefixFooter);
     
     if ([_origo isResidence]) {
         if (self.isModal && [self aspectIs:kAspectJuvenile]) {
-            footerContent = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
+            footerContent = OLocalizedString(@"Tap + to register additional guardians in the household.", @"");
         }
     } else if ([_origo isPrivate]) {
         if ([self actionIs:kActionRegister]) {
             if ([_member isJuvenile] && [_member guardians].count) {
                 if ([_member isUser]) {
-                    footerContent = NSLocalizedString(@"This list will only be visible to you and adult members of your family.", @"");
+                    footerContent = OLocalizedString(@"This list will only be visible to you and adult members of your family.", @"");
                 } else if ([_member isActive]) {
-                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"This list will only be visible to %@ and adult members of the family.", @""), [_member givenName]];
+                    footerContent = [NSString stringWithFormat:OLocalizedString(@"This list will only be visible to %@ and adult members of the family.", @""), [_member givenName]];
                 } else {
-                    footerContent = NSLocalizedString(@"This list will only be visible to adult members of the family.", @"");
+                    footerContent = OLocalizedString(@"This list will only be visible to adult members of the family.", @"");
                 }
             } else {
-                footerContent = NSLocalizedString(@"This list will only be visible to you.", @"");
+                footerContent = OLocalizedString(@"This list will only be visible to you.", @"");
             }
         } else if (self.isModal || ![_origo members].count) {
             if ([_member isJuvenile]) {
-                footerContent = NSLocalizedString(@"Tap + to register friends.", @"");
+                footerContent = OLocalizedString(@"Tap + to register friends.", @"");
             } else {
-                footerContent = NSLocalizedString(@"Tap + to register contacts.", @"");
+                footerContent = OLocalizedString(@"Tap + to register contacts.", @"");
             }
         }
     }
@@ -842,7 +842,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     NSString *buttonTitle = nil;
     
     if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
-        buttonTitle = NSLocalizedString(@"Remove", @"");
+        buttonTitle = OLocalizedString(@"Remove", @"");
     }
     
     return buttonTitle;
@@ -954,7 +954,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         
         if (![_origo hasAddress]) {
             if ([self actionIs:kActionEdit]) {
-                self.title = NSLocalizedString(@"Register address", @"");
+                self.title = OLocalizedString(@"Register address", @"");
             } else {
                 [self.navigationController popViewControllerAnimated:YES];
             }

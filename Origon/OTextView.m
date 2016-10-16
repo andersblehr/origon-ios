@@ -121,7 +121,7 @@ static CGFloat const kTextInsetLeft = -1.f;
     if (self) {
         _key = key;
         _constrainer = constrainer;
-        _placeholder = NSLocalizedString(_key, kStringPrefixPlaceholder);
+        _placeholder = OLocalizedString(_key, kStringPrefixPlaceholder);
         _isInlineField = NO;
         _supportsMultiLineText = YES;
         

@@ -77,7 +77,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
             photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColour];
             photoPrompt.font = [UIFont detailFont];
-            photoPrompt.text = NSLocalizedString(kPropertyKeyPhoto, kStringPrefixPlaceholder);
+            photoPrompt.text = OLocalizedString(kPropertyKeyPhoto, kStringPrefixPlaceholder);
             photoPrompt.textAlignment = NSTextAlignmentCenter;
             photoPrompt.textColor = [UIColor imagePlaceholderTextColour];
             [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -112,7 +112,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addButtonForKey:(NSString *)key
 {
-    OButton *button = [[OButton alloc] initWithTitle:NSLocalizedString(key, kStringPrefixTitle) target:_inputCellDelegate action:NSSelectorFromString([NSString stringWithFormat:kButtonActionFormat, [key stringByCapitalisingFirstLetter]])];
+    OButton *button = [[OButton alloc] initWithTitle:OLocalizedString(key, kStringPrefixTitle) target:_inputCellDelegate action:NSSelectorFromString([NSString stringWithFormat:kButtonActionFormat, [key stringByCapitalisingFirstLetter]])];
     
     _views[[key stringByAppendingString:kViewKeySuffixButton]] = button;
     [self.contentView addSubview:button];
@@ -357,14 +357,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if (fabs(self.frame.size.height - desiredHeight) > 0.5f) {
             [self setNeedsUpdateConstraints];
             
-            if ([OMeta iOSVersionIs:@"7"]) {
-                [self layoutIfNeeded];
-            }
-            
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
-                if (![OMeta iOSVersionIs:@"7"]) {
-                    [self layoutIfNeeded];
-                }
+                [self layoutIfNeeded];
                 
 #if !CGFLOAT_IS_DOUBLE // Compiled for 32-bit
                 [_state.viewController.tableView beginUpdates];

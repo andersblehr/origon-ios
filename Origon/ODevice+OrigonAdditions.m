@@ -36,7 +36,7 @@ NSString *kDeviceType_iPodTouch = @"iPod";
     ODevice *device = [[OMeta m].context entityWithId:deviceId];
     
     if (!device) {
-        device = [[OMeta m].context insertEntityOfClass:[self class] inOrigo:[[OMeta m].user stash] entityId:deviceId];
+        device = [[OMeta m].context insertEntityOfClass:[self class] inOrigo:(OOrigo *)[[OMeta m].user stash] entityId:deviceId];
         device.type = [UIDevice currentDevice].model;
         device.name = [UIDevice currentDevice].name;
         device.user = [OMeta m].user;

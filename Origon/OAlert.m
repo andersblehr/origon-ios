@@ -15,7 +15,7 @@
 
 + (void)showAlertWithCode:(NSInteger)code message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"") message:[NSString stringWithFormat:NSLocalizedString(@"An error has occurred. Please try again later. [%d: \"%@\"]", @""), code, message] delegate:delegate cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"Error", @"") message:[NSString stringWithFormat:OLocalizedString(@"An error has occurred. Please try again later. [%d: \"%@\"]", @""), code, message] delegate:delegate cancelButtonTitle:OLocalizedString(@"OK", @"") otherButtonTitles:nil];
     alert.tag = tag;
     
     [alert show];
@@ -32,7 +32,7 @@
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message delegate:(id)delegate tag:(NSInteger)tag
 {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:OLocalizedString(@"OK", @"") otherButtonTitles:nil];
     alertView.delegate = delegate;
     alertView.tag = tag;
     

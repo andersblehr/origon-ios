@@ -9,8 +9,7 @@
 #ifndef Origon_Origon_h
 #define Origon_Origon_h
 
-#undef NSLocalizedString
-#define NSLocalizedString(key, prefix) \
+#define OLocalizedString(key, prefix) \
         [[NSBundle mainBundle] localizedStringForKey:([prefix length] ? [prefix stringByAppendingString:key separator:@" "] : key) value:nil table:nil]
 
 #import <AddressBook/AddressBook.h>

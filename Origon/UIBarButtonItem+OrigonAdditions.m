@@ -169,7 +169,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)cancelButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(@"Cancel", @"") target:target action:@selector(didCancelEditing) tag:kBarButtonItemTagCancel];
+    return [self barButtonWithVisuals:OLocalizedString(@"Cancel", @"") target:target action:@selector(didCancelEditing) tag:kBarButtonItemTagCancel];
 }
 
 
@@ -185,7 +185,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 + (instancetype)closeButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = [self doneButtonWithTarget:target];
-    button.title = NSLocalizedString(@"Close", @"");
+    button.title = OLocalizedString(@"Close", @"");
     
     return button;
 }
@@ -193,7 +193,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)doneButtonWithTarget:(id)target
 {
-    return [self doneButtonWithTitle:NSLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing)];
+    return [self doneButtonWithTitle:OLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing)];
 }
 
 
@@ -216,20 +216,20 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)nextButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(@"Next", @"") target:target action:@selector(moveToNextInputField) tag:kBarButtonItemTagNext];
+    return [self barButtonWithVisuals:OLocalizedString(@"Next", @"") target:target action:@selector(moveToNextInputField) tag:kBarButtonItemTagNext];
 }
 
 
 + (instancetype)logoutButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(kActionKeyLogout, kStringPrefixLabel) target:target action:@selector(logout) tag:kBarButtonItemTagLogout];
+    return [self barButtonWithVisuals:OLocalizedString(kActionKeyLogout, kStringPrefixLabel) target:target action:@selector(logout) tag:kBarButtonItemTagLogout];
 }
 
 
 + (instancetype)skipButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = [self cancelButtonWithTarget:target];
-    button.title = NSLocalizedString(@"Skip", @"");
+    button.title = OLocalizedString(@"Skip", @"");
     
     return button;
 }

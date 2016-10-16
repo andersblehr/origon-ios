@@ -161,7 +161,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         _numberOfFailedAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") message:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Activation failed", @"") message:OLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
         } else if ([self targetIs:kTargetEmail]) {
             [self.dismisser dismissModalViewController:self];
         }
@@ -276,7 +276,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"Go back", @""), NSLocalizedString(@"Have code", @""), nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:OLocalizedString(@"If you have the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:nil otherButtonTitles:OLocalizedString(@"Go back", @""), OLocalizedString(@"Have code", @""), nil];
             alert.tag = kAlertTagWelcomeBack;
             
             [alert show];
@@ -353,16 +353,16 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     
     if (self.isOnline) {
         if ([self actionIs:kActionLogin]) {
-            footerContent = NSLocalizedString(@"When you register, you will receive an email with an activation code to use in the next step.", @"");
+            footerContent = OLocalizedString(@"When you register, you will receive an email with an activation code to use in the next step.", @"");
         } else if ([self actionIs:kActionActivate]) {
             if ([self targetIs:kTargetUser]) {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"Your activation code has been sent to %@ ...", @""), [OMeta m].userEmail];
+                footerContent = [NSString stringWithFormat:OLocalizedString(@"Your activation code has been sent to %@ ...", @""), [OMeta m].userEmail];
             } else if ([self targetIs:kTargetEmail]) {
-                footerContent = [NSString stringWithFormat:NSLocalizedString(@"Your activation code has been sent to %@.", @""), self.target];
+                footerContent = [NSString stringWithFormat:OLocalizedString(@"Your activation code has been sent to %@.", @""), self.target];
             }
         }
     } else {
-        footerContent = NSLocalizedString(@"You need a working internet connection to continue.", @"");
+        footerContent = OLocalizedString(@"You need a working internet connection to continue.", @"");
     }
     
     return footerContent;
@@ -470,8 +470,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [self performAuthAction:_authAction];
         } else {
             OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAuthAction];
-            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeyRegister, kStringPrefixTitle) tag:kButtonTagAuthActionRegister];
-            [actionSheet addButtonWithTitle:NSLocalizedString(kActionKeyLogin, kStringPrefixTitle) tag:kButtonTagAuthActionLogin];
+            [actionSheet addButtonWithTitle:OLocalizedString(kActionKeyRegister, kStringPrefixTitle) tag:kButtonTagAuthActionRegister];
+            [actionSheet addButtonWithTitle:OLocalizedString(kActionKeyLogin, kStringPrefixTitle) tag:kButtonTagAuthActionLogin];
             
             [actionSheet show];
         }
@@ -603,12 +603,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 if (_authAction == kAuthActionRegister) {
                     [self didReceiveAuthInfo:data];
                 } else if (_authAction == kAuthActionLogin) {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"New password", @"") message:[NSString stringWithFormat:NSLocalizedString(@"Your password has been reset and a new password has been generated and sent to %@.", @""), _emailField.value]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"New password", @"") message:[NSString stringWithFormat:OLocalizedString(@"Your password has been reset and a new password has been generated and sent to %@.", @""), _emailField.value]];
                     
                     [_passwordField becomeFirstResponder];
                 }
             } else if ([self actionIs:kActionChange]) {
-                [OAlert showAlertWithTitle:@"" message:NSLocalizedString(@"Your password has been changed.", @"")];
+                [OAlert showAlertWithTitle:@"" message:OLocalizedString(@"Your password has been changed.", @"")];
                 
                 [self.dismisser dismissModalViewController:self];
             } else if ([self actionIs:kActionActivate] && [self targetIs:kTargetEmail]) {
@@ -635,7 +635,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 if (_numberOfFailedAttempts == kMaxAttempts) {
                     _numberOfFailedAttempts = 0;
                     
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:NSLocalizedString(@"Did you forget the password?", @"") delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:OLocalizedString(@"Did you forget the password?", @"") delegate:self cancelButtonTitle:OLocalizedString(@"No", @"") otherButtonTitles:OLocalizedString(@"Yes", @""), nil];
                     alert.tag = kAlertTagForgottenPassword;
                     
                     [alert show];
@@ -646,9 +646,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 [_passwordField becomeFirstResponder];
             }
         } else if (response.statusCode == kHTTPStatusNotFound) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"User not found", @"") message:[NSString stringWithFormat:NSLocalizedString(@"No user has registered with the email address %@. Please tap Register if you want to register with this address.", @""), _emailField.value]];
+            [OAlert showAlertWithTitle:OLocalizedString(@"User not found", @"") message:[NSString stringWithFormat:OLocalizedString(@"No user has registered with the email address %@. Please tap Register if you want to register with this address.", @""), _emailField.value]];
         } else if (response.statusCode == kHTTPSTatusConflict) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Already registered", @"") message:[NSString stringWithFormat:NSLocalizedString(@"A user with email address %@ is already registered. Please tap Log in if you want to log in with this address.", @""), _emailField.value]];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Already registered", @"") message:[NSString stringWithFormat:OLocalizedString(@"A user with email address %@ is already registered. Please tap Log in if you want to log in with this address.", @""), _emailField.value]];
         }
     }
 }

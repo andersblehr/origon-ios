@@ -418,7 +418,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (NSString *)shortAddress
 {
-    return [self hasAddress] ? [self.address lines][0] : NSLocalizedString(@"-no address-", @"");
+    return [self hasAddress] ? [self.address lines][0] : OLocalizedString(@"-no address-", @"");
 }
 
 @end
