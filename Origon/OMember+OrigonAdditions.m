@@ -869,7 +869,7 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
 
 - (void)makeActive
 {
-    OMembership *stashMembership = [[self stash] membershipForMember:self];
+    id<OMembership> stashMembership = [[self stash] membershipForMember:self];
     stashMembership.status = kMembershipStatusActive;
     stashMembership.isAdmin = @YES;
     
@@ -1076,12 +1076,12 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
         } else if ([self isGuardianOfWardOfUser]) {
             userCanEdit = YES;
         } else {
-            OOrigo *baseOrigo = [OState s].baseOrigo;
-            OMembership *baseMembership = [baseOrigo userMembership];
+            id<OOrigo> baseOrigo = [OState s].baseOrigo;
+            id<OMembership> baseMembership = [baseOrigo userMembership];
             
             if ([baseMembership isAssociate]) {
                 for (OMember *ward in [[OMeta m].user wards]) {
-                    OMembership *wardMembership = [baseOrigo membershipForMember:ward];
+                    id<OMembership> wardMembership = [baseOrigo membershipForMember:ward];
                     
                     if (![wardMembership isAssociate]) {
                         baseMembership = wardMembership;
@@ -1216,11 +1216,11 @@ static NSMutableDictionary *_cachedPeersByMemberId = nil;
     NSString *recipientLabelFormat = nil;
     
     if (recipientType == kRecipientTypeText) {
-        recipientLabelFormat = NSLocalizedString(@"Send text to %@", @"");
+        recipientLabelFormat = OLocalizedString(@"Send text to %@", @"");
     } else if (recipientType == kRecipientTypeCall) {
-        recipientLabelFormat = NSLocalizedString(@"Call %@", @"");
+        recipientLabelFormat = OLocalizedString(@"Call %@", @"");
     } else if (recipientType == kRecipientTypeEmail) {
-        recipientLabelFormat = NSLocalizedString(@"Send email to %@", @"");
+        recipientLabelFormat = OLocalizedString(@"Send email to %@", @"");
     }
     
     return [NSString stringWithFormat:recipientLabelFormat, [self recipientLabel]];

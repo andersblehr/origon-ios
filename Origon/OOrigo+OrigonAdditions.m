@@ -70,7 +70,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     
     if ([member instance]) {
         member = [member instance];
-        membership = [self membershipForMember:member includeExpired:YES];
+        membership = (OMembership *)[self membershipForMember:member includeExpired:YES];
         
         if (membership) {
             if ([membership hasExpired] || [membership isDeclined]) {
@@ -89,7 +89,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
             }
         } else {
             membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self entityId:[OCrypto UUIDByOverlayingUUID:member.entityId withUUID:self.entityId]];
-            membership.member = member;
+            membership.member = (OMember *)member;
             
             [membership alignWithOrigoIsAssociate:isAssociate];
             
@@ -98,7 +98,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
         
         [OMember clearCachedPeers];
     } else {
-        membership = [[self proxy] addMember:member];
+        membership = (OMembership *)[[self proxy] addMember:member];
     }
     
     return membership;
@@ -107,12 +107,12 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 
 - (id<OMembership>)addResident:(id<OMember>)resident
 {
-    OMembership *residency = nil;
+    id<OMembership> residency = nil;
     
     if (![resident residencies].count || [resident hasAddress]) {
         residency = [self addMember:resident isAssociate:NO];
     } else if (![resident isJuvenile] || ![self hasMember:resident]) {
-        OOrigo *residence = [resident primaryResidence];
+        id<OOrigo> residence = [resident primaryResidence];
         
         if (residence != self) {
             residency = [self addMember:resident isAssociate:NO];
@@ -571,7 +571,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 
 - (id<OMembership>)associateMembershipForMember:(id<OMember>)member
 {
-    OMembership *membership = [self membershipForMember:member];
+    id<OMembership> membership = [self membershipForMember:member];
     
     return [membership isAssociate] ? membership : nil;
 }
@@ -784,7 +784,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     
     if ([member instance] && ![self isCommunity]) {
         member = [member instance];
-        OMembership *directMembership = [self membershipForMember:member];
+        id<OMembership> directMembership = [self membershipForMember:member];
         
         for (OMembership *membership in [self allMemberships]) {
             if (!indirectlyKnows && membership != directMembership && [membership isMirrored]) {
@@ -844,7 +844,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 - (NSArray *)recipientCandidates
 {
     NSArray *recipientCandidates = @[];
-    OMembership *userMembership = [self userMembership];
+    id<OMembership> userMembership = [self userMembership];
     
     if ([self isResidence]) {
         for (OMember *resident in [self residents]) {
@@ -959,15 +959,15 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     BOOL membersCanEdit = self.membersCanEdit;
     
     if (membersCanAdd && membersCanDelete && membersCanEdit) {
-        displayPermissions = NSLocalizedString(@"All", @"");
+        displayPermissions = OLocalizedString(@"All", @"");
     } else if (membersCanAdd || membersCanDelete || membersCanEdit) {
         for (NSString *permissionKey in [self memberPermissionKeys]) {
             if ([self hasPermissionWithKey:permissionKey]) {
-                displayPermissions = [displayPermissions stringByAppendingString:NSLocalizedString(permissionKey, @"") separator:kSeparatorComma];
+                displayPermissions = [displayPermissions stringByAppendingString:OLocalizedString(permissionKey, @"") separator:kSeparatorComma];
             }
         }
     } else {
-        displayPermissions = NSLocalizedString(@"None", @"");
+        displayPermissions = OLocalizedString(@"None", @"");
     }
     
     return [displayPermissions stringByCapitalisingFirstLetter];
@@ -981,7 +981,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     if ([self hasAddress]) {
         singleLineAddress = [self.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];
     } else {
-        singleLineAddress = NSLocalizedString(@"-no address-", @"");
+        singleLineAddress = OLocalizedString(@"-no address-", @"");
     }
     
     return singleLineAddress;
@@ -990,7 +990,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 
 - (NSString *)shortAddress
 {
-    return [self hasAddress] ? [self.address lines][0] : NSLocalizedString(@"-no address-", @"");
+    return [self hasAddress] ? [self.address lines][0] : OLocalizedString(@"-no address-", @"");
 }
 
 
@@ -1007,7 +1007,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
             if ([self hasAddress]) {
                 recipientLabel = [self shortAddress];
             } else {
-                recipientLabel = [NSString stringWithFormat:NSLocalizedString(@"Home: %@", @""), formattedPhoneNumber];
+                recipientLabel = [NSString stringWithFormat:OLocalizedString(@"Home: %@", @""), formattedPhoneNumber];
             }
         } else {
             recipientLabel = formattedPhoneNumber;
@@ -1020,7 +1020,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 
 - (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType
 {
-    return [NSString stringWithFormat:NSLocalizedString(@"Call %@", @""), [[self recipientLabel] stringByLowercasingFirstLetter]];
+    return [NSString stringWithFormat:OLocalizedString(@"Call %@", @""), [[self recipientLabel] stringByLowercasingFirstLetter]];
 }
 
 
@@ -1148,15 +1148,15 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
     if ([unmappedKey isEqualToString:kPropertyKeyName]) {
         if ([self isResidence]) {
             if ([self residents].count > 1) {
-                defaultValue = NSLocalizedString(@"Our place", @"");
+                defaultValue = OLocalizedString(@"Our place", @"");
             } else {
-                defaultValue = NSLocalizedString(@"My place", @"");
+                defaultValue = OLocalizedString(@"My place", @"");
             }
         } else if ([self isPrivate]) {
-            OMember *owner = [self owner];
+            id<OMember> owner = [self owner];
             
             if ([owner isUser] || [owner isWardOfUser]) {
-                defaultValue = NSLocalizedString(@"Friends", @"");
+                defaultValue = OLocalizedString(@"Friends", @"");
             }
         }
     }

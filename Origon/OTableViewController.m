@@ -371,7 +371,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self action:@selector(didCancelEditingTitle)];
         }
         
-        self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Use", @"") target:self action:@selector(didFinishEditingTitle)]];
+        self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem doneButtonWithTitle:OLocalizedString(@"Use", @"") target:self action:@selector(didFinishEditingTitle)]];
         
         [_tableView dim];
     } else {
@@ -920,7 +920,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     mailComposer.mailComposeDelegate = self;
     [mailComposer setToRecipients:toAddresses];
     [mailComposer setCcRecipients:ccAddresses];
-    [mailComposer setMessageBody:NSLocalizedString(@"Sent from Origon - http://origon.co", @"") isHTML:NO];
+    [mailComposer setMessageBody:OLocalizedString(@"Sent from Origon - http://origon.co", @"") isHTML:NO];
     
     [self presentViewController:mailComposer animated:YES completion:nil];
 }
@@ -941,7 +941,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([[UIApplication sharedApplication] canOpenURL:phoneURL]) {
         [[UIApplication sharedApplication] openURL:phoneURL];
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot place call", @"") message:[NSString stringWithFormat:NSLocalizedString(@"Please verify that %@ is a valid phone number.", @""), [OPhoneNumberFormatter formatterForNumber:phoneNumber].formattedNumber]];
+        [OAlert showAlertWithTitle:OLocalizedString(@"Cannot place call", @"") message:[NSString stringWithFormat:OLocalizedString(@"Please verify that %@ is a valid phone number.", @""), [OPhoneNumberFormatter formatterForNumber:phoneNumber].formattedNumber]];
     }
 }
 
@@ -983,14 +983,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [destinationViewController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     
     if (_presentStealthilyOnce) {
-        if ([OMeta iOSVersionIs:@"7"]) {
-            self.navigationController.modalPresentationStyle = UIModalPresentationCurrentContext;
-        } else {
-            destinationViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
-            
-            _needsInvokeViewWillAppearOnModalDismissal = YES;
-        }
+        _needsInvokeViewWillAppearOnModalDismissal = YES;
         
+        destinationViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
         destinationViewController.view.alpha = 0.f;
         
         [self presentViewController:destinationViewController animated:NO completion:^{
@@ -998,10 +993,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             dispatch_after(delay, dispatch_get_main_queue(), ^(void) {
                 destinationViewController.view.alpha = 1.f;
             });
-            
-            if ([OMeta iOSVersionIs:@"7"]) {
-                self.navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
-            }
         }];
         
         _presentStealthilyOnce = NO;
@@ -1032,23 +1023,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
             [_instance willDismissModalViewController:viewController];
-        }
-        
-        if ([OMeta iOSVersionIs:@"8"] && viewController.presentedViewController) {
-            // Dismissal of stacked modal view controllers does not work as documented in iOS 8.
-            // Instead of animating the dismissal of the topmost view controller while simply
-            // removing intermediate view controllers from the stack, all view controllers but
-            // the one immediately on top of the dismissing view controller are removed from the
-            // stack, thus making the latter suddenly appear and then be dismissed with an
-            // animation.
-            //
-            // This workaround (more or less) emulates the intended behaviour by superimposing
-            // a screenshot of the topmost view controller's view on top of the view of the view
-            // controller whose dismissal is animated.
-            
-            UIView *snapshot = [[UIScreen mainScreen] snapshotViewAfterScreenUpdates:NO];
-            [viewController.navigationController setNavigationBarHidden:YES animated:NO];
-            [viewController.view addSubview:snapshot];
         }
         
         _needsReloadOnModalDismissal = [[OMeta m] userIsLoggedIn] && !viewController.didCancel;
@@ -1392,7 +1366,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         CGFloat titleWidth = [self.title sizeWithFont:[UIFont navigationBarTitleFont] maxWidth:CGFLOAT_MAX].width;
         
         if (titleWidth / [OMeta screenSize].width > 0.3f) {
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Back", @"")];
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:OLocalizedString(@"Back", @"")];
         }
     }
     
@@ -1705,7 +1679,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (shouldBeginEditing) {
         _shouldBeginEditingTitleView = NO;
     } else {
-        NSString *buttonTitle = [NSString stringWithFormat:NSLocalizedString(@"Edit %@", @""), [OLanguage inlineNoun:_titleView.placeholder]];
+        NSString *buttonTitle = [NSString stringWithFormat:OLocalizedString(@"Edit %@", @""), [OLanguage inlineNoun:_titleView.placeholder]];
         
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
             _titleView.editing = YES;
@@ -1822,7 +1796,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         buttonTitle = [_instance deleteConfirmationButtonTitleForCellAtIndexPath:indexPath];
     }
     
-    return buttonTitle ? buttonTitle : NSLocalizedString(@"Delete", @"");
+    return buttonTitle ? buttonTitle : OLocalizedString(@"Delete", @"");
 }
 
 

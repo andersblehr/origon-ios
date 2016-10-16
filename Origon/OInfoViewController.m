@@ -116,12 +116,12 @@ static NSInteger const kSectionKeyMembership = 2;
         id<OOrigo> origo = _entity;
         
         if ([origo isResidence]) {
-            self.title = NSLocalizedString(@"About this household", @"");
+            self.title = OLocalizedString(@"About this household", @"");
         } else {
-            self.title = NSLocalizedString(@"About this list", @"");
+            self.title = OLocalizedString(@"About this list", @"");
         }
         
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"About", @"")];
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:OLocalizedString(@"About", @"")];
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
         id<OMember> member = _entity;
         
@@ -169,11 +169,11 @@ static NSInteger const kSectionKeyMembership = 2;
     if (sectionKey == kSectionKeyGeneral) {
         NSString *displayKey = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = NSLocalizedString(displayKey, kStringPrefixLabel);
+        cell.textLabel.text = OLocalizedString(displayKey, kStringPrefixLabel);
         
         if ([displayKey isEqualToString:kPropertyKeyCreatedBy]) {
             if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-                cell.textLabel.text = NSLocalizedString(displayKey, kStringPrefixAlternateLabel);
+                cell.textLabel.text = OLocalizedString(displayKey, kStringPrefixAlternateLabel);
             }
             
             [self listCell:cell loadDetailsForInstigatorWithId:[_entity createdBy]];
@@ -186,9 +186,9 @@ static NSInteger const kSectionKeyMembership = 2;
                 cell.detailTextLabel.text = [origo displayName];
             } else if ([displayKey isEqualToString:kPropertyKeyType]) {
                 if ([origo isPrivate] && [[origo owner] isJuvenile]) {
-                    cell.detailTextLabel.text = NSLocalizedString(@"Private list of friends", @"");
+                    cell.detailTextLabel.text = OLocalizedString(@"Private list of friends", @"");
                 } else {
-                    cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
+                    cell.detailTextLabel.text = OLocalizedString(origo.type, kStringPrefixOrigoTitle);
                 }
                 
                 if (self.isOnline) {
@@ -240,7 +240,7 @@ static NSInteger const kSectionKeyMembership = 2;
                     cell.destinationTarget = [origo admins][0];
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyPermissions]) {
-                cell.textLabel.text = NSLocalizedString(@"User permissions", @"");
+                cell.textLabel.text = OLocalizedString(@"User permissions", @"");
                 cell.detailTextLabel.text = [origo displayPermissions];
                 
                 if (self.isOnline) {
@@ -264,9 +264,9 @@ static NSInteger const kSectionKeyMembership = 2;
                     NSInteger numberOfComponents = components.count;
                     
                     if (numberOfComponents == 1) {
-                        cell.detailTextLabel.text = NSLocalizedString(kOrigoTypePrivate, kStringPrefixTitle);
+                        cell.detailTextLabel.text = OLocalizedString(kOrigoTypePrivate, kStringPrefixTitle);
                     } else if (numberOfComponents == 2) {
-                        cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), components[1]];
+                        cell.detailTextLabel.text = [NSString stringWithFormat:OLocalizedString(@"%@'s friends", @""), components[1]];
                     }
                 } else {
                     id<OOrigo> createdIn = [[OMeta m].context entityWithId:components[0]];
@@ -280,19 +280,19 @@ static NSInteger const kSectionKeyMembership = 2;
                     }
                 }
             } else if ([displayKey isEqualToString:kPropertyKeyActiveSince]) {
-                cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"On %@", @""), [OMeta m].appName];
+                cell.textLabel.text = [NSString stringWithFormat:OLocalizedString(@"On %@", @""), [OMeta m].appName];
                 
                 if ([member isManaged]) {
-                    cell.detailTextLabel.text = NSLocalizedString(@"Through household", @"");
+                    cell.detailTextLabel.text = OLocalizedString(@"Through household", @"");
                 } else {
-                    cell.detailTextLabel.text = NSLocalizedString(@"No", @"");
+                    cell.detailTextLabel.text = OLocalizedString(@"No", @"");
                 }
             }
         }
     } else if (sectionKey == kSectionKeyParents) {
         NSString *propertyKey = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixLabel);
+        cell.textLabel.text = OLocalizedString(propertyKey, kStringPrefixLabel);
         
         if ([propertyKey isEqualToString:kPropertyKeyMotherId]) {
             cell.detailTextLabel.text = [_entity mother].name;
@@ -310,12 +310,12 @@ static NSInteger const kSectionKeyMembership = 2;
         NSString *propertyKey = [self dataAtIndexPath:indexPath];
         
         if ([propertyKey isEqualToString:kPropertyKeyType]) {
-            cell.textLabel.text = NSLocalizedString(@"My membership", @"");
+            cell.textLabel.text = OLocalizedString(@"My membership", @"");
             
             if ([origo userIsAdmin]) {
                 cell.detailTextLabel.text = [[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter];
             } else if ([membership organiserRoles].count) {
-                cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrganiserTitle);
+                cell.detailTextLabel.text = OLocalizedString(origo.type, kStringPrefixOrganiserTitle);
             } else if ([membership parentRoles].count) {
                 cell.detailTextLabel.text = [[OLanguage nouns][_parentContact_][singularIndefinite] stringByCapitalisingFirstLetter];
             } else if ([[OMeta m].user wardsInOrigo:origo].count) {
@@ -323,12 +323,12 @@ static NSInteger const kSectionKeyMembership = 2;
             } else if ([membership roles].count) {
                 cell.detailTextLabel.text = [[OUtil commaSeparatedListOfNouns:[membership roles] conjoin:NO] stringByCapitalisingFirstLetter];
             } else if ([membership isParticipancy]) {
-                cell.detailTextLabel.text = NSLocalizedString(@"Regular member", @"");
+                cell.detailTextLabel.text = OLocalizedString(@"Regular member", @"");
             } else if ([membership isCommunityMembership]) {
-                cell.detailTextLabel.text = NSLocalizedString(@"Community member", @"");
+                cell.detailTextLabel.text = OLocalizedString(@"Community member", @"");
             }
         } else {
-            cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixLabel);
+            cell.textLabel.text = OLocalizedString(propertyKey, kStringPrefixLabel);
             
             if ([propertyKey isEqualToString:kPropertyKeyCreatedBy]) {
                 [self listCell:cell loadDetailsForInstigatorWithId:membership.createdBy];
@@ -364,25 +364,25 @@ static NSInteger const kSectionKeyMembership = 2;
     
     if (sectionKey == kSectionKeyGeneral) {
         if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Created %@.", @""), [[_entity dateCreated] localisedDateString]];
+            footerContent = [NSString stringWithFormat:OLocalizedString(@"Created %@.", @""), [[_entity dateCreated] localisedDateString]];
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered %@.", @""), [[_entity dateCreated] localisedDateString]];
+            footerContent = [NSString stringWithFormat:OLocalizedString(@"Registered %@.", @""), [[_entity dateCreated] localisedDateString]];
             
             if ([_entity isActive] && ([_entity isHousemateOfUser] || [_entity isTeenOrOlder])) {
-                footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active on %@ since %@.", @""), [OMeta m].appName, [[_entity activeSince] localisedDateString]] separator:kSeparatorNewline];
+                footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:OLocalizedString(@"Active on %@ since %@.", @""), [OMeta m].appName, [[_entity activeSince] localisedDateString]] separator:kSeparatorNewline];
             }
         }
         
         if ([_entity modifiedBy]) {
-            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified %@.", @""), [[_entity dateReplicated] localisedDateString]] separator:kSeparatorNewline];
+            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:OLocalizedString(@"Last modified %@.", @""), [[_entity dateReplicated] localisedDateString]] separator:kSeparatorNewline];
         }
     } else if (sectionKey == kSectionKeyMembership) {
         id<OMembership> membership = [_entity userMembership];
         
-        footerContent = [NSString stringWithFormat:NSLocalizedString(@"Registered %@.", @""), [membership.dateCreated localisedDateString]];
+        footerContent = [NSString stringWithFormat:OLocalizedString(@"Registered %@.", @""), [membership.dateCreated localisedDateString]];
         
         if (membership.modifiedBy) {
-            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified %@.", @""), [membership.dateReplicated localisedDateString]] separator:kSeparatorNewline];
+            footerContent = [footerContent stringByAppendingString:[NSString stringWithFormat:OLocalizedString(@"Last modified %@.", @""), [membership.dateReplicated localisedDateString]] separator:kSeparatorNewline];
         }
     }
     

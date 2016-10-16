@@ -63,7 +63,7 @@
                 commaSeparatedList = [NSMutableString stringWithString:stringItem];
             } else {
                 if (conjoin && string == [strings lastObject]) {
-                    [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
+                    [commaSeparatedList appendString:OLocalizedString(@" and ", @"")];
                 } else {
                     [commaSeparatedList appendString:kSeparatorComma];
                 }
@@ -106,7 +106,7 @@
         NSString *lastName2 = [[[elders[1] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
         
         if ([lastName1 isEqualToString:lastName2]) {
-            label = [NSString stringWithFormat:@"%@%@%@ %@", [elders[0] givenName], NSLocalizedString(@" and ", @""), [elders[1] givenName], lastName1];
+            label = [NSString stringWithFormat:@"%@%@%@ %@", [elders[0] givenName], OLocalizedString(@" and ", @""), [elders[1] givenName], lastName1];
         }
     }
     

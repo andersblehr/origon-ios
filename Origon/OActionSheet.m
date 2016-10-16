@@ -67,7 +67,7 @@
 
 - (void)show
 {
-    [self addButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
+    [self addButtonWithTitle:OLocalizedString(@"Cancel", @"")];
     self.cancelButtonIndex = self.numberOfButtons - 1;
     
     UIViewController *viewController = (UIViewController *)[OState s].viewController;

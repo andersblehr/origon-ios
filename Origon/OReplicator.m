@@ -189,7 +189,7 @@
             [[OMeta m] logout];
         }
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Authentication required", @"") message:NSLocalizedString(@"You have been logged out. Please log in again to continue using Origon on this device.", @"")];
+        [OAlert showAlertWithTitle:OLocalizedString(@"Authentication required", @"") message:OLocalizedString(@"You have been logged out. Please log in again to continue using Origon on this device.", @"")];
         
     }
 }

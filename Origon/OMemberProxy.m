@@ -31,8 +31,8 @@
     [instance stash];
     
     if (![instance isUser]) {
-        OOrigo *baseOrigo = [OState s].baseOrigo;
-        OMember *baseMember = [OState s].baseMember;
+        id<OOrigo> baseOrigo = [OState s].baseOrigo;
+        id<OMember> baseMember = [OState s].baseMember;
         
         if ([baseOrigo isPrivate]) {
             instance.createdIn = kOrigoTypePrivate;

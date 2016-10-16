@@ -61,14 +61,14 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     NSString *subtitle = nil;
     
     if (_toRecipients.count) {
-        title = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"To", @""), [OUtil commaSeparatedListOfMembers:_toRecipients conjoin:NO subjective:YES]];
+        title = [NSString stringWithFormat:@"%@: %@", OLocalizedString(@"To", @""), [OUtil commaSeparatedListOfMembers:_toRecipients conjoin:NO subjective:YES]];
     } else {
-        title = NSLocalizedString(@"Recipients", @"");
+        title = OLocalizedString(@"Recipients", @"");
     }
     
     if ([self targetIs:kTargetEmail]) {
         if (_ccRecipients.count) {
-            subtitle = [NSString stringWithFormat:@"%@: %@", NSLocalizedString(@"Cc", @""), [OUtil commaSeparatedListOfMembers:_ccRecipients conjoin:NO subjective:YES]];
+            subtitle = [NSString stringWithFormat:@"%@: %@", OLocalizedString(@"Cc", @""), [OUtil commaSeparatedListOfMembers:_ccRecipients conjoin:NO subjective:YES]];
         } else {
             subtitle = nil;
         }
@@ -114,11 +114,11 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
     
     if ((!groups.count && (!_titleSegments || [_origo isCommunity])) || (parentsOnly && !isClass)) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
     } else {
         BOOL needsEverybody = NO;
         
-        actionSheet.title = NSLocalizedString(@"Select recipients", @"");
+        actionSheet.title = OLocalizedString(@"Select recipients", @"");
 
         if (hasMembers) {
             if (_titleSegments) {
@@ -127,7 +127,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                 if ([_origo isPrivate] || [_origo isStandard]) {
                     buttonTitle = [_origo displayName];
                 } else {
-                    buttonTitle = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+                    buttonTitle = OLocalizedString(_origo.type, kStringPrefixMembersTitle);
                 }
                 
                 [actionSheet addButtonWithTitle:buttonTitle tag:kButtonTagGroupMembers];
@@ -137,7 +137,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                 NSString *buttonTitle = nil;
                 
                 if (_titleSegments) {
-                    buttonTitle = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(_origo.type, kStringPrefixMembersTitle), group];
+                    buttonTitle = [NSString stringWithFormat:OLocalizedString(@"%@ in %@", @""), OLocalizedString(_origo.type, kStringPrefixMembersTitle), group];
                 } else {
                     buttonTitle = group;
                 }
@@ -149,21 +149,21 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         if (hasParents) {
             needsEverybody = hasMembers;
             
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents", @"") tag:kButtonTagGroupParents];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Parents", @"") tag:kButtonTagGroupParents];
             
             for (NSString *group in groups) {
-                [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Parents in %@", @""), group] tag:kButtonTagGroupParentsInGroup];
+                [actionSheet addButtonWithTitle:[NSString stringWithFormat:OLocalizedString(@"Parents in %@", @""), group] tag:kButtonTagGroupParentsInGroup];
             }
             
             if ([_origo isOfType:@[kOrigoTypePreschoolClass, kOrigoTypeSchoolClass]]) {
                 if ([_origo userIsOrganiser]) {
-                    [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents of boys", @"") tag:kButtonTagGroupParentsOfBoys];
-                    [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents of girls", @"") tag:kButtonTagGroupParentsOfGirls];
+                    [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of boys", @"") tag:kButtonTagGroupParentsOfBoys];
+                    [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of girls", @"") tag:kButtonTagGroupParentsOfGirls];
                 } else if (![_origo userIsMember]) {
                     if ([[OState s].currentMember isMale]) {
-                        [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents of boys", @"") tag:kButtonTagGroupParentsOfBoys];
+                        [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of boys", @"") tag:kButtonTagGroupParentsOfBoys];
                     } else {
-                        [actionSheet addButtonWithTitle:NSLocalizedString(@"Parents of girls", @"") tag:kButtonTagGroupParentsOfGirls];
+                        [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of girls", @"") tag:kButtonTagGroupParentsOfGirls];
                     }
                 }
             }
@@ -172,11 +172,11 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         if (hasOrganisers) {
             needsEverybody = needsEverybody || hasMembers || hasParents;
             
-            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) tag:kButtonTagGroupOrganisers];
+            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixOrganisersTitle) tag:kButtonTagGroupOrganisers];
         }
         
         if (needsEverybody) {
-            [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Everybody", @""), [NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
+            [actionSheet addButtonWithTitle:[NSString stringWithFormat:OLocalizedString(@"Everybody", @""), [OLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
         }
     }
     
@@ -217,7 +217,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     mailComposer.mailComposeDelegate = self;
     [mailComposer setToRecipients:toRecipients];
     [mailComposer setCcRecipients:ccRecipients];
-    [mailComposer setMessageBody:NSLocalizedString(@"Sent from Origon - http://origon.co", @"") isHTML:NO];
+    [mailComposer setMessageBody:OLocalizedString(@"Sent from Origon - http://origon.co", @"") isHTML:NO];
     
     [self presentViewController:mailComposer animated:YES completion:nil];
 }
@@ -264,7 +264,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     
     if ([self targetIs:kTargetAllContacts]) {
         if ([[OMeta m].user favourites].count) {
-            _titleSegments = [self titleSegmentsWithTitles:@[NSLocalizedString(@"Favourites", @""), NSLocalizedString(@"Others", @"")]];
+            _titleSegments = [self titleSegmentsWithTitles:@[OLocalizedString(@"Favourites", @""), OLocalizedString(@"Others", @"")]];
             
             if ([self aspectIs:kAspectFavourites]) {
                 _titleSegments.selectedSegmentIndex = kTitleSegmentFavourites;
@@ -276,7 +276,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         NSArray *segmentTitles = nil;
         
         if ([_origo isCommunity]) {
-            segmentTitles = @[NSLocalizedString(_origo.type, kStringPrefixMembersTitle), NSLocalizedString(@"Households", @"")];
+            segmentTitles = @[OLocalizedString(_origo.type, kStringPrefixMembersTitle), OLocalizedString(@"Households", @"")];
             
             _segmentMembers = 0;
             _segmentGrouped = 1;
@@ -314,7 +314,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                 }
                 
                 if (listsMembers) {
-                    segmentTitles = @[NSLocalizedString(_origo.type, kStringPrefixMembersTitle), NSLocalizedString(@"Parents", @"")];
+                    segmentTitles = @[OLocalizedString(_origo.type, kStringPrefixMembersTitle), OLocalizedString(@"Parents", @"")];
                     
                     _segmentMembers = 0;
                     
@@ -324,12 +324,12 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                         _segmentParents = 1;
                         _segmentGrouped = 2;
                         
-                        segmentTitles = [segmentTitles arrayByAddingObject:NSLocalizedString(@"Grouped", @"")];
+                        segmentTitles = [segmentTitles arrayByAddingObject:OLocalizedString(@"Grouped", @"")];
                     }
                 } else if (userIsOrganiser && showsOrganisers) {
-                    segmentTitles = @[NSLocalizedString(@"Parents", @"")];
+                    segmentTitles = @[OLocalizedString(@"Parents", @"")];
                 } else if (!userIsOrganiser) {
-                    segmentTitles = @[NSLocalizedString(@"Parents", @""), NSLocalizedString(@"Grouped", @"")];
+                    segmentTitles = @[OLocalizedString(@"Parents", @""), OLocalizedString(@"Grouped", @"")];
                     
                     _segmentParents = 0;
                     _segmentGrouped = 1;
@@ -344,12 +344,12 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                 _segmentMembers = 0;
                 
                 if (showsOrganisers) {
-                    segmentTitles = @[NSLocalizedString(_origo.type, kStringPrefixMembersTitle)];
+                    segmentTitles = @[OLocalizedString(_origo.type, kStringPrefixMembersTitle)];
                 }
             }
 
             if (showsOrganisers) {
-                segmentTitles = [segmentTitles arrayByAddingObject:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
+                segmentTitles = [segmentTitles arrayByAddingObject:OLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
                 
                 _segmentOrganisers = segmentTitles.count - 1;
             }
@@ -410,8 +410,8 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self targetIs:kTargetEmail] && !cell.checkedStateAccessoryViews) {
-        UILabel *toLabel = [OLabel genericLabelWithText:NSLocalizedString(@"To", @"")];
-        UILabel *ccLabel = [OLabel genericLabelWithText:NSLocalizedString(@"Cc", @"")];
+        UILabel *toLabel = [OLabel genericLabelWithText:OLocalizedString(@"To", @"")];
+        UILabel *ccLabel = [OLabel genericLabelWithText:OLocalizedString(@"Cc", @"")];
         
         cell.checkedStateAccessoryViews = @[[NSNull null], toLabel, ccLabel];
     }

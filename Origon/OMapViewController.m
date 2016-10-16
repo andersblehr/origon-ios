@@ -81,13 +81,13 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 
 - (void)presentStartingPointSheet
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Select starting point for directions", @"") delegate:self tag:kActionSheetTagStartingPoint];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:OLocalizedString(@"Select starting point for directions", @"") delegate:self tag:kActionSheetTagStartingPoint];
     
     for (id<OOrigo> address in [[OMeta m].user addresses]) {
         [actionSheet addButtonWithTitle:[address shortAddress]];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Current location", @"") tag:kButtonTagStartingPointCurrentLocation];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Current location", @"") tag:kButtonTagStartingPointCurrentLocation];
     
     [actionSheet show];
 }
@@ -98,9 +98,9 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 - (void)showAlertForError:(NSError *)error info:(id)info
 {
     if (error.domain == kCLErrorDomain && error.code == kCLErrorGeocodeFoundNoResult) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown address", @"") message:[NSString stringWithFormat:NSLocalizedString(@"No known address matches %@.", @""), info]];
+        [OAlert showAlertWithTitle:OLocalizedString(@"Unknown address", @"") message:[NSString stringWithFormat:OLocalizedString(@"No known address matches %@.", @""), info]];
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Error", @"") message:NSLocalizedString(@"An error has occurred. Please try again another time.", @"")];
+        [OAlert showAlertWithTitle:OLocalizedString(@"Error", @"") message:OLocalizedString(@"An error has occurred. Please try again another time.", @"")];
     }
     
     self.navigationItem.leftBarButtonItem.enabled = NO;
@@ -109,7 +109,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 
 - (void)showAmbiguousAddressAlertForOrigo:(id<OOrigo>)origo
 {
-    [OAlert showAlertWithTitle:NSLocalizedString(@"Unclear address", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The address %@ is unclear and could not be not found in the map.", @""), [origo singleLineAddress]]];
+    [OAlert showAlertWithTitle:OLocalizedString(@"Unclear address", @"") message:[NSString stringWithFormat:OLocalizedString(@"The address %@ is unclear and could not be not found in the map.", @""), [origo singleLineAddress]]];
     
     self.navigationItem.leftBarButtonItem.enabled = NO;
 }
@@ -146,10 +146,10 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
         } else if (status == kCLAuthorizationStatusAuthorizedWhenInUse) {
             [self presentStartingPointSheet];
         } else if (status == kCLAuthorizationStatusDenied) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot give directions", @"") message:NSLocalizedString(@"Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon.", @"")];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Cannot give directions", @"") message:OLocalizedString(@"Location services are disabled for Origon. Open Settings and go to Privacy > Location Services to enable location services for Origon.", @"")];
         }
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot give directions", @"") message:NSLocalizedString(@"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.", @"")];
+        [OAlert showAlertWithTitle:OLocalizedString(@"Cannot give directions", @"") message:OLocalizedString(@"Open Settings, go to Privacy > Location Services and turn on location services in order to get directions.", @"")];
     }
 }
 
@@ -172,7 +172,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
     
     [self.view addSubview:_mapView];
     
-    _titleSegments = [self titleSegmentsWithTitles:@[NSLocalizedString(@"Standard", @""), NSLocalizedString(@"Hybrid", @""), NSLocalizedString(@"Satellite", @"")]];
+    _titleSegments = [self titleSegmentsWithTitles:@[OLocalizedString(@"Standard", @""), OLocalizedString(@"Hybrid", @""), OLocalizedString(@"Satellite", @"")]];
     _titleSegments.selectedSegmentIndex = kTitleSegmentStandard;
 
     id<OOrigo> origo = self.target;

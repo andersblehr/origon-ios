@@ -84,7 +84,7 @@ static NSInteger const kSectionKeyValues = 0;
     if ([self targetIs:kTargetSetting]) {
         _settingKey = self.target;
         
-        self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
+        self.title = OLocalizedString(_settingKey, kStringPrefixSettingTitle);
     } else if ([self targetIs:kTargetParent]) {
         _isNoValuePicker = YES;
         _ward = self.meta;
@@ -95,16 +95,16 @@ static NSInteger const kSectionKeyValues = 0;
             self.usesPlainTableViewStyle = NO;
         }
         
-        self.title = NSLocalizedString(self.target, kStringPrefixLabel);
+        self.title = OLocalizedString(self.target, kStringPrefixLabel);
     } else if ([self targetIs:kTargetOrigoType]) {
         _origo = self.state.currentOrigo;
         _valuesByKey = [NSMutableDictionary dictionary];
 
-        self.title = NSLocalizedString(@"Type", @"");
+        self.title = OLocalizedString(@"Type", @"");
     } else if ([self targetIs:kTargetGender]) {
         _valuesByKey = [NSMutableDictionary dictionary];
         
-        self.title = NSLocalizedString(kPropertyKeyGender, kStringPrefixLabel);
+        self.title = OLocalizedString(kPropertyKeyGender, kStringPrefixLabel);
     } else {
         self.usesSectionIndexTitles = YES;
         
@@ -113,12 +113,12 @@ static NSInteger const kSectionKeyValues = 0;
         _isNoValuePicker = YES;
         
         if ([self targetIs:kTargetMember]) {
-            self.title = NSLocalizedString(@"Listed elsewhere", @"");
+            self.title = OLocalizedString(@"Listed elsewhere", @"");
         } else if ([self targetIs:kTargetMembers]) {
             if ([_origo isCommunity]) {
-                self.titleView = [OTitleView titleViewWithTitle:NSLocalizedString(@"Households", @"")];
+                self.titleView = [OTitleView titleViewWithTitle:OLocalizedString(@"Households", @"")];
             } else {
-                self.titleView = [OTitleView titleViewWithTitle:NSLocalizedString(@"Listed elsewhere", @"")];
+                self.titleView = [OTitleView titleViewWithTitle:OLocalizedString(@"Listed elsewhere", @"")];
             }
         } else if ([self targetIs:kTargetAffiliation]) {
             if ([@[kTargetRole, kTargetGroup] containsObject:self.target]) {
@@ -132,21 +132,21 @@ static NSInteger const kSectionKeyValues = 0;
             if ([self aspectIs:kAspectParentRole]) {
                 _affiliationType = kAffiliationTypeParentRole;
                 _pickedValues = _affiliation ? [[_origo parentsWithRole:_affiliation] mutableCopy] : nil;
-                placeholder = NSLocalizedString(@"Responsibility", @"");
+                placeholder = OLocalizedString(@"Responsibility", @"");
             } else if ([self aspectIs:kAspectOrganiserRole]) {
                 _affiliationType = kAffiliationTypeOrganiserRole;
                 _pickedValues = _affiliation ? [[_origo organisersWithRole:_affiliation] mutableCopy] : nil;
-                placeholder = NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle);
+                placeholder = OLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle);
             } else if ([self aspectIs:kAspectMemberRole]) {
                 _affiliationType = kAffiliationTypeMemberRole;
                 _pickedValues = _affiliation ? [[_origo membersWithRole:_affiliation] mutableCopy] : nil;
-                placeholder = NSLocalizedString(@"Responsibility", @"");
+                placeholder = OLocalizedString(@"Responsibility", @"");
             } else if ([self aspectIs:kAspectGroup]) {
                 _affiliationType = kAffiliationTypeGroup;
                 _pickedValues = _affiliation ? [[_origo membersOfGroup:_affiliation] mutableCopy] : nil;
-                placeholder = NSLocalizedString(@"Group name", @"");
+                placeholder = OLocalizedString(@"Group name", @"");
             } else if ([self targetIs:kTargetAdmins]) {
-                _affiliation = NSLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
+                _affiliation = OLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
                 _pickedValues = [[_origo admins] mutableCopy];
             }
             
@@ -163,7 +163,7 @@ static NSInteger const kSectionKeyValues = 0;
         
         if (_isMultiValuePicker) {
             if ([self targetIs:kTargetMembers]) {
-                self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Add", @"") target:self];
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTitle:OLocalizedString(@"Add", @"") target:self];
             } else {
                 self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
             }
@@ -188,7 +188,7 @@ static NSInteger const kSectionKeyValues = 0;
         }
     } else if ([self targetIs:kTargetOrigoType]) {
         for (NSString *origoType in [self eligibleOrigoTypesForOrigo:_origo]) {
-            _valuesByKey[origoType] = NSLocalizedString(origoType, kStringPrefixOrigoTitle);
+            _valuesByKey[origoType] = OLocalizedString(origoType, kStringPrefixOrigoTitle);
         }
         
         [self setData:[[_valuesByKey allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] forSectionWithKey:kSectionKeyValues];
@@ -237,7 +237,7 @@ static NSInteger const kSectionKeyValues = 0;
         
         cell.textLabel.text = origoTitle;
         
-        if ([origoTitle isEqualToString:NSLocalizedString(_origo.type, kStringPrefixOrigoTitle)]) {
+        if ([origoTitle isEqualToString:OLocalizedString(_origo.type, kStringPrefixOrigoTitle)]) {
             cell.checked = YES;
         }
     } else if ([self targetIs:kTargetGender]) {
@@ -264,7 +264,7 @@ static NSInteger const kSectionKeyValues = 0;
             }
             
             if (!isActive) {
-                cell.textLabel.text = [cell.textLabel.text stringByAppendingFormat:@" (%@)", NSLocalizedString(@"waiting...", @"")];
+                cell.textLabel.text = [cell.textLabel.text stringByAppendingFormat:@" (%@)", OLocalizedString(@"waiting...", @"")];
                 cell.textLabel.textColor = [UIColor valueTextColour];
                 cell.detailTextLabel.textColor = [UIColor valueTextColour];
                 cell.selectable = NO;
@@ -333,7 +333,7 @@ static NSInteger const kSectionKeyValues = 0;
     if ([self targetIs:kTargetParent]) {
         NSString *hisHerParent = [OLanguage labelForParentWithGender:_parentGender relativeToOffspringWithGender:_ward.gender];
         
-        footerText = [NSString stringWithFormat:NSLocalizedString(@"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.", @""), [_ward givenName], hisHerParent, hisHerParent];
+        footerText = [NSString stringWithFormat:OLocalizedString(@"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.", @""), [_ward givenName], hisHerParent, hisHerParent];
     }
     
     return footerText;

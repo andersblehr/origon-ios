@@ -18,9 +18,9 @@
     NSString *friendTerm = nil;
     
     if ([member isMale]) {
-        friendTerm = NSLocalizedString(@"friend [male]", @"");
+        friendTerm = OLocalizedString(@"friend [male]", @"");
     } else {
-        friendTerm = NSLocalizedString(@"friend [female]", @"");
+        friendTerm = OLocalizedString(@"friend [female]", @"");
     }
     
     return friendTerm;
@@ -99,30 +99,30 @@
                             isParentByWard[ward.entityId] = @([ward hasParent:member]);
                             
                             if (![ward participanciesIncludeHidden:YES].count) {
-                                associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [[origo owner] givenName]];
+                                associationsByWard[ward.entityId] = [NSString stringWithFormat:OLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [[origo owner] givenName]];
                             } else if (![origo isPrivate]) {
                                 if ([ward isWardOfUser]) {
                                     associationsByWard[ward.entityId] = [ward givenName];
                                 } else {
-                                    associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
+                                    associationsByWard[ward.entityId] = [NSString stringWithFormat:OLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
                                 }
                             }
                         }
                     }
                 } else {
                     if ([member isJuvenile] && ![member participanciesIncludeHidden:YES].count) {
-                        association = [[NSString stringWithFormat:NSLocalizedString(@"%@ [friend of] %@", @""), [self friendTermForMember:member], [[origo owner] givenName]] stringByCapitalisingFirstLetter];
+                        association = [[NSString stringWithFormat:OLocalizedString(@"%@ [friend of] %@", @""), [self friendTermForMember:member], [[origo owner] givenName]] stringByCapitalisingFirstLetter];
                     } else if ([membership organiserRoles].count) {
-                        association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
+                        association = [NSString stringWithFormat:OLocalizedString(@"%@ in %@", @""), OLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
                     } else if ([membership isListing]) {
-                        association = [NSString stringWithFormat:NSLocalizedString(@"Listed in %@", @""), membership.origo.name];
+                        association = [NSString stringWithFormat:OLocalizedString(@"Listed in %@", @""), membership.origo.name];
                     } else {
                         NSArray *memberRoles = [membership memberRoles];
                         
                         if (memberRoles.count) {
-                            association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
+                            association = [NSString stringWithFormat:OLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
                         } else {
-                            association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixMemberTitle), origo.name];
+                            association = [NSString stringWithFormat:OLocalizedString(@"%@ in %@", @""), OLocalizedString(origo.type, kStringPrefixMemberTitle), origo.name];
                         }
                     }
                 }
@@ -131,7 +131,7 @@
             id<OMember> partner = [member partner];
             
             if (partner) {
-                association = [NSString stringWithFormat:NSLocalizedString(@"Lives with %@", @""), partner.name];
+                association = [NSString stringWithFormat:OLocalizedString(@"Lives with %@", @""), partner.name];
             }
         }
         
@@ -144,7 +144,7 @@
             
             NSString *parentLabel = isParentOfAll ? [member parentNoun][singularIndefinite] : [member guardianNoun][singularIndefinite];
             
-            association = [NSString stringWithFormat:NSLocalizedString(@"%@ [guardian of] %@", @""), [parentLabel stringByCapitalisingFirstLetter], [OUtil commaSeparatedListOfNames:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
+            association = [NSString stringWithFormat:OLocalizedString(@"%@ [guardian of] %@", @""), [parentLabel stringByCapitalisingFirstLetter], [OUtil commaSeparatedListOfNames:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
         }
         
         self.textLabel.text = [member displayNameInOrigo:origo];

@@ -449,7 +449,7 @@ static NSString * const kPlaceholderAffiliation = @"<<placeholder>>";
                 }
             } else if ([self.member isUser]) {
                 for (OMember *housemate in [self.member housemates]) {
-                    OMembership *housemateMembership = [self.origo membershipForMember:housemate];
+                    id<OMembership> housemateMembership = [self.origo membershipForMember:housemate];
                     
                     if (housemateMembership && ![housemateMembership isAssociate]) {
                         [housemateMembership expire];

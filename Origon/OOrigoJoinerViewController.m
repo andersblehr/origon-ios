@@ -43,9 +43,9 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     NSString *footerText = nil;
     
     if ([_origo isJuvenile]) {
-        footerText = NSLocalizedString(@"The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.", @"");
+        footerText = OLocalizedString(@"The join code can be shared with the parents of children you wish to include in this list. They can then join their children to the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.", @"");
     } else {
-        footerText = NSLocalizedString(@"The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.", @"");
+        footerText = OLocalizedString(@"The join code can be shared with those you wish to include in this list. They can then join the list themselves by tapping the join button (circled plus sign) in the start view and entering the join code.", @"");
     }
     
     return footerText;
@@ -54,7 +54,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
 
 - (void)showJoinCodeSetAlertAndReplicate
 {
-    [OAlert showAlertWithTitle:NSLocalizedString(@"The code has been set", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The join code for %@ is '%@'. You may now share it with those you wish to include in the list.", @""), _origo.name, _origo.joinCode]];
+    [OAlert showAlertWithTitle:OLocalizedString(@"The code has been set", @"") message:[NSString stringWithFormat:OLocalizedString(@"The join code for %@ is '%@'. You may now share it with those you wish to include in the list.", @""), _origo.name, _origo.joinCode]];
     
     [[OMeta m].replicator replicateIfNeeded];
 }
@@ -91,21 +91,21 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
         } else if (existingMembership) {
             if ([existingMembership isActive]) {
                 if ([_member isUser]) {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Already a member", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You are already a member of %@.", @""), origo.name, _joinCode, origo.name]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"Already a member", @"") message:[NSString stringWithFormat:OLocalizedString(@"%@ has join code '%@'. You are already a member of %@.", @""), origo.name, _joinCode, origo.name]];
                 } else {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Already a member", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. %@ is already a member of %@.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"Already a member", @"") message:[NSString stringWithFormat:OLocalizedString(@"%@ has join code '%@'. %@ is already a member of %@.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
                 }
             } else if ([existingMembership isRequested]) {
                 if ([_member isUser]) {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Awaiting approval", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, origo.name]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"Awaiting approval", @"") message:[NSString stringWithFormat:OLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, origo.name]];
                 } else {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Awaiting approval", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"Awaiting approval", @"") message:[NSString stringWithFormat:OLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. You will get access as soon as the request has been approved.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
                 }
             } else if ([existingMembership isDeclined]) {
                 if ([_member isUser]) {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request declined", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view.", @""), origo.name, _joinCode, origo.name]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"Join request declined", @"") message:[NSString stringWithFormat:OLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@. The request was declined. You can delete or resend the request in the start view.", @""), origo.name, _joinCode, origo.name]];
                 } else {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"Join request denied", @"") message:[NSString stringWithFormat:NSLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"Join request denied", @"") message:[NSString stringWithFormat:OLocalizedString(@"%@ has join code '%@'. You have already sent a request to join %@ to %@. The request was declined. You can delete or resend the request in the start view.", @""), origo.name, _joinCode, [_member givenName], origo.name]];
                 }
             }
             
@@ -124,13 +124,13 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     if ([self targetIs:kTargetJoinCode]) {
         _origo = self.state.currentOrigo;
         
-        self.title = NSLocalizedString(kPropertyKeyJoinCode, kStringPrefixLabel);
+        self.title = OLocalizedString(kPropertyKeyJoinCode, kStringPrefixLabel);
     } else if ([self targetIs:kTargetOrigo]) {
         _member = self.state.currentMember;
         
-        self.title = NSLocalizedString(@"Join list", @"");
+        self.title = OLocalizedString(@"Join list", @"");
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Done", @"") target:self action:@selector(fetchOrigo)];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTitle:OLocalizedString(@"Done", @"") target:self action:@selector(fetchOrigo)];
     }
     
     self.requiresSynchronousServerCalls = YES;
@@ -162,7 +162,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     if ([cell isInlineCell]) {
         _joinCodeCell = cell;
         joinCodeField = [_joinCodeCell inlineField];
-        joinCodeField.placeholder = NSLocalizedString(kPropertyKeyJoinCode, kStringPrefixLabel);
+        joinCodeField.placeholder = OLocalizedString(kPropertyKeyJoinCode, kStringPrefixLabel);
     }
     
     if ([self targetIs:kTargetJoinCode] || !_origo) {
@@ -183,7 +183,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
         }
     } else if (_origo) {
         cell.textLabel.text = _origo.name;
-        cell.detailTextLabel.text = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
+        cell.detailTextLabel.text = OLocalizedString(_origo.type, kStringPrefixOrigoTitle);
         
         if (self.isOnline) {
             [cell loadImageWithName:kIconFileJoin tintColour:[UIColor globalTintColour]];
@@ -214,15 +214,15 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     if ([self targetIs:kTargetJoinCode]) {
         if ([_origo userIsAdmin]) {
             OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagJoinCode];
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit join code", @"") tag:kButtonTagJoinCodeEdit];
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Delete join code", @"") tag:kButtonTagJoinCodeDelete];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Edit join code", @"") tag:kButtonTagJoinCodeEdit];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Delete join code", @"") tag:kButtonTagJoinCodeDelete];
             actionSheet.destructiveButtonIndex = 1;
             
             [actionSheet show];
         }
     } else if ([self targetIs:kTargetOrigo]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagJoin];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Send join request", @"")];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Send join request", @"")];
         
         [actionSheet show];
     }
@@ -246,9 +246,9 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     NSString *headerContent = nil;
     
     if ([_member isUser]) {
-        headerContent = [NSLocalizedString(@"Send join request", @"") stringByAppendingString:kSeparatorColon];
+        headerContent = [OLocalizedString(@"Send join request", @"") stringByAppendingString:kSeparatorColon];
     } else {
-        headerContent = [NSString stringWithFormat:NSLocalizedString(@"Send join request for %@:", @""), [_member givenName]];
+        headerContent = [NSString stringWithFormat:OLocalizedString(@"Send join request for %@:", @""), [_member givenName]];
     }
     
     return headerContent;
@@ -265,19 +265,19 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
         } else {
             if (self.isOnline) {
                 if ([_member isUser]) {
-                    footerContent = NSLocalizedString(@"Please enter the join code for the list you want to join.", @"");
+                    footerContent = OLocalizedString(@"Please enter the join code for the list you want to join.", @"");
                 } else {
-                    footerContent = [NSString stringWithFormat:NSLocalizedString(@"Please enter the join code for the list that %@ should be joined to.", @""), [_member givenName]];
+                    footerContent = [NSString stringWithFormat:OLocalizedString(@"Please enter the join code for the list that %@ should be joined to.", @""), [_member givenName]];
                 }
             } else {
-                footerContent = NSLocalizedString(@"You need a working internet connection to continue.", @"");
+                footerContent = OLocalizedString(@"You need a working internet connection to continue.", @"");
             }
         }
     } else if ([self targetIs:kTargetOrigo]) {
         if (self.isOnline) {
-            footerContent = [NSString stringWithFormat:NSLocalizedString(@"You will get access to %@ as soon as the request has been approved.", @""), _origo.name];
+            footerContent = [NSString stringWithFormat:OLocalizedString(@"You will get access to %@ as soon as the request has been approved.", @""), _origo.name];
         } else {
-            footerContent = NSLocalizedString(@"You need a working internet connection to continue.", @"");
+            footerContent = OLocalizedString(@"You need a working internet connection to continue.", @"");
         }
     }
     
@@ -291,9 +291,9 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     
     if ([self targetIs:kTargetJoinCode]) {
         if ([_origo userIsAdmin] && !self.isOnline) {
-            footerText = [[self infoText] stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"You need a working internet connection to create a join code for %@.", @""), _origo.name] separator:kSeparatorParagraph];
+            footerText = [[self infoText] stringByAppendingString:[NSString stringWithFormat:OLocalizedString(@"You need a working internet connection to create a join code for %@.", @""), _origo.name] separator:kSeparatorParagraph];
         } else {
-            footerText = [[self infoText] stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"You may ask an administrator to create a join code for %@.", @""), _origo.name] separator:kSeparatorParagraph];
+            footerText = [[self infoText] stringByAppendingString:[NSString stringWithFormat:OLocalizedString(@"You may ask an administrator to create a join code for %@.", @""), _origo.name] separator:kSeparatorParagraph];
         }
     }
     
@@ -352,7 +352,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             
             [self showJoinCodeSetAlertAndReplicate];
         } else {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Code in use", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.", @""), _joinCode]];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Code in use", @"") message:[NSString stringWithFormat:OLocalizedString(@"The join code '%@' is already in use. Please try to make the code more specific, for instance by including a location and/or a year.", @""), _joinCode]];
             
             [self editInlineInCell:_joinCodeCell];
         }
@@ -367,39 +367,39 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                 
                 if ([_member isUser]) {
                     if ([_member isMale]) {
-                        message = [NSString stringWithFormat:NSLocalizedString(@"You are a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?", @""), _origo.joinCode];
+                        message = [NSString stringWithFormat:OLocalizedString(@"You are a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?", @""), _origo.joinCode];
                     } else {
-                        message = [NSString stringWithFormat:NSLocalizedString(@"You are a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?", @""), _origo.joinCode];
+                        message = [NSString stringWithFormat:OLocalizedString(@"You are a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to join?", @""), _origo.joinCode];
                     }
                 } else {
                     if ([_member isMale]) {
-                        message = [NSString stringWithFormat:NSLocalizedString(@"%@ is a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?", @""), [_member givenName], _origo.joinCode];
+                        message = [NSString stringWithFormat:OLocalizedString(@"%@ is a [male] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?", @""), [_member givenName], _origo.joinCode];
                     } else {
-                        message = [NSString stringWithFormat:NSLocalizedString(@"%@ is a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?", @""), [_member givenName], _origo.joinCode];
+                        message = [NSString stringWithFormat:OLocalizedString(@"%@ is a [female] minor. The list with join code '%@' is primarily for adults. Are you sure you want to continue?", @""), [_member givenName], _origo.joinCode];
                     }
                 }
                 
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Primarily for adults", @"") message:message delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"Primarily for adults", @"") message:message delegate:self cancelButtonTitle:OLocalizedString(@"No", @"") otherButtonTitles:OLocalizedString(@"Yes", @""), nil];
                 alert.tag = kAlertTagJoinConfirmation;
                 
                 [alert show];
             } else if (![_member isJuvenile] && [_origo isJuvenile]) {
                 if ([_origo isOrganised]) {
-                    NSString *origoTitle = [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixOrigoTitle)];
-                    NSString *organiserTitle = [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle)];
+                    NSString *origoTitle = [OLanguage inlineNoun:OLocalizedString(_origo.type, kStringPrefixOrigoTitle)];
+                    NSString *organiserTitle = [OLanguage inlineNoun:OLocalizedString(_origo.type, kStringPrefixOrganiserTitle)];
                     
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Join as %@?", @""), organiserTitle] message:[NSString stringWithFormat:NSLocalizedString(@"The list with join code '%@' represents a %@. Do you want to join as %@?", @""), _origo.joinCode, origoTitle, organiserTitle] delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:OLocalizedString(@"Join as %@?", @""), organiserTitle] message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' represents a %@. Do you want to join as %@?", @""), _origo.joinCode, origoTitle, organiserTitle] delegate:self cancelButtonTitle:OLocalizedString(@"No", @"") otherButtonTitles:OLocalizedString(@"Yes", @""), nil];
                     alert.tag = kAlertTagJoinAsOrganiser;
                     
                     [alert show];
                 } else {
-                    [OAlert showAlertWithTitle:NSLocalizedString(@"For minors", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The list with join code '%@' is for minors. You cannot join this list.", @""), _origo.joinCode]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"For minors", @"") message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' is for minors. You cannot join this list.", @""), _origo.joinCode]];
                 }
             } else if ([_origo isCommunity] && [[_member primaryResidence] elders].count > 1) {
                 NSMutableArray *coResidents = [[[_member primaryResidence] elders] mutableCopy];
                 [coResidents removeObject:[OMeta m].user];
                 
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Community list", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request.", @""), _origo.joinCode, [OUtil commaSeparatedListOfMembers:coResidents conjoin:YES subjective:YES]] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Continue", @""), nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"Community list", @"") message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request.", @""), _origo.joinCode, [OUtil commaSeparatedListOfMembers:coResidents conjoin:YES subjective:YES]] delegate:self cancelButtonTitle:OLocalizedString(@"Cancel", @"") otherButtonTitles:OLocalizedString(@"Continue", @""), nil];
                 alert.tag = kAlertTagJoinConfirmation;
                 
                 [alert show];
@@ -409,7 +409,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                 self.navigationItem.rightBarButtonItem = nil;
             }
         } else if (response.statusCode == kHTTPStatusNotFound) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown join code", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The join code '%@' is unknown. Please check your spelling.", @""), _joinCode]];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Unknown join code", @"") message:[NSString stringWithFormat:OLocalizedString(@"The join code '%@' is unknown. Please check your spelling.", @""), _joinCode]];
             
             [self editInlineInCell:_joinCodeCell];
         }
@@ -468,7 +468,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
     switch (alertView.tag) {
         case kAlertTagJoinAsOrganiser:
             if (buttonIndex != alertView.cancelButtonIndex) {
-                _organiserRole = NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle);
+                _organiserRole = OLocalizedString(_origo.type, kStringPrefixOrganiserTitle);
             }
             
         case kAlertTagJoinConfirmation:

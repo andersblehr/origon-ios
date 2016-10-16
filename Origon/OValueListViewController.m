@@ -60,12 +60,12 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     
     if ([_origo isOrganised]) {
         [_titleSegmentMappings addObject:@(kTitleSegmentOrganisers)];
-        [titleSegments addObject:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
+        [titleSegments addObject:OLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
     }
     
     if (![_origo isOfType:kOrigoTypePreschoolClass]) {
         [_titleSegmentMappings addObject:@(kTitleSegmentMembers)];
-        [titleSegments addObject:NSLocalizedString(_origo.type, kStringPrefixMembersTitle)];
+        [titleSegments addObject:OLocalizedString(_origo.type, kStringPrefixMembersTitle)];
     }
     
     if (titleSegments.count > 1) {
@@ -128,8 +128,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         } else if (_titleSegment == kTitleSegmentOrganisers) {
             if ([_origo organiserCandidates].count) {
                 OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
-                [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
-                [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];
+                [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
+                [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];
                 
                 [actionSheet show];
             } else {
@@ -160,9 +160,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         NSString *buttonTitle = nil;
         
         if (_candidates.count == 2) {
-            buttonTitle = NSLocalizedString(@"Send text to both", @"");
+            buttonTitle = OLocalizedString(@"Send text to both", @"");
         } else if (_candidates.count > 2) {
-            buttonTitle = NSLocalizedString(@"Send text to all", @"");
+            buttonTitle = OLocalizedString(@"Send text to all", @"");
         }
         
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
@@ -192,9 +192,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         NSString *buttonTitle = nil;
         
         if (_candidates.count == 2) {
-            buttonTitle = NSLocalizedString(@"Send email to both", @"");
+            buttonTitle = OLocalizedString(@"Send email to both", @"");
         } else if (_candidates.count > 2) {
-            buttonTitle = NSLocalizedString(@"Send email to all", @"");
+            buttonTitle = OLocalizedString(@"Send email to all", @"");
         }
         
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
@@ -209,7 +209,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
             mailComposer.mailComposeDelegate = self;
             [mailComposer setToRecipients:recipients];
-            [mailComposer setMessageBody:NSLocalizedString(@"Sent from Origon - http://origon.co", @"") isHTML:NO];
+            [mailComposer setMessageBody:OLocalizedString(@"Sent from Origon - http://origon.co", @"") isHTML:NO];
             
             [self presentViewController:mailComposer animated:YES completion:nil];
         }];
@@ -282,19 +282,19 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     _origo = self.state.currentOrigo;
     
     if ([self targetIs:kTargetSettings]) {
-        self.title = NSLocalizedString(@"Settings", @"");
+        self.title = OLocalizedString(@"Settings", @"");
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
     } else if ([self targetIs:kTargetAbout]) {
-        self.title = [NSString stringWithFormat:NSLocalizedString(@"About %@", @""), [OMeta m].appName];
+        self.title = [NSString stringWithFormat:OLocalizedString(@"About %@", @""), [OMeta m].appName];
     } else if ([self targetIs:kTargetPermissions]) {
-        self.title = NSLocalizedString(@"User permissions", @"");
+        self.title = OLocalizedString(@"User permissions", @"");
     } else if ([self targetIs:kTargetAdmins]) {
-        self.title = NSLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
+        self.title = OLocalizedString(kLabelKeyAdmins, kStringPrefixLabel);
     } else if ([self targetIs:kTargetAllContacts]) {
-        self.title = NSLocalizedString(@"All contacts", @"");
+        self.title = OLocalizedString(@"All contacts", @"");
         self.usesSectionIndexTitles = YES;
         
-        _titleSegments = [self titleSegmentsWithTitles:@[NSLocalizedString(@"Favourites", @""), NSLocalizedString(@"Others", @"")]];
+        _titleSegments = [self titleSegmentsWithTitles:@[OLocalizedString(@"Favourites", @""), OLocalizedString(@"Others", @"")]];
         _titleSegment = _titleSegments.selectedSegmentIndex;
     } else if ([self targetIs:kTargetParents]) {
         if (self.meta) {
@@ -322,12 +322,12 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
     } else if ([self targetIs:kTargetDevices]) {
-        self.title = NSLocalizedString(self.target, kStringPrefixSettingLabel);
+        self.title = OLocalizedString(self.target, kStringPrefixSettingLabel);
         self.usesPlainTableViewStyle = YES;
     } else if ([self targetIs:kTargetRole]) {
         self.title = self.target;
     } else if ([self targetIs:kTargetRoles]) {
-        self.title = NSLocalizedString(@"Responsibilities", @"");
+        self.title = OLocalizedString(@"Responsibilities", @"");
         
         [self setRoleTitleSegments];
         [self inferTitleSegment];
@@ -336,14 +336,14 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
     } else if ([self targetIs:kTargetGroups]) {
         if ([self aspectIs:kAspectEditable]) {
-            self.title = NSLocalizedString(@"Edit groups", @"");
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Groups", @"")];
+            self.title = OLocalizedString(@"Edit groups", @"");
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:OLocalizedString(@"Groups", @"")];
             
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
             self.navigationItem.leftBarButtonItem.enabled = self.isOnline;
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         } else {
-            self.title = NSLocalizedString(@"Groups", @"");
+            self.title = OLocalizedString(@"Groups", @"");
 
             if ([_origo userCanEdit]) {
                 self.navigationItem.leftBarButtonItem = [UIBarButtonItem systemEditButtonWithTarget:self];
@@ -429,13 +429,13 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         if (sectionKey == kSectionKeyValues1) {
             NSString *settingKey = [self dataAtIndexPath:indexPath];
             
-            cell.textLabel.text = NSLocalizedString(settingKey, kStringPrefixSettingLabel);
-            cell.detailTextLabel.text = @"TODO"; // TODO
+            cell.textLabel.text = OLocalizedString(settingKey, kStringPrefixSettingLabel);
+            // cell.detailTextLabel.text = @"TODO"; // TODO
             cell.destinationId = kIdentifierValuePicker;
         } else if (sectionKey == kSectionKeyValues2) {
             NSString *target = [self dataAtIndexPath:indexPath];
             
-            cell.textLabel.text = NSLocalizedString(target, kStringPrefixSettingLabel);
+            cell.textLabel.text = OLocalizedString(target, kStringPrefixSettingLabel);
             
             NSInteger numberOfDevices = [[OMeta m].user activeDevices].count;
             NSInteger numberOfHiddenOrigos = [[OMeta m].user hiddenOrigos].count;
@@ -455,11 +455,11 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             NSString *actionKey = [self dataAtIndexPath:indexPath];
             
             if ([actionKey isEqualToString:kActionKeyPingServer]) {
-                cell.textLabel.text = NSLocalizedString(actionKey, kStringPrefixLabel);
+                cell.textLabel.text = OLocalizedString(actionKey, kStringPrefixLabel);
                 cell.selectable = YES;
             } else {
                 if ([actionKey isEqualToString:kActionKeyChangePassword]) {
-                    cell.textLabel.text = NSLocalizedString(actionKey, kStringPrefixLabel);
+                    cell.textLabel.text = OLocalizedString(actionKey, kStringPrefixLabel);
                     
                     if (self.isOnline) {
                         cell.textLabel.textColor = [UIColor textColour];
@@ -467,7 +467,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                         cell.textLabel.textColor = [UIColor tonedDownTextColour];
                     }
                 } else if ([actionKey isEqualToString:kActionKeyLogoutName]) {
-                    cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(actionKey, kStringPrefixLabel), [OMeta m].user.name];
+                    cell.textLabel.text = [NSString stringWithFormat:OLocalizedString(actionKey, kStringPrefixLabel), [OMeta m].user.name];
                     
                     if (self.isOnline) {
                         cell.textLabel.textColor = [UIColor redColor];
@@ -479,7 +479,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                 cell.selectable = self.isOnline;
             }
         } else if (sectionKey == kSectionKeyAbout) {
-            cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"About %@", @""), [OMeta m].appName];
+            cell.textLabel.text = [NSString stringWithFormat:OLocalizedString(@"About %@", @""), [OMeta m].appName];
             cell.destinationId = kIdentifierValueList;
         }
     } else if ([self targetIs:kTargetPermissions]) {
@@ -489,10 +489,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [permissionSwitch addTarget:self action:@selector(didTogglePermissionSwitch:) forControlEvents:UIControlEventValueChanged];
         permissionSwitch.on = [_origo hasPermissionWithKey:permissionKey];
         
-        cell.textLabel.text = NSLocalizedString(permissionKey, kStringPrefixSettingLabel);
+        cell.textLabel.text = OLocalizedString(permissionKey, kStringPrefixSettingLabel);
         
         if ([permissionKey isEqualToString:kPermissionKeyApplyToAll]) {
-            cell.textLabel.text = [NSString stringWithFormat:cell.textLabel.text, [OLanguage inlineNoun:NSLocalizedString(_origo.type, kStringPrefixMembersTitle)]];
+            cell.textLabel.text = [NSString stringWithFormat:cell.textLabel.text, [OLanguage inlineNoun:OLocalizedString(_origo.type, kStringPrefixMembersTitle)]];
         }
         
         cell.accessoryView = permissionSwitch;
@@ -514,7 +514,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         NSString *parentKey = [self dataAtIndexPath:indexPath];
         id<OMember> ward = _wards[_titleSegment];
         
-        cell.textLabel.text = NSLocalizedString(parentKey, kStringPrefixLabel);
+        cell.textLabel.text = OLocalizedString(parentKey, kStringPrefixLabel);
         
         if ([parentKey isEqualToString:kPropertyKeyMotherId]) {
             cell.detailTextLabel.text = [ward mother].name;
@@ -532,7 +532,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         cell.selectable = NO;
         
         if ([device.entityId isEqualToString:[OMeta m].deviceId]) {
-            cell.detailTextLabel.text = NSLocalizedString(@"This device", @"");
+            cell.detailTextLabel.text = OLocalizedString(@"This device", @"");
             cell.detailTextLabel.textColor = [UIColor globalTintColour];
         }
         
@@ -613,17 +613,17 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSString *footerText = nil;
     
     if ([self targetIs:kTargetAbout]) {
-        footerText = [NSString stringWithFormat:NSLocalizedString(@"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2015 Anders Blehr\n\norigon.co\nsupport@origon.co", @""), [OMeta m].appVersion];
+        footerText = [NSString stringWithFormat:OLocalizedString(@"Version: %@\nConcept & code: Anders Blehr (@rhelba)\nCopyright © 2016 Anders Blehr\n\norigon.co\nsupport@origon.co", @""), [OMeta m].appVersion];
     } else if ([self targetIs:kTargetAllContacts]) {
         if (_titleSegment == kTitleSegmentFavourites) {
-            footerText = NSLocalizedString(@"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.", @"");
+            footerText = OLocalizedString(@"This is your private favourites list. Tap ☆ in the person view to mark a person as favourite.", @"");
         } else if (_titleSegment == kTitleSegmentOthers) {
-            footerText = NSLocalizedString(@"All who are not marked as favourites will be listed here.", @"");
+            footerText = OLocalizedString(@"All who are not marked as favourites will be listed here.", @"");
         }
     } else if ([self targetIs:kTargetRoles]) {
-        footerText = NSLocalizedString(@"Tap + to add a responsibility.", @"");
+        footerText = OLocalizedString(@"Tap + to add a responsibility.", @"");
     } else if ([self targetIs:kTargetGroups]) {
-        footerText = NSLocalizedString(@"Tap + to create a group.", @"");
+        footerText = OLocalizedString(@"Tap + to create a group.", @"");
     }
     
     return footerText;
@@ -711,7 +711,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSString *buttonTitle = nil;
     
     if ([self targetIs:kTargetDevices]) {
-        buttonTitle = NSLocalizedString(kActionKeyLogout, kStringPrefixLabel);
+        buttonTitle = OLocalizedString(kActionKeyLogout, kStringPrefixLabel);
     }
     
     return buttonTitle;

@@ -102,9 +102,9 @@ static OMemberExaminer *_instance = nil;
     NSString *prompt = nil;
     
     if ([_member isUser]) {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a %@?", @""), femaleGender, maleGender];
+        prompt = [NSString stringWithFormat:OLocalizedString(@"Are you a %@ or a %@?", @""), femaleGender, maleGender];
     } else {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], femaleGender, maleGender];
+        prompt = [NSString stringWithFormat:OLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], femaleGender, maleGender];
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];
@@ -120,10 +120,10 @@ static OMemberExaminer *_instance = nil;
     NSString *prompt = [OLanguage questionWithSubject:_candidates verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:[_member givenName] noun:_parent_]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagBothParents];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
     [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[OLanguage labelForParentWithGender:[_candidates[0] gender] relativeToOffspringWithGender:_member.gender]]];
     [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[OLanguage labelForParentWithGender:[_candidates[1] gender] relativeToOffspringWithGender:_member.gender]]];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagNo];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
     
     [actionSheet show];
 }
@@ -135,16 +135,16 @@ static OMemberExaminer *_instance = nil;
     NSString *prompt = [OLanguage questionWithSubject:_member verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:parentNoun]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAllOffspring];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
     
     if (_candidates.count == 2) {
         [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[0] noun:parentNoun] stringByCapitalisingFirstLetter]];
         [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[1] noun:parentNoun] stringByCapitalisingFirstLetter]];
     } else if (_candidates.count > 2) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"To some of them", @"")]; // TODO
+        [actionSheet addButtonWithTitle:OLocalizedString(@"To some of them", @"")]; // TODO
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagNo];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
     
     [actionSheet show];
 }
@@ -155,8 +155,8 @@ static OMemberExaminer *_instance = nil;
     NSString *prompt = [OLanguage questionWithSubject:candidate verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:[_member givenName] noun:[self parentNounForGender:candidate.gender]]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagParent];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagNo];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
     
     [actionSheet show];
 }
@@ -167,8 +167,8 @@ static OMemberExaminer *_instance = nil;
     NSString *prompt = [OLanguage questionWithSubject:[_member givenName] verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:_member.gender]]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagOffspring];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagNo];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
     
     [actionSheet show];
 }

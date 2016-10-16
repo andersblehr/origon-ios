@@ -23,7 +23,7 @@ NSInteger const kHTTPStatusServiceUnavailable = 503;
 
 NSString * const kHTTPHeaderLocation = @"Location";
 
-static BOOL _useDevServerIfOnSimulator = YES;
+static BOOL _useDevServerIfOnSimulator = NO;
 static BOOL _isDownForMaintenance = NO;
 
 static NSString * const kOrigonServer = @"https://origon-api.appspot.com";
@@ -120,7 +120,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         }
     } else {
         NSInteger code = NSURLErrorNotConnectedToInternet;
-        NSString *description = NSLocalizedString(@"No internet connection", @"");
+        NSString *description = OLocalizedString(@"No internet connection", @"");
         NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:code userInfo:[NSDictionary dictionaryWithObject:description forKey:NSLocalizedDescriptionKey]];
         
         OLogError(@"Connection failed with error: %@ (%ld)", description, (long)code);
@@ -343,7 +343,7 @@ static NSString * const kURLParameterIdentifier = @"id";
         BOOL shouldPostReachabilityChangedNotification = NO;
         
         if (response.statusCode == kHTTPStatusServiceUnavailable && !_isDownForMaintenance) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Down for maintenance", @"") message:NSLocalizedString(@"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again.", @"")];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Down for maintenance", @"") message:OLocalizedString(@"The Origon server is currently down for maintenance. You can still use Origon, but you cannot make any changes. You can check under Settings to see if the server has come up again.", @"")];
             
             _isDownForMaintenance = YES;
             shouldPostReachabilityChangedNotification = YES;
@@ -351,7 +351,7 @@ static NSString * const kURLParameterIdentifier = @"id";
             _isDownForMaintenance = NO;
             shouldPostReachabilityChangedNotification = YES;
         } else if (response.statusCode == kHTTPStatusServiceUnavailable && _isDownForMaintenance) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Still down", @"") message:NSLocalizedString(@"The Origon server is still down for maintenance. Please try again in a while.", @"")];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Still down", @"") message:OLocalizedString(@"The Origon server is still down for maintenance. Please try again in a while.", @"")];
         }
         
         if (shouldPostReachabilityChangedNotification) {
