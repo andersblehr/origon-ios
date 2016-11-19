@@ -233,7 +233,7 @@ static CGFloat const kPopUpCornerRadius = 5.f;
         inputMatches = [_dateOfBirthField.value isEqual:dateOfBirth];
     }
   
-// NOTE: Commented out to simplify member registration for 1.0.1. Comment back in if too loose.
+// TODO: Commented out to simplify member registration for 1.0.1. Comment back in if too loose.
 
 //    if (inputMatches && [mobilePhone hasValue] && ![OMeta deviceIsSimulator]) {
 //        inputMatches = _mobilePhoneField.value ? [[[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value] completelyFormattedNumberCanonicalised:YES] isEqualToString:[[OPhoneNumberFormatter formatterForNumber:mobilePhone] completelyFormattedNumberCanonicalised:YES]] : NO;
