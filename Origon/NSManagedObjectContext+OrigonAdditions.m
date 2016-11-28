@@ -30,7 +30,7 @@
         entity = resultsArray[0];
     }
     
-    return [entity isFault] ? nil : entity;
+    return entity;
 }
 
 
