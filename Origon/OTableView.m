@@ -148,9 +148,9 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
     [self addSubview:_dimmerView];
     
     [UIView animateWithDuration:kFadeAnimationDuration animations:^{
-        _dimmerView.alpha = 1.f;
+        self->_dimmerView.alpha = 1.f;
     } completion:^(BOOL finished) {
-        _dimmerView.userInteractionEnabled = YES;
+        self->_dimmerView.userInteractionEnabled = YES;
     }];
     
     self.scrollEnabled = NO;
@@ -166,9 +166,9 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
     }
     
     [UIView animateWithDuration:kFadeAnimationDuration animations:^{
-        _dimmerView.alpha = 0.f;
+        self->_dimmerView.alpha = 0.f;
     } completion:^(BOOL finished) {
-        _dimmerView.userInteractionEnabled = NO;
+        self->_dimmerView.userInteractionEnabled = NO;
     }];
     
     [_dimmerView removeFromSuperview];

@@ -27,7 +27,7 @@ static BOOL _useDevServerIfOnSimulator = NO;
 static BOOL _isDownForMaintenance = NO;
 
 static NSString * const kOrigonServer = @"https://origon-api.appspot.com";
-static NSString * const kDevServer = @"http://localhost:8888";
+static NSString * const kDevServer = @"http://localhost:8080";
 
 static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";

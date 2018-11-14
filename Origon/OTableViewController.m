@@ -1032,11 +1032,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         [self dismissViewControllerAnimated:YES completion:^{
-            _needsReloadOnModalDismissal = NO;
-            _needsInvokeViewWillAppearOnModalDismissal = NO;
+            self->_needsReloadOnModalDismissal = NO;
+            self->_needsInvokeViewWillAppearOnModalDismissal = NO;
             
-            if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
-                [_instance didDismissModalViewController:viewController];
+            if ([self->_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
+                [self->_instance didDismissModalViewController:viewController];
             }
         }];
     }
@@ -1682,7 +1682,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         NSString *buttonTitle = [NSString stringWithFormat:OLocalizedString(@"Edit %@", @""), [OLanguage inlineNoun:_titleView.placeholder]];
         
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
-            _titleView.editing = YES;
+            self->_titleView.editing = YES;
         }];
     }
     
