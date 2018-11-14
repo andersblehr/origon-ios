@@ -369,8 +369,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 self.frame = frame;
                 
 #if CGFLOAT_IS_DOUBLE // Compiled for 64-bit
-                [_state.viewController.tableView beginUpdates];
-                [_state.viewController.tableView endUpdates];
+                [self->_state.viewController.tableView beginUpdates];
+                [self->_state.viewController.tableView endUpdates];
 #endif
             }];
         }

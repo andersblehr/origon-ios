@@ -56,7 +56,7 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
     [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error) {
         if (!error) {
             for (MKRoute *route in [response routes]) {
-                [_mapView addOverlay:[route polyline] level:MKOverlayLevelAboveRoads];
+                [self->_mapView addOverlay:[route polyline] level:MKOverlayLevelAboveRoads];
                 
                 self.navigationItem.leftBarButtonItem = [UIBarButtonItem navigationButtonWithTarget:self];
             }
@@ -181,11 +181,11 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
     [geocoder geocodeAddressString:origo.address completionHandler:^(NSArray* placemarks, NSError* error) {
         if (!error) {
             if (placemarks.count == 1) {
-                _placemark = [[MKPlacemark alloc] initWithPlacemark:placemarks[0]];
-                MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(_placemark.coordinate, kMapRegionSpan, kMapRegionSpan);
+                self->_placemark = [[MKPlacemark alloc] initWithPlacemark:placemarks[0]];
+                MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(self->_placemark.coordinate, kMapRegionSpan, kMapRegionSpan);
                 
-                [_mapView setRegion:region animated:YES];
-                [_mapView addAnnotation:_placemark];
+                [self->_mapView setRegion:region animated:YES];
+                [self->_mapView addAnnotation:self->_placemark];
             } else {
                 [self showAmbiguousAddressAlertForOrigo:origo];
             }
@@ -282,8 +282,8 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
                             if (placemarks.count == 1) {
                                 MKPlacemark *placemark = [[MKPlacemark alloc] initWithPlacemark:placemarks[0]];
                                 
-                                _startItem = [[MKMapItem alloc] initWithPlacemark:placemark];
-                                _startAnnotation = placemark;
+                                self->_startItem = [[MKMapItem alloc] initWithPlacemark:placemark];
+                                self->_startAnnotation = placemark;
                                 
                                 [self overlayDirections];
                             } else {

@@ -168,7 +168,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
             NSMutableArray *recipients = [NSMutableArray array];
             
-            for (id<OMember> candidate in _candidates) {
+            for (id<OMember> candidate in self->_candidates) {
                 if ([candidate.mobilePhone hasValue]) {
                     [recipients addObject:candidate.mobilePhone];
                 }
@@ -200,7 +200,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
             NSMutableArray *recipients = [NSMutableArray array];
             
-            for (id<OMember> candidate in _candidates) {
+            for (id<OMember> candidate in self->_candidates) {
                 if ([candidate.email hasValue]) {
                     [recipients addObject:candidate.email];
                 }
