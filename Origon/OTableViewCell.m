@@ -361,8 +361,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 [self layoutIfNeeded];
                 
 #if !CGFLOAT_IS_DOUBLE // Compiled for 32-bit
-                [_state.viewController.tableView beginUpdates];
-                [_state.viewController.tableView endUpdates];
+                [self->_state.viewController.tableView beginUpdates];
+                [self->_state.viewController.tableView endUpdates];
 #endif
                 CGRect frame = self.frame;
                 frame.size.height = desiredHeight;
