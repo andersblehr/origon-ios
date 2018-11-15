@@ -524,7 +524,7 @@
 "All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter, vil bli listet opp her.";
 "Tap + to add a responsibility." = "Trykk + for å legge til et ansvarsområde.";
 "Tap + to create a group." = "Trykk + for å opprette en gruppe.";
-"Version: %@\nConcept & code: Anders Blehr (@andersblehr)\nCopyright © 2015-2016 Anders Blehr\n\norigon.co\nsupport@origon.co" = "Versjon: %@\nKonsept & kode: Anders Blehr (@andersblehr)\nCopyright © 2015-2016 Anders Blehr\n\norigon.co\nsupport@origon.co";
+"Version: %@\nConcept & code: Anders Blehr (@andersblehr)\nCopyright © 2015-%@ Anders Blehr\n\norigon.co\nsupport@origon.co" = "Versjon: %@\nKonsept & kode: Anders Blehr (@andersblehr)\nCopyright © 2015-%@ Anders Blehr\n\norigon.co\nsupport@origon.co";
 
 // Buttons
 "Send text to both" = "Send melding til begge";
