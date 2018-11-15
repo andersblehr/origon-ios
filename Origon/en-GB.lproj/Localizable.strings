@@ -525,7 +525,7 @@
 "All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
 "Tap + to add a responsibility." = "Tap + to add a responsibility.";
 "Tap + to create a group." = "Tap + to create a group.";
-"Version: %@\nConcept & code: Anders Blehr (@andersblehr)\nCopyright © 2015-2016 Anders Blehr\n\norigon.co\nsupport@origon.co" = "Version: %@\nConcept & code: Anders Blehr (@andersblehr)\nCopyright © 2015-2016 Anders Blehr\n\norigon.co\nsupport@origon.co";
+"Version: %@\nConcept & code: Anders Blehr (@andersblehr)\nCopyright © 2015-%@ Anders Blehr\n\norigon.co\nsupport@origon.co" = "Version: %@\nConcept & code: Anders Blehr (@andersblehr)\nCopyright © 2015-%@ Anders Blehr\n\norigon.co\nsupport@origon.co";
 
 // Buttons
 "Send text to both" = "Send text to both";
