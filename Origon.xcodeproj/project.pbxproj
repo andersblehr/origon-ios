@@ -431,8 +431,8 @@
 		5CD6270219CB3619007DD29B /* ro-two-heads@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ro-two-heads@3x.png"; sourceTree = "<group>"; };
 		5CDE11AE19F8F92E005018F8 /* OTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableView.h; sourceTree = "<group>"; };
 		5CDE11AF19F8F92E005018F8 /* OTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableView.m; sourceTree = "<group>"; };
-		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OTableViewCell+OrigonAdditions.h"; path = "Origon/OTableViewCell+OrigonAdditions.h"; sourceTree = "<group>"; };
-		5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "OTableViewCell+OrigonAdditions.m"; path = "Origon/OTableViewCell+OrigonAdditions.m"; sourceTree = "<group>"; };
+		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OTableViewCell+OrigonAdditions.h"; path = "OTableViewCell+OrigonAdditions.h"; sourceTree = "<group>"; };
+		5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "OTableViewCell+OrigonAdditions.m"; path = "OTableViewCell+OrigonAdditions.m"; sourceTree = "<group>"; };
 		5CDE879C176F185E00272909 /* OInputCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputCellDelegate.h; sourceTree = "<group>"; };
 		5CE33EFF1A97847A0007272C /* 722-location-pin-toolbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "722-location-pin-toolbar@2x.png"; sourceTree = "<group>"; };
 		5CF3DE271775AD810068B2E7 /* ODefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODefaults.h; sourceTree = "<group>"; };
@@ -530,6 +530,19 @@
 				5CD626D419CB10F0007DD29B /* 895-user-group-toolbar.png */,
 				5CD626D519CB10F0007DD29B /* 895-user-group-toolbar@2x.png */,
 				5CD626D619CB10F0007DD29B /* 895-user-group-toolbar@3x.png */,
+				5C17E1411AEC25D8008E5EC5 /* Icon-40.png */,
+				5C17E1421AEC25D8008E5EC5 /* Icon-40@2x.png */,
+				5C07847C1AEBA46F00FC5B03 /* Icon-60.png */,
+				5C0784781AEAE98000FC5B03 /* Icon-60@2x.png */,
+				5C07847A1AEAEF4F00FC5B03 /* Icon-60@3x.png */,
+				5C17E1451AEC25F1008E5EC5 /* Icon-76.png */,
+				5C17E1461AEC25F1008E5EC5 /* Icon-76@2x.png */,
+				5C17E1471AEC25F1008E5EC5 /* Icon-Small.png */,
+				5C17E1481AEC25F1008E5EC5 /* Icon-Small@2x.png */,
+				5C17E1491AEC25F1008E5EC5 /* Icon-Small@3x.png */,
+				5C17E14B1AEC25F1008E5EC5 /* LaunchImage-iPhone4s.png */,
+				5C17E14C1AEC25F1008E5EC5 /* LaunchImage-iPhone5.png */,
+				5C17E14A1AEC25F1008E5EC5 /* iTunesArtwork.png */,
 				5CD6268219CB01B6007DD29B /* ro-593-boy.png */,
 				5CD6267E19CAF79F007DD29B /* ro-593-boy@2x.png */,
 				5CD6268319CB01B6007DD29B /* ro-593-boy@3x.png */,
@@ -551,27 +564,14 @@
 				5CD6270019CB32F9007DD29B /* ro-two-heads.png */,
 				5CD626FE19CB2E7F007DD29B /* ro-two-heads@2x.png */,
 				5CD6270219CB3619007DD29B /* ro-two-heads@3x.png */,
-				5C17E1411AEC25D8008E5EC5 /* Icon-40.png */,
-				5C17E1421AEC25D8008E5EC5 /* Icon-40@2x.png */,
-				5C07847C1AEBA46F00FC5B03 /* Icon-60.png */,
-				5C0784781AEAE98000FC5B03 /* Icon-60@2x.png */,
-				5C07847A1AEAEF4F00FC5B03 /* Icon-60@3x.png */,
-				5C17E1451AEC25F1008E5EC5 /* Icon-76.png */,
-				5C17E1461AEC25F1008E5EC5 /* Icon-76@2x.png */,
-				5C17E1471AEC25F1008E5EC5 /* Icon-Small.png */,
-				5C17E1481AEC25F1008E5EC5 /* Icon-Small@2x.png */,
-				5C17E1491AEC25F1008E5EC5 /* Icon-Small@3x.png */,
-				5C17E14A1AEC25F1008E5EC5 /* iTunesArtwork.png */,
-				5C17E14B1AEC25F1008E5EC5 /* LaunchImage-iPhone4s.png */,
-				5C17E14C1AEC25F1008E5EC5 /* LaunchImage-iPhone5.png */,
 			);
 			name = Media;
+			path = Media;
 			sourceTree = "<group>";
 		};
 		5C36BEA51471A05700DD3CEA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				5C36BE9A1470507700DD3CEA /* Origon.xcdatamodeld */,
 				5C7513A519B719360071FD34 /* ODevice.h */,
 				5C7513A619B719360071FD34 /* ODevice.m */,
 				5CBF05C31A6FCE140037E49C /* OMember.h */,
@@ -584,8 +584,10 @@
 				5CC307D319E97EEE00373980 /* OReplicatedEntity.m */,
 				5CD33AD718F5288000A863F4 /* OReplicatedEntityRef.h */,
 				5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */,
+				5C36BE9A1470507700DD3CEA /* Origon.xcdatamodeld */,
 			);
 			name = Entities;
+			path = Entities;
 			sourceTree = "<group>";
 		};
 		5C4F9766149529BF006E244F /* Cocoa Categories */ = {
@@ -615,6 +617,7 @@
 				5C50581B14CAEC76000D6587 /* UIView+OrigonAdditions.m */,
 			);
 			name = "Cocoa Categories";
+			path = "Cocoa Categories";
 			sourceTree = "<group>";
 		};
 		5C50F2581779A6AD00B961BC /* Cell Layout */ = {
@@ -626,6 +629,7 @@
 				5CBDF78B1659175000D4681C /* OInputCellConstrainer.m */,
 			);
 			name = "Cell Layout";
+			path = "Cell Layout";
 			sourceTree = "<group>";
 		};
 		5C5ED5CB14F2E95B006BBDFB /* Entity Categories */ = {
@@ -643,6 +647,7 @@
 				5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigonAdditions.m */,
 			);
 			name = "Entity Categories";
+			path = "Entity Categories";
 			sourceTree = "<group>";
 		};
 		5C7C4DCF18E57DDF00903989 /* Entity Proxies */ = {
@@ -658,6 +663,7 @@
 				5C7EDE3318DB2450003AFFAF /* OOrigoProxy.m */,
 			);
 			name = "Entity Proxies";
+			path = "Entity Proxies";
 			sourceTree = "<group>";
 		};
 		5CB49DCD14881E98006EA2F8 /* Protocols */ = {
@@ -670,6 +676,7 @@
 				5CB897C61AB7913900CA05B5 /* OTitleViewDelegate.h */,
 			);
 			name = Protocols;
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		5CB49DCE14881EC6006EA2F8 /* View Controllers */ = {
@@ -697,6 +704,7 @@
 				5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */,
 			);
 			name = "View Controllers";
+			path = "View Controllers";
 			sourceTree = "<group>";
 		};
 		5CB49DD014881F36006EA2F8 /* Auxiliary Classes */ = {
@@ -733,6 +741,7 @@
 				5CC40C9A1772DC5E00DD850E /* OValidator.m */,
 			);
 			name = "Auxiliary Classes";
+			path = "Auxiliary Classes";
 			sourceTree = "<group>";
 		};
 		5CB49DD114882012006EA2F8 /* Third Party */ = {
@@ -742,6 +751,7 @@
 				5CCF08FD1465D5D900D41AB0 /* Reachability.m */,
 			);
 			name = "Third Party";
+			path = "Third Party";
 			sourceTree = "<group>";
 		};
 		5CBB63A9146080DD00A9133A = {
@@ -765,23 +775,23 @@
 		5CBB63BE146080DF00A9133A /* Origon */ = {
 			isa = PBXGroup;
 			children = (
+				5CB49DD014881F36006EA2F8 /* Auxiliary Classes */,
+				5C50F2581779A6AD00B961BC /* Cell Layout */,
+				5C4F9766149529BF006E244F /* Cocoa Categories */,
+				5CD433201ADA53E600DE59E9 /* Cocoa Subclass categories */,
+				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
+				5C36BEA51471A05700DD3CEA /* Entities */,
+				5C5ED5CB14F2E95B006BBDFB /* Entity Categories */,
+				5C7C4DCF18E57DDF00903989 /* Entity Proxies */,
+				5CB49DCD14881E98006EA2F8 /* Protocols */,
+				5CBB63BF146080DF00A9133A /* Supporting Files */,
+				5CB49DD114882012006EA2F8 /* Third Party */,
+				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
 				5C9E115B19F675690067D076 /* Images.xcassets */,
 				5C01A2D319F26F470043B0DD /* Launch Screen.xib */,
 				5CD5EC0B18D0768A0075D07E /* MainStoryboard.storyboard */,
 				5CBB63C7146080DF00A9133A /* OAppDelegate.h */,
 				5CBB63C8146080DF00A9133A /* OAppDelegate.m */,
-				5CB49DD014881F36006EA2F8 /* Auxiliary Classes */,
-				5C50F2581779A6AD00B961BC /* Cell Layout */,
-				5C4F9766149529BF006E244F /* Cocoa Categories */,
-				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
-				5CD433201ADA53E600DE59E9 /* Cocoa Subclass categories */,
-				5C36BEA51471A05700DD3CEA /* Entities */,
-				5C5ED5CB14F2E95B006BBDFB /* Entity Categories */,
-				5C7C4DCF18E57DDF00903989 /* Entity Proxies */,
-				5CB49DCD14881E98006EA2F8 /* Protocols */,
-				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
-				5CB49DD114882012006EA2F8 /* Third Party */,
-				5CBB63BF146080DF00A9133A /* Supporting Files */,
 			);
 			path = Origon;
 			sourceTree = "<group>";
@@ -789,23 +799,24 @@
 		5CBB63BF146080DF00A9133A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				5CBB63C4146080DF00A9133A /* main.m */,
-				5C3F999A178AD58600E31A44 /* Origon.h */,
-				5CBB63C6146080DF00A9133A /* Origon-Prefix.pch */,
-				5CBB63C0146080DF00A9133A /* Origon-Info.plist */,
-				5C70542C1B35AC4300F2FC65 /* Localizable.strings */,
-				5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */,
 				5C276E7A1475B9A800A6C500 /* Media */,
+				5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */,
+				5C70542C1B35AC4300F2FC65 /* Localizable.strings */,
+				5CBB63C0146080DF00A9133A /* Origon-Info.plist */,
+				5CBB63C6146080DF00A9133A /* Origon-Prefix.pch */,
+				5C3F999A178AD58600E31A44 /* Origon.h */,
+				5CBB63C4146080DF00A9133A /* main.m */,
 			);
 			name = "Supporting Files";
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		5CBB63DF146080E000A9133A /* OrigonTests */ = {
 			isa = PBXGroup;
 			children = (
+				5CBB63E0146080E000A9133A /* Supporting Files */,
 				5CBB63E5146080E000A9133A /* OrigonTests.h */,
 				5CBB63E6146080E000A9133A /* OrigonTests.m */,
-				5CBB63E0146080E000A9133A /* Supporting Files */,
 			);
 			path = OrigonTests;
 			sourceTree = "<group>";
@@ -816,6 +827,7 @@
 				5CBB63E1146080E000A9133A /* OrigonTests-Info.plist */,
 			);
 			name = "Supporting Files";
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		5CD433201ADA53E600DE59E9 /* Cocoa Subclass categories */ = {
@@ -825,7 +837,7 @@
 				5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.m */,
 			);
 			name = "Cocoa Subclass categories";
-			path = ..;
+			path = "Cocoa Subclass categories";
 			sourceTree = "<group>";
 		};
 		5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */ = {
@@ -853,6 +865,7 @@
 				5CAFEFD91AB6F6C4005374CA /* OTitleView.m */,
 			);
 			name = "Cocoa Subclasses";
+			path = "Cocoa Subclasses";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1163,23 +1176,25 @@
 		5C70542C1B35AC4300F2FC65 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
+				5C1B2D801B384CB1009F3690 /* de */,
+				5C70542E1B35AC7200F2FC65 /* en */,
 				5C70542B1B35AC4300F2FC65 /* en-GB */,
 				5C70542D1B35AC6A00F2FC65 /* nb */,
-				5C70542E1B35AC7200F2FC65 /* en */,
-				5C1B2D801B384CB1009F3690 /* de */,
 			);
 			name = Localizable.strings;
+			path = .;
 			sourceTree = "<group>";
 		};
 		5C7BD0501A6D1C7A00C1F14B /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5C7BD04F1A6D1C7A00C1F14B /* nb */,
-				5C16F1051B3466560005D474 /* en-GB */,
-				5C16F1091B3551850005D474 /* en */,
 				5C1B2D811B384CB8009F3690 /* de */,
+				5C16F1091B3551850005D474 /* en */,
+				5C16F1051B3466560005D474 /* en-GB */,
+				5C7BD04F1A6D1C7A00C1F14B /* nb */,
 			);
 			name = InfoPlist.strings;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1300,8 +1315,8 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
-				INFOPLIST_FILE = "Origon/Origon-Info.plist";
+				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
+				INFOPLIST_FILE = "Origon/Supporting Files/Origon-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
@@ -1322,8 +1337,8 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
-				INFOPLIST_FILE = "Origon/Origon-Info.plist";
+				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
+				INFOPLIST_FILE = "Origon/Supporting Files/Origon-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
@@ -1343,8 +1358,8 @@
 					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
-				INFOPLIST_FILE = "OrigonTests/OrigonTests-Info.plist";
+				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
+				INFOPLIST_FILE = "OrigonTests/Supporting Files/OrigonTests-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = OrigonTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
@@ -1360,8 +1375,8 @@
 					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Origon/Origon-Prefix.pch";
-				INFOPLIST_FILE = "OrigonTests/OrigonTests-Info.plist";
+				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
+				INFOPLIST_FILE = "OrigonTests/Supporting Files/OrigonTests-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = OrigonTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
