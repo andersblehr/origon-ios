@@ -23,7 +23,7 @@ NSInteger const kHTTPStatusServiceUnavailable = 503;
 
 NSString * const kHTTPHeaderLocation = @"Location";
 
-static BOOL _useDevServerIfOnSimulator = NO;
+static BOOL _useDevServerIfOnSimulator = YES;
 static BOOL _isDownForMaintenance = NO;
 
 static NSString * const kOrigonServer = @"https://origon-api.appspot.com";
