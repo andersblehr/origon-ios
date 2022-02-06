@@ -10,7 +10,6 @@
 
 extern CGFloat const kDefaultCellHeight;
 extern CGFloat const kDefaultCellPadding;
-extern CGFloat const kMinimumCellPadding;
 extern CGFloat const kPhotoFrameWidth;
 
 @interface OInputCellBlueprint : NSObject

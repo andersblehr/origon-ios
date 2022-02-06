@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OState.h"
-
 NSString * const kActionActivate = @"activate";
 NSString * const kActionChange = @"change";
 NSString * const kActionDisplay = @"display";
@@ -62,7 +60,6 @@ NSString * const kAspectNonFavourites = @"others";
 NSString * const kAspectOrganiserRole = @"organisers";
 NSString * const kAspectParentRole = @"parents";
 NSString * const kAspectParent = @"parent";
-NSString * const kAspectRole = @"role";
 
 static OState *_activeState = nil;
 

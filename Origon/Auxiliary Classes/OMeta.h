@@ -48,6 +48,5 @@
 
 + (BOOL)deviceIs_iPhone;
 + (BOOL)deviceIsSimulator;
-+ (BOOL)iOSVersionIs:(NSString *)majorVersionNumber;
 
 @end

@@ -304,20 +304,6 @@
 }
 
 
-+ (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey
-{
-    NSString *sortKey = nil;
-    
-    if (relationshipKey) {
-        sortKey = [NSString stringWithFormat:@"%@.%@", relationshipKey, propertyKey];
-    } else {
-        sortKey = propertyKey;
-    }
-    
-    return sortKey;
-}
-
-
 #pragma mark - Object comparison
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo
@@ -331,7 +317,7 @@
 
 #pragma mark - Determining if origo is organised
 
-+ (BOOL)isOrganisedOrigowithType:(NSString *)type
++ (BOOL)isOrganisedOrigoWithType:(NSString *)type
 {
     BOOL isOrganised = NO;
     

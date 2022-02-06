@@ -8,15 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OActionSheet : UIActionSheet
+@interface OActionSheet : NSObject
 
 + (void)singleButtonActionSheetWithButtonTitle:(NSString *)buttonTitle action:(void (^)(void))action;
 
-- (instancetype)initWithPrompt:(NSString *)prompt delegate:(id<UIActionSheetDelegate>)delegate tag:(NSInteger)tag;
+- (instancetype)initWithPrompt:(NSString *)prompt;
 
-- (NSInteger)addButtonWithTitle:(NSString *)title tag:(NSInteger)tag;
-- (NSInteger)tagForButtonIndex:(NSInteger)buttonIndex;
+- (void)addButtonWithTitle:(NSString *)title action:(void (^)(void))action;
+- (void)addDestructiveButtonWithTitle:(NSString *)title action:(void (^)(void))action;
+- (NSUInteger)numberOfButtons;
 
 - (void)show;
+- (void)showWithCancelAction:(void (^)(void))cancelAction;
 
 @end

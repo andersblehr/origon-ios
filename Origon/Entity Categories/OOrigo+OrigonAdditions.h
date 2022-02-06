@@ -58,6 +58,8 @@ extern NSString * const kPermissionKeyApplyToAll;
 - (NSArray *)members;
 - (NSArray *)regulars;
 - (NSArray *)guardians;
+- (NSArray *)guardiansOfWardsInGroup:(NSString *)group;
+- (NSArray *)guardiansOfWardsWithGender:(NSString *)gender;
 - (NSArray *)elders;
 - (NSArray *)minors;
 - (NSArray *)parentContacts;

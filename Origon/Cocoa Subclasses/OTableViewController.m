@@ -34,7 +34,6 @@ static UIViewController * _reinstantiatedRootViewController;
     BOOL _isUsingSectionIndexTitles;
     BOOL _shouldBeginEditingTitleView;
     BOOL _needsReloadOnModalDismissal;
-    BOOL _needsInvokeViewWillAppearOnModalDismissal;
     BOOL _isOnline;
     
     Class _entityClass;
@@ -53,9 +52,6 @@ static UIViewController * _reinstantiatedRootViewController;
     
     OTableViewCell *_inlineCell;
     UIGestureRecognizer *_inlineCellCancelRecogniser;
-    
-    NSIndexPath *_selectedIndexPath;
-    OActivityIndicator *_activityIndicator;
     
     UIBarButtonItem *_nextButton;
     UIBarButtonItem *_doneButton;
@@ -895,14 +891,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)sendEmailToRecipients:(id)toRecipients cc:(id)ccRecipients
+- (void)sendEmailToRecipients:(id)toRecipients
 {
     if (toRecipients && ![toRecipients conformsToProtocol:@protocol(NSFastEnumeration)]) {
         toRecipients = @[toRecipients];
-    }
-    
-    if (ccRecipients && ![ccRecipients conformsToProtocol:@protocol(NSFastEnumeration)]) {
-        ccRecipients = @[ccRecipients];
     }
     
     NSMutableArray *toAddresses = [NSMutableArray array];
@@ -910,10 +902,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     for (id<OMember> toRecipient in toRecipients) {
         [toAddresses addObject:toRecipient.email];
-    }
-    
-    for (id<OMember> ccRecipient in ccRecipients) {
-        [ccAddresses addObject:ccRecipient.email];
     }
     
     MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
@@ -979,17 +967,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else {
         destinationViewController = [[UINavigationController alloc] initWithRootViewController:viewController];
     }
-    
+
     [destinationViewController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     
     if (_presentStealthilyOnce) {
-        _needsInvokeViewWillAppearOnModalDismissal = YES;
         
         destinationViewController.modalPresentationStyle = UIModalPresentationOverFullScreen;
         destinationViewController.view.alpha = 0.f;
         
         [self presentViewController:destinationViewController animated:NO completion:^{
-            dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, 1.f * NSEC_PER_SEC);
+            dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC);
             dispatch_after(delay, dispatch_get_main_queue(), ^(void) {
                 destinationViewController.view.alpha = 1.f;
             });
@@ -1026,14 +1013,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         _needsReloadOnModalDismissal = [[OMeta m] userIsLoggedIn] && !viewController.didCancel;
-        
-        if (_needsInvokeViewWillAppearOnModalDismissal) {
-            [self viewWillAppear:YES];
-        }
+
+        [self viewWillAppear:YES];
         
         [self dismissViewControllerAnimated:YES completion:^{
             self->_needsReloadOnModalDismissal = NO;
-            self->_needsInvokeViewWillAppearOnModalDismissal = NO;
             
             if ([self->_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
                 [self->_instance didDismissModalViewController:viewController];
@@ -2024,8 +2008,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
             [_instance didSelectCell:cell atIndexPath:indexPath];
         }
-        
-        _selectedIndexPath = indexPath;
     }
 }
 

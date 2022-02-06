@@ -23,18 +23,8 @@ static NSInteger const kSectionKeyAuth = 0;
 
 static NSInteger const kMaxAttempts = 2;
 
-static NSInteger const kActionSheetTagAuthAction = 0;
-static NSInteger const kButtonTagAuthActionRegister = 0;
-static NSInteger const kButtonTagAuthActionLogin = 1;
 
-static NSInteger const kAlertTagWelcomeBack = 0;
-static NSInteger const kAlertTagActivationFailed = 1;
-static NSInteger const kAlertTagForgottenPassword = 2;
-
-static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
-
-
-@interface OAuthViewController () <OTableViewController, OInputCellDelegate, OConnectionDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OAuthViewController () <OTableViewController, OInputCellDelegate, OConnectionDelegate> {
 @private
     OTableViewCell *_inputCell;
     
@@ -161,7 +151,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         _numberOfFailedAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
-            [OAlert showAlertWithTitle:OLocalizedString(@"Activation failed", @"") message:OLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
+            [OAlert showAlertWithTitle:OLocalizedString(@"Activation failed", @"")
+                               message:OLocalizedString(@"It looks like you may have lost the activation code ...", @"")
+                                  onOk:^{ [self toggleAuthState]; }];
         } else if ([self targetIs:kTargetEmail]) {
             [self.dismisser dismissModalViewController:self];
         }
@@ -176,7 +168,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     _authInfo = authInfo;
     
     if ([self targetIs:kTargetUser]) {
-        [ODefaults setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo] forKey:kDefaultsKeyAuthInfo];
+        NSError *error;
+        [ODefaults setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo
+                                                          requiringSecureCoding:NO
+                                                                          error:&error]
+                             forKey:kDefaultsKeyAuthInfo];
         
         [self toggleAuthState];
     }
@@ -276,10 +272,21 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:OLocalizedString(@"If you have the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:nil otherButtonTitles:OLocalizedString(@"Go back", @""), OLocalizedString(@"Have code", @""), nil];
-            alert.tag = kAlertTagWelcomeBack;
-            
-            [alert show];
+            UIAlertController *alertController =
+                    [UIAlertController alertControllerWithTitle:OLocalizedString(@"Welcome back!", @"")
+                                                        message:[NSString stringWithFormat:OLocalizedString(@"If you have the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]]
+                                                 preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:
+                    [UIAlertAction actionWithTitle:OLocalizedString(@"Go back", @"")
+                                             style:UIAlertActionStyleDefault
+                                           handler:^(UIAlertAction* action) {
+                                               [self toggleAuthState];
+                                           }]];
+            [alertController addAction:
+                    [UIAlertAction actionWithTitle:OLocalizedString(@"Have code", @"")
+                                             style:UIAlertActionStyleDefault
+                                           handler:^(UIAlertAction * action) {}]];
+            [alertController show];
         } else if ([self targetIs:kTargetEmail]) {
             [[OConnection connectionWithDelegate:self] sendActivationCodeToEmail:self.target];
         }
@@ -300,7 +307,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         NSData *authInfoArchive = [ODefaults globalDefaultForKey:kDefaultsKeyAuthInfo];
         
         if (authInfoArchive) {
-            _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
+            _authInfo = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class]
+                                                          fromData:authInfoArchive
+                                                             error:nil];
             
             [OMeta m].userEmail = _authInfo[kPropertyKeyEmail];
             [OMeta m].deviceId = _authInfo[kInternalKeyDeviceId];
@@ -469,9 +478,13 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if (_authAction) {
             [self performAuthAction:_authAction];
         } else {
-            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAuthAction];
-            [actionSheet addButtonWithTitle:OLocalizedString(kActionKeyRegister, kStringPrefixTitle) tag:kButtonTagAuthActionRegister];
-            [actionSheet addButtonWithTitle:OLocalizedString(kActionKeyLogin, kStringPrefixTitle) tag:kButtonTagAuthActionLogin];
+            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+            [actionSheet addButtonWithTitle:OLocalizedString(kActionKeyRegister, kStringPrefixTitle) action:^{
+                [self performAuthAction:kAuthActionRegister];
+            }];
+            [actionSheet addButtonWithTitle:OLocalizedString(kActionKeyLogin, kStringPrefixTitle) action:^{
+                [self performAuthAction:kAuthActionLogin];
+            }];
             
             [actionSheet show];
         }
@@ -535,62 +548,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (actionSheet.tag) {
-        case kActionSheetTagAuthAction:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-                
-                if (buttonTag == kButtonTagAuthActionRegister) {
-                    [self performAuthAction:kAuthActionRegister];
-                } else if (buttonTag == kButtonTagAuthActionLogin) {
-                    [self performAuthAction:kAuthActionLogin];
-                }
-            }
-            
-            break;
-            
-        default:
-            break;
-    }
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertTagWelcomeBack:
-            if (buttonIndex == kAlertButtonWelcomeBackStartOver) {
-                [self toggleAuthState];
-            }
-            
-            break;
-            
-        case kAlertTagActivationFailed:
-            [self toggleAuthState];
-            
-            break;
-            
-        case kAlertTagForgottenPassword:
-            if (buttonIndex == alertView.cancelButtonIndex) {
-                [_passwordField becomeFirstResponder];
-            } else {
-                [[OConnection connectionWithDelegate:self] resetPasswordWithEmail:[OMeta m].userEmail password:[OCrypto generateActivationCode]];
-            }
-
-            break;
-            
-        default:
-            break;
-    }
-}
-
-
 #pragma mark - OconnectionDelegate conformance
 
 - (void)connection:(OConnection *)connection didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
@@ -635,10 +592,14 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 if (_numberOfFailedAttempts == kMaxAttempts) {
                     _numberOfFailedAttempts = 0;
                     
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:OLocalizedString(@"Did you forget the password?", @"") delegate:self cancelButtonTitle:OLocalizedString(@"No", @"") otherButtonTitles:OLocalizedString(@"Yes", @""), nil];
-                    alert.tag = kAlertTagForgottenPassword;
-                    
-                    [alert show];
+                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"" message:OLocalizedString(@"Did you forget the password?", @"") preferredStyle:UIAlertControllerStyleAlert];
+                    [alertController addAction:[UIAlertAction actionWithTitle:OLocalizedString(@"No", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                        [self->_passwordField becomeFirstResponder];
+                    }]];
+                    [alertController addAction:[UIAlertAction actionWithTitle:OLocalizedString(@"Yes", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                        [[OConnection connectionWithDelegate:self] resetPasswordWithEmail:[OMeta m].userEmail password:[OCrypto generateActivationCode]];
+                    }]];
+                    [alertController show];
                 } else {
                     [_passwordField becomeFirstResponder];
                 }
