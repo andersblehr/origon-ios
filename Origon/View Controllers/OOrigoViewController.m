@@ -167,6 +167,32 @@ static NSInteger const kHeaderSegmentResidences = 1;
 }
 
 
+- (void)initiateContactWithRecipient:(OMember *)recipient {
+    if (_recipientType == kRecipientTypeText) {
+        [self sendTextToRecipients:recipient];
+    } else if (_recipientType == kRecipientTypeCall) {
+        [self callRecipient:recipient];
+    } else if (_recipientType == kRecipientTypeEmail) {
+        [self sendEmailToRecipients:recipient];
+    }
+}
+
+
+- (void)joinRequestForMembers:(NSArray *)members wasAccepted:(BOOL)accepted {
+    for (id<OMember> member in members) {
+        id<OMembership> membership = [_origo membershipForMember:member];
+        if (accepted) {
+            membership.status = kMembershipStatusActive;
+        } else {
+            membership.status = kMembershipStatusDeclined;
+            membership.affiliations = nil;
+        }
+    }
+    [self reloadSections];
+    [[OMeta m].replicator replicate];
+}
+
+
 #pragma mark - Actions sheets
 
 - (void)presentCoHabitantsSheetWithCandidates:(NSArray *)candidates
@@ -256,17 +282,6 @@ static NSInteger const kHeaderSegmentResidences = 1;
 }
 
 
-- (void)initiateContactWithRecipient:(OMember *)recipient {
-    if (_recipientType == kRecipientTypeText) {
-        [self sendTextToRecipients:recipient];
-    } else if (_recipientType == kRecipientTypeCall) {
-        [self callRecipient:recipient];
-    } else if (_recipientType == kRecipientTypeEmail) {
-        [self sendEmailToRecipients:recipient];
-    }
-}
-
-
 #pragma mark - Selector implementations
 
 - (void)didTapEmbeddedButton:(OButton *)embeddedButton
@@ -305,21 +320,6 @@ static NSInteger const kHeaderSegmentResidences = 1;
     }];
     
     [actionSheet show];
-}
-
-
-- (void)joinRequestForMembers:(NSArray *)members wasAccepted:(BOOL)accepted {
-    for (id<OMember> member in members) {
-        id<OMembership> membership = [_origo membershipForMember:member];
-        if (accepted) {
-            membership.status = kMembershipStatusActive;
-        } else {
-            membership.status = kMembershipStatusDeclined;
-            membership.affiliations = nil;
-        }
-    }
-    [self reloadSections];
-    [[OMeta m].replicator replicate];
 }
 
 
