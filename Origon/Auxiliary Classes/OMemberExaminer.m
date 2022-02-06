@@ -6,28 +6,15 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OMemberExaminer.h"
-
 static NSInteger const kParentCandidateStatusUndetermined = 0x00;
 static NSInteger const kParentCandidateStatusMother = 0x01;
 static NSInteger const kParentCandidateStatusFather = 0x02;
 static NSInteger const kParentCandidateStatusBoth = 0x03;
 
-static NSInteger const kActionSheetTagGender = 0;
-static NSInteger const kButtonTagFemale = 0;
-
-static NSInteger const kActionSheetTagBothParents = 1;
-static NSInteger const kActionSheetTagParent = 2;
-static NSInteger const kActionSheetTagAllOffspring = 3;
-static NSInteger const kActionSheetTagOffspring = 4;
-
-static NSInteger const kButtonTagYes = 0;
-static NSInteger const kButtonTagNo = 3;
-
 static OMemberExaminer *_instance = nil;
 
 
-@interface OMemberExaminer () <UIActionSheetDelegate> {
+@interface OMemberExaminer () {
 @private
     id<OMember> _member;
     id<OOrigo> _residence;
@@ -107,11 +94,17 @@ static OMemberExaminer *_instance = nil;
         prompt = [NSString stringWithFormat:OLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], femaleGender, maleGender];
     }
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];
-    [actionSheet addButtonWithTitle:[femaleGender stringByCapitalisingFirstLetter] tag:kButtonTagFemale];
-    [actionSheet addButtonWithTitle:[maleGender stringByCapitalisingFirstLetter]];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    [actionSheet addButtonWithTitle:[femaleGender stringByCapitalisingFirstLetter] action:^{
+        [self->_member setGender:kGenderFemale];
+    }];
+    [actionSheet addButtonWithTitle:[maleGender stringByCapitalisingFirstLetter] action:^{
+        [self->_member setGender:kGenderMale];
+    }];
     
-    [actionSheet show];
+    [actionSheet showWithCancelAction:^{
+        [self finishExaminationDidCancel:YES];
+    }];
 }
 
 
@@ -119,13 +112,41 @@ static OMemberExaminer *_instance = nil;
 {
     NSString *prompt = [OLanguage questionWithSubject:_candidates verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:[_member givenName] noun:_parent_]];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagBothParents];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
-    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[OLanguage labelForParentWithGender:[_candidates[0] gender] relativeToOffspringWithGender:_member.gender]]];
-    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[OLanguage labelForParentWithGender:[_candidates[1] gender] relativeToOffspringWithGender:_member.gender]]];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
+        [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+        id<OMember> father = [self->_candidates[0] isMale] ? self->_candidates[0] : self->_candidates[1];
+        id<OMember> mother = [self->_candidates[0] isMale] ? self->_candidates[1] : self->_candidates[0];
+        [self->_member setFatherId:father.entityId];
+        [self->_member setMotherId:mother.entityId];
+        [self performExamination];
+    }];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[OLanguage labelForParentWithGender:[_candidates[0] gender] relativeToOffspringWithGender:_member.gender]] action:^{
+        [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+        if ([self->_candidates[0] isMale]) {
+            [self->_member setFatherId:[self->_candidates[0] entityId]];
+        } else {
+            [self->_member setMotherId:[self->_candidates[0] entityId]];
+        }
+        [self performExamination];
+    }];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[OLanguage labelForParentWithGender:[_candidates[1] gender] relativeToOffspringWithGender:_member.gender]] action:^{
+        [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+        if ([self->_candidates[1] isMale]) {
+            [self->_member setFatherId:[self->_candidates[1] entityId]];
+        } else {
+            [self->_member setMotherId:[self->_candidates[1] entityId]];
+        }
+        [self performExamination];
+    }];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:^{
+        [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+        [self performExamination];
+    }];
     
-    [actionSheet show];
+    [actionSheet showWithCancelAction:^{
+        [self finishExaminationDidCancel:YES];
+    }];
 }
 
 
@@ -134,31 +155,70 @@ static OMemberExaminer *_instance = nil;
     NSString *parentNoun = [self parentNounForGender:_member.gender];
     NSString *prompt = [OLanguage questionWithSubject:_member verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:parentNoun]];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAllOffspring];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
+        [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+        [self->_registrantOffspring addObjectsFromArray:self->_candidates];
+        [self performExamination];
+    }];
     
     if (_candidates.count == 2) {
-        [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[0] noun:parentNoun] stringByCapitalisingFirstLetter]];
-        [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[1] noun:parentNoun] stringByCapitalisingFirstLetter]];
+        [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[0] noun:parentNoun] stringByCapitalisingFirstLetter] action:^{
+            [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+            [self->_registrantOffspring addObject:self->_candidates[0]];
+            [self performExamination];
+        }];
+        [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[1] noun:parentNoun] stringByCapitalisingFirstLetter] action:^{
+            [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+            [self->_registrantOffspring addObject:self->_candidates[1]];
+            [self performExamination];
+        }];
     } else if (_candidates.count > 2) {
-        [actionSheet addButtonWithTitle:OLocalizedString(@"To some of them", @"")]; // TODO
+        [actionSheet addButtonWithTitle:OLocalizedString(@"To some of them", @"") action:^{
+            [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+            [self performExamination];
+        }]; // TODO
     }
     
-    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:^{
+        [self->_examinedCandidates addObjectsFromArray:self->_candidates];
+        [self performExamination];
+    }];
     
-    [actionSheet show];
+    [actionSheet showWithCancelAction:^{
+        [self finishExaminationDidCancel:YES];
+    }];
 }
 
 
-- (void)presentCandidateSheetForParentCandidate:(id<OMember>)candidate
+- (void)presentCandidateSheetForParentCandidate:(id<OMember>)parentCandidate
 {
-    NSString *prompt = [OLanguage questionWithSubject:candidate verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:[_member givenName] noun:[self parentNounForGender:candidate.gender]]];
+    NSString *prompt = [OLanguage questionWithSubject:parentCandidate verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:[_member givenName] noun:[self parentNounForGender:parentCandidate.gender]]];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagParent];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
+        if ([self->_currentCandidate isMale]) {
+            [self->_member setFatherId:self->_currentCandidate.entityId];
+        } else {
+            [self->_member setMotherId:self->_currentCandidate.entityId];
+        }
+
+        for (id<OMember> candidate in self->_candidates) {
+            if ([candidate isMale] == [self->_currentCandidate isMale]) {
+                [self->_examinedCandidates addObject:candidate];
+            }
+        }
+
+        [self performExamination];
+    }];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:^{
+        [self->_examinedCandidates addObject:self->_currentCandidate];
+        [self performExamination];
+    }];
     
-    [actionSheet show];
+    [actionSheet showWithCancelAction:^{
+        [self finishExaminationDidCancel:YES];
+    }];
 }
 
 
@@ -166,11 +226,20 @@ static OMemberExaminer *_instance = nil;
 {
     NSString *prompt = [OLanguage questionWithSubject:[_member givenName] verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:_member.gender]]];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagOffspring];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagYes];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagNo];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
+        [self->_registrantOffspring addObject:self->_currentCandidate];
+        [self->_examinedCandidates addObject:self->_currentCandidate];
+        [self performExamination];
+    }];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:^{
+        [self->_examinedCandidates addObject:self->_currentCandidate];
+        [self performExamination];
+    }];
     
-    [actionSheet show];
+    [actionSheet showWithCancelAction:^{
+        [self finishExaminationDidCancel:YES];
+    }];
 }
 
 
@@ -306,93 +375,6 @@ static OMemberExaminer *_instance = nil;
     _registrantOffspring = [NSMutableArray array];
     
     [self performExamination];
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex < actionSheet.cancelButtonIndex) {
-        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-        
-        switch (actionSheet.tag) {
-            case kActionSheetTagGender:
-                [_member setGender:buttonTag == kButtonTagFemale ? kGenderFemale : kGenderMale];
-                
-                break;
-                
-            case kActionSheetTagBothParents:
-                [_examinedCandidates addObjectsFromArray:_candidates];
-                
-                if (buttonTag == kButtonTagYes) {
-                    id<OMember> father = [_candidates[0] isMale] ? _candidates[0] : _candidates[1];
-                    id<OMember> mother = [_candidates[0] isMale] ? _candidates[1] : _candidates[0];
-                    
-                    [_member setFatherId:father.entityId];
-                    [_member setMotherId:mother.entityId];
-                } else if (buttonTag != kButtonTagNo) {
-                    if ([_candidates[buttonTag - 1] isMale]) {
-                        [_member setFatherId:[_candidates[buttonTag - 1] entityId]];
-                    } else {
-                        [_member setMotherId:[_candidates[buttonTag - 1] entityId]];
-                    }
-                }
-                
-                break;
-                
-            case kActionSheetTagAllOffspring:
-                if (buttonTag == kButtonTagYes) {
-                    [_examinedCandidates addObjectsFromArray:_candidates];
-                    [_registrantOffspring addObjectsFromArray:_candidates];
-                } else if (buttonTag != kButtonTagNo) {
-                    if (_candidates.count == 2) {
-                        [_examinedCandidates addObjectsFromArray:_candidates];
-                        [_registrantOffspring addObject:_candidates[buttonTag - 1]];
-                    }
-                } else {
-                    [_examinedCandidates addObjectsFromArray:_candidates];
-                }
-                
-                break;
-                
-            case kActionSheetTagParent:
-                if (buttonTag == kButtonTagYes) {
-                    if ([_currentCandidate isMale]) {
-                        [_member setFatherId:_currentCandidate.entityId];
-                    } else {
-                        [_member setMotherId:_currentCandidate.entityId];
-                    }
-                    
-                    for (id<OMember> candidate in _candidates) {
-                        if ([candidate isMale] == [_currentCandidate isMale]) {
-                            [_examinedCandidates addObject:candidate];
-                        }
-                    }
-                } else {
-                    [_examinedCandidates addObject:_currentCandidate];
-                }
-                
-                break;
-                
-            case kActionSheetTagOffspring:
-                if (buttonTag == kButtonTagYes) {
-                    [_registrantOffspring addObject:_currentCandidate];
-                }
-                
-                [_examinedCandidates addObject:_currentCandidate];
-                
-                break;
-                
-            default:
-                
-                break;
-        }
-        
-        [self performExamination];
-    } else {
-        [self finishExaminationDidCancel:YES];
-    }
 }
 
 @end

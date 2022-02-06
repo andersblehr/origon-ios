@@ -28,7 +28,7 @@
 
 #import "Reachability.h"
 
-@protocol OEntity, OMember, OMembership, OOrigo, OSettings;
+@protocol OEntity, OMember, OMembership, OOrigo;
 @protocol OTableViewController;
 @class OEntityProxy, OMemberProxy, OMembershipProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef;
@@ -67,6 +67,7 @@ typedef UIView<OTextInput> OInputField;
 #import "NSManagedObjectContext+OrigonAdditions.h"
 #import "NSString+OrigonAdditions.h"
 #import "NSURL+OrigonAdditions.h"
+#import "UIAlertController+OrigonAdditions.h"
 #import "UIBarButtonItem+OrigonAdditions.h"
 #import "UIColor+OrigonAdditions.h"
 #import "UIFont+OrigonAdditions.h"

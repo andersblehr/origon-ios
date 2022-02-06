@@ -6,9 +6,6 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OMeta.h"
-
-//static NSTimeInterval const kTimeInterval30Days = 2592000;
 static NSTimeInterval const kTimeInterval100Years = 3153600000;
 
 

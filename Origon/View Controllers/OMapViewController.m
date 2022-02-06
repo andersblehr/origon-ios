@@ -12,16 +12,13 @@ static NSInteger const kTitleSegmentStandard = 0;
 static NSInteger const kTitleSegmentHybrid = 1;
 static NSInteger const kTitleSegmentSatellite = 2;
 
-static NSInteger const kActionSheetTagStartingPoint = 0;
-static NSInteger const kButtonTagStartingPointCurrentLocation = 10;
-
 static CGFloat const kMapRegionSpan = 1000.f;
 static CGFloat const kMapEdgePadding = 50.f;
 
 static NSString * const kIdentifierPinAnnotationView = @"pin";
 
 
-@interface OMapViewController () <OTableViewController, CLLocationManagerDelegate, MKMapViewDelegate, UIActionSheetDelegate> {
+@interface OMapViewController () <OTableViewController, CLLocationManagerDelegate, MKMapViewDelegate> {
 @private
     UISegmentedControl *_titleSegments;
     MKMapView *_mapView;
@@ -81,13 +78,35 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 
 - (void)presentStartingPointSheet
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:OLocalizedString(@"Select starting point for directions", @"") delegate:self tag:kActionSheetTagStartingPoint];
+    OActionSheet *actionSheet =
+            [[OActionSheet alloc] initWithPrompt:OLocalizedString(@"Select starting point for directions", @"")];
     
     for (id<OOrigo> address in [[OMeta m].user addresses]) {
-        [actionSheet addButtonWithTitle:[address shortAddress]];
+        [actionSheet addButtonWithTitle:[address shortAddress] action:^{
+            self->_destinationItem = [[MKMapItem alloc] initWithPlacemark:self->_placemark];
+            CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+            [geocoder geocodeAddressString:address.address completionHandler:^(NSArray *placemarks, NSError *error) {
+                if (!error) {
+                    if (placemarks.count == 1) {
+                        MKPlacemark *placemark = [[MKPlacemark alloc] initWithPlacemark:placemarks[0]];
+                        self->_startItem = [[MKMapItem alloc] initWithPlacemark:placemark];
+                        self->_startAnnotation = placemark;
+                        [self overlayDirections];
+                    } else {
+                        [self showAmbiguousAddressAlertForOrigo:address];
+                    }
+                } else {
+                    [self showAlertForError:error info:[address singleLineAddress]];
+                }
+            }];
+        }];
     }
     
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Current location", @"") tag:kButtonTagStartingPointCurrentLocation];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Current location", @"") action:^{
+        self->_destinationItem = [[MKMapItem alloc] initWithPlacemark:self->_placemark];
+        self->_startItem = [MKMapItem mapItemForCurrentLocation];
+        [self overlayDirections];
+    }];
     
     [actionSheet show];
 }
@@ -255,52 +274,6 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
     }
     
     return renderer;
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (actionSheet.tag) {
-        case kActionSheetTagStartingPoint:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                _destinationItem = [[MKMapItem alloc] initWithPlacemark:_placemark];
-                
-                NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-                
-                if (buttonTag == kButtonTagStartingPointCurrentLocation) {
-                    _startItem = [MKMapItem mapItemForCurrentLocation];
-                    
-                    [self overlayDirections];
-                } else {
-                    id<OOrigo> address = [[OMeta m].user addresses][buttonIndex];
-                    
-                    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
-                    [geocoder geocodeAddressString:address.address completionHandler:^(NSArray *placemarks, NSError *error) {
-                        if (!error) {
-                            if (placemarks.count == 1) {
-                                MKPlacemark *placemark = [[MKPlacemark alloc] initWithPlacemark:placemarks[0]];
-                                
-                                self->_startItem = [[MKMapItem alloc] initWithPlacemark:placemark];
-                                self->_startAnnotation = placemark;
-                                
-                                [self overlayDirections];
-                            } else {
-                                [self showAmbiguousAddressAlertForOrigo:address];
-                            }
-                        } else {
-                            [self showAlertForError:error info:[address singleLineAddress]];
-                        }
-                    }];
-                }
-            }
-            
-            break;
-            
-        default:
-            break;
-    }
 }
 
 @end

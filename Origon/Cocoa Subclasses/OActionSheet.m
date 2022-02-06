@@ -6,28 +6,23 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OActionSheet.h"
-
-@interface OActionSheet () <UIActionSheetDelegate> {
+@interface OActionSheet () {
 @private
+    UIAlertController *_alertController;
     NSMutableArray *_buttonTags;
 }
-
-@property (nonatomic, strong) void (^action)(void);
 
 @end
 
 
 @implementation OActionSheet
 
-#pragma mark - Block based action sheets
+#pragma mark - Factory methods
 
 + (void)singleButtonActionSheetWithButtonTitle:(NSString *)buttonTitle action:(void (^)(void))action
 {
-    OActionSheet *actionSheet = [[self alloc] initWithPrompt:nil delegate:nil tag:0];
-    [actionSheet addButtonWithTitle:buttonTitle];
-    actionSheet.delegate = actionSheet;
-    actionSheet.action = action;
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+    [actionSheet addButtonWithTitle:buttonTitle action:action];
     
     [actionSheet show];
 }
@@ -35,69 +30,58 @@
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithPrompt:(NSString *)prompt delegate:(id<UIActionSheetDelegate>)delegate tag:(NSInteger)tag
-{
-    self = [super initWithTitle:prompt delegate:delegate cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-
+- (instancetype)initWithPrompt:(NSString *)prompt {
+    self = [super init];
     if (self) {
-        self.tag = tag;
-        
-        _buttonTags = [NSMutableArray array];
+        _alertController = [UIAlertController alertControllerWithTitle:prompt
+                                                               message:nil
+                                                        preferredStyle:UIAlertControllerStyleActionSheet];
     }
-    
     return self;
 }
 
 
-#pragma mark - Tagged button handling
+#pragma mark - Button handling
 
-- (NSInteger)addButtonWithTitle:(NSString *)title tag:(NSInteger)tag
-{
-    [_buttonTags addObject:@(tag)];
-    
-    return [super addButtonWithTitle:title];
+- (void)addButtonWithTitle:(NSString *)title action:(void (^)(void))action {
+    [self addButtonWithTitle:title action:action isDestructive:NO];
 }
 
 
-- (NSInteger)tagForButtonIndex:(NSInteger)buttonIndex
-{
-    return [_buttonTags[buttonIndex] integerValue];
+- (void)addDestructiveButtonWithTitle:(NSString *)title action:(void (^)(void))action {
+    [self addButtonWithTitle:title action:action isDestructive:YES];
+}
+
+
+- (void)addButtonWithTitle:(NSString *)title action:(void (^)(void))action isDestructive:(BOOL)isDestructive {
+    [_alertController addAction:
+            [UIAlertAction actionWithTitle:title
+                                     style:isDestructive ? UIAlertActionStyleDefault : UIAlertActionStyleDestructive
+                                   handler:^(UIAlertAction *_) {
+                                       if (action != nil) action();
+                                   }]];
+}
+
+
+- (NSUInteger)numberOfButtons {
+    return [_alertController actions].count;
 }
 
 
 - (void)show
 {
-    [self addButtonWithTitle:OLocalizedString(@"Cancel", @"")];
-    self.cancelButtonIndex = self.numberOfButtons - 1;
-    
-    UIViewController *viewController = (UIViewController *)[OState s].viewController;
-    UIView *containerView = nil;
-    
-    if (viewController.navigationController) {
-        containerView = viewController.navigationController.view;
-    } else {
-        containerView = viewController.view;
-    }
-    
-    [self showInView:containerView];
+    [self showWithCancelAction:nil];
 }
 
 
-#pragma mark - UIActionSheet overrides
-
-- (NSInteger)addButtonWithTitle:(NSString *)title
-{
-    return [self addButtonWithTitle:title tag:_buttonTags.count];
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex != actionSheet.cancelButtonIndex) {
-        _action();
-    }
+- (void)showWithCancelAction:(void (^)(void))cancelAction {
+    [_alertController addAction:
+            [UIAlertAction actionWithTitle:OLocalizedString(@"Cancel", @"")
+                                     style:UIAlertActionStyleCancel
+                                   handler:^(UIAlertAction *_) {
+                                       if (cancelAction) cancelAction();
+                                   }]];
+    [[OState s].viewController presentViewController:_alertController animated:YES completion:nil];
 }
 
 @end

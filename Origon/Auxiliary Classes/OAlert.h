@@ -10,12 +10,21 @@
 
 @interface OAlert : NSObject
 
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)text;
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)text delegate:(id)delegate tag:(NSInteger)tag;
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message onOk:(void (^)(void))handleOk;
++ (void)showAlertWithTitle:(NSString *)title
+                   message:(NSString *)message
+             okButtonTitle:(NSString *)okButtonTitle
+                      onOk:(void (^)(void))handleOk
+                  onCancel:(void (^)(void))handleCancel;
++ (void)showAlertWithTitle:(NSString *)title
+                   message:(NSString *)message
+             okButtonTitle:(NSString *)okButtonTitle
+                      onOk:(void (^)(void))handleOk
+         cancelButtonTitle:(NSString *)cancelButtonTitle
+                  onCancel:(void (^)(void))handleCancel;
 
 + (void)showAlertForError:(NSError *)error;
-+ (void)showAlertForError:(NSError *)error tag:(NSInteger)tag delegate:(id)delegate;
 + (void)showAlertForHTTPStatus:(NSInteger)status;
-+ (void)showAlertForHTTPStatus:(NSInteger)status tag:(NSInteger)tag delegate:(id)delegate;
 
 @end

@@ -6,11 +6,8 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OInputCellBlueprint.h"
-
 CGFloat const kDefaultCellHeight = 45.f;
 CGFloat const kDefaultCellPadding = 10.f;
-CGFloat const kMinimumCellPadding = 0.1f;
 CGFloat const kPhotoFrameWidth = 55.f;
 
 
