@@ -53,7 +53,6 @@
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 - (void)viewWillBeDismissed;
 
-- (NSString *)editTitleViewPrompt;
 - (void)didFinishEditingInlineField:(OInputField *)inlineField;
 
 - (BOOL)supportsPullToRefresh;
@@ -90,7 +89,7 @@
 @property (nonatomic, assign) BOOL presentStealthilyOnce;
 @property (nonatomic, assign) BOOL needsReloadInputSection;
 
-@property (nonatomic, assign) NSInteger selectedHeaderSegment;
+@property (nonatomic, assign) NSUInteger selectedHeaderSegment;
 @property (nonatomic, assign) UITableViewRowAnimation rowAnimation;
 
 @property (nonatomic) id meta;
@@ -121,7 +120,7 @@
 - (UISegmentedControl *)titleSegmentsWithTitles:(NSArray *)segmentTitles;
 
 - (void)sendTextToRecipients:(id)recipients;
-- (void)sendEmailToRecipients:(id)toRecipients cc:(id)ccRecipients;
+- (void)sendEmailToRecipients:(id)toRecipients;
 - (void)callRecipient:(id)recipient;
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;

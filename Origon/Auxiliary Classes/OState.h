@@ -62,7 +62,6 @@ extern NSString * const kAspectNonFavourites;
 extern NSString * const kAspectOrganiserRole;
 extern NSString * const kAspectParentRole;
 extern NSString * const kAspectParent;
-extern NSString * const kAspectRole;
 
 
 @interface OState : NSObject

@@ -6,15 +6,11 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OConnection.h"
-
 NSInteger const kHTTPStatusErrorRangeStart = 400;
 
 NSInteger const kHTTPStatusOK = 200;
 NSInteger const kHTTPStatusCreated = 201;
-NSInteger const kHTTPStatusNoContent = 204;
 NSInteger const kHTTPStatusMultiStatus = 207;
-NSInteger const kHTTPStatusNotModified = 304;
 NSInteger const kHTTPStatusUnauthorized = 401;
 NSInteger const kHTTPStatusNotFound = 404;
 NSInteger const kHTTPSTatusConflict = 409;
@@ -23,7 +19,7 @@ NSInteger const kHTTPStatusServiceUnavailable = 503;
 
 NSString * const kHTTPHeaderLocation = @"Location";
 
-static BOOL _useDevServerIfOnSimulator = YES;
+static BOOL _useDevServerIfOnSimulator = NO;
 static BOOL _isDownForMaintenance = NO;
 
 static NSString * const kOrigonServer = @"https://origon-api.appspot.com";
@@ -31,7 +27,6 @@ static NSString * const kDevServer = @"http://localhost:8080";
 
 static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
-static NSString * const kHTTPMethodDELETE = @"DELETE";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";

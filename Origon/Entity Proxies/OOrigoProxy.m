@@ -368,7 +368,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (BOOL)isOrganised
 {
-    return [OUtil isOrganisedOrigowithType:self.type];
+    return [OUtil isOrganisedOrigoWithType:self.type];
 }
 
 

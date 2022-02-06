@@ -25,12 +25,8 @@ static NSInteger const kPermissionTagAdd = 1;
 static NSInteger const kPermissionTagDelete = 2;
 static NSInteger const kPermissionTagApplyToAll = 3;
 
-static NSInteger const kActionSheetTagAdd = 0;
-static NSInteger const kButtonTagAddOrganiser = 0;
-static NSInteger const kButtonTagAddOrganiserRole = 1;
 
-
-@interface OValueListViewController () <OTableViewController, UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
+@interface OValueListViewController () <OTableViewController, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
     id<OOrigo> _origo;
 
     UISegmentedControl *_titleSegments;
@@ -97,7 +93,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 - (void)inferTitleSegment
 {
     if ([self targetIs:kTargetRoles]) {
-        _titleSegment = [_titleSegmentMappings[_titleSegments.selectedSegmentIndex] integerValue];
+        _titleSegment = [_titleSegmentMappings[(NSUInteger) _titleSegments.selectedSegmentIndex] integerValue];
     } else {
         _titleSegment = _titleSegments.selectedSegmentIndex;
     }
@@ -127,9 +123,13 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
         } else if (_titleSegment == kTitleSegmentOrganisers) {
             if ([_origo organiserCandidates].count) {
-                OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
-                [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
-                [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];
+                OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+                [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) action:^{
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
+                }];
+                [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) action:^{
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectOrganiserRole}];
+                }];
                 
                 [actionSheet show];
             } else {
@@ -413,7 +413,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         if ([self aspectIs:kAspectEditable]) {
             [self setData:groups forSectionWithKey:kSectionKeyValues1];
         } else {
-            NSString *group = groups.count ? groups[_titleSegment] : @"";
+            NSString *group = groups.count ? groups[(NSUInteger) _titleSegment] : @"";
             
             [self setData:[_origo membersOfGroup:group] forSectionWithKey:kSectionKeyValues1];
         }
@@ -795,30 +795,6 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 - (void)onlineStatusDidChange
 {
     [self enableOrDisableButtons];
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-    
-    switch (actionSheet.tag) {
-        case kActionSheetTagAdd:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagAddOrganiserRole) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectOrganiserRole}];
-                } else if (buttonTag == kButtonTagAddOrganiser) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
-                }
-            }
-            
-            break;
-            
-        default:
-            break;
-    }
 }
 
 

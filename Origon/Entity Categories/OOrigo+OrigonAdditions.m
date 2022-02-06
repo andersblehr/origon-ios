@@ -301,6 +301,30 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 }
 
 
+- (NSArray *)guardiansOfWardsInGroup:(NSString *)group {
+    NSMutableSet *guardians = [NSMutableSet set];
+    if ([self isJuvenile]) {
+        for (OMember *member in [self membersOfGroup:group]) {
+            [guardians unionSet:[NSSet setWithArray:[member guardians]]];
+        }
+    }
+    return [[guardians allObjects] sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+- (NSArray *)guardiansOfWardsWithGender:(NSString *)gender {
+    NSMutableSet *guardians = [NSMutableSet set];
+    if ([self isJuvenile]) {
+        for (OMember *member in [self regulars]) {
+            if ([member.gender isEqualToString:gender]) {
+                [guardians unionSet:[NSSet setWithArray:[member guardians]]];
+            }
+        }
+    }
+    return [[guardians allObjects] sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
 - (NSArray *)elders
 {
     NSMutableArray *elders = [NSMutableArray array];
@@ -696,7 +720,7 @@ static NSString * const kDefaultOrigoPermissions = @"add:1;all:0;delete:0;edit:1
 
 - (BOOL)isOrganised
 {
-    return [OUtil isOrganisedOrigowithType:self.type];
+    return [OUtil isOrganisedOrigoWithType:self.type];
 }
 
 

@@ -12,43 +12,11 @@ static NSInteger const kSectionKeyRoles = 1;
 static NSInteger const kSectionKeyGuardians = 2;
 static NSInteger const kSectionKeyAddresses = 3;
 
-static NSInteger const kActionSheetTagEdit = 0;
-static NSInteger const kButtonTagEdit = 0;
-static NSInteger const kButtonTagEditAddAddress = 1;
-static NSInteger const kButtonTagEditAddGuardian = 2;
-
-static NSInteger const kActionSheetTagResidence = 1;
-static NSInteger const kButtonTagResidenceNewAddress = 10;
-
-static NSInteger const kActionSheetTagCoHabitants = 2;
-static NSInteger const kButtonTagCoHabitantsAll = 0;
-static NSInteger const kButtonTagCoHabitantsMinors = 1;
-static NSInteger const kButtonTagCoHabitantsNone = 2;
-
-static NSInteger const kActionSheetTagSource = 3;
-static NSInteger const kButtonTagSourceLists = 0;
-static NSInteger const kButtonTagSourceAddressBook = 1;
-
-static NSInteger const kActionSheetTagAddressBookEntry = 4;
-static NSInteger const kButtonTagAddressBookEntryAllValues = 10;
-static NSInteger const kButtonTagAddressBookEntryNoValue = 11;
-
-static NSInteger const kActionSheetTagGuardianAddressYesNo = 5;
-static NSInteger const kButtonTagGuardianAddressYes = 0;
-
-static NSInteger const kActionSheetTagGuardianAddress = 6;
-static NSInteger const kActionSheetTagEditRole = 7;
-
-static NSInteger const kActionSheetTagRecipients = 8;
-
-static NSInteger const kAlertTagEmailChange = 0;
-static NSInteger const kButtonIndexContinue = 1;
-
 static CGFloat const kPopUpAlpha = 0.9f;
 static CGFloat const kPopUpCornerRadius = 5.f;
 
 
-@interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate> {
+@interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, ABPeoplePickerNavigationControllerDelegate> {
 @private
     id<OMember> _member;
     id<OOrigo> _origo;
@@ -62,7 +30,6 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
     NSMutableArray *_addressBookAddresses;
     NSMutableArray *_addressBookHomeNumbers;
-    NSMutableArray *_addressBookMappings;
     NSInteger _addressBookHomeNumberCount;
     
     NSMutableDictionary *_cachedResidencesById;
@@ -437,13 +404,18 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
 - (void)presentHousemateResidencesSheet
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagResidence];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
     
     for (id<OOrigo> residence in _cachedResidences) {
-        [actionSheet addButtonWithTitle:[residence shortAddress]];
+        [actionSheet addButtonWithTitle:[residence shortAddress] action:^{
+            [residence addMember:self->_member];
+            [self reloadSections];
+        }];
     }
     
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Other address", @"") tag:kButtonTagResidenceNewAddress];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Other address", @"") action:^{
+        [self registerNewResidence];
+    }];
     
     [actionSheet show];
 }
@@ -451,33 +423,52 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
 - (void)presentCoHabitantsSheet
 {
-    _cachedCandidates = [OUtil sortedGroupsOfResidents:[[_member primaryResidence] residents] excluding:_member];
+    void (^registerMemberCoHabitants)(NSArray *, BOOL) = ^(NSArray *coHabitants, BOOL minorsOnly) {
+        id<OOrigo> primaryResidence = [self->_member primaryResidence];
+        if (minorsOnly || [primaryResidence hasAddress]) {
+            if (minorsOnly && ![primaryResidence hasAddress]) {
+                [[[primaryResidence membershipForMember:self->_member] proxy] expire];
+            }
+            primaryResidence = [OOrigoProxy residenceProxyUseDefaultName:![self->_member isUser]];
+            [primaryResidence addMember:self->_member];
+            for (id<OMember> coHabitant in coHabitants) {
+                [primaryResidence addMember:coHabitant];
+            }
+        }
+        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
+    };
     
+    NSArray *residentGroups = [OUtil sortedGroupsOfResidents:[[_member primaryResidence] residents] excluding:_member];
     OActionSheet *actionSheet = nil;
     
-    if (_cachedCandidates.count == 1) {
+    if (residentGroups.count == 1) {
         NSString *prompt = nil;
-        NSArray *allCoHabitants = _cachedCandidates[kButtonTagCoHabitantsAll];
         
-        if (allCoHabitants.count == 1) {
-            prompt = [NSString stringWithFormat:OLocalizedString(@"[sg] Should %@ also be registered at this address?", @""), [allCoHabitants[0] givenName]];
+        if ([residentGroups[0] count] == 1) {
+            prompt = [NSString stringWithFormat:OLocalizedString(@"[sg] Should %@ also be registered at this address?", @""), [residentGroups[0][0] givenName]];
         } else {
-            prompt = [NSString stringWithFormat:OLocalizedString(@"[pl] Should %@ also be registered at this address?", @""), [OUtil commaSeparatedListOfMembers:allCoHabitants conjoin:YES subjective:YES]];
+            prompt = [NSString stringWithFormat:OLocalizedString(@"[pl] Should %@ also be registered at this address?", @""), [OUtil commaSeparatedListOfMembers:residentGroups[0] conjoin:YES subjective:YES]];
         }
         
-        actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagCoHabitants];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagCoHabitantsNone];
+        actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
+            registerMemberCoHabitants(residentGroups[0], NO);
+        }];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:nil];
     } else {
-        actionSheet = [[OActionSheet alloc] initWithPrompt:OLocalizedString(@"Who else should be registered at this address?", @"") delegate:self tag:kActionSheetTagCoHabitants];
-        [actionSheet addButtonWithTitle:[[OUtil commaSeparatedListOfMembers:_cachedCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:YES] stringByCapitalisingFirstLetter] tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:[[OUtil commaSeparatedListOfMembers:_cachedCandidates[kButtonTagCoHabitantsMinors] conjoin:YES subjective:YES] stringByCapitalisingFirstLetter] tag:kButtonTagCoHabitantsMinors];
+        actionSheet = [[OActionSheet alloc] initWithPrompt:OLocalizedString(@"Who else should be registered at this address?", @"")];
+        [actionSheet addButtonWithTitle:[[OUtil commaSeparatedListOfMembers:residentGroups[0] conjoin:YES subjective:YES] stringByCapitalisingFirstLetter] action:^{
+            registerMemberCoHabitants(residentGroups[0], NO);
+        }];
+        [actionSheet addButtonWithTitle:[[OUtil commaSeparatedListOfMembers:residentGroups[1] conjoin:YES subjective:YES] stringByCapitalisingFirstLetter] action:^{
+            registerMemberCoHabitants(residentGroups[1], YES);
+        }];
         
         if ([_member hasAddress]) {
-            if ([_cachedCandidates[kButtonTagCoHabitantsAll] containsObject:[OMeta m].user]) {
-                [actionSheet addButtonWithTitle:OLocalizedString(@"None of you", @"") tag:kButtonTagCoHabitantsNone];
+            if ([residentGroups[0] containsObject:[OMeta m].user]) {
+                [actionSheet addButtonWithTitle:OLocalizedString(@"None of you", @"") action:nil];
             } else {
-                [actionSheet addButtonWithTitle:OLocalizedString(@"None of them [persons]", @"") tag:kButtonTagCoHabitantsNone];
+                [actionSheet addButtonWithTitle:OLocalizedString(@"None of them [persons]", @"") action:nil];
             }
         }
     }
@@ -493,16 +484,31 @@ static CGFloat const kPopUpCornerRadius = 5.f;
     if (_cachedResidences.count == 1) {
         NSString *guardians = [OUtil commaSeparatedListOfMembers:[_cachedResidences[0] elders] conjoin:YES subjective:YES];
         
-        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:OLocalizedString(@"Does %@ live with %@?", @""), [_member givenName], guardians] delegate:self tag:kActionSheetTagGuardianAddressYesNo];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"")];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"")];
+        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:OLocalizedString(@"Does %@ live with %@?", @""), [_member givenName], guardians]];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
+            [self->_cachedResidences[0] addMember:self->_member];
+            [self.dismisser dismissModalViewController:self];
+        }];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:^{
+            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[self->_member primaryResidence]];
+        }];
     } else {
+        void (^addMemberToResidence)(id<OOrigo>) = ^(id<OOrigo> residence) {
+            [self.inputCell resumeFirstResponder];
+            [residence addMember:self->_member];
+            [self.dismisser dismissModalViewController:self];
+        };
+
         NSString *guardians1 = [OUtil commaSeparatedListOfMembers:[_cachedResidences[0] elders] conjoin:YES subjective:YES];
         NSString *guardians2 = [OUtil commaSeparatedListOfMembers:[_cachedResidences[1] elders] conjoin:YES subjective:YES];
         
-        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:OLocalizedString(@"Does %@ live with %@ or %@?", @""), [_member givenName], guardians1, guardians2] delegate:self tag:kActionSheetTagGuardianAddress];
-        [actionSheet addButtonWithTitle:guardians1];
-        [actionSheet addButtonWithTitle:guardians2];
+        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:OLocalizedString(@"Does %@ live with %@ or %@?", @""), [_member givenName], guardians1, guardians2]];
+        [actionSheet addButtonWithTitle:guardians1 action:^{
+            addMemberToResidence(self->_cachedResidences[0]);
+        }];
+        [actionSheet addButtonWithTitle:guardians2 action:^{
+            addMemberToResidence(self->_cachedResidences[1]);
+        }];
     }
     
     [actionSheet show];
@@ -510,147 +516,196 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
 
 - (void)presentMultiValueSheetForInputField:(OInputField *)inputField
+                                     prompt:(NSString *)prompt
+                              onValueSelect:(void (^)(NSString *))selectValue
 {
-    NSString *promptFormat = nil;
-    
-    if (inputField == _mobilePhoneField) {
-        promptFormat = OLocalizedString(@"%@ has more than one mobile phone number. Which number do you want to provide?", @"");
-    } else if (inputField == _emailField) {
-        promptFormat = OLocalizedString(@"%@ has more than one email address. Which address do you want to provide?", @"");
-    }
-    
     [inputField becomeFirstResponder];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:promptFormat, [_nameField.value givenName]] delegate:self tag:kActionSheetTagAddressBookEntry];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
     
-    for (NSInteger i = 0; i < [inputField.value count]; i++) {
-        [actionSheet addButtonWithTitle:inputField.value[i]];
+    for (id inputFieldValue in inputField.value) {
+        [actionSheet addButtonWithTitle:inputFieldValue action:^{
+            inputField.value = inputFieldValue;
+            selectValue(inputFieldValue);
+            [self finaliseOrRefineAddressBookInfo];
+        }];
     }
-    
-    [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") tag:kButtonTagAddressBookEntryNoValue];
-    
+    [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") action:^{
+        [self finaliseOrRefineAddressBookInfo];
+    }];
     [actionSheet show];
 }
 
 
 - (void)presentMultipleAddressesSheet
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:OLocalizedString(@"%@ has more than one home address. Which address do you want to provide?", @""), [_nameField.value givenName]] delegate:self tag:kActionSheetTagAddressBookEntry];
+    OActionSheet *actionSheet =
+            [[OActionSheet alloc] initWithPrompt:
+                    [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home address. Which address do you want to provide?", @""),
+                            [_nameField.value givenName]]];
     
-    for (NSInteger i = 0; i < _addressBookAddresses.count; i++) {
-        [actionSheet addButtonWithTitle:[_addressBookAddresses[i] shortAddress]];
-    }
-    
-    NSString *allTitle = nil;
-    NSString *noneTitle = nil;
-    
-    if (_addressBookAddresses.count == 2) {
-        allTitle = OLocalizedString(@"Both", @"");
-        noneTitle = OLocalizedString(@"Neither", @"");
-    } else {
-        allTitle = OLocalizedString(@"All of them", @"");
-        noneTitle = OLocalizedString(@"None of them", @"");
+    for (id<OOrigo> selectableAddress in _addressBookAddresses) {
+        [actionSheet addButtonWithTitle:[selectableAddress shortAddress] action:^{
+            [selectableAddress addMember:self->_member];
+            for (id<OOrigo> address in self->_addressBookAddresses) {
+                if (address != selectableAddress) {
+                    [address expire];
+                }
+            }
+            [self->_addressBookAddresses removeAllObjects];
+            [self finaliseOrRefineAddressBookInfo];
+        }];
     }
     
     if (![self aspectIs:kAspectJuvenile]) {
-        [actionSheet addButtonWithTitle:allTitle tag:kButtonTagAddressBookEntryAllValues];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"All of them", @"") action:^{
+            for (id<OOrigo> address in self->_addressBookAddresses) {
+                [address addMember:self->_member];
+            }
+            [self->_addressBookAddresses removeAllObjects];
+            [self finaliseOrRefineAddressBookInfo];
+        }];
     }
     
-    [actionSheet addButtonWithTitle:noneTitle tag:kButtonTagAddressBookEntryNoValue];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") action:^{
+        [self->_addressBookAddresses removeAllObjects];
+        [self finaliseOrRefineAddressBookInfo];
+    }];
     
+    [actionSheet show];
+}
+
+
+- (void)presentHomeNumberConfirmationSheetForResidence:(id<OOrigo>)residence {
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:
+            OLocalizedString(@"Is %@ the phone number for %@?", @""),
+                    _addressBookHomeNumbers[0],
+                    [residence shortAddress]]];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
+        residence.telephone = self->_addressBookHomeNumbers[0];
+        [self->_addressBookHomeNumbers removeAllObjects];
+        [self finaliseOrRefineAddressBookInfo];
+    }];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:^{
+        [self->_addressBookHomeNumbers removeAllObjects];
+        [self finaliseOrRefineAddressBookInfo];
+    }];
+    [actionSheet show];
+}
+
+
+- (void)presentHomeNumberSelectionSheetForResidence:(id<OOrigo>)residence {
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:
+            [residence hasAddress]
+                    ? [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home phone number. Which number is valid for %@?", @""),
+                              [_nameField.value givenName],
+                              [residence shortAddress]]
+                    : [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home phone number. Which number do you want to provide?", @""),
+                              [_nameField.value givenName]]];
+    for (NSString *homeNumber in _addressBookHomeNumbers) {
+        [actionSheet addButtonWithTitle:homeNumber action:^{
+            residence.telephone = homeNumber;
+            [self->_addressBookHomeNumbers removeAllObjects];
+            [self finaliseOrRefineAddressBookInfo];
+        }];
+    }
+    [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") action:^{
+        [self->_addressBookHomeNumbers removeAllObjects];
+        [self finaliseOrRefineAddressBookInfo];
+    }];
+    [actionSheet show];
+}
+
+
+- (void)presentHomeNumberResidenceSelectionSheet:(NSMutableArray *)residences {
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:
+            _addressBookHomeNumberCount == 1 || _addressBookHomeNumbers.count == _addressBookHomeNumberCount
+                    ? [NSString stringWithFormat:_addressBookHomeNumberCount == 1
+                                    ? OLocalizedString(@"%@ has only one home phone number, %@. Which address has this number?", @"")
+                                    : OLocalizedString(@"%@ has more than one home phone number. Which address has the number %@?", @""),
+                            [_nameField.value givenName],
+                            _addressBookHomeNumbers[0]]
+                    : [NSString stringWithFormat:OLocalizedString(@"Which address has phone number %@?", @""),
+                            _addressBookHomeNumbers[0]]];
+    for (OOrigo *residence in residences) {
+        [actionSheet addButtonWithTitle:[residence shortAddress] action:^{
+            residence.telephone = self->_addressBookHomeNumbers[0];
+            [residences removeObject:residence];
+            [self->_addressBookHomeNumbers removeObjectAtIndex:0];
+            if (residences.count && self->_addressBookHomeNumbers.count) {
+                [self refineAddressBookAddressInfo];
+            }
+        }];
+    }
+    [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") action:^{
+        [self->_addressBookHomeNumbers removeObjectAtIndex:0];
+        [self finaliseOrRefineAddressBookInfo];
+    }];
     [actionSheet show];
 }
 
 
 - (void)presentHomeNumberMappingSheet
 {
-    NSString *givenName = [_nameField.value givenName];
-    NSString *prompt = nil;
-    
-    if ([_member residences].count == 1) {
-        _addressBookMappings = _addressBookHomeNumbers;
-        id<OOrigo> primaryResidence = [_member primaryResidence];
-        
-        if ([primaryResidence hasAddress]) {
-            if (_addressBookHomeNumbers.count == 1) {
-                prompt = [NSString stringWithFormat:OLocalizedString(@"Is %@ the phone number for %@?", @""), _addressBookHomeNumbers[0], [primaryResidence shortAddress]];
-            } else {
-                prompt = [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home phone number. Which number is valid for %@?", @""), givenName, [primaryResidence shortAddress]];
-            }
-        } else {
-            prompt = [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home phone number. Which number do you want to provide?", @""), givenName];
-        }
-    } else {
-        _addressBookMappings = [NSMutableArray array];
-        
-        for (id<OOrigo> residence in [_member residences]) {
-            if (!residence.telephone) {
-                [_addressBookMappings addObject:residence];
-            }
-        }
-        
-        if (_addressBookHomeNumberCount == 1) {
-            prompt = [NSString stringWithFormat:OLocalizedString(@"%@ has only one home phone number, %@. Which address has this number?", @""), givenName, _addressBookHomeNumbers[0]];
-        } else if (_addressBookHomeNumbers.count == _addressBookHomeNumberCount) {
-            prompt = [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home phone number. Which address has the number %@?", @""), givenName, _addressBookHomeNumbers[0]];
-        } else {
-            if (_addressBookHomeNumbers.count == 1 && _addressBookMappings.count == 1) {
-                prompt = [NSString stringWithFormat:OLocalizedString(@"Is %@ the phone number for %@?", @""), _addressBookHomeNumbers[0], [_addressBookMappings[0] shortAddress]];
-            } else {
-                prompt = [NSString stringWithFormat:OLocalizedString(@"Which address has phone number %@?", @""), _addressBookHomeNumbers[0]];
-            }
+    NSMutableArray *residencesLackingHomeNumber = [NSMutableArray array];
+    for (id<OOrigo> residence in [_member residences]) {
+        if (!residence.telephone) {
+            [residencesLackingHomeNumber addObject:residence];
         }
     }
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAddressBookEntry];
-    
-    if (_addressBookHomeNumbers.count == 1 && _addressBookMappings.count == 1) {
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"")];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") tag:kButtonTagAddressBookEntryNoValue];
+    if (_addressBookHomeNumbers.count == 1 && residencesLackingHomeNumber.count == 1) {
+        [self presentHomeNumberConfirmationSheetForResidence:residencesLackingHomeNumber[0]];
+    } else if ([_member residences].count == 1) {
+        [self presentHomeNumberSelectionSheetForResidence:[_member primaryResidence]];
     } else {
-        for (NSInteger i = 0; i < _addressBookMappings.count; i++) {
-            if ([_addressBookMappings[0] isKindOfClass:[NSString class]]) {
-                [actionSheet addButtonWithTitle:_addressBookMappings[i]];
-            } else {
-                [actionSheet addButtonWithTitle:[_addressBookMappings[i] shortAddress]];
-            }
-        }
-        
-        [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") tag:kButtonTagAddressBookEntryNoValue];
+        [self presentHomeNumberResidenceSelectionSheet:residencesLackingHomeNumber];
     }
-    
-    [actionSheet show];
 }
 
 
 - (void)presentRecipientsSheet
 {
-    NSString *prompt = nil;
-
-    if (_recipientCandidates.count > 1) {
-        if (_recipientType == kRecipientTypeText) {
-            prompt = OLocalizedString(@"Who do you want to text?", @"");
-        } else if (_recipientType == kRecipientTypeCall) {
-            prompt = OLocalizedString(@"Who do you want to call?", @"");
-        } else if (_recipientType == kRecipientTypeEmail) {
-            prompt = OLocalizedString(@"Who do you want to email?", @"");
-        }
-    }
-    
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagRecipients];
-    
-    if (_recipientCandidates.count > 1) {
-        for (id recipientCandidate in _recipientCandidates) {
-            if ([recipientCandidate isKindOfClass:[NSArray class]]) {
-                [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:recipientCandidate conjoin:YES subjective:YES]];
-            } else {
-                [actionSheet addButtonWithTitle:[recipientCandidate recipientLabel]];
+    if (_recipientCandidates.count == 1) {
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+        [actionSheet addButtonWithTitle:[_recipientCandidates[0] recipientLabelForRecipientType:_recipientType] action:^{
+            if (self->_recipientType == kRecipientTypeText) {
+                [self sendTextToRecipients:self->_recipientCandidates[0]];
+            } else if (self->_recipientType == kRecipientTypeCall) {
+                [self callRecipient:self->_recipientCandidates[0]];
+            } else if (self->_recipientType == kRecipientTypeEmail) {
+                [self sendEmailToRecipients:self->_recipientCandidates[0]];
             }
-        }
+        }];
+        [actionSheet show];
     } else {
-        [actionSheet addButtonWithTitle:[_recipientCandidates[0] recipientLabelForRecipientType:_recipientType]];
+        if (_recipientType == kRecipientTypeText) {
+            [self presentRecipientsSheetWithPrompt:OLocalizedString(@"Who do you want to text?", @"")
+                                          onSelect:^(id recipient) {
+                                              [self sendTextToRecipients:recipient];
+                                          }];
+        } else if (_recipientType == kRecipientTypeCall) {
+            [self presentRecipientsSheetWithPrompt:OLocalizedString(@"Who do you want to call?", @"")
+                                          onSelect:^(id recipient) {
+                                              [self callRecipient:recipient];
+                                          }];
+        } else if (_recipientType == kRecipientTypeEmail) {
+            [self presentRecipientsSheetWithPrompt:OLocalizedString(@"Who do you want to email?", @"")
+                                          onSelect:^(id recipient) {
+                                              [self sendEmailToRecipients:recipient];
+                                          }];
+        }
     }
-    
+}
+
+
+- (void)presentRecipientsSheetWithPrompt:(NSString *)prompt onSelect:(void (^)(id))selectRecipient {
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    for (id recipientCandidate in _recipientCandidates) {
+        [actionSheet addButtonWithTitle:[recipientCandidate recipientLabel] action:^{
+            selectRecipient(recipientCandidate);
+        }];
+    }
     [actionSheet show];
 }
 
@@ -686,27 +741,27 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
 - (void)presentEmailChangeAlert
 {
-    NSString *message = nil;
-    
     if (self.isOnline) {
-        if ([_member isUser]) {
-            message = [NSString stringWithFormat:OLocalizedString(@"You are about to change your email address from %@ to %@ ...", @""), _member.email, _emailField.value];
-        } else {
-            message = [NSString stringWithFormat:OLocalizedString(@"You are about to change %@'s email address from %@ to %@ ...", @""), [_member givenName], _member.email, _emailField.value];
-        }
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"New email address", @"") message:message delegate:self cancelButtonTitle:OLocalizedString(@"Cancel", @"") otherButtonTitles:OLocalizedString(@"Continue", @""), nil];
-        alert.tag = kAlertTagEmailChange;
-        
-        [alert show];
+        [OAlert showAlertWithTitle:OLocalizedString(@"New email address", @"")
+                           message:[_member isUser]
+                                   ? [NSString stringWithFormat:OLocalizedString(@"You are about to change your email address from %@ to %@ ...", @""),
+                                             _member.email,
+                                             _emailField.value]
+                                   : [NSString stringWithFormat:OLocalizedString(@"You are about to change %@'s email address from %@ to %@ ...", @""),
+                                             [_member givenName],
+                                             _member.email,
+                                             _emailField.value]
+                     okButtonTitle:OLocalizedString(@"Continue", @"")
+                              onOk:^{
+                                  [[OConnection connectionWithDelegate:self] lookupMemberWithEmail:self->_emailField.value];
+                              }
+                          onCancel:^{ [self->_emailField becomeFirstResponder]; }];
     } else {
-        if ([_member isUser]) {
-            message = OLocalizedString(@"You need a working internet connection to change your email address.", @"");
-        } else {
-            message = [NSString stringWithFormat:OLocalizedString(@"You need a working internet connection to change %@'s email address.", @""), [_member givenName]];
-        }
-        
-        [OAlert showAlertWithTitle:OLocalizedString(@"No internet connection", @"") message:message];
+        [OAlert showAlertWithTitle:OLocalizedString(@"No internet connection", @"")
+                           message:[_member isUser]
+                                   ? OLocalizedString(@"You need a working internet connection to change your email address.", @"")
+                                   : [NSString stringWithFormat:OLocalizedString(@"You need a working internet connection to change %@'s email address.", @""),
+                                             [_member givenName]]];
     }
 }
 
@@ -716,9 +771,21 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 - (void)refineAddressBookContactInfo
 {
     if ([_mobilePhoneField hasMultiValue]) {
-        [self presentMultiValueSheetForInputField:_mobilePhoneField];
+        [self presentMultiValueSheetForInputField:_mobilePhoneField
+                                           prompt:[NSString stringWithFormat:
+                                                   OLocalizedString(@"%@ has more than one mobile phone number. Which number do you want to provide?", @""),
+                                                   [_nameField.value givenName]]
+                                    onValueSelect:^(NSString *selectedValue) {
+                                        self->_mobilePhoneField.value = selectedValue;
+                                    }];
     } else if ([_emailField hasMultiValue]) {
-        [self presentMultiValueSheetForInputField:_emailField];
+        [self presentMultiValueSheetForInputField:_emailField
+                                           prompt:[NSString stringWithFormat:
+                                                   OLocalizedString(@"%@ has more than one email address. Which address do you want to provide?", @""),
+                                                   [_nameField.value givenName]]
+                                    onValueSelect:^(NSString *selectedValue) {
+                                        self->_emailField.value = selectedValue;
+                                    }];
     }
 }
 
@@ -733,6 +800,29 @@ static CGFloat const kPopUpCornerRadius = 5.f;
         } else {
             [_addressBookHomeNumbers removeAllObjects];
         }
+    }
+}
+
+
+- (void)finaliseOrRefineAddressBookInfo {
+    if (![_member instance]) {
+        if ([_emailField hasMultiValue]) {
+            [self refineAddressBookContactInfo];
+        } else if (!_didPerformLocalLookup) {
+            [self performLocalLookup];
+            if ([_member instance] && _addressBookAddresses.count) {
+                for (id<OOrigo> address in _addressBookAddresses) {
+                    [address expire];
+                }
+            } else {
+                [self refineAddressBookAddressInfo];
+            }
+        } else if (_addressBookHomeNumbers.count) {
+            [self refineAddressBookAddressInfo];
+        }
+    }
+    if (!_addressBookHomeNumbers.count && !_addressBookAddresses.count) {
+        [self reflectMember:_member];
     }
 }
 
@@ -914,9 +1004,9 @@ static CGFloat const kPopUpCornerRadius = 5.f;
     isFavourite = !isFavourite;
     
     NSMutableArray *rightBarButtonItems = [self.navigationItem.rightBarButtonItems mutableCopy];
-    NSInteger toggleIndex = [rightBarButtonItems indexOfObject:[self.navigationItem barButtonItemWithTag:kBarButtonItemTagFavourite]];
+    NSUInteger toggleIndex = [rightBarButtonItems indexOfObject:[self.navigationItem barButtonItemWithTag:kBarButtonItemTagFavourite]];
     
-    [rightBarButtonItems replaceObjectAtIndex:toggleIndex withObject:[UIBarButtonItem favouriteButtonWithTarget:self isFavourite:isFavourite]];
+    rightBarButtonItems[toggleIndex] = [UIBarButtonItem favouriteButtonWithTarget:self isFavourite:isFavourite];
     
     self.navigationItem.rightBarButtonItems = rightBarButtonItems;
     
@@ -931,17 +1021,23 @@ static CGFloat const kPopUpCornerRadius = 5.f;
     if ([[OMeta m].user isJuvenile]) {
         [self scrollToTopAndToggleEditMode];
     } else {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit", @"") action:^{
+            [self scrollToTopAndToggleEditMode];
+        }];
         
         if (![_member isJuvenile] || [_member isWardOfUser]) {
-            if ([_member hasAddress]) {
-                [actionSheet addButtonWithTitle:OLocalizedString(@"Register an address", @"") tag:kButtonTagEditAddAddress];
-            } else {
-                [actionSheet addButtonWithTitle:OLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
-            }
+            [actionSheet addButtonWithTitle:OLocalizedString([_member hasAddress] ? @"Register an address" : @"Register address", @"") action:^{
+                if ([self->_member housemateResidences]) {
+                    [self presentHousemateResidencesSheet];
+                } else {
+                    [self registerNewResidence];
+                }
+            }];
         } else if (![[OMeta m].user isJuvenile]) {
-            [actionSheet addButtonWithTitle:OLocalizedString(@"Register guardian", @"") tag:kButtonTagEditAddGuardian];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Register guardian", @"") action:^{
+                [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
+            }];
         }
         
         [actionSheet show];
@@ -967,11 +1063,19 @@ static CGFloat const kPopUpCornerRadius = 5.f;
     }
     
     if (_cachedCandidates && _cachedCandidates.count) {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Retrieve from lists", @"") tag:kButtonTagSourceLists];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Retrieve from lists", @"") action:^{
+            [self resetInputState];
+            [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMember meta:self->_cachedCandidates];
+        }];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Retrieve from Contacts", @"") action:^{
+            [self resetInputState];
+            [self pickFromAddressBook];
+        }];
         
-        [actionSheet show];
+        [actionSheet showWithCancelAction:^{
+            [self.inputCell resumeFirstResponder];
+        }];
     } else {
         [self pickFromAddressBook];
     }
@@ -1019,7 +1123,7 @@ static CGFloat const kPopUpCornerRadius = 5.f;
         
         [self presentRecipientsSheet];
     } else {
-        [self sendEmailToRecipients:_member cc:nil];
+        [self sendEmailToRecipients:_member];
     }
 }
 
@@ -1325,7 +1429,7 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
 {
-    NSComparisonResult result = NSOrderedSame;
+    NSComparisonResult result;
     
     id<OMember> guardian1 = object1;
     id<OMember> guardian2 = object2;
@@ -1364,9 +1468,14 @@ static CGFloat const kPopUpCornerRadius = 5.f;
         _role = [self dataAtIndexPath:indexPath];
         _roleCell = cell;
         
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEditRole];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit responsibility", @"")];
-        [actionSheet show];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit responsibility", @"") action:^{
+            [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
+            [self editInlineInCell:self->_roleCell];
+        }];
+        [actionSheet showWithCancelAction:^{
+            [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
+        }];
     }
 }
 
@@ -1425,7 +1534,9 @@ static CGFloat const kPopUpCornerRadius = 5.f;
             [self persistMember];
         } else {
             if (!viewController.didCancel) {
-                [[[UIAlertView alloc] initWithTitle:OLocalizedString(@"Activation failed", @"") message:[NSString stringWithFormat:OLocalizedString(@"The email address %@ could not be activated ...", @""), _emailField.value] delegate:nil cancelButtonTitle:OLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+                [OAlert showAlertWithTitle:OLocalizedString(@"Activation failed", @"")
+                                   message:[NSString stringWithFormat:OLocalizedString(@"The email address %@ could not be activated ...", @""),
+                                                   self->_emailField.value]];
             }
             
             self.nextInputField = _emailField;
@@ -1783,264 +1894,6 @@ static CGFloat const kPopUpCornerRadius = 5.f;
                 [self toggleEditMode];
             }
         }
-    }
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-    
-    switch (actionSheet.tag) {
-        case kActionSheetTagEdit:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagEdit) {
-                    [self scrollToTopAndToggleEditMode];
-                }
-            }
-            
-            break;
-            
-        case kActionSheetTagSource:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                [self resetInputState];
-            }
-            
-            break;
-            
-        case kActionSheetTagAddressBookEntry:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if ([_mobilePhoneField hasMultiValue]) {
-                    if (buttonTag != kButtonTagAddressBookEntryNoValue) {
-                        _mobilePhoneField.value = _mobilePhoneField.value[buttonIndex];
-                        _member.mobilePhone = _mobilePhoneField.value;
-                    }
-                } else if ([_emailField hasMultiValue]) {
-                    if (buttonTag != kButtonTagAddressBookEntryNoValue) {
-                        _emailField.value = _emailField.value[buttonIndex];
-                        _member.email = _emailField.value;
-                    }
-                } else if (_addressBookAddresses.count) {
-                    if (buttonTag == kButtonTagAddressBookEntryAllValues) {
-                        for (id<OOrigo> address in _addressBookAddresses) {
-                            [address addMember:_member];
-                        }
-                    } else if (buttonTag != kButtonTagAddressBookEntryNoValue) {
-                        for (id<OOrigo> address in _addressBookAddresses) {
-                            if (address == _addressBookAddresses[buttonIndex]) {
-                                [address addMember:_member];
-                            } else {
-                                [address expire];
-                            }
-                        }
-                    }
-                    
-                    [_addressBookAddresses removeAllObjects];
-                } else if (_addressBookHomeNumbers.count) {
-                    if ([_addressBookMappings[0] isKindOfClass:[NSString class]]) {
-                        if (buttonTag != kButtonTagAddressBookEntryNoValue) {
-                            NSString *selectedNumber = _addressBookMappings[buttonIndex];
-                            [_member primaryResidence].telephone = selectedNumber;
-                        }
-                        
-                        [_addressBookHomeNumbers removeAllObjects];
-                    } else {
-                        if (buttonTag != kButtonTagAddressBookEntryNoValue) {
-                            id<OOrigo> selectedAddress = _addressBookMappings[buttonIndex];
-                            selectedAddress.telephone = _addressBookHomeNumbers[0];
-                        }
-                        
-                        [_addressBookHomeNumbers removeObjectAtIndex:0];
-                    }
-                }
-                
-                if (!_addressBookAddresses.count && !_addressBookHomeNumbers.count) {
-                    [self reflectMember:_member];
-                }
-            }
-            
-            break;
-            
-        case kActionSheetTagGuardianAddress:
-        case kActionSheetTagGuardianAddressYesNo:
-            if (buttonIndex == actionSheet.cancelButtonIndex) {
-                [self.inputCell resumeFirstResponder];
-            }
-            
-            break;
-            
-        case kActionSheetTagEditRole:
-            [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
-            
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                [self editInlineInCell:_roleCell];
-            }
-            
-            break;
-            
-        default:
-            break;
-    }
-}
-
-
-- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-    
-    switch (actionSheet.tag) {
-        case kActionSheetTagEdit:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagEditAddAddress) {
-                    _cachedResidences = [_member housemateResidences];
-                    
-                    if (_cachedResidences.count) {
-                        [self presentHousemateResidencesSheet];
-                    } else {
-                        [self registerNewResidence];
-                    }
-                } else if (buttonTag == kButtonTagEditAddGuardian) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
-                }
-            }
-            
-            break;
-            
-        case kActionSheetTagResidence:
-            if (buttonTag == kButtonTagResidenceNewAddress) {
-                [self registerNewResidence];
-            } else if (buttonIndex != actionSheet.cancelButtonIndex) {
-                [_cachedResidences[buttonIndex] addMember:_member];
-                [self reloadSections];
-            }
-            
-            break;
-            
-        case kActionSheetTagCoHabitants:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                id<OOrigo> primaryResidence = [_member primaryResidence];
-                
-                if ([primaryResidence hasAddress] || buttonTag != kButtonTagCoHabitantsAll) {
-                    NSArray *coHabitants = nil;
-                    
-                    if ([primaryResidence hasAddress]) {
-                        if (buttonTag == kButtonTagCoHabitantsAll) {
-                            coHabitants = [primaryResidence residents];
-                        } else if (buttonTag == kButtonTagCoHabitantsMinors) {
-                            coHabitants = [primaryResidence minors];
-                        }
-                    } else if (buttonTag == kButtonTagCoHabitantsMinors) {
-                        coHabitants = [primaryResidence minors];
-                        
-                        if (![primaryResidence hasAddress]) {
-                            [[[primaryResidence membershipForMember:_member] proxy] expire];
-                        }
-                    }
-                    
-                    primaryResidence = [OOrigoProxy residenceProxyUseDefaultName:![_member isUser]];
-                    [primaryResidence addMember:_member];
-                    
-                    for (id<OMember> coHabitant in coHabitants) {
-                        [primaryResidence addMember:coHabitant];
-                    }
-                }
-                
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
-            }
-            
-            break;
-            
-        case kActionSheetTagSource:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagSourceLists) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMember meta:_cachedCandidates];
-                } else if (buttonTag == kButtonTagSourceAddressBook) {
-                    [self pickFromAddressBook];
-                }
-            } else {
-                [self.inputCell resumeFirstResponder];
-            }
-            
-            break;
-            
-        case kActionSheetTagAddressBookEntry:
-            if (buttonIndex != actionSheet.cancelButtonIndex && ![_member instance]) {
-                if ([_emailField hasMultiValue]) {
-                    [self refineAddressBookContactInfo];
-                } else if (!_didPerformLocalLookup) {
-                    [self performLocalLookup];
-                    
-                    if (![_member instance]) {
-                        [self refineAddressBookAddressInfo];
-                    } else if (_addressBookAddresses.count) {
-                        for (id<OOrigo> address in _addressBookAddresses) {
-                            [address expire];
-                        }
-                    }
-                } else if (_addressBookHomeNumbers.count) {
-                    [self refineAddressBookAddressInfo];
-                }
-            }
-            
-            break;
-            
-        case kActionSheetTagGuardianAddressYesNo:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagGuardianAddressYes) {
-                    [_cachedResidences[0] addMember:_member];
-                    [self.dismisser dismissModalViewController:self];
-                } else {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
-                }
-            }
-            
-            break;
-            
-        case kActionSheetTagGuardianAddress:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                [_cachedResidences[buttonIndex] addMember:_member];
-                [self.dismisser dismissModalViewController:self];
-            }
-            
-            break;
-            
-        case kActionSheetTagRecipients:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (_recipientType == kRecipientTypeText) {
-                    [self sendTextToRecipients:_recipientCandidates[buttonIndex]];
-                } else if (_recipientType == kRecipientTypeCall) {
-                    [self callRecipient:_recipientCandidates[buttonIndex]];
-                } else if (_recipientType == kRecipientTypeEmail) {
-                    [self sendEmailToRecipients:_recipientCandidates[buttonIndex] cc:nil];
-                }
-            }
-            
-            break;
-            
-        default:
-            break;
-    }
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertTagEmailChange:
-            if (buttonIndex == kButtonIndexContinue) {
-                [[OConnection connectionWithDelegate:self] lookupMemberWithEmail:_emailField.value];
-            } else {
-                [_emailField becomeFirstResponder];
-            }
-            
-            break;
-            
-        default:
-            break;
     }
 }
 

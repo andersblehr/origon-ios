@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "NSURL+OrigonAdditions.h"
-
 static NSString * const kURLParameterFormat = @"%@%@=%@";
 
 

@@ -17,32 +17,6 @@ static NSInteger const kHeaderSegmentMembers = 0;
 static NSInteger const kHeaderSegmentParents = 1;
 static NSInteger const kHeaderSegmentResidences = 1;
 
-static NSInteger const kActionSheetTagAcceptDecline = 0;
-static NSInteger const kButtonTagAcceptDeclineAccept = 0;
-static NSInteger const kButtonTagAcceptDeclineDecline = 1;
-
-static NSInteger const kActionSheetTagAdd = 1;
-static NSInteger const kButtonTagAddMember = 0;
-static NSInteger const kButtonTagAddFromLists = 1;
-static NSInteger const kButtonTagAddOrganiser = 2;
-static NSInteger const kButtonTagAddParentContact = 3;
-
-static NSInteger const kActionSheetTagEdit = 2;
-static NSInteger const kButtonTagEdit = 0;
-static NSInteger const kButtonTagEditRoles = 1;
-
-static NSInteger const kActionSheetTagCoHabitants = 3;
-static NSInteger const kButtonTagCoHabitantsAll = 0;
-static NSInteger const kButtonTagCoHabitantsWards = 1;
-static NSInteger const kButtonTagCoHabitantsNew = 2;
-static NSInteger const kButtonTagCoHabitantsGuardian = 3;
-
-static NSInteger const kActionSheetTagRecipients = 4;
-
-static NSInteger const kActionSheetTagJoinRequest = 5;
-static NSInteger const kButtonTagJoinRequestAccept = 0;
-static NSInteger const kButtonTagJoinRequestDecline = 1;
-
 
 @interface OOrigoViewController () <OTableViewController, OInputCellDelegate, UIActionSheetDelegate> {
 @private
@@ -197,30 +171,49 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 
 - (void)presentCoHabitantsSheetWithCandidates:(NSArray *)candidates
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagCoHabitants];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
     
     _eligibleCandidates = [OUtil sortedGroupsOfResidents:candidates excluding:nil];
     
     if (_eligibleCandidates.count == 1) {
-        if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
-            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:YES] tag:kButtonTagCoHabitantsAll];
+        if ([_eligibleCandidates[0][0] isJuvenile]) {
+            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[0] conjoin:YES subjective:YES] action:^{
+                [self addMembersAndReloadSections:self->_eligibleCandidates[0]];
+            }];
         } else {
-            for (id<OMember> candidate in _eligibleCandidates[kButtonTagCoHabitantsAll]) {
-                [actionSheet addButtonWithTitle:[candidate shortName]];
+            for (id<OMember> candidate in _eligibleCandidates[0]) {
+                [actionSheet addButtonWithTitle:[candidate shortName] action:^{
+                    [self addMembersAndReloadSections:@[candidate]];
+                }];
             }
         }
     } else {
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:NO] tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoin:YES subjective:NO] tag:kButtonTagCoHabitantsWards];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[0] conjoin:YES subjective:NO] action:^{
+            [self addMembersAndReloadSections:self->_eligibleCandidates[0]];
+        }];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[1] conjoin:YES subjective:NO] action:^{
+            [self addMembersAndReloadSections:self->_eligibleCandidates[1]];
+        }];
     }
     
     if (![_origo userIsMember] && [_member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Other guardian", @"") tag:kButtonTagCoHabitantsGuardian];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Other guardian", @"") action:^{
+            [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
+        }];
     } else {
-        [actionSheet addButtonWithTitle:OLocalizedString(kOrigoTypeResidence, kStringPrefixAddMemberButton) tag:kButtonTagCoHabitantsNew];
+        [actionSheet addButtonWithTitle:OLocalizedString(kOrigoTypeResidence, kStringPrefixAddMemberButton) action:^{
+            [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetMember];
+        }];
     }
     
     [actionSheet show];
+}
+
+- (void)addMembersAndReloadSections:(NSArray *)members {
+    for (id<OMember> member in members) {
+        [_origo addMember:member];
+        [self reloadSections];
+    }
 }
 
 
@@ -242,21 +235,35 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
     }
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagRecipients];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
     
     if (_recipientCandidates.count > 1) {
         for (id recipientCandidate in _recipientCandidates) {
-            if ([recipientCandidate isKindOfClass:[NSArray class]]) {
-                [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:recipientCandidate conjoin:YES subjective:YES]];
-            } else {
-                [actionSheet addButtonWithTitle:[recipientCandidate recipientLabel]];
-            }
+            NSString *title = [recipientCandidate conformsToProtocol:@protocol(NSFastEnumeration)]
+                    ? [OUtil commaSeparatedListOfMembers:recipientCandidate conjoin:YES subjective:YES]
+                    : [recipientCandidate recipientLabel];
+            [actionSheet addButtonWithTitle:title action:^{
+                [self initiateContactWithRecipient:recipientCandidate];
+            }];
         }
     } else {
-        [actionSheet addButtonWithTitle:[_recipientCandidates[0] recipientLabelForRecipientType:_recipientType]];
+        [actionSheet addButtonWithTitle:[_recipientCandidates[0] recipientLabelForRecipientType:_recipientType] action:^{
+            [self initiateContactWithRecipient:self->_recipientCandidates[0]];
+        }];
     }
     
     [actionSheet show];
+}
+
+
+- (void)initiateContactWithRecipient:(OMember *)recipient {
+    if (_recipientType == kRecipientTypeText) {
+        [self sendTextToRecipients:recipient];
+    } else if (_recipientType == kRecipientTypeCall) {
+        [self callRecipient:recipient];
+    } else if (_recipientType == kRecipientTypeEmail) {
+        [self sendEmailToRecipients:recipient];
+    }
 }
 
 
@@ -273,6 +280,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         joiningMembers = [[_joiningMember primaryResidence] elders];
         memberLabel = [OUtil commaSeparatedListOfMembers:joiningMembers conjoin:YES];
     } else {
+        joiningMembers = @[_joiningMember];
         if ([_joiningMember isJuvenile]) {
             memberLabel = [_joiningMember givenName];
         } else {
@@ -288,11 +296,30 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         prompt = [NSString stringWithFormat:OLocalizedString(@"%@ has requested to join %@", @""), memberLabel, _origo.name];
     }
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagJoinRequest];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Accept", @"") tag:kButtonTagJoinRequestAccept];
-    [actionSheet addButtonWithTitle:OLocalizedString(@"Decline", @"") tag:kButtonTagJoinRequestDecline];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Accept", @"") action:^{
+        [self joinRequestForMembers:joiningMembers wasAccepted:YES];
+    }];
+    [actionSheet addButtonWithTitle:OLocalizedString(@"Decline", @"") action:^{
+        [self joinRequestForMembers:joiningMembers wasAccepted:NO];
+    }];
     
     [actionSheet show];
+}
+
+
+- (void)joinRequestForMembers:(NSArray *)members wasAccepted:(BOOL)accepted {
+    for (id<OMember> member in members) {
+        id<OMembership> membership = [_origo membershipForMember:member];
+        if (accepted) {
+            membership.status = kMembershipStatusActive;
+        } else {
+            membership.status = kMembershipStatusDeclined;
+            membership.affiliations = nil;
+        }
+    }
+    [self reloadSections];
+    [[OMeta m].replicator replicate];
 }
 
 
@@ -318,9 +345,28 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
     }
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAcceptDecline];
-    [actionSheet addButtonWithTitle:acceptButtonTitle tag:kButtonTagAcceptDeclineAccept];
-    [actionSheet addButtonWithTitle:declineButtonTitle tag:kButtonTagAcceptDeclineDecline];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt];
+    [actionSheet addButtonWithTitle:acceptButtonTitle action:^{
+        BOOL wasHidden = [self->_membership isHidden];
+        self->_membership.status = kMembershipStatusActive;
+        if (wasHidden) {
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            [self loadRightNavigationBarButtonItems];
+        }
+        [OMember clearCachedPeers];
+    }];
+    [actionSheet addButtonWithTitle:declineButtonTitle action:^{
+        if (![self->_membership isHidden]) {
+            if ([self->_origo isResidence]) {
+                [self->_membership expire];
+            } else {
+                self->_membership.status = kMembershipStatusListed;
+            }
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+        [OMember clearCachedPeers];
+    }];
     
     [actionSheet show];
 }
@@ -331,16 +377,16 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     if ([_origo isResidence]) {
         [self addMember];
     } else {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
         
         if ([_origo isPrivate]) {
-            if ([_member isJuvenile]) {
-                [actionSheet addButtonWithTitle:OLocalizedString(@"Register friend", @"") tag:kButtonTagAddMember];
-            } else {
-                [actionSheet addButtonWithTitle:OLocalizedString(@"Register contact", @"") tag:kButtonTagAddMember];
-            }
+            [actionSheet addButtonWithTitle:OLocalizedString([_member isJuvenile] ? @"Register friend" : @"Register contact", @"") action:^{
+                [self addMember];
+            }];
         } else {
-            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
+            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddMemberButton) action:^{
+                [self addMember];
+            }];
         }
         
         if ([_origo isCommunity]) {
@@ -350,14 +396,20 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
         }
         
         if (_eligibleCandidates.count) {
-            [actionSheet addButtonWithTitle:OLocalizedString(@"Add from other lists", @"") tag:kButtonTagAddFromLists];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Add from other lists", @"") action:^{
+                [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMembers meta:self->_eligibleCandidates];
+            }];
         }
         
         if ([_origo isOrganised]) {
-            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
+            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) action:^{
+                [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
+            }];
             
             if ([_origo isJuvenile]) {
-                [actionSheet addButtonWithTitle:OLocalizedString(@"Register parent representative", @"") tag:kButtonTagAddParentContact];
+                [actionSheet addButtonWithTitle:OLocalizedString(@"Register parent representative", @"") action:^{
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
+                }];
             }
         }
         
@@ -375,9 +427,13 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
     if ([_origo isOfType:@[kOrigoTypeResidence, kOrigoTypePrivate]]) {
         [self scrollToTopAndToggleEditMode];
     } else {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit", @"") action:^{
+            [self scrollToTopAndToggleEditMode];
+        }];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Edit responsibilities", @"") action:^{
+            [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetRoles];
+        }];
         
         [actionSheet show];
     }
@@ -789,7 +845,7 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
 {
-    NSComparisonResult result = NSOrderedSame;
+    NSComparisonResult result;
     
     id<OMember> member1 = object1;
     id<OMember> member2 = object2;
@@ -1072,157 +1128,6 @@ static NSInteger const kButtonTagJoinRequestDecline = 1;
 - (BOOL)shouldCommitEntity:(id)entity
 {
     return [self.entity.ancestor isCommitted] || [self.state.baseOrigo isCommunity];
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex != actionSheet.cancelButtonIndex) {
-        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-        
-        switch (actionSheet.tag) {
-            case kActionSheetTagAcceptDecline:
-                if (buttonTag == kButtonTagAcceptDeclineAccept) {
-                    BOOL wasHidden = [_membership isHidden];
-                    
-                    _membership.status = kMembershipStatusActive;
-                    
-                    if (wasHidden) {
-                        [self.navigationController popViewControllerAnimated:YES];
-                    } else {
-                        [self loadRightNavigationBarButtonItems];
-                    }
-                } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
-                    if (![_membership isHidden]) {
-                        if ([_origo isResidence]) {
-                            [_membership expire];
-                        } else {
-                            _membership.status = kMembershipStatusListed;
-                        }
-                        
-                        [self.navigationController popViewControllerAnimated:YES];
-                    }
-                }
-                
-                [OMember clearCachedPeers];
-                
-                break;
-                
-            case kActionSheetTagEdit:
-                if (buttonTag == kButtonTagEdit) {
-                    [self scrollToTopAndToggleEditMode];
-                }
-                
-                break;
-                
-            default:
-                break;
-        }
-    }
-}
-
-
-- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex < actionSheet.cancelButtonIndex) {
-        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-        
-        switch (actionSheet.tag) {
-            case kActionSheetTagEdit:
-                if (buttonTag == kButtonTagEditRoles) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetRoles];
-                }
-                
-                break;
-                
-            case kActionSheetTagAdd:
-                if (buttonTag == kButtonTagAddMember) {
-                    [self addMember];
-                } else if (buttonTag == kButtonTagAddFromLists) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMembers meta:_eligibleCandidates];
-                } else if (buttonTag == kButtonTagAddOrganiser) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
-                } else if (buttonTag == kButtonTagAddParentContact) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
-                }
-                
-                break;
-                
-            case kActionSheetTagCoHabitants:
-                if (buttonTag == kButtonTagCoHabitantsNew) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetMember];
-                } else if (buttonTag == kButtonTagCoHabitantsGuardian) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
-                } else {
-                    NSArray *coHabitants = nil;
-                    
-                    if (_eligibleCandidates.count == 1) {
-                        if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
-                            coHabitants = _eligibleCandidates[kButtonTagCoHabitantsAll];
-                        } else {
-                            coHabitants = @[_eligibleCandidates[kButtonTagCoHabitantsAll][buttonIndex]];
-                        }
-                    } else if (buttonTag == kButtonTagCoHabitantsAll) {
-                        coHabitants = _eligibleCandidates[kButtonTagCoHabitantsAll];
-                    } else if (buttonTag == kButtonTagCoHabitantsWards) {
-                        coHabitants = _eligibleCandidates[kButtonTagCoHabitantsWards];
-                    }
-                    
-                    for (id<OMember> coHabitant in coHabitants) {
-                        [_origo addMember:coHabitant];
-                    }
-                    
-                    [self reloadSections];
-                }
-                
-                break;
-                
-            case kActionSheetTagRecipients:
-                if (_recipientType == kRecipientTypeText) {
-                    [self sendTextToRecipients:_recipientCandidates[buttonIndex]];
-                } else if (_recipientType == kRecipientTypeCall) {
-                    [self callRecipient:_recipientCandidates[buttonIndex]];
-                } else if (_recipientType == kRecipientTypeEmail) {
-                    [self sendEmailToRecipients:_recipientCandidates[buttonIndex] cc:nil];
-                }
-                
-                break;
-                
-            case kActionSheetTagJoinRequest:
-                if (buttonIndex != actionSheet.cancelButtonIndex) {
-                    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-                    NSArray *joiningMembers = nil;
-                    
-                    if ([_origo isCommunity]) {
-                        joiningMembers = [[_joiningMember primaryResidence] elders];
-                    } else {
-                        joiningMembers = @[_joiningMember];
-                    }
-                    
-                    for (id<OMember> member in joiningMembers) {
-                        id<OMembership> membership = [_origo membershipForMember:member];
-                        
-                        if (buttonTag == kButtonTagJoinRequestAccept) {
-                            membership.status = kMembershipStatusActive;
-                        } else if (buttonTag == kButtonTagJoinRequestDecline) {
-                            membership.status = kMembershipStatusDeclined;
-                            membership.affiliations = nil;
-                        }
-                    }
-                    
-                    [self reloadSections];
-                    
-                    [[OMeta m].replicator replicate];
-                }
-                
-                break;
-                
-            default:
-                break;
-        }
-    }
 }
 
 @end

@@ -15,18 +15,8 @@ static NSInteger const kCellCheckedStateNone = 0;
 static NSInteger const kCellCheckedStateTo = 1;
 static NSInteger const kCellCheckedStateCc = 2;
 
-static NSInteger const kActionSheetTagGroups = 0;
-static NSInteger const kButtonTagGroupAll = 0;
-static NSInteger const kButtonTagGroupMembers = 1;
-static NSInteger const kButtonTagGroupMembersInGroup = 2;
-static NSInteger const kButtonTagGroupParents = 3;
-static NSInteger const kButtonTagGroupParentsInGroup = 4;
-static NSInteger const kButtonTagGroupParentsOfBoys = 5;
-static NSInteger const kButtonTagGroupParentsOfGirls = 6;
-static NSInteger const kButtonTagGroupOrganisers = 7;
 
-
-@interface ORecipientPickerViewController () <OTableViewController, UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
+@interface ORecipientPickerViewController () <OTableViewController, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate> {
 @private
     id<OOrigo> _origo;
     
@@ -111,14 +101,25 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     BOOL parentsOnly = hasParents && !hasMembers && !hasOrganisers;
     BOOL isClass = [_origo isOfType:@[kOrigoTypePreschoolClass, kOrigoTypeSchoolClass]];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagGroups];
+    OActionSheet *actionSheet;
     
     if ((!groups.count && (!_titleSegments || [_origo isCommunity])) || (parentsOnly && !isClass)) {
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Select all", @"") tag:kButtonTagGroupAll];
+        actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Select all", @"") action:^{
+            if (hasMembers) {
+                [self setRecipients:[self->_origo regulars]];
+            }
+            if (hasParents) {
+                [self setRecipients:[self->_origo guardians]];
+            }
+            if (hasOrganisers) {
+                [self setRecipients:[self->_origo organisers]];
+            }
+        }];
     } else {
         BOOL needsEverybody = NO;
         
-        actionSheet.title = OLocalizedString(@"Select recipients", @"");
+        actionSheet = [[OActionSheet alloc] initWithPrompt:OLocalizedString(@"Select recipients", @"")];
 
         if (hasMembers) {
             if (_titleSegments) {
@@ -130,7 +131,9 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                     buttonTitle = OLocalizedString(_origo.type, kStringPrefixMembersTitle);
                 }
                 
-                [actionSheet addButtonWithTitle:buttonTitle tag:kButtonTagGroupMembers];
+                [actionSheet addButtonWithTitle:buttonTitle action:^{
+                    [self setRecipients:[self->_origo regulars]];
+                }];
             }
             
             for (NSString *group in groups) {
@@ -142,28 +145,42 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
                     buttonTitle = group;
                 }
                 
-                [actionSheet addButtonWithTitle:buttonTitle tag:kButtonTagGroupMembersInGroup];
+                [actionSheet addButtonWithTitle:buttonTitle action:^{
+                    [self setRecipients:[self->_origo membersOfGroup:group]];
+                }];
             }
         }
         
         if (hasParents) {
             needsEverybody = hasMembers;
             
-            [actionSheet addButtonWithTitle:OLocalizedString(@"Parents", @"") tag:kButtonTagGroupParents];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Parents", @"") action:^{
+                [self setRecipients:[self->_origo guardians]];
+            }];
             
             for (NSString *group in groups) {
-                [actionSheet addButtonWithTitle:[NSString stringWithFormat:OLocalizedString(@"Parents in %@", @""), group] tag:kButtonTagGroupParentsInGroup];
+                [actionSheet addButtonWithTitle:[NSString stringWithFormat:OLocalizedString(@"Parents in %@", @""), group] action:^{
+                    [self setRecipients:[self->_origo guardiansOfWardsInGroup:group]];
+                }];
             }
             
             if ([_origo isOfType:@[kOrigoTypePreschoolClass, kOrigoTypeSchoolClass]]) {
                 if ([_origo userIsOrganiser]) {
-                    [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of boys", @"") tag:kButtonTagGroupParentsOfBoys];
-                    [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of girls", @"") tag:kButtonTagGroupParentsOfGirls];
+                    [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of boys", @"") action:^{
+                        [self setRecipients:[self->_origo guardiansOfWardsWithGender:kGenderMale]];
+                    }];
+                    [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of girls", @"") action:^{
+                        [self setRecipients:[self->_origo guardiansOfWardsWithGender:kGenderFemale]];
+                    }];
                 } else if (![_origo userIsMember]) {
                     if ([[OState s].currentMember isMale]) {
-                        [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of boys", @"") tag:kButtonTagGroupParentsOfBoys];
+                        [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of boys", @"") action:^{
+                            [self setRecipients:[self->_origo guardiansOfWardsWithGender:kGenderMale]];
+                        }];
                     } else {
-                        [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of girls", @"") tag:kButtonTagGroupParentsOfGirls];
+                        [actionSheet addButtonWithTitle:OLocalizedString(@"Parents of girls", @"") action:^{
+                            [self setRecipients:[self->_origo guardiansOfWardsWithGender:kGenderFemale]];
+                        }];
                     }
                 }
             }
@@ -171,16 +188,45 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
         
         if (hasOrganisers) {
             needsEverybody = needsEverybody || hasMembers || hasParents;
-            
-            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixOrganisersTitle) tag:kButtonTagGroupOrganisers];
+
+            [actionSheet addButtonWithTitle:OLocalizedString(_origo.type, kStringPrefixOrganisersTitle) action:^{
+                [self setRecipients:[self->_origo organisers]];
+            }];
         }
         
         if (needsEverybody) {
-            [actionSheet addButtonWithTitle:[NSString stringWithFormat:OLocalizedString(@"Everybody", @""), [OLocalizedString(_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] tag:kButtonTagGroupAll];
+            [actionSheet addButtonWithTitle:[NSString stringWithFormat:OLocalizedString(@"Everybody", @""), [OLocalizedString(self->_origo.type, kStringPrefixOrganisersTitle) stringByLowercasingFirstLetter]] action:^{
+                if (hasMembers) {
+                    [self setRecipients:[self->_origo regulars]];
+                }
+                if (hasParents) {
+                    [self setRecipients:[self->_origo guardians]];
+                }
+                if (hasOrganisers) {
+                    [self setRecipients:[self->_origo organisers]];
+                }
+            }];
         }
     }
     
     [actionSheet show];
+}
+
+
+- (void)setRecipients:(NSArray *)recipientCandidates {
+    if ([self targetIs:kTargetText]) {
+        _toRecipients = [[_origo textRecipientsInSet:recipientCandidates] mutableCopy];
+    } else if ([self targetIs:kTargetEmail]) {
+        _toRecipients = [[_origo emailRecipientsInSet:recipientCandidates] mutableCopy];
+    }
+
+    if (_toRecipients.count) {
+        [self inferTitleAndSubtitle];
+        [self reloadSections];
+
+        self.navigationItem.rightBarButtonItems = @[self.navigationItem.rightBarButtonItem];
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    }
 }
 
 
@@ -519,7 +565,7 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
             }
         }
         
-        NSInteger titleSegment = UISegmentedControlNoSegment;
+        NSInteger titleSegment;
         
         if ([self targetIs:kTargetAllContacts] && !_titleSegments) {
             titleSegment = kTitleSegmentOthers;
@@ -610,88 +656,6 @@ static NSInteger const kButtonTagGroupOrganisers = 7;
     }
     
     self.navigationItem.rightBarButtonItem.enabled = _toRecipients.count > 0;
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (actionSheet.tag) {
-        case kActionSheetTagGroups:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-                NSMutableArray *recipientCandidates = [NSMutableArray array];
-                
-                if (buttonTag == kButtonTagGroupMembers) {
-                    [recipientCandidates addObjectsFromArray:[_origo regulars]];
-                } else if (buttonTag == kButtonTagGroupMembersInGroup) {
-                    [recipientCandidates addObjectsFromArray:[_origo membersOfGroup:[_origo groups][buttonIndex - 1]]];
-                } else if (buttonTag == kButtonTagGroupParents) {
-                    [recipientCandidates addObjectsFromArray:[_origo guardians]];
-                } else if (buttonTag == kButtonTagGroupParentsInGroup) {
-                    NSArray *groups = [_origo groups];
-                    NSString *group = nil;
-                    
-                    if ([self hasSegment:_segmentMembers]) {
-                        group = groups[buttonIndex - groups.count - 2];
-                    } else {
-                        group = groups[buttonIndex - 1];
-                    }
-
-                    for (id<OMember> member in [_origo membersOfGroup:group]) {
-                        [recipientCandidates addObjectsFromArray:[member guardians]];
-                    }
-                    
-                    [recipientCandidates addObjectsFromArray:[_origo membersOfGroup:group]];
-                } else if (buttonTag == kButtonTagGroupParentsOfBoys) {
-                    for (id<OMember> member in [_origo regulars]) {
-                        if ([member.gender isEqualToString:kGenderMale]) {
-                            [recipientCandidates addObjectsFromArray:[member guardians]];
-                        }
-                    }
-                } else if (buttonTag == kButtonTagGroupParentsOfGirls) {
-                    for (id<OMember> member in [_origo regulars]) {
-                        if ([member.gender isEqualToString:kGenderFemale]) {
-                            [recipientCandidates addObjectsFromArray:[member guardians]];
-                        }
-                    }
-                } else if (buttonTag == kButtonTagGroupOrganisers) {
-                    [recipientCandidates addObjectsFromArray:[_origo organisers]];
-                } else if (buttonTag == kButtonTagGroupAll) {
-                    if ([self hasSegment:_segmentMembers]) {
-                        [recipientCandidates addObjectsFromArray:[_origo regulars]];
-                    }
-                    
-                    if ([self hasSegment:_segmentParents]) {
-                        [recipientCandidates addObjectsFromArray:[_origo guardians]];
-                    }
-                    
-                    if ([self hasSegment:_segmentOrganisers]) {
-                        [recipientCandidates addObjectsFromArray:[_origo organisers]];
-                    }
-                }
-                
-                if ([self targetIs:kTargetText]) {
-                    _toRecipients = [[_origo textRecipientsInSet:recipientCandidates] mutableCopy];
-                } else if ([self targetIs:kTargetEmail]) {
-                    _toRecipients = [[_origo emailRecipientsInSet:recipientCandidates] mutableCopy];
-                }
-                
-                if (_toRecipients.count) {
-                    [self inferTitleAndSubtitle];
-                    [self reloadSections];
-                    
-                    self.navigationItem.rightBarButtonItems = @[self.navigationItem.rightBarButtonItem];
-                    self.navigationItem.rightBarButtonItem.enabled = YES;
-                }
-            }
-            
-            break;
-            
-        default:
-            break;
-    }
 }
 
 

@@ -24,10 +24,9 @@
 + (NSDictionary *)isUniqueByGivenNameFromMembers:(id)members;
 + (NSArray *)singleMemberPerPrimaryResidenceFromMembers:(NSArray *)members includeUser:(BOOL)includeUser;
 + (NSArray *)sortedGroupsOfResidents:(id)residents excluding:(id<OMember>)excludedResident;
-+ (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo;
 
-+ (BOOL)isOrganisedOrigowithType:(NSString *)type;
++ (BOOL)isOrganisedOrigoWithType:(NSString *)type;
 
 @end

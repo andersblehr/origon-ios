@@ -177,6 +177,7 @@
 		5CFBC8D019124E1D00863F86 /* OMembershipProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFBC8CF19124E1D00863F86 /* OMembershipProxy.m */; };
 		5CFD8E70183CE27200DC3945 /* OPhoneNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD8E6F183CE27200DC3945 /* OPhoneNumberFormatter.m */; };
 		5CFD8E76183E0BA100DC3945 /* NSLocale+OrigonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD8E75183E0BA100DC3945 /* NSLocale+OrigonAdditions.m */; };
+		AB1DBD7991FCAE55D540D299 /* UIAlertController+OrigonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = AB1DB237617820870641EDBC /* UIAlertController+OrigonAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -431,8 +432,8 @@
 		5CD6270219CB3619007DD29B /* ro-two-heads@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ro-two-heads@3x.png"; sourceTree = "<group>"; };
 		5CDE11AE19F8F92E005018F8 /* OTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableView.h; sourceTree = "<group>"; };
 		5CDE11AF19F8F92E005018F8 /* OTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableView.m; sourceTree = "<group>"; };
-		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OTableViewCell+OrigonAdditions.h"; path = "OTableViewCell+OrigonAdditions.h"; sourceTree = "<group>"; };
-		5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "OTableViewCell+OrigonAdditions.m"; path = "OTableViewCell+OrigonAdditions.m"; sourceTree = "<group>"; };
+		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OTableViewCell+OrigonAdditions.h"; sourceTree = "<group>"; };
+		5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OTableViewCell+OrigonAdditions.m"; sourceTree = "<group>"; };
 		5CDE879C176F185E00272909 /* OInputCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputCellDelegate.h; sourceTree = "<group>"; };
 		5CE33EFF1A97847A0007272C /* 722-location-pin-toolbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "722-location-pin-toolbar@2x.png"; sourceTree = "<group>"; };
 		5CF3DE271775AD810068B2E7 /* ODefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODefaults.h; sourceTree = "<group>"; };
@@ -444,6 +445,8 @@
 		5CFD8E6F183CE27200DC3945 /* OPhoneNumberFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPhoneNumberFormatter.m; sourceTree = "<group>"; };
 		5CFD8E74183E0BA100DC3945 /* NSLocale+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLocale+OrigonAdditions.h"; sourceTree = "<group>"; };
 		5CFD8E75183E0BA100DC3945 /* NSLocale+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+OrigonAdditions.m"; sourceTree = "<group>"; };
+		AB1DB237617820870641EDBC /* UIAlertController+OrigonAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+OrigonAdditions.m"; sourceTree = "<group>"; };
+		AB1DBDC77E8607886E9ABF93 /* UIAlertController+OrigonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+OrigonAdditions.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -565,7 +568,6 @@
 				5CD626FE19CB2E7F007DD29B /* ro-two-heads@2x.png */,
 				5CD6270219CB3619007DD29B /* ro-two-heads@3x.png */,
 			);
-			name = Media;
 			path = Media;
 			sourceTree = "<group>";
 		};
@@ -586,7 +588,6 @@
 				5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */,
 				5C36BE9A1470507700DD3CEA /* Origon.xcdatamodeld */,
 			);
-			name = Entities;
 			path = Entities;
 			sourceTree = "<group>";
 		};
@@ -615,8 +616,9 @@
 				5CCC3597181FC8200079DB55 /* UINavigationItem+OrigonAdditions.m */,
 				5C50581A14CAEC76000D6587 /* UIView+OrigonAdditions.h */,
 				5C50581B14CAEC76000D6587 /* UIView+OrigonAdditions.m */,
+				AB1DB237617820870641EDBC /* UIAlertController+OrigonAdditions.m */,
+				AB1DBDC77E8607886E9ABF93 /* UIAlertController+OrigonAdditions.h */,
 			);
-			name = "Cocoa Categories";
 			path = "Cocoa Categories";
 			sourceTree = "<group>";
 		};
@@ -628,7 +630,6 @@
 				5CBDF78A1659175000D4681C /* OInputCellConstrainer.h */,
 				5CBDF78B1659175000D4681C /* OInputCellConstrainer.m */,
 			);
-			name = "Cell Layout";
 			path = "Cell Layout";
 			sourceTree = "<group>";
 		};
@@ -646,7 +647,6 @@
 				5C5ED5CC14F2E9FE006BBDFB /* OReplicatedEntity+OrigonAdditions.h */,
 				5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigonAdditions.m */,
 			);
-			name = "Entity Categories";
 			path = "Entity Categories";
 			sourceTree = "<group>";
 		};
@@ -662,7 +662,6 @@
 				5C7EDE3218DB2450003AFFAF /* OOrigoProxy.h */,
 				5C7EDE3318DB2450003AFFAF /* OOrigoProxy.m */,
 			);
-			name = "Entity Proxies";
 			path = "Entity Proxies";
 			sourceTree = "<group>";
 		};
@@ -675,7 +674,6 @@
 				5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */,
 				5CB897C61AB7913900CA05B5 /* OTitleViewDelegate.h */,
 			);
-			name = Protocols;
 			path = Protocols;
 			sourceTree = "<group>";
 		};
@@ -703,7 +701,6 @@
 				5CBFB736174B64D40021A8F6 /* OValuePickerViewController.h */,
 				5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */,
 			);
-			name = "View Controllers";
 			path = "View Controllers";
 			sourceTree = "<group>";
 		};
@@ -740,7 +737,6 @@
 				5CC40C991772DC5E00DD850E /* OValidator.h */,
 				5CC40C9A1772DC5E00DD850E /* OValidator.m */,
 			);
-			name = "Auxiliary Classes";
 			path = "Auxiliary Classes";
 			sourceTree = "<group>";
 		};
@@ -750,7 +746,6 @@
 				5CCF08FC1465D5D800D41AB0 /* Reachability.h */,
 				5CCF08FD1465D5D900D41AB0 /* Reachability.m */,
 			);
-			name = "Third Party";
 			path = "Third Party";
 			sourceTree = "<group>";
 		};
@@ -807,7 +802,6 @@
 				5C3F999A178AD58600E31A44 /* Origon.h */,
 				5CBB63C4146080DF00A9133A /* main.m */,
 			);
-			name = "Supporting Files";
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
@@ -826,7 +820,6 @@
 			children = (
 				5CBB63E1146080E000A9133A /* OrigonTests-Info.plist */,
 			);
-			name = "Supporting Files";
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
@@ -836,7 +829,6 @@
 				5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.h */,
 				5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigonAdditions.m */,
 			);
-			name = "Cocoa Subclass categories";
 			path = "Cocoa Subclass categories";
 			sourceTree = "<group>";
 		};
@@ -864,7 +856,6 @@
 				5CAFEFD81AB6F6C4005374CA /* OTitleView.h */,
 				5CAFEFD91AB6F6C4005374CA /* OTitleView.m */,
 			);
-			name = "Cocoa Subclasses";
 			path = "Cocoa Subclasses";
 			sourceTree = "<group>";
 		};
@@ -914,7 +905,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0510;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "Anders Blehr";
 				TargetAttributes = {
 					5CBB63B3146080DF00A9133A = {
@@ -924,7 +915,7 @@
 			};
 			buildConfigurationList = 5CBB63AE146080DD00A9133A /* Build configuration list for PBXProject "Origon" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -1151,6 +1142,7 @@
 				5CFD8E70183CE27200DC3945 /* OPhoneNumberFormatter.m in Sources */,
 				5C78695018116AD400020E08 /* OActionSheet.m in Sources */,
 				5C64105917D499450005B192 /* ONavigationController.m in Sources */,
+				AB1DBD7991FCAE55D540D299 /* UIAlertController+OrigonAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1219,6 +1211,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1246,7 +1239,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Origo;
 				PROVISIONING_PROFILE = "";
@@ -1275,6 +1268,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1294,7 +1288,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = Origo;
 				PROVISIONING_PROFILE = "";
@@ -1317,7 +1311,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
 				INFOPLIST_FILE = "Origon/Supporting Files/Origon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
 				PROVISIONING_PROFILE = "";
@@ -1339,7 +1333,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
 				INFOPLIST_FILE = "Origon/Supporting Files/Origon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
 				PROVISIONING_PROFILE = "";

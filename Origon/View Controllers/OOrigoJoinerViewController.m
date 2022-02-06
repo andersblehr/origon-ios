@@ -10,16 +10,7 @@
 
 static NSInteger const kSectionKeyMain = 0;
 
-static NSInteger const kActionSheetTagJoinCode = 0;
-static NSInteger const kButtonTagJoinCodeEdit = 0;
-static NSInteger const kButtonTagJoinCodeDelete = 1;
-
-static NSInteger const kActionSheetTagJoin = 1;
-
-static NSInteger const kAlertTagJoinConfirmation = 0;
-static NSInteger const kAlertTagJoinAsOrganiser = 1;
-
-@interface OOrigoJoinerViewController () <OTableViewController, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OOrigoJoinerViewController () <OTableViewController> {
 @private
     id<OOrigo> _origo;
     id<OMember> _member;
@@ -74,7 +65,7 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
         id<OOrigo> origo = nil;
         
         for (id<OMembership> membership in [_member allMembershipsIncludeHidden:YES]) {
-            if ([membership.origo.internalJoinCode isEqualToString:_internalJoinCode]) {
+            if ([[membership.origo internalJoinCode] isEqualToString:_internalJoinCode]) {
                 existingMembership = membership;
                 origo = membership.origo;
                 
@@ -213,16 +204,31 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
 {
     if ([self targetIs:kTargetJoinCode]) {
         if ([_origo userIsAdmin]) {
-            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagJoinCode];
-            [actionSheet addButtonWithTitle:OLocalizedString(@"Edit join code", @"") tag:kButtonTagJoinCodeEdit];
-            [actionSheet addButtonWithTitle:OLocalizedString(@"Delete join code", @"") tag:kButtonTagJoinCodeDelete];
-            actionSheet.destructiveButtonIndex = 1;
+            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+            [actionSheet addButtonWithTitle:OLocalizedString(@"Edit join code", @"") action:^{
+                [self editInlineInCell:self->_joinCodeCell];
+            }];
+            [actionSheet addDestructiveButtonWithTitle:OLocalizedString(@"Delete join code", @"") action:^{
+                self->_origo.joinCode = nil;
+                [self->_joinCodeCell inlineField].value = nil;
+                [[OMeta m].replicator replicate];
+                [self editInlineInCell:self->_joinCodeCell];
+            }];
             
             [actionSheet show];
         }
     } else if ([self targetIs:kTargetOrigo]) {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagJoin];
-        [actionSheet addButtonWithTitle:OLocalizedString(@"Send join request", @"")];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil];
+        [actionSheet addButtonWithTitle:OLocalizedString(@"Send join request", @"") action:^{
+            if (![self->_origo instance]) {
+                [self->_origo instantiate];
+            }
+            id<OMembership> membership = [self->_origo addMember:self->_member];
+            if (self->_organiserRole) {
+                [membership addAffiliation:self->_organiserRole ofType:kAffiliationTypeOrganiserRole];
+            }
+            [self.dismisser dismissModalViewController:self];
+        }];
         
         [actionSheet show];
     }
@@ -379,30 +385,53 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
                     }
                 }
                 
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"Primarily for adults", @"") message:message delegate:self cancelButtonTitle:OLocalizedString(@"No", @"") otherButtonTitles:OLocalizedString(@"Yes", @""), nil];
-                alert.tag = kAlertTagJoinConfirmation;
-                
-                [alert show];
+                [OAlert showAlertWithTitle:OLocalizedString(@"Primarily for adults", @"")
+                                   message:message
+                             okButtonTitle:OLocalizedString(@"Yes", @"")
+                                      onOk:^{
+                                          [self reloadSections];
+                                          self.navigationItem.rightBarButtonItem = nil;
+                                      }
+                         cancelButtonTitle:OLocalizedString(@"No", @"")
+                                  onCancel:^{ [self editInlineInCell:self->_joinCodeCell]; }];
             } else if (![_member isJuvenile] && [_origo isJuvenile]) {
                 if ([_origo isOrganised]) {
                     NSString *origoTitle = [OLanguage inlineNoun:OLocalizedString(_origo.type, kStringPrefixOrigoTitle)];
                     NSString *organiserTitle = [OLanguage inlineNoun:OLocalizedString(_origo.type, kStringPrefixOrganiserTitle)];
                     
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:OLocalizedString(@"Join as %@?", @""), organiserTitle] message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' represents a %@. Do you want to join as %@?", @""), _origo.joinCode, origoTitle, organiserTitle] delegate:self cancelButtonTitle:OLocalizedString(@"No", @"") otherButtonTitles:OLocalizedString(@"Yes", @""), nil];
-                    alert.tag = kAlertTagJoinAsOrganiser;
-                    
-                    [alert show];
+                    [OAlert showAlertWithTitle:[NSString stringWithFormat:OLocalizedString(@"Join as %@?", @""),
+                                                       organiserTitle]
+                                       message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' represents a %@. Do you want to join as %@?", @""),
+                                                       _origo.joinCode,
+                                                       origoTitle,
+                                                       organiserTitle]
+                                 okButtonTitle:OLocalizedString(@"Yes", @"")
+                                          onOk:^{
+                        self->_organiserRole = OLocalizedString(self->_origo.type, kStringPrefixOrganiserTitle);
+                                          }
+                             cancelButtonTitle:OLocalizedString(@"No", @"")
+                                      onCancel:nil];
                 } else {
-                    [OAlert showAlertWithTitle:OLocalizedString(@"For minors", @"") message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' is for minors. You cannot join this list.", @""), _origo.joinCode]];
+                    [OAlert showAlertWithTitle:OLocalizedString(@"For minors", @"")
+                                       message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' is for minors. You cannot join this list.", @""),
+                                                       _origo.joinCode]];
                 }
             } else if ([_origo isCommunity] && [[_member primaryResidence] elders].count > 1) {
                 NSMutableArray *coResidents = [[[_member primaryResidence] elders] mutableCopy];
                 [coResidents removeObject:[OMeta m].user];
                 
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:OLocalizedString(@"Community list", @"") message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request.", @""), _origo.joinCode, [OUtil commaSeparatedListOfMembers:coResidents conjoin:YES subjective:YES]] delegate:self cancelButtonTitle:OLocalizedString(@"Cancel", @"") otherButtonTitles:OLocalizedString(@"Continue", @""), nil];
-                alert.tag = kAlertTagJoinConfirmation;
-                
-                [alert show];
+                [OAlert showAlertWithTitle:OLocalizedString(@"Community list", @"")
+                                   message:[NSString stringWithFormat:OLocalizedString(@"The list with join code '%@' is a community list which consists of whole households. %@ will also be included in the join request.", @""),
+                                                   _origo.joinCode,
+                                                   [OUtil commaSeparatedListOfMembers:coResidents
+                                                                              conjoin:YES
+                                                                           subjective:YES]]
+                             okButtonTitle:OLocalizedString(@"Continue", @"")
+                                      onOk:^{
+                                          [self reloadSections];
+                                          self.navigationItem.rightBarButtonItem = nil;
+                                      }
+                                  onCancel:^{ [self editInlineInCell:self->_joinCodeCell]; }];
             } else {
                 [self reloadSections];
                 
@@ -413,77 +442,6 @@ static NSInteger const kAlertTagJoinAsOrganiser = 1;
             
             [self editInlineInCell:_joinCodeCell];
         }
-    }
-}
-
-
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-    
-    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
-
-    switch (actionSheet.tag) {
-        case kActionSheetTagJoinCode:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagJoinCodeDelete) {
-                    _origo.joinCode = nil;
-                    [_joinCodeCell inlineField].value = nil;
-                    
-                    [[OMeta m].replicator replicate];
-                }
-                
-                [self editInlineInCell:_joinCodeCell];
-            }
-            
-            break;
-            
-        case kActionSheetTagJoin:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (![_origo instance]) {
-                    [_origo instantiate];
-                }
-                
-                id<OMembership> membership = [_origo addMember:_member];
-                
-                if (_organiserRole) {
-                    [membership addAffiliation:_organiserRole ofType:kAffiliationTypeOrganiserRole];
-                }
-                
-                [self.dismisser dismissModalViewController:self];
-            }
-            
-        default:
-            break;
-    }
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertTagJoinAsOrganiser:
-            if (buttonIndex != alertView.cancelButtonIndex) {
-                _organiserRole = OLocalizedString(_origo.type, kStringPrefixOrganiserTitle);
-            }
-            
-        case kAlertTagJoinConfirmation:
-            if (buttonIndex != alertView.cancelButtonIndex) {
-                [self reloadSections];
-                
-                self.navigationItem.rightBarButtonItem = nil;
-            } else {
-                [self editInlineInCell:_joinCodeCell];
-            }
-            
-            break;
-            
-        default:
-            break;
     }
 }
 
