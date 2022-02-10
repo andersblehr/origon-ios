@@ -11,6 +11,6 @@
 @interface OOrigoProxy : OEntityProxy<OOrigo>
 
 + (instancetype)residenceProxyUseDefaultName:(BOOL)useDefaultName;
-+ (instancetype)residenceProxyFromAddress:(CFDictionaryRef)address;
++ (instancetype)residenceProxyFromAddress:(CNPostalAddress *)address;
 
 @end

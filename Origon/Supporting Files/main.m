@@ -6,10 +6,6 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-#import "OAppDelegate.h"
-
 int main(int argc, char *argv[])
 {
     @autoreleasepool {

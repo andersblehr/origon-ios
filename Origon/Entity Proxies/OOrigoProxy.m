@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
-#import "OOrigoProxy.h"
-
 static NSString * const kPlaceholderStreet = @"{street}";
 static NSString * const kPlaceholderCity = @"{city}";
 static NSString * const kPlaceholderZip = @"{zip}";
@@ -24,15 +22,9 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - Auxiliary methods
 
-- (void)formatAddressFromAddressBookAddress:(CFDictionaryRef)address
+- (void)formatAddressFromAddressBookAddress:(CNPostalAddress *)address
 {
     NSString *formattedAddress = kDefaultAddressTemplate;
-    NSString *countryCode = [(NSString *)CFDictionaryGetValue(address, kABPersonAddressCountryCodeKey) uppercaseString];
-    
-    if (!countryCode) {
-        countryCode = [NSLocale countryCode];
-    }
-    
     NSArray *mappings = [kAddressTemplatesByCountryCode componentsSeparatedByString:kSeparatorList];
     
     for (NSString *mapping in mappings) {
@@ -46,13 +38,13 @@ static NSString * const kAddressTemplatesByCountryCode =
         }
     }
     
-    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderStreet withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressStreetKey)];
-    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderCity withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressCityKey)];
-    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderState withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressStateKey)];
-    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressZIPKey)];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderStreet withString:address.street];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderCity withString:address.city];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderState withString:address.state];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderZip withString:address.postalCode];
     
     self.address = [formattedAddress stringByRemovingRedundantWhitespaceKeepNewlines:YES];
-    self.location = countryCode;
+    self.location = address.ISOCountryCode != nil ? address.ISOCountryCode : [NSLocale countryCode];
 }
 
 
@@ -66,7 +58,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithAddressBookAddress:(CFDictionaryRef)address
+- (instancetype)initWithAddressBookAddress:(CNPostalAddress *)address
 {
     self = [[self class] proxyForEntityOfClass:[OOrigo class] meta:kOrigoTypeResidence];
     
@@ -92,7 +84,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-+ (instancetype)residenceProxyFromAddress:(CFDictionaryRef)address
++ (instancetype)residenceProxyFromAddress:(CNPostalAddress *)address
 {
     OOrigoProxy *proxy = [[self alloc] initWithAddressBookAddress:address];
     proxy.name = kPlaceholderDefault;
@@ -139,7 +131,7 @@ static NSString * const kAddressTemplatesByCountryCode =
     }
     
     for (id<OMembership> membership in [[self class] cachedProxiesForEntityClass:[OMembership class]]) {
-        if ([membership.origo.entityId isEqualToString:self.entityId]) {
+        if ([[membership.origo entityId] isEqualToString:self.entityId]) {
             [allMemberships addObject:membership];
         }
     }
@@ -304,7 +296,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (BOOL)userIsMember
 {
-    BOOL userIsMember = NO;
+    BOOL userIsMember;
     
     if ([self instance]) {
         userIsMember = [[self instance] userIsMember];

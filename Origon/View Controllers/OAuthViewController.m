@@ -168,10 +168,9 @@ static NSInteger const kMaxAttempts = 2;
     _authInfo = authInfo;
     
     if ([self targetIs:kTargetUser]) {
-        NSError *error;
         [ODefaults setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo
                                                           requiringSecureCoding:NO
-                                                                          error:&error]
+                                                                          error:nil]
                              forKey:kDefaultsKeyAuthInfo];
         
         [self toggleAuthState];
@@ -403,7 +402,7 @@ static NSInteger const kMaxAttempts = 2;
 - (void)onlineStatusDidChange
 {
     [self enableOrDisableButtons];
-    [self reloadFooterForSectionWtihKey:kSectionKeyAuth];
+    [self reloadFooterForSectionWithKey:kSectionKeyAuth];
 }
 
 

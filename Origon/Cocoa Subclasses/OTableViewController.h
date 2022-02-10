@@ -8,12 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol OTableViewController<UITableViewDataSource, UITableViewDelegate, OTitleViewDelegate,  OConnectionDelegate>
+@protocol OTableViewController<UITableViewDataSource, UITableViewDelegate, OTitleViewDelegate, OConnectionDelegate>
 
 @required
 @property (strong, nonatomic, readonly) NSString *identifier;
 @property (strong, nonatomic) id target;
-@property (strong, nonatomic) id returnData;
 
 - (void)loadState;
 - (void)loadData;
@@ -89,7 +88,7 @@
 @property (nonatomic, assign) BOOL presentStealthilyOnce;
 @property (nonatomic, assign) BOOL needsReloadInputSection;
 
-@property (nonatomic, assign) NSUInteger selectedHeaderSegment;
+@property (nonatomic, assign) NSInteger selectedHeaderSegment;
 @property (nonatomic, assign) UITableViewRowAnimation rowAnimation;
 
 @property (nonatomic) id meta;
@@ -139,6 +138,6 @@
 - (void)reloadSectionWithKey:(NSInteger)sectionKey rowAnimation:(UITableViewRowAnimation)rowAnimation;
 
 - (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey;
-- (void)reloadFooterForSectionWtihKey:(NSInteger)sectionKey;
+- (void)reloadFooterForSectionWithKey:(NSInteger)sectionKey;
 
 @end

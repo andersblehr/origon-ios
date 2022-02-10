@@ -340,7 +340,7 @@ static NSInteger const kSectionKeyMain = 0;
     
     if ([self targetIs:kTargetOrigo]) {
         [self.navigationItem barButtonItemWithTag:kBarButtonItemTagDone].enabled = self.isOnline;
-        [self reloadFooterForSectionWtihKey:kSectionKeyMain];
+        [self reloadFooterForSectionWithKey:kSectionKeyMain];
     }
 }
 

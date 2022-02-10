@@ -10,7 +10,7 @@
 
 @interface NSURL (OrigonAdditions)
 
-+ (NSString *)URLEscapeString:(NSString *)unencodedString;
++ (NSString *)URLEscapeString:(NSString *)rawString;
 - (NSURL *)URLByAppendingURLParameters:(NSDictionary *)queryParameters;
 
 @end
