@@ -11,13 +11,9 @@ static NSString * const kURLParameterFormat = @"%@%@=%@";
 
 @implementation NSURL (OrigonAdditions)
 
-+ (NSString *)URLEscapeString:(NSString *)unencodedString 
++ (NSString *)URLEscapeString:(NSString *)rawString 
 {
-    CFStringRef originalStringRef = (__bridge_retained CFStringRef)unencodedString;
-    NSString *URLEscapedString = (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, originalStringRef, NULL, (CFStringRef)@"=@", kCFStringEncodingUTF8);
-    CFRelease(originalStringRef);
-    
-    return URLEscapedString;
+    return [rawString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 
 

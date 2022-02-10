@@ -99,12 +99,6 @@ static NSTimeInterval const kTimeInterval100Years = 3153600000;
 }
 
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    return self;
-}
-
-
 - (instancetype)init
 {
     self = [super init];
@@ -113,7 +107,7 @@ static NSTimeInterval const kTimeInterval100Years = 3153600000;
         _appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         _appVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
         _language = [[[NSBundle mainBundle] preferredLocalizations][0] substringToIndex:2];
-        _carrier = [[[CTTelephonyNetworkInfo alloc] init] subscriberCellularProvider];
+        _carrier = [[CTTelephonyNetworkInfo new] serviceSubscriberCellularProviders].allValues.firstObject;
         _hasInternetConnection = NO;
         
         if ([ODefaults globalDefaultForKey:kDefaultsKeyUserEmail]) {
@@ -141,7 +135,7 @@ static NSTimeInterval const kTimeInterval100Years = 3153600000;
     static dispatch_once_t onceToken;
     
     dispatch_once(&onceToken, ^{
-        meta = [[super allocWithZone:nil] init];
+        meta = (OMeta *) [[super allocWithZone:nil] init];
     });
     
     return meta;
@@ -220,7 +214,7 @@ static NSTimeInterval const kTimeInterval100Years = 3153600000;
 
 + (CGSize)screenSize
 {
-    return [UIScreen mainScreen].applicationFrame.size;
+    return [UIApplication sharedApplication].delegate.window.frame.size;
 }
 
 
@@ -243,12 +237,6 @@ static NSTimeInterval const kTimeInterval100Years = 3153600000;
 #else
     return NO;
 #endif
-}
-
-
-+ (BOOL)iOSVersionIs:(NSString *)majorVersionNumber
-{
-    return [[UIDevice currentDevice].systemVersion hasPrefix:majorVersionNumber];
 }
 
 

@@ -1097,7 +1097,7 @@ static NSInteger const kHeaderSegmentResidences = 1;
             [self reloadSections];
             
             if ([_origo isPrivate]) {
-                [self reloadFooterForSectionWtihKey:kSectionKeyOrigo];
+                [self reloadFooterForSectionWithKey:kSectionKeyOrigo];
             }
             
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];

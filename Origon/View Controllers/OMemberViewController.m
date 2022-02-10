@@ -16,7 +16,7 @@ static CGFloat const kPopUpAlpha = 0.9f;
 static CGFloat const kPopUpCornerRadius = 5.f;
 
 
-@interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, ABPeoplePickerNavigationControllerDelegate> {
+@interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, CNContactPickerDelegate> {
 @private
     id<OMember> _member;
     id<OOrigo> _origo;
@@ -28,9 +28,9 @@ static CGFloat const kPopUpCornerRadius = 5.f;
     OInputField *_mobilePhoneField;
     OInputField *_emailField;
 
-    NSMutableArray *_addressBookAddresses;
-    NSMutableArray *_addressBookHomeNumbers;
-    NSInteger _addressBookHomeNumberCount;
+    NSMutableArray *_contactAddresses;
+    NSMutableArray *_contactHomeNumbers;
+    NSInteger _contactHomeNumberCount;
     
     NSMutableDictionary *_cachedResidencesById;
     NSArray *_cachedResidences;
@@ -139,7 +139,7 @@ static CGFloat const kPopUpCornerRadius = 5.f;
     [self.view.window addSubview:popUpView];
     self.view.window.userInteractionEnabled = NO;
     
-    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, 1.f * NSEC_PER_SEC);
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC);
     dispatch_after(delay, dispatch_get_main_queue(), ^(void) {
         self.view.window.userInteractionEnabled = YES;
         [popUpView removeFromSuperview];
@@ -544,31 +544,31 @@ static CGFloat const kPopUpCornerRadius = 5.f;
                     [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home address. Which address do you want to provide?", @""),
                             [_nameField.value givenName]]];
     
-    for (id<OOrigo> selectableAddress in _addressBookAddresses) {
+    for (id<OOrigo> selectableAddress in _contactAddresses) {
         [actionSheet addButtonWithTitle:[selectableAddress shortAddress] action:^{
             [selectableAddress addMember:self->_member];
-            for (id<OOrigo> address in self->_addressBookAddresses) {
+            for (id<OOrigo> address in self->_contactAddresses) {
                 if (address != selectableAddress) {
                     [address expire];
                 }
             }
-            [self->_addressBookAddresses removeAllObjects];
+            [self->_contactAddresses removeAllObjects];
             [self finaliseOrRefineAddressBookInfo];
         }];
     }
     
     if (![self aspectIs:kAspectJuvenile]) {
         [actionSheet addButtonWithTitle:OLocalizedString(@"All of them", @"") action:^{
-            for (id<OOrigo> address in self->_addressBookAddresses) {
+            for (id<OOrigo> address in self->_contactAddresses) {
                 [address addMember:self->_member];
             }
-            [self->_addressBookAddresses removeAllObjects];
+            [self->_contactAddresses removeAllObjects];
             [self finaliseOrRefineAddressBookInfo];
         }];
     }
     
     [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") action:^{
-        [self->_addressBookAddresses removeAllObjects];
+        [self->_contactAddresses removeAllObjects];
         [self finaliseOrRefineAddressBookInfo];
     }];
     
@@ -579,15 +579,15 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 - (void)presentHomeNumberConfirmationSheetForResidence:(id<OOrigo>)residence {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:
             OLocalizedString(@"Is %@ the phone number for %@?", @""),
-                    _addressBookHomeNumbers[0],
-                    [residence shortAddress]]];
+            _contactHomeNumbers[0],
+            [residence shortAddress]]];
     [actionSheet addButtonWithTitle:OLocalizedString(@"Yes", @"") action:^{
-        residence.telephone = self->_addressBookHomeNumbers[0];
-        [self->_addressBookHomeNumbers removeAllObjects];
+        residence.telephone = self->_contactHomeNumbers[0];
+        [self->_contactHomeNumbers removeAllObjects];
         [self finaliseOrRefineAddressBookInfo];
     }];
     [actionSheet addButtonWithTitle:OLocalizedString(@"No", @"") action:^{
-        [self->_addressBookHomeNumbers removeAllObjects];
+        [self->_contactHomeNumbers removeAllObjects];
         [self finaliseOrRefineAddressBookInfo];
     }];
     [actionSheet show];
@@ -602,15 +602,15 @@ static CGFloat const kPopUpCornerRadius = 5.f;
                               [residence shortAddress]]
                     : [NSString stringWithFormat:OLocalizedString(@"%@ has more than one home phone number. Which number do you want to provide?", @""),
                               [_nameField.value givenName]]];
-    for (NSString *homeNumber in _addressBookHomeNumbers) {
+    for (NSString *homeNumber in _contactHomeNumbers) {
         [actionSheet addButtonWithTitle:homeNumber action:^{
             residence.telephone = homeNumber;
-            [self->_addressBookHomeNumbers removeAllObjects];
+            [self->_contactHomeNumbers removeAllObjects];
             [self finaliseOrRefineAddressBookInfo];
         }];
     }
     [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") action:^{
-        [self->_addressBookHomeNumbers removeAllObjects];
+        [self->_contactHomeNumbers removeAllObjects];
         [self finaliseOrRefineAddressBookInfo];
     }];
     [actionSheet show];
@@ -619,26 +619,26 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
 - (void)presentHomeNumberResidenceSelectionSheet:(NSMutableArray *)residences {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:
-            _addressBookHomeNumberCount == 1 || _addressBookHomeNumbers.count == _addressBookHomeNumberCount
-                    ? [NSString stringWithFormat:_addressBookHomeNumberCount == 1
+            _contactHomeNumberCount == 1 || _contactHomeNumbers.count == _contactHomeNumberCount
+                    ? [NSString stringWithFormat:_contactHomeNumberCount == 1
                                     ? OLocalizedString(@"%@ has only one home phone number, %@. Which address has this number?", @"")
                                     : OLocalizedString(@"%@ has more than one home phone number. Which address has the number %@?", @""),
-                            [_nameField.value givenName],
-                            _addressBookHomeNumbers[0]]
+                                                 [_nameField.value givenName],
+                                                 _contactHomeNumbers[0]]
                     : [NSString stringWithFormat:OLocalizedString(@"Which address has phone number %@?", @""),
-                            _addressBookHomeNumbers[0]]];
+                                                 _contactHomeNumbers[0]]];
     for (OOrigo *residence in residences) {
         [actionSheet addButtonWithTitle:[residence shortAddress] action:^{
-            residence.telephone = self->_addressBookHomeNumbers[0];
+            residence.telephone = self->_contactHomeNumbers[0];
             [residences removeObject:residence];
-            [self->_addressBookHomeNumbers removeObjectAtIndex:0];
-            if (residences.count && self->_addressBookHomeNumbers.count) {
+            [self->_contactHomeNumbers removeObjectAtIndex:0];
+            if (residences.count && self->_contactHomeNumbers.count) {
                 [self refineAddressBookAddressInfo];
             }
         }];
     }
     [actionSheet addButtonWithTitle:OLocalizedString(@"None of them", @"") action:^{
-        [self->_addressBookHomeNumbers removeObjectAtIndex:0];
+        [self->_contactHomeNumbers removeObjectAtIndex:0];
         [self finaliseOrRefineAddressBookInfo];
     }];
     [actionSheet show];
@@ -654,7 +654,7 @@ static CGFloat const kPopUpCornerRadius = 5.f;
         }
     }
     
-    if (_addressBookHomeNumbers.count == 1 && residencesLackingHomeNumber.count == 1) {
+    if (_contactHomeNumbers.count == 1 && residencesLackingHomeNumber.count == 1) {
         [self presentHomeNumberConfirmationSheetForResidence:residencesLackingHomeNumber[0]];
     } else if ([_member residences].count == 1) {
         [self presentHomeNumberSelectionSheetForResidence:[_member primaryResidence]];
@@ -792,13 +792,13 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 
 - (void)refineAddressBookAddressInfo
 {
-    if (_addressBookAddresses.count) {
+    if (_contactAddresses.count) {
         [self presentMultipleAddressesSheet];
-    } else if (_addressBookHomeNumbers.count) {
+    } else if (_contactHomeNumbers.count) {
         if ([_member residences].count) {
             [self presentHomeNumberMappingSheet];
         } else {
-            [_addressBookHomeNumbers removeAllObjects];
+            [_contactHomeNumbers removeAllObjects];
         }
     }
 }
@@ -810,18 +810,18 @@ static CGFloat const kPopUpCornerRadius = 5.f;
             [self refineAddressBookContactInfo];
         } else if (!_didPerformLocalLookup) {
             [self performLocalLookup];
-            if ([_member instance] && _addressBookAddresses.count) {
-                for (id<OOrigo> address in _addressBookAddresses) {
+            if ([_member instance] && _contactAddresses.count) {
+                for (id<OOrigo> address in _contactAddresses) {
                     [address expire];
                 }
             } else {
                 [self refineAddressBookAddressInfo];
             }
-        } else if (_addressBookHomeNumbers.count) {
+        } else if (_contactHomeNumbers.count) {
             [self refineAddressBookAddressInfo];
         }
     }
-    if (!_addressBookHomeNumbers.count && !_addressBookAddresses.count) {
+    if (!_contactHomeNumbers.count && !_contactAddresses.count) {
         [self reflectMember:_member];
     }
 }
@@ -833,18 +833,18 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 {
     [self resetInputState];
     
-    ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
-    peoplePicker.peoplePickerDelegate = self;
+    CNContactPickerViewController *contactPicker = [[CNContactPickerViewController alloc] init];
+    contactPicker.delegate = self;
     
-    [self presentViewController:peoplePicker animated:YES completion:nil];
+    [self presentViewController:contactPicker animated:YES completion:nil];
 }
 
 
-- (void)retrieveNameFromAddressBookPersonRecord:(ABRecordRef)person
+- (void)retrieveNameFromContact:(CNContact *)contact
 {
-    NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonFirstNameProperty);
-    NSString *middleName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonMiddleNameProperty);
-    NSString *lastName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
+    NSString *firstName = contact.givenName;
+    NSString *middleName = contact.middleName;
+    NSString *lastName = contact.familyName;
     
     NSString *name = firstName;
     
@@ -861,37 +861,34 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 }
 
 
-- (void)retrievePhoneNumbersFromAddressBookPersonRecord:(ABRecordRef)person
+- (void)retrievePhoneNumbersFromContact:(CNContact *)contact
 {
-    ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonPhoneProperty);
-    CFIndex multiValueCount = ABMultiValueGetCount(multiValues);
+    NSArray<CNLabeledValue<CNPhoneNumber *> *> *labeledPhoneNumbers = contact.phoneNumbers;
     
-    if (multiValueCount) {
-        _addressBookHomeNumbers = [NSMutableArray array];
+    if (labeledPhoneNumbers.count > 0) {
+        _contactHomeNumbers = [NSMutableArray array];
         
         NSMutableArray *mobilePhoneNumbers = [NSMutableArray array];
         
-        for (CFIndex i = 0; i < multiValueCount; i++) {
-            NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
+        for (CNLabeledValue<CNPhoneNumber *> *labeledPhoneNumber in labeledPhoneNumbers) {
+            NSString *label = labeledPhoneNumber.label;
             
-            BOOL isMobilePhone = [label isEqualToString:(NSString *)kABPersonPhoneMobileLabel];
-            BOOL is_iPhone = [label isEqualToString:(NSString *)kABPersonPhoneIPhoneLabel];
-            BOOL isHomePhone = [label isEqualToString:(NSString *)kABHomeLabel];
+            BOOL isMobilePhone = [label isEqualToString:CNLabelPhoneNumberMobile];
+            BOOL is_iPhone = [label isEqualToString:CNLabelPhoneNumberiPhone];
+            BOOL isHomePhone = [label isEqualToString:CNLabelPhoneNumberMain];
             
             if (isMobilePhone || is_iPhone || isHomePhone) {
-                NSString *phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+                NSString *phoneNumber = labeledPhoneNumber.value.stringValue;
                 
                 if (isMobilePhone || is_iPhone) {
                     [mobilePhoneNumbers addObject:phoneNumber];
                 } else {
-                    [_addressBookHomeNumbers addObject:phoneNumber];
+                    [_contactHomeNumbers addObject:phoneNumber];
                 }
             }
         }
         
-        _addressBookHomeNumberCount = _addressBookHomeNumbers.count;
-        
-        CFRelease(multiValues);
+        _contactHomeNumberCount = _contactHomeNumbers.count;
         
         if (mobilePhoneNumbers.count) {
             _mobilePhoneField.value = mobilePhoneNumbers;
@@ -901,30 +898,23 @@ static CGFloat const kPopUpCornerRadius = 5.f;
             }
         }
     }
-    
-    // NOTE TO REVIEWERS: Xcode Analyzer warns of a potential memory leak on multiValues here.
-    // However, releasing multiValues here instead of inside if block causes the app to crash
-    // in certain cases.
 }
 
 
-- (void)retrieveEmailAddressesFromAddressBookPersonRecord:(ABRecordRef)person
+- (void)retrieveEmailAddressesFromContact:(CNContact *)contact
 {
-    ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonEmailProperty);
-    CFIndex multiValueCount = ABMultiValueGetCount(multiValues);
+    NSArray<CNLabeledValue<NSString *> *> *labeledEmailAddresses = contact.emailAddresses;
     
-    if (multiValueCount) {
+    if (labeledEmailAddresses.count > 0) {
         NSMutableArray *emailAddresses = [NSMutableArray array];
         
-        for (CFIndex i = 0; i < multiValueCount; i++) {
-            NSString *emailAddress = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+        for (CNLabeledValue<NSString *> *labeledEmailAddress in labeledEmailAddresses) {
+            NSString *emailAddress = labeledEmailAddress.value;
             
             if ([OValidator isEmailValue:emailAddress]) {
                 [emailAddresses addObject:emailAddress];
             }
         }
-        
-        CFRelease(multiValues);
         
         if (emailAddresses.count) {
             _emailField.value = emailAddresses;
@@ -934,55 +924,42 @@ static CGFloat const kPopUpCornerRadius = 5.f;
             }
         }
     }
-    
-    // NOTE TO REVIEWERS: Xcode Analyzer warns of a potential memory leak on multiValues here.
-    // However, releasing multiValues here instead of inside if block causes the app to crash
-    // in certain cases.
 }
 
 
-- (void)retrieveAddressesFromAddressBookPersonRecord:(ABRecordRef)person
+- (void)retrieveAddressesFromContact:(CNContact *)contact
 {
-    ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonAddressProperty);
-    CFIndex multiValueCount = ABMultiValueGetCount(multiValues);
+    NSArray<CNLabeledValue<CNPostalAddress *> *> *labeledAddresses = contact.postalAddresses;
     
-    if (multiValueCount) {
-        _addressBookAddresses = [NSMutableArray array];
+    if (labeledAddresses.count > 0) {
+        _contactAddresses = [NSMutableArray array];
         
-        for (CFIndex i = 0; i < multiValueCount; i++) {
-            NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
+        for (CNLabeledValue<CNPostalAddress *> *labeledAddress in labeledAddresses) {
+            NSString *label = labeledAddress.label;
             
-            if ([label isEqualToString:(NSString *)kABHomeLabel]) {
-                CFTypeRef address = ABMultiValueCopyValueAtIndex(multiValues, i);
-                [_addressBookAddresses addObject:[OOrigoProxy residenceProxyFromAddress:address]];
-                CFRelease(address);
+            if ([label isEqualToString:CNLabelHome]) {
+                [_contactAddresses addObject:[OOrigoProxy residenceProxyFromAddress:labeledAddress.value]];
             }
         }
         
-        CFRelease(multiValues);
-        
-        if (_addressBookAddresses.count == 1) {
-            [_addressBookAddresses[0] addMember:_member];
-            [_addressBookAddresses removeAllObjects];
+        if (_contactAddresses.count == 1) {
+            [_contactAddresses[0] addMember:_member];
+            [_contactAddresses removeAllObjects];
         }
         
-        if (_addressBookHomeNumbers.count) {
-            if (!_addressBookAddresses.count && ![_member hasAddress]) {
-                if (_addressBookHomeNumbers.count == 1) {
+        if (_contactHomeNumbers.count) {
+            if (!_contactAddresses.count && ![_member hasAddress]) {
+                if (_contactHomeNumbers.count == 1) {
                     [[OOrigoProxy residenceProxyUseDefaultName:YES] addMember:_member];
                 }
             }
             
-            if ([_member residences].count == 1 && _addressBookHomeNumbers.count == 1) {
-                [_member primaryResidence].telephone = _addressBookHomeNumbers[0];
-                [_addressBookHomeNumbers removeAllObjects];
+            if ([_member residences].count == 1 && _contactHomeNumbers.count == 1) {
+                [_member primaryResidence].telephone = _contactHomeNumbers[0];
+                [_contactHomeNumbers removeAllObjects];
             }
         }
     }
-    
-    // NOTE TO REVIEWERS: Xcode Analyzer warns of a potential memory leak on multiValues here.
-    // However, releasing multiValues here instead of inside if block causes the app to crash
-    // in certain cases.
 }
 
 
@@ -1351,9 +1328,9 @@ static CGFloat const kPopUpCornerRadius = 5.f;
         }
     } else if (sectionKey == kSectionKeyRoles) {
         if ([[_origo membershipForMember:_member] roles].count == 1) {
-            headerContent = [NSString stringWithFormat:OLocalizedString(@"Responsibility in %@", @""), _roleMembership.origo.name];
+            headerContent = [NSString stringWithFormat:OLocalizedString(@"Responsibility in %@", @""), [_roleMembership.origo name]];
         } else {
-            headerContent = [NSString stringWithFormat:OLocalizedString(@"Responsibilities in %@", @""), _roleMembership.origo.name];
+            headerContent = [NSString stringWithFormat:OLocalizedString(@"Responsibilities in %@", @""), [_roleMembership.origo name]];
         }
     }
     
@@ -1898,13 +1875,13 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 }
 
 
-#pragma mark - ABPeoplePickerNavigationControllerDelegate conformance
+#pragma mark - CNContactPickerDelegate conformance
 
-- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person
+- (void)contactPicker:(CNContactPickerViewController *)picker didSelectContact:(CNContact *)contact
 {
-    [self retrieveNameFromAddressBookPersonRecord:person];
-    [self retrievePhoneNumbersFromAddressBookPersonRecord:person];
-    [self retrieveEmailAddressesFromAddressBookPersonRecord:person];
+    [self retrieveNameFromContact:contact];
+    [self retrievePhoneNumbersFromContact:contact];
+    [self retrieveEmailAddressesFromContact:contact];
     
     if (![_mobilePhoneField hasMultiValue] && ![_emailField hasMultiValue]) {
         [self performLocalLookup];
@@ -1913,14 +1890,14 @@ static CGFloat const kPopUpCornerRadius = 5.f;
     if ([_member instance]) {
         [self dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [self retrieveAddressesFromAddressBookPersonRecord:person];
+        [self retrieveAddressesFromContact:contact];
         
         if ([_mobilePhoneField hasMultiValue] || [_emailField hasMultiValue]) {
             [self dismissViewControllerAnimated:YES completion:^{
                 [self refineAddressBookContactInfo];
             }];
         } else {
-            if (_addressBookAddresses.count || _addressBookHomeNumbers.count) {
+            if (_contactAddresses.count || _contactHomeNumbers.count) {
                 [self dismissViewControllerAnimated:YES completion:^{
                     [self refineAddressBookAddressInfo];
                 }];
@@ -1933,21 +1910,11 @@ static CGFloat const kPopUpCornerRadius = 5.f;
 }
 
 
-- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
+- (void)contactPickerDidCancel:(CNContactPickerViewController *)picker
 {
     [self dismissViewControllerAnimated:YES completion:^{
         [self.inputCell resumeFirstResponder];
     }];
-}
-
-
-#pragma mark - ABPeoplePickerNavigationControllerDelegate conformance (iOS 7.x)
-
-- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
-{
-    [self peoplePickerNavigationController:peoplePicker didSelectPerson:person];
-    
-    return NO;
 }
 
 @end
