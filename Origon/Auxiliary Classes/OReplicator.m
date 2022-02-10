@@ -105,7 +105,10 @@
             [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
         }
         
-        [ODefaults setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
+        [ODefaults setUserDefault:
+                [NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs
+                                      requiringSecureCoding:NO
+                                                      error:nil] forKey:kDefaultsKeyDirtyEntities];
     }
 }
 
@@ -117,7 +120,7 @@
     NSData *dirtyEntityURIArchive = [ODefaults userDefaultForKey:kDefaultsKeyDirtyEntities];
     
     if (dirtyEntityURIArchive) {
-        NSSet *dirtyEntityURIs = [NSKeyedUnarchiver unarchiveObjectWithData:dirtyEntityURIArchive];
+        NSSet *dirtyEntityURIs = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSSet class] fromData:dirtyEntityURIArchive error:nil];
         
         for (NSURL *dirtyEntityURI in dirtyEntityURIs) {
             NSManagedObjectID *dirtyEntityID = [[OMeta m].context.persistentStoreCoordinator managedObjectIDForURIRepresentation:dirtyEntityURI];

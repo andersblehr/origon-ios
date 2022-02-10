@@ -118,12 +118,6 @@ static NSString * const kLanguageCodeGerman = @"de";
 }
 
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    return self;
-}
-
-
 - (instancetype)init
 {
     self = [super init];

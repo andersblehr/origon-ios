@@ -12,10 +12,9 @@
 #define OLocalizedString(key, prefix) \
         [[NSBundle mainBundle] localizedStringForKey:([prefix length] ? [prefix stringByAppendingString:key separator:@" "] : key) value:nil table:nil]
 
-#import <AddressBook/AddressBook.h>
-#import <AddressBookUI/AddressBookUI.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <CommonCrypto/CommonDigest.h>
+#import <ContactsUI/ContactsUI.h>
 #import <CoreData/CoreData.h>
 #import <CoreLocation/CoreLocation.h>
 #import <CoreTelephony/CTCarrier.h>

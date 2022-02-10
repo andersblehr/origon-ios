@@ -172,19 +172,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
+- (NSUInteger)sectionKeyForSectionNumber:(NSUInteger)sectionNumber
 {
     return [_sectionKeys[sectionNumber] integerValue];
 }
 
 
-- (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey
+- (NSUInteger)sectionNumberForSectionKey:(NSInteger)sectionKey
 {
     return [_sectionKeys indexOfObject:@(sectionKey)];
 }
 
 
-- (BOOL)shouldEliminateSpaceBelowSection:(NSInteger)section
+- (BOOL)shouldEliminateSpaceBelowSection:(NSUInteger)section
 {
     BOOL shouldEliminate = NO;
     
@@ -200,12 +200,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (BOOL)shouldEliminateSpaceAboveSection:(NSInteger)section
+- (BOOL)shouldEliminateSpaceAboveSection:(NSUInteger)section
 {
     BOOL shouldEliminate = NO;
     
     if ([self isEntityViewController]) {
-        NSInteger inputSection = [self sectionNumberForSectionKey:kInputSectionKey];
+        NSUInteger inputSection = [self sectionNumberForSectionKey:kInputSectionKey];
         
         if (section == inputSection + 1) {
             shouldEliminate = [self shouldEliminateSpaceBelowSection:inputSection];
@@ -216,15 +216,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)reloadHeaderForSection:(NSInteger)section
+- (void)reloadHeaderForSection:(NSUInteger)section
 {
     [self reloadHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]];
 }
 
 
-- (void)reloadFooterForSection:(NSInteger)section
+- (void)reloadFooterForSection:(NSUInteger)section
 {
-    [self reloadFooterForSectionWtihKey:[self sectionKeyForSectionNumber:section]];
+    [self reloadFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]];
 }
 
 
@@ -405,7 +405,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)instanceHasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
-    BOOL hasHeader = NO;
+    BOOL hasHeader;
     
     if ([_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
         hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
@@ -665,12 +665,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _inputSectionKey = sectionKey;
             
             if (_entity) {
-                _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:_entity];
+                _sectionData[@(sectionKey)] = [@[_entity] mutableCopy];
             } else {
-                _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
+                _sectionData[@(sectionKey)] = [@[data] mutableCopy];
             }
         } else {
-            _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
+            _sectionData[@(sectionKey)] = [@[data] mutableCopy];
         }
     }
     
@@ -700,7 +700,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey
 {
-    static NSInteger sectionKey;
+    static NSUInteger sectionKey;
     static NSString *labelKey = nil;
     
     if (sectionIndexLabelKey) {
@@ -718,7 +718,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self setData:data sectionIndexLabelKey:nil];
         } else {
             if (_sectionIndexTitles.count) {
-                NSInteger numberOfSections = _sectionKeys.count;
+                NSUInteger numberOfSections = _sectionKeys.count;
                 
                 [_sectionKeys removeAllObjects];
                 [_sectionData removeAllObjects];
@@ -740,7 +740,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             NSMutableArray *sectionData = [NSMutableArray array];
             NSArray *remainingData = nil;
             
-            for (NSInteger i = 0; !remainingData && i < data.count; i++) {
+            for (NSUInteger i = 0; !remainingData && i < data.count; i++) {
                 NSString *label = [data[i] valueForKey:labelKey];
                 
                 if ([[label lowercaseString] hasPrefix:[sectionInitial lowercaseString]]) {
@@ -768,7 +768,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
-    return _sectionData[@([self sectionKeyForIndexPath:indexPath])][indexPath.row];
+    return _sectionData[@([self sectionKeyForIndexPath:indexPath])][(NSUInteger) indexPath.row];
 }
 
 
@@ -794,7 +794,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath
 {
-    return [self sectionKeyForSectionNumber:indexPath.section];
+    return [self sectionKeyForSectionNumber:(NSUInteger) indexPath.section];
 }
 
 
@@ -804,7 +804,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if (segmentTitles.count) {
         if (_titleSegments) {
-            NSString *selectedTitle = [_titleSegments titleForSegmentAtIndex:_titleSegments.selectedSegmentIndex];
+            NSString *selectedTitle = [_titleSegments titleForSegmentAtIndex:(NSUInteger) _titleSegments.selectedSegmentIndex];
             
             if (![segmentTitles containsObject:selectedTitle]) {
                 selectedTitle = nil;
@@ -812,7 +812,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             
             _titleSegments.selectedSegmentIndex = UISegmentedControlNoSegment;
             
-            for (NSInteger i = 0; i < _titleSegmentTitles.count; i++) {
+            for (NSUInteger i = 0; i < _titleSegmentTitles.count; i++) {
                 NSString *segmentTitle = _titleSegmentTitles[i];
                 
                 if (![segmentTitles containsObject:segmentTitle]) {
@@ -821,7 +821,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 }
             }
             
-            for (NSInteger i = 0; i < segmentTitles.count; i++) {
+            for (NSUInteger i = 0; i < segmentTitles.count; i++) {
                 NSString *segmentTitle = segmentTitles[i];
                 
                 if (![_titleSegmentTitles containsObject:segmentTitle]) {
@@ -927,7 +927,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSURL *phoneURL = [NSURL URLWithString:[kProtocolTel stringByAppendingString:phoneNumber]];
     
     if ([[UIApplication sharedApplication] canOpenURL:phoneURL]) {
-        [[UIApplication sharedApplication] openURL:phoneURL];
+        [[UIApplication sharedApplication] openURL:phoneURL
+                                           options:@{UIApplicationOpenURLOptionUniversalLinksOnly : @YES}
+                                 completionHandler:nil];
     } else {
         [OAlert showAlertWithTitle:OLocalizedString(@"Cannot place call", @"") message:[NSString stringWithFormat:OLocalizedString(@"Please verify that %@ is a valid phone number.", @""), [OPhoneNumberFormatter formatterForNumber:phoneNumber].formattedNumber]];
     }
@@ -1156,7 +1158,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [_inputCell readData];
             }
         } else {
-            NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
+            NSUInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
             
             if (section != NSNotFound) {
                 NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
@@ -1188,7 +1190,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (sectionsToDelete.count) {
         [_tableView deleteSections:sectionsToDelete withRowAnimation:rowAnimation];
         
-        NSInteger deletedSection = [sectionsToDelete firstIndex];
+        NSUInteger deletedSection = [sectionsToDelete firstIndex];
         
         while (deletedSection != NSNotFound) {
             [_sectionKeys removeObject:@([self sectionKeyForSectionNumber:deletedSection])];
@@ -1202,9 +1204,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [affectedSections addIndexes:sectionsToInsert];
         [affectedSections addIndexes:sectionsToDelete];
         
-        NSInteger topmostAffectedSection = [affectedSections firstIndex];
-        NSInteger bottomAffectedSection = [affectedSections lastIndex];
-        NSInteger bottomSection = [self sectionNumberForSectionKey:[[_sectionKeys lastObject] integerValue]];
+        NSUInteger topmostAffectedSection = [affectedSections firstIndex];
+        NSUInteger bottomAffectedSection = [affectedSections lastIndex];
+        NSUInteger bottomSection = [self sectionNumberForSectionKey:[[_sectionKeys lastObject] integerValue]];
         
         if (topmostAffectedSection != NSNotFound) {
             if (topmostAffectedSection > 0) {
@@ -1244,8 +1246,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (sectionExists || !sectionIsEmpty) {
             _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
             
-            NSInteger section = [self sectionNumberForSectionKey:sectionKey];
-            NSInteger bottomSection = [self sectionNumberForSectionKey:[[_sectionKeys lastObject] integerValue]];
+            NSUInteger section = [self sectionNumberForSectionKey:sectionKey];
+            NSUInteger bottomSection = [self sectionNumberForSectionKey:[[_sectionKeys lastObject] integerValue]];
             
             if (section == 0 && section < bottomSection) {
                 [self reloadHeaderForSection:section + 1];
@@ -1260,7 +1262,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [_tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
             } else if (!sectionExists && !sectionIsEmpty) {
                 [_tableView insertSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
-            } else if (sectionExists && sectionIsEmpty) {
+            } else if (sectionExists) {
                 [_sectionKeys removeObject:@(sectionKey)];
                 [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
             }
@@ -1277,7 +1279,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey
 {
-    BOOL hasHeader = NO;
+    BOOL hasHeader;
     
     if ([_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
         hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
@@ -1297,7 +1299,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)reloadFooterForSectionWtihKey:(NSInteger)sectionKey
+- (void)reloadFooterForSectionWithKey:(NSInteger)sectionKey
 {
     BOOL hasFooter = NO;
     
@@ -1502,11 +1504,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
-- (NSUInteger)supportedInterfaceOrientations
-#else
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
-#endif
 {
     return UIInterfaceOrientationMaskPortrait;
 }
@@ -1694,19 +1692,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - UITableViewDataSource conformance
 
-- (NSInteger)numberOfSectionsInTableView:(OTableView *)tableView
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return _sectionKeys.count;
 }
 
 
-- (NSInteger)tableView:(OTableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [_sectionCounts[@([_sectionKeys[section] integerValue])] integerValue];
 }
 
 
-- (CGFloat)tableView:(OTableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = kDefaultCellHeight;
     
@@ -1722,7 +1720,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (UITableViewCell *)tableView:(OTableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     OTableViewCell *cell = nil;
     
@@ -1734,9 +1732,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         if (reuseIdentifier) {
-            cell = [tableView inputCellWithReuseIdentifier:reuseIdentifier delegate:_instance];
+            cell = [(OTableView *)tableView inputCellWithReuseIdentifier:reuseIdentifier delegate:_instance];
         } else {
-            cell = [tableView inputCellWithEntity:_entity delegate:_instance];
+            cell = [(OTableView *)tableView inputCellWithEntity:_entity delegate:_instance];
         }
         
         _inputCell = cell;
@@ -1747,14 +1745,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             style = [_instance listCellStyleForSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
         }
         
-        cell = [tableView listCellWithStyle:style data:[self dataAtIndexPath:indexPath] delegate:_instance];
+        cell = [(OTableView *)tableView listCellWithStyle:style data:[self dataAtIndexPath:indexPath] delegate:_instance];
     }
     
     return cell;
 }
 
 
-- (BOOL)tableView:(OTableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDeleteCell = NO;
     
@@ -1772,7 +1770,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (NSString *)tableView:(OTableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *buttonTitle = nil;
     
@@ -1784,7 +1782,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)tableView:(OTableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         BOOL shouldDeleteCell = YES;
@@ -1816,13 +1814,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (NSArray *)sectionIndexTitlesForTableView:(OTableView *)tableView
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
     return _sectionIndexTitles;
 }
 
 
-- (NSInteger)tableView:(OTableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
 {
     return index;
 }
@@ -1830,16 +1828,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - UITableViewDelegate conformance
 
-- (CGFloat)tableView:(OTableView *)tableView heightForHeaderInSection:(NSInteger)section
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     CGFloat height = 0.f;
     
     if (_usesPlainTableViewStyle) {
         height = _sectionIndexTitles.count ? kPlainTableViewHeaderHeight : 0.f;
-    } else if ([self shouldEliminateSpaceAboveSection:section]) {
+    } else if ([self shouldEliminateSpaceAboveSection:(NSUInteger) section]) {
         height = kEliminatedHeaderFooterHeight;
     } else {
-        NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
+        NSInteger sectionKey = [self sectionKeyForSectionNumber:(NSUInteger) section];
         
         if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
             if ([_instance respondsToSelector:@selector(headerHeightForSectionWithKey:)]) {
@@ -1866,14 +1864,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (CGFloat)tableView:(OTableView *)tableView heightForFooterInSection:(NSInteger)section
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     CGFloat height = _usesPlainTableViewStyle ? 0.f : kEmptyFooterHeight;
     
-    if ([self shouldEliminateSpaceBelowSection:section]) {
+    if ([self shouldEliminateSpaceBelowSection:(NSUInteger) section]) {
         height = kEliminatedHeaderFooterHeight;
     } else {
-        NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
+        NSInteger sectionKey = [self sectionKeyForSectionNumber:(NSUInteger) section];
         
         if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
             if ([_instance respondsToSelector:@selector(footerHeightForSectionWithKey:)]) {
@@ -1890,14 +1888,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (UIView *)tableView:(OTableView *)tableView viewForHeaderInSection:(NSInteger)section
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:(NSUInteger) section];
     UIView *headerView = nil;
     id headerContent = nil;
     
     if (_isUsingSectionIndexTitles) {
-        headerContent = _sectionIndexTitles[section];
+        headerContent = _sectionIndexTitles[(NSUInteger) section];
     } else if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
         headerContent = [_instance headerContentForSectionWithKey:sectionKey];
     }
@@ -1930,7 +1928,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         headerLabel.textAlignment = NSTextAlignmentLeft;
         [headerView addSubview:headerLabel];
         
-        [_sectionHeaderLabels setObject:headerLabel forKey:@(sectionKey)];
+        _sectionHeaderLabels[@(sectionKey)] = headerLabel;
     } else if ([headerContent isKindOfClass:[NSArray class]]) {
         headerView = [self segmentedHeaderViewWithSegmentTitles:headerContent inSection:section];
         
@@ -1943,9 +1941,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (UIView *)tableView:(OTableView *)tableView viewForFooterInSection:(NSInteger)section
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:(NSUInteger) section];
     UIView *footerView = nil;
     
     if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
@@ -1954,7 +1952,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if ([footer isKindOfClass:[NSString class]]) {
             footerView = [self footerViewWithText:footer];
             
-            [_sectionFooterLabels setObject:footerView.subviews[0] forKey:@(sectionKey)];
+            _sectionFooterLabels[@(sectionKey)] = footerView.subviews[0];
         } else if ([footer isKindOfClass:[UIView class]]) {
             footerView = footer;
         }
@@ -1964,23 +1962,23 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)tableView:(OTableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (cell == _inputCell) {
         [_inputCell prepareForDisplay];
         
         if ([_instance respondsToSelector:@selector(willDisplayInputCell:)]) {
-            [_instance willDisplayInputCell:cell];
+            [_instance willDisplayInputCell:(OTableViewCell *) cell];
         }
     } else {
-        [_instance loadListCell:cell atIndexPath:indexPath];
+        [_instance loadListCell:(OTableViewCell *) cell atIndexPath:indexPath];
     }
 }
 
 
-- (void)tableView:(OTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    OTableViewCell *cell = (OTableViewCell *)[_tableView cellForRowAtIndexPath:indexPath];
+    OTableViewCell *cell = [_tableView cellForRowAtIndexPath:indexPath];
     
     BOOL didSelectCell = cell.selectable;
     
@@ -2014,15 +2012,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - UITextFieldDelegate conformance
 
-- (void)textFieldDidBeginEditing:(OTextField *)textField
+- (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     if ([_inputCell hasInputField:textField]) {
-        [self inputFieldDidBecomeFirstResponder:textField];
+        [self inputFieldDidBecomeFirstResponder:(OTextField *)textField];
     }
 }
 
 
-- (BOOL)textFieldShouldReturn:(OTextField *)textField
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if ([_inputCell hasInputField:textField]) {
         if ([_inputCell nextInputField]) {
@@ -2030,8 +2028,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         } else {
             [self didFinishEditing];
         }
-    } else if (textField.isInlineField) {
-        if ([textField hasValidValue]) {
+    } else if (((OTextField *)textField).isInlineField) {
+        if ([(OTextField *)textField hasValidValue]) {
             [self finishInlineEditing];
         }
     }
@@ -2040,7 +2038,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)textFieldDidEndEditing:(OTextField *)textField
+- (void)textFieldDidEndEditing:(UITextField *)textField
 {
     if ([_inputCell hasInputField:textField]) {
         _inputCell.inputField = nil;
@@ -2050,19 +2048,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - UITextViewDelegate conformance
 
-- (void)textViewDidBeginEditing:(OTextView *)textView
+- (void)textViewDidBeginEditing:(UITextView *)textView
 {
-    [self inputFieldDidBecomeFirstResponder:textView];
+    [self inputFieldDidBecomeFirstResponder:(OTextView *)textView];
 }
 
 
-- (void)textViewDidChange:(OTextView *)textView
+- (void)textViewDidChange:(UITextView *)textView
 {
     [_inputCell redrawIfNeeded];
 }
 
 
-- (void)textViewDidEndEditing:(OTextView *)textView
+- (void)textViewDidEndEditing:(UITextView *)textView
 {
     _inputCell.inputField = nil;
 }

@@ -64,16 +64,6 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
 }
 
 
-- (MKPointAnnotation *)pointAnnotationWithCoordinate:(CLLocationCoordinate2D)coordinate title:(NSString *)title
-{
-    MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
-    annotation.coordinate = coordinate;
-    annotation.title = title;
-    
-    return annotation;
-}
-
-
 #pragma mark - Action sheets
 
 - (void)presentStartingPointSheet
@@ -251,9 +241,9 @@ static NSString * const kIdentifierPinAnnotationView = @"pin";
         }
         
         if (annotation == _startAnnotation) {
-            pinAnnotationView.pinColor = MKPinAnnotationColorGreen;
+            pinAnnotationView.pinTintColor = [UIColor greenColor];
         } else {
-            pinAnnotationView.pinColor = MKPinAnnotationColorRed;
+            pinAnnotationView.pinTintColor = [UIColor redColor];
         }
     }
     

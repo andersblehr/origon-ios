@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OAppDelegate.h"
-
 static NSString * const kTimeZoneNameUTC = @"UTC";
 static NSString * const kPersistentStoreURLFormat = @"Origon^%@.sqlite";
 
@@ -90,7 +88,7 @@ static void uncaughtExceptionHandler(NSException *exception)
         NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
         
         if (coordinator) {
-            _managedObjectContext = [[NSManagedObjectContext alloc] init];
+            _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
             _managedObjectContext.persistentStoreCoordinator = coordinator;
         }
     }
