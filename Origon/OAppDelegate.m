@@ -118,8 +118,18 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     OLogDebug(@"Application did finish launching");
     
-    //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-    //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+    if (@available(iOS 15.0, *)) {
+        UINavigationBarAppearance *navigationBarAppearance = [[UINavigationBarAppearance alloc] init];
+        [navigationBarAppearance configureWithOpaqueBackground];
+        navigationBarAppearance.backgroundColor = [UIColor toolbarColour];
+        [UINavigationBar appearance].standardAppearance = navigationBarAppearance;
+        [UINavigationBar appearance].scrollEdgeAppearance = navigationBarAppearance;
+        UIToolbarAppearance *toolbarAppearance = [[UIToolbarAppearance alloc] init];
+        [toolbarAppearance configureWithOpaqueBackground];
+        toolbarAppearance.backgroundColor = [UIColor toolbarColour];
+        [UIToolbar appearance].standardAppearance = toolbarAppearance;
+        [UIToolbar appearance].scrollEdgeAppearance = toolbarAppearance;
+    }
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
