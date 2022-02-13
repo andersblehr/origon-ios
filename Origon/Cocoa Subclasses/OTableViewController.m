@@ -279,14 +279,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if ([_instance respondsToSelector:@selector(toolbarHasCallButton)]) {
             BOOL hasSignal = [[OMeta m].carrier.mobileNetworkCode hasValue];
             BOOL deviceCanMakeCall = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]];
-            BOOL is_iPhoneSimulator = [OMeta deviceIsSimulator] && [OMeta deviceIs_iPhone];
+            BOOL is_iPhoneSimulator = [OMeta deviceIsSimulator] && [OMeta deviceIsiPhone];
             
             if ((hasSignal && deviceCanMakeCall) || is_iPhoneSimulator) {
                 hasCallButton = [_instance toolbarHasCallButton];
             }
         }
         
-        if ([MFMailComposeViewController canSendMail]) {
+        if ([MFMailComposeViewController canSendMail] || [OMeta deviceIsSimulator]) {
             if ([_instance respondsToSelector:@selector(toolbarHasSendEmailButton)]) {
                 hasSendEmailButton = [_instance toolbarHasSendEmailButton];
             }
@@ -488,8 +488,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (UIView *)footerViewWithText:(NSString *)footerText
 {
     CGFloat footerHeight = [self footerHeightWithText:footerText];
-    CGRect footerFrame = CGRectMake(0.f, 0.f, [OMeta screenSize].width, footerHeight);
-    CGRect labelFrame = CGRectMake(kContentInset, 0.f, [OMeta screenSize].width - 2 * kContentInset, footerHeight + kFooterHeadroom);
+    CGRect footerFrame = CGRectMake(0.f, 0.f, self.view.frame.size.width, footerHeight);
+    CGRect labelFrame = CGRectMake(kContentInset, 0.f, self.view.frame.size.width - 2 * kContentInset, footerHeight + kFooterHeadroom);
     
     UIView *footerView = [[UIView alloc] initWithFrame:footerFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:labelFrame];
@@ -841,7 +841,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _titleSegmentTitles = [segmentTitles mutableCopy];
             _titleSegments = [[UISegmentedControl alloc] initWithItems:segmentTitles];
             _titleSegments.selectedSegmentIndex = 0;
-            _titleSegments.frame = CGRectMake(kContentInset, kContentInset / 2.f, [OMeta screenSize].width - 2 * kContentInset, _titleSegments.frame.size.height);
             [_titleSegments addTarget:_instance action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
             
             UIView *segmentsHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kToolbarBarHeight, [OMeta screenSize].width, [OMeta borderWidth])];
@@ -1321,12 +1320,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - View lifecycle
 
-- (void)loadView
-{
-    self.view = [[UIView alloc] initWithFrame:[OMeta m].appDelegate.window.bounds];
-}
-
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -1421,6 +1414,30 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _isPushed = [self isMovingToParentViewController] || (_didJustLoad && !_isModal);
     _didResurface = !_isPushed && !_wasHidden && (!_isModal || !_didJustLoad);
     _didJustLoad = NO;
+
+    if (_titleSegments != nil) {
+        _titleSegments.frame =
+                CGRectMake(
+                        kContentInset,
+                        kContentInset / 2.f,
+                        self.view.frame.size.width - 2 * kContentInset,
+                        _titleSegments.frame.size.height);
+
+        if (_isModal) {
+            for (UIView *view in self.view.subviews) {
+                if ([[view class] isSubclassOfClass:[UITableView class]]) {
+                    view.frame =
+                            CGRectMake(
+                                    self.view.frame.origin.x,
+                                    self.view.frame.origin.y,
+                                    self.view.frame.size.width,
+                                    self.view.frame.size.height
+                                            - kPlainTableViewHeaderHeight
+                                            - _titleSegments.frame.size.height);
+                }
+            }
+        }
+    }
     
     [_state makeActive];
 
