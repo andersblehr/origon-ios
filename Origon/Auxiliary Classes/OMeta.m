@@ -224,7 +224,7 @@ static NSTimeInterval const kTimeInterval100Years = 3153600000;
 }
 
 
-+ (BOOL)deviceIs_iPhone
++ (BOOL)deviceIsiPhone
 {
     return [[UIDevice currentDevice].model hasPrefix:@"iPhone"];
 }

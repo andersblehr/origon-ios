@@ -46,7 +46,7 @@
 + (CGSize)screenSize;
 + (CGFloat)borderWidth;
 
-+ (BOOL)deviceIs_iPhone;
++ (BOOL)deviceIsiPhone;
 + (BOOL)deviceIsSimulator;
 
 @end

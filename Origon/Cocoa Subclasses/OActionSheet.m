@@ -9,7 +9,6 @@
 @interface OActionSheet () {
 @private
     UIAlertController *_alertController;
-    NSMutableArray *_buttonTags;
 }
 
 @end
@@ -33,9 +32,13 @@
 - (instancetype)initWithPrompt:(NSString *)prompt {
     self = [super init];
     if (self) {
+        UIView *sourceView = [OState s].viewController.view;
         _alertController = [UIAlertController alertControllerWithTitle:prompt
                                                                message:nil
                                                         preferredStyle:UIAlertControllerStyleActionSheet];
+        _alertController.popoverPresentationController.sourceView = sourceView;
+        _alertController.popoverPresentationController.sourceRect =
+                CGRectMake(sourceView.frame.size.width / 2.f, sourceView.frame.size.height, 1.f, 1.f);
     }
     return self;
 }
@@ -56,7 +59,7 @@
 - (void)addButtonWithTitle:(NSString *)title action:(void (^)(void))action isDestructive:(BOOL)isDestructive {
     [_alertController addAction:
             [UIAlertAction actionWithTitle:title
-                                     style:isDestructive ? UIAlertActionStyleDefault : UIAlertActionStyleDestructive
+                                     style:isDestructive ? UIAlertActionStyleDestructive : UIAlertActionStyleDefault
                                    handler:^(UIAlertAction *_) {
                                        if (action != nil) action();
                                    }]];
