@@ -1307,11 +1307,13 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
 				INFOPLIST_FILE = "Origon/Supporting Files/Origon-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
 				PROVISIONING_PROFILE = "";
@@ -1329,11 +1331,13 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Origon/Supporting Files/Origon-Prefix.pch";
 				INFOPLIST_FILE = "Origon/Supporting Files/Origon-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "co.origon.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Origon;
 				PROVISIONING_PROFILE = "";
