@@ -1423,7 +1423,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                         self.view.frame.size.width - 2 * kContentInset,
                         _titleSegments.frame.size.height);
 
-        if (_isModal) {
+        if (_didJustLoad && _isModal) {
             for (UIView *view in self.view.subviews) {
                 if ([[view class] isSubclassOfClass:[UITableView class]]) {
                     view.frame =
